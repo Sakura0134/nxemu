@@ -30,12 +30,18 @@
     <ClCompile Include="UserInterface\CMainGui.cpp">
       <Filter>Source Files\UserInterface</Filter>
     </ClCompile>
+    <ClCompile Include="UserInterface\Notification.cpp">
+      <Filter>Source Files\UserInterface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UserInterface\CMainGui.h">
+      <Filter>Header Files\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\Notification.h">
       <Filter>Header Files\UserInterface</Filter>
     </ClInclude>
   </ItemGroup>

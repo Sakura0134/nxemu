@@ -64,7 +64,7 @@ int main()
         {
             line = "#define GIT_VERSION                 \"" + verinfo[2] + "\"\r\n";
         }
-        if (!OutFile.Write(line.c_str(), line.length()))
+        if (!OutFile.Write(line.c_str(), (uint32_t)line.length()))
         {
             return 0;
         }

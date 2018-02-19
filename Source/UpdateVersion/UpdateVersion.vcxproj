@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">
-      <Project>{b4a4b994-9111-42b1-93c2-6f1ca8bc4421}</Project>
+      <Project>{c9b7522e-5aae-41d1-8a34-ea61e17d32bb}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
