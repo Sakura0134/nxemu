@@ -45,7 +45,7 @@ void CMainGui::Create(const wchar_t * WindowTitle)
     blah = blah;
 }
 
-uint32_t CMainGui::ProcessAllMessages(void)
+uint64_t CMainGui::ProcessAllMessages(void)
 {
     MSG msg;
 
@@ -54,7 +54,7 @@ uint32_t CMainGui::ProcessAllMessages(void)
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-    return msg.wParam;
+    return (uint64_t)msg.wParam;
 }
 
 void CMainGui::Show(bool Visible)
@@ -65,7 +65,7 @@ void CMainGui::Show(bool Visible)
     }
 }
 
-void * CMainGui::MainGui_Proc(void * hWnd, uint32_t uMsg, uint32_t wParam, uint32_t lParam)
+void * CMainGui::MainGui_Proc(void * hWnd, uint32_t uMsg, uint64_t wParam, uint64_t lParam)
 {
     switch (uMsg)
     {
