@@ -24,6 +24,9 @@
     <ClInclude Include="SystemGlobals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Notification.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">

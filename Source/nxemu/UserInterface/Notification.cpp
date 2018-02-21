@@ -25,3 +25,7 @@ void CNotificationImp::BreakPoint(const char * FileName, uint32_t LineNumber)
         DebugBreak();
     }
 }
+
+void CNotificationImp::AppInitDone(void)
+{
+}

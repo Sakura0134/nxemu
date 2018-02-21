@@ -11,6 +11,8 @@ public:
     //Error Messages
     virtual void DisplayError(const char * Message) const = 0;
     virtual void BreakPoint(const char * FileName, uint32_t LineNumber) = 0;
+
+    virtual void AppInitDone(void) = 0;
 };
 
 extern CNotification * g_Notify;
