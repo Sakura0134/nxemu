@@ -43,6 +43,7 @@
     <ClInclude Include="AppInit.h" />
     <ClInclude Include="Notification.h" />
     <ClInclude Include="SystemGlobals.h" />
+    <ClInclude Include="Trace.h" />
     <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
