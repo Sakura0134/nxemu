@@ -11,6 +11,15 @@ public:
 
     CSettings(const char * BaseDirectory);
 
+    //return the values
+    std::string LoadStringVal(SettingID Type);
+    bool LoadStringVal(SettingID Type, std::string & Value);
+    bool LoadStringVal(SettingID Type, char * Buffer, int32_t BufferSize);
+
+    //Update the settings
+    void SaveString(SettingID Type, const std::string & Value);
+    void SaveString(SettingID Type, const char * Buffer);
+
 private:
     CSettings(void);                          // Disable default constructor
     CSettings(const CSettings&);              // Disable copy constructor
@@ -21,6 +30,7 @@ private:
 
     void AddHowToHandleSetting(const char * BaseDirectory);
     void AddHandler(SettingID TypeID, CSettingType * Handler);
+    void UnknownSetting(SettingID Type);
 
     SETTING_MAP m_SettingInfo;
 };

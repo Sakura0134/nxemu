@@ -8,5 +8,6 @@ enum SettingID
 
     //Command Settings
     Cmd_BaseDirectory,
+    Cmd_RunFile,
 };
 

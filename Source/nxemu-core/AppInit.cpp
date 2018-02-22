@@ -24,6 +24,32 @@ void InitializeLog(void)
     SetTraceModuleNames();
 }
 
+static bool ParseCommand(int32_t argc, char **argv)
+{
+    if (argc <= 1)
+    {
+        return true;
+    }
+    for (int32_t i = 1; i < argc; i++)
+    {
+        if (argv[i][0] != '-')
+        {
+            if (g_Settings->LoadStringVal(Cmd_RunFile).length() > 0)
+            {
+                WriteTrace(TraceAppInit, TraceError, "Run file has already been set");
+                return false;
+            }
+            g_Settings->SaveString(Cmd_RunFile, &(argv[i][0]));
+        }
+        else
+        {
+            WriteTrace(TraceAppInit, TraceError, "unrecognized command-line parameter '%d: %s'", i, argv[i]);
+            return false;
+        }
+    }
+    return true;
+}
+
 bool AppInit(CNotification * Notify, const char * BaseDirectory, int argc, char **argv)
 {
     g_Notify = Notify;
@@ -37,6 +63,13 @@ bool AppInit(CNotification * Notify, const char * BaseDirectory, int argc, char 
 
     WriteTrace(TraceAppInit, TraceDebug, "Settings up settings");
     g_Settings = new CSettings(BaseDirectory);
+
+    WriteTrace(TraceAppInit, TraceDebug, "Parse Commands");
+    if (!ParseCommand(argc, argv))
+    {
+        WriteTrace(TraceAppInit, TraceError, "Failed to Parse Commands, exiting now");
+        return false;
+    }
 
     g_Notify->AppInitDone();
     WriteTrace(TraceAppInit, TraceDebug, "Initialized Successfully");
