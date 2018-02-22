@@ -64,7 +64,7 @@ void * CThread::ThreadWrapper (CThread * _this)
     void * res = NULL;
     try
     {
-        res = (void *)_this->m_StartAddress(_this->m_lpThreadParameter);
+        res = (void *)((uint64_t)_this->m_StartAddress(_this->m_lpThreadParameter));
     }
     catch (...)
     {

@@ -1,5 +1,7 @@
 #include "AppInit.h"
 #include <nxemu-core/Trace.h>
+#include <nxemu-core/Settings.h>
+#include <nxemu-core/SystemGlobals.h>
 
 void SetTraceModuleNames(void)
 {
@@ -27,6 +29,15 @@ bool AppInit(CNotification * Notify, const char * BaseDirectory, int argc, char 
     g_Notify = Notify;
     InitializeLog();
     WriteTrace(TraceAppInit, TraceDebug, "Starting (BaseDirectory: %s)", BaseDirectory ? BaseDirectory : "null");
+    if (Notify == NULL)
+    {
+        WriteTrace(TraceAppInit, TraceError, "No Notification class passed");
+        return false;
+    }
+
+    WriteTrace(TraceAppInit, TraceDebug, "Settings up settings");
+    g_Settings = new CSettings(BaseDirectory);
+
     g_Notify->AppInitDone();
     WriteTrace(TraceAppInit, TraceDebug, "Initialized Successfully");
     return true;

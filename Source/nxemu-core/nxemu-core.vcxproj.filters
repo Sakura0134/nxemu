@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Settings">
+      <UniqueIdentifier>{2398d593-4fe0-4c06-9747-96bad5e16c6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Settings\SettingType">
+      <UniqueIdentifier>{d937c11b-3558-408c-bfce-80ef74abad86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Settings">
+      <UniqueIdentifier>{aa1602de-2518-4e67-b49b-876eb2cfeb0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Settings\SettingType">
+      <UniqueIdentifier>{ea433908-248d-42bd-be8c-c0c72f21c8a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -24,11 +36,26 @@
     <ClInclude Include="SystemGlobals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Notification.h">
+    <ClInclude Include="TraceModules.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Trace.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Notification.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingsID.h">
+      <Filter>Header Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-Base.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-TempString.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -37,6 +64,12 @@
     </ClCompile>
     <ClCompile Include="SystemGlobals.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

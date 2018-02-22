@@ -42,8 +42,13 @@
   <ItemGroup>
     <ClInclude Include="AppInit.h" />
     <ClInclude Include="Notification.h" />
+    <ClInclude Include="Settings.h" />
+    <ClInclude Include="Settings\SettingsID.h" />
+    <ClInclude Include="Settings\SettingType\SettingsType-Base.h" />
+    <ClInclude Include="Settings\SettingType\SettingsType-TempString.h" />
     <ClInclude Include="SystemGlobals.h" />
     <ClInclude Include="Trace.h" />
+    <ClInclude Include="TraceModules.h" />
     <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp" />
+    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp" />
     <ClCompile Include="SystemGlobals.cpp" />
   </ItemGroup>
 </Project>
