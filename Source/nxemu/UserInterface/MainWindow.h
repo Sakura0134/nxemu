@@ -3,19 +3,33 @@
 
 class CMainGui
 {
+    enum
+    {
+        Width = 640,
+        Height = 480,
+    };
+
+    BEGIN_MSG_MAP(CMainGui)
+        MESSAGE_HANDLER(WM_CREATE, OnCreate)
+        MESSAGE_HANDLER(WM_DESTROY, OnDestory)
+    END_MSG_MAP()
+
 public:
     CMainGui(const wchar_t * WindowTitle);
     ~CMainGui(void);
 
-    uint64_t ProcessAllMessages(void);
+    WPARAM ProcessAllMessages(void);
     void Show(bool ShowWindow); //Show or Hide the current window
 
 private:
     void Create(const wchar_t * WindowTitle);
     bool RegisterWinClass(void);
 
-    static void * __stdcall MainGui_Proc(void *, uint32_t, uint64_t, uint64_t);
+    LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+    LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
-    void * m_hMainWindow;
+    static LRESULT __stdcall MainGui_Proc(HWND, UINT, WPARAM, LPARAM);
+
+    HWND m_hWnd;
     std::wstring m_ClassName;
 };

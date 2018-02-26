@@ -2,7 +2,7 @@
 #include <Windows.h>
 
 CMainGui::CMainGui(const wchar_t * WindowTitle) :
-    m_hMainWindow(NULL),
+    m_hWnd(NULL),
     m_ClassName(stdstr_f("NXEmu %s", VER_FILE_VERSION_STR).ToUTF16())
 {
     RegisterWinClass();
@@ -11,9 +11,9 @@ CMainGui::CMainGui(const wchar_t * WindowTitle) :
 
 CMainGui::~CMainGui()
 {
-    if (m_hMainWindow)
+    if (m_hWnd)
     {
-        DestroyWindow((HWND)m_hMainWindow);
+        DestroyWindow((HWND)m_hWnd);
     }
 }
 
@@ -38,14 +38,12 @@ bool CMainGui::RegisterWinClass(void)
 
 void CMainGui::Create(const wchar_t * WindowTitle)
 {
-    m_hMainWindow = CreateWindowExW(WS_EX_ACCEPTFILES, m_ClassName.c_str(), WindowTitle, WS_OVERLAPPED | WS_CLIPCHILDREN |
-        WS_CLIPSIBLINGS | WS_SYSMENU | WS_MINIMIZEBOX, 5, 5, 640, 480,
+    CreateWindowExW(WS_EX_ACCEPTFILES, m_ClassName.c_str(), WindowTitle, WS_OVERLAPPED | WS_CLIPCHILDREN |
+        WS_CLIPSIBLINGS | WS_SYSMENU | WS_MINIMIZEBOX, 0, 0, Width, Height,
         NULL, NULL, GetModuleHandle(NULL), this);
-    DWORD blah = GetLastError();
-    blah = blah;
 }
 
-uint64_t CMainGui::ProcessAllMessages(void)
+WPARAM CMainGui::ProcessAllMessages(void)
 {
     MSG msg;
 
@@ -54,33 +52,49 @@ uint64_t CMainGui::ProcessAllMessages(void)
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-    return (uint64_t)msg.wParam;
+    return msg.wParam;
 }
 
 void CMainGui::Show(bool Visible)
 {
-    if (m_hMainWindow)
+    if (m_hWnd)
     {
-        ShowWindow((HWND)m_hMainWindow, Visible ? SW_SHOW : SW_HIDE);
+        ShowWindow((HWND)m_hWnd, Visible ? SW_SHOW : SW_HIDE);
     }
 }
 
-void * CMainGui::MainGui_Proc(void * hWnd, uint32_t uMsg, uint64_t wParam, uint64_t lParam)
+LRESULT CMainGui::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
-    switch (uMsg)
-    {
-    case WM_CREATE:
-    {
-        //record class for future usage
-        LPCREATESTRUCT lpcs = (LPCREATESTRUCT)lParam;
-        CMainGui * _this = (CMainGui *)lpcs->lpCreateParams;
-        SetProp((HWND)hWnd, "Class", _this);
+    int X = (GetSystemMetrics(SM_CXSCREEN) - Width) / 2;
+    int	Y = (GetSystemMetrics(SM_CYSCREEN) - Height) / 2;
 
-        _this->m_hMainWindow = hWnd;
+    SetWindowPos(m_hWnd, NULL, X, Y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+    return 0;
+}
+
+LRESULT CMainGui::OnDestory(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+    PostQuitMessage(0);
+    return 0;
+}
+
+LRESULT CMainGui::MainGui_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    if (uMsg == WM_CREATE)
+    {
+        LPCREATESTRUCT lpcs = (LPCREATESTRUCT)lParam;
+        SetWindowLongPtrW(hWnd, GWLP_USERDATA, (uintptr_t)lpcs->lpCreateParams);
+        CMainGui * _this = (CMainGui *)lpcs->lpCreateParams;
+        _this->m_hWnd = hWnd;
     }
-    break;
-    default:
-        return (void *)DefWindowProcW((HWND)hWnd, uMsg, wParam, lParam);
+    CMainGui * _this = (CMainGui *)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
+    if (_this)
+    {
+        LRESULT result;
+        if (_this->ProcessWindowMessage(hWnd, uMsg, wParam, lParam, result))
+        {
+            return result;
+        }
     }
-    return (void *)true;
+    return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
