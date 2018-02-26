@@ -36,14 +36,14 @@
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="UserInterface\CMainGui.cpp" />
+    <ClCompile Include="UserInterface\MainWindow.cpp" />
     <ClCompile Include="UserInterface\Notification.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\nxemu-core\Version.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="UserInterface\CMainGui.h" />
+    <ClInclude Include="UserInterface\MainWindow.h" />
     <ClInclude Include="UserInterface\Notification.h" />
     <ClInclude Include="UserInterface\WTLApp.h" />
   </ItemGroup>

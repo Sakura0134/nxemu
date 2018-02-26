@@ -4,4 +4,4 @@
 #include <Common/StdString.h>
 
 //User interface
-#include "UserInterface/CMainGui.h"
+#include "UserInterface/MainWindow.h"
