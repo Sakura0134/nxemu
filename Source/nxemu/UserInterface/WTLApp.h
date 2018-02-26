@@ -40,3 +40,5 @@ public:
 };
 
 extern WTLModule _Module;
+
+#include "resource.h"

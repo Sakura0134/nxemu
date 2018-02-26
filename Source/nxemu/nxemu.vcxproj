@@ -40,6 +40,8 @@
     <ClCompile Include="UserInterface\Notification.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\nxemu-core\Version.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="UserInterface\CMainGui.h" />
     <ClInclude Include="UserInterface\Notification.h" />
@@ -52,5 +54,11 @@
     <ProjectReference Include="..\nxemu-core\nxemu-core.vcxproj">
       <Project>{18098a2d-f1c3-4325-befc-a464fcb97ba1}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\nxemu-core\Version.h.in" />
   </ItemGroup>
 </Project>
