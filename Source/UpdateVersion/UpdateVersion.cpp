@@ -52,7 +52,7 @@ int main()
         return 0;
     }
 
-    for (size_t i = 0, n = VersionData.size() - 1; i < n; i++)
+    for (size_t i = 0, n = VersionData.size(); i < n; i++)
     {
         stdstr &line = VersionData[i];
         line += "\r\n";
