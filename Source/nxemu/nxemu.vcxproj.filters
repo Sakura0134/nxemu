@@ -44,5 +44,8 @@
     <ClInclude Include="UserInterface\Notification.h">
       <Filter>Header Files\UserInterface</Filter>
     </ClInclude>
+    <ClInclude Include="UserInterface\WTLApp.h">
+      <Filter>Header Files\UserInterface</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

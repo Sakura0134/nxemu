@@ -43,6 +43,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="UserInterface\CMainGui.h" />
     <ClInclude Include="UserInterface\Notification.h" />
+    <ClInclude Include="UserInterface\WTLApp.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

@@ -1,4 +1,5 @@
 #pragma once
+#include "WTLApp.h"
 
 class CMainGui
 {
