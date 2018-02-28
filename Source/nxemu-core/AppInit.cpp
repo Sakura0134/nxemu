@@ -2,6 +2,7 @@
 #include <nxemu-core/Trace.h>
 #include <nxemu-core/Settings.h>
 #include <nxemu-core/SystemGlobals.h>
+#include <nxemu-core/Language/Language.h>
 
 void SetTraceModuleNames(void)
 {
@@ -64,6 +65,8 @@ bool AppInit(CNotification * Notify, const char * BaseDirectory, int argc, char 
     WriteTrace(TraceAppInit, TraceDebug, "Settings up settings");
     g_Settings = new CSettings(BaseDirectory);
 
+    g_Lang = new CLanguage;
+
     WriteTrace(TraceAppInit, TraceDebug, "Parse Commands");
     if (!ParseCommand(argc, argv))
     {
@@ -78,4 +81,9 @@ bool AppInit(CNotification * Notify, const char * BaseDirectory, int argc, char 
 
 void AppCleanup(void)
 {
+    if (g_Lang)
+    {
+        delete g_Lang;
+        g_Lang = NULL;
+    }
 }

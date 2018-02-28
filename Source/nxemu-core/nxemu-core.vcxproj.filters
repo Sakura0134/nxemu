@@ -25,6 +25,12 @@
     <Filter Include="Source Files\Settings\SettingType">
       <UniqueIdentifier>{ea433908-248d-42bd-be8c-c0c72f21c8a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Language">
+      <UniqueIdentifier>{ee6b69ee-01f0-4c0c-8622-aad5075d39db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Language">
+      <UniqueIdentifier>{87a3cb0b-94b8-43e0-8895-80950233b2f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -57,6 +63,12 @@
     <ClInclude Include="Settings\SettingType\SettingsType-TempString.h">
       <Filter>Header Files\Settings\SettingType</Filter>
     </ClInclude>
+    <ClInclude Include="Language\Language.h">
+      <Filter>Header Files\Language</Filter>
+    </ClInclude>
+    <ClInclude Include="Language\LanguageStringID.h">
+      <Filter>Header Files\Language</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -70,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp">
       <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Language\Language.cpp">
+      <Filter>Source Files\Language</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
