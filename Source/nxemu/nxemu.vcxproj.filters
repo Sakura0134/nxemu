@@ -21,11 +21,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface\MainWindow.cpp">
+      <Filter>Source Files\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface\MainMenu.cpp">
+      <Filter>Source Files\UserInterface</Filter>
     </ClCompile>
     <ClCompile Include="UserInterface\CMainGui.cpp">
       <Filter>Source Files\UserInterface</Filter>
@@ -33,15 +36,21 @@
     <ClCompile Include="UserInterface\Notification.cpp">
       <Filter>Source Files\UserInterface</Filter>
     </ClCompile>
+    <ClCompile Include="UserInterface\MenuItem.cpp">
+      <Filter>Source Files\UserInterface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="UserInterface\CMainGui.h">
       <Filter>Header Files\UserInterface</Filter>
     </ClInclude>
     <ClInclude Include="UserInterface\Notification.h">
+      <Filter>Header Files\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\MainWindow.h">
+      <Filter>Header Files\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\MenuItem.h">
       <Filter>Header Files\UserInterface</Filter>
     </ClInclude>
     <ClInclude Include="UserInterface\WTLApp.h">

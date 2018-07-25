@@ -4,7 +4,8 @@
 
 CMainGui::CMainGui(const wchar_t * WindowTitle) :
     m_hWnd(NULL),
-    m_ClassName(L"NXEmu")
+    m_ClassName(L"NXEmu"),
+    m_Menu(this)
 {
     RegisterWinClass();
     Create(WindowTitle);
@@ -66,6 +67,8 @@ void CMainGui::Show(bool Visible)
 
 LRESULT CMainGui::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
+    ResetMenu();
+
     int X = (GetSystemMetrics(SM_CXSCREEN) - Width) / 2;
     int	Y = (GetSystemMetrics(SM_CYSCREEN) - Height) / 2;
 
@@ -76,6 +79,12 @@ LRESULT CMainGui::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, 
 LRESULT CMainGui::OnDestory(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
     PostQuitMessage(0);
+    return 0;
+}
+
+LRESULT CMainGui::OnFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+    DestroyWindow(m_hWnd);
     return 0;
 }
 
@@ -98,4 +107,9 @@ LRESULT CMainGui::MainGui_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         }
     }
     return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+
+void CMainGui::ResetMenu()
+{
+    SetMenu(m_hWnd, m_Menu.GetHandle());
 }

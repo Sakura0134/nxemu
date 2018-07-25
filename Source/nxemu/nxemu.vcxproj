@@ -29,13 +29,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="UserInterface\MainMenu.cpp" />
     <ClCompile Include="UserInterface\MainWindow.cpp" />
+    <ClCompile Include="UserInterface\MenuItem.cpp" />
     <ClCompile Include="UserInterface\Notification.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\nxemu-core\Version.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="UserInterface\MainMenu.h" />
     <ClInclude Include="UserInterface\MainWindow.h" />
+    <ClInclude Include="UserInterface\MenuItem.h" />
     <ClInclude Include="UserInterface\Notification.h" />
     <ClInclude Include="UserInterface\WTLApp.h" />
   </ItemGroup>
