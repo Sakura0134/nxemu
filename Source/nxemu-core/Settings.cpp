@@ -10,7 +10,6 @@ CSettings::CSettings(const char * BaseDirectory)
 void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
 {
     AddHandler(Cmd_BaseDirectory, new CSettingTypeTempString(BaseDirectory));
-    AddHandler(Cmd_RunFile, new CSettingTypeTempString(""));
 }
 
 void CSettings::AddHandler(SettingID TypeID, CSettingType * Handler)
