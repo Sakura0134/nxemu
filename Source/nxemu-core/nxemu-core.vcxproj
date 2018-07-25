@@ -1,17 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
@@ -30,7 +22,6 @@
     <Import Project="$(SolutionDir)PropertySheets\Platform.$(Configuration).props" />
   </ImportGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -54,15 +45,19 @@
     <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UpdateVersion\UpdateVersion.vcxproj">
-      <Project>{1968162c-0793-491d-91a1-81645a24d399}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="AppInit.cpp" />
     <ClCompile Include="Language\Language.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp" />
     <ClCompile Include="SystemGlobals.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Version.h.in" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UpdateVersion\UpdateVersion.vcxproj">
+      <Project>{1968162c-0793-491d-91a1-81645a24d399}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

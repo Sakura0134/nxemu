@@ -1,9 +1,10 @@
-#include "stdafx.h"
+#include "MainWindow.h"
+#include <Common\StdString.h>
 #include <Windows.h>
 
 CMainGui::CMainGui(const wchar_t * WindowTitle) :
     m_hWnd(NULL),
-    m_ClassName(stdstr_f("NXEmu %s", VER_FILE_VERSION_STR).ToUTF16())
+    m_ClassName(L"NXEmu")
 {
     RegisterWinClass();
     Create(WindowTitle);

@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "Notification.h"
+#include <Common\StdString.h>
 #include <Windows.h>
 
 CNotificationImp & Notify(void)
