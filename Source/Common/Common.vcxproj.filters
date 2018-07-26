@@ -21,6 +21,9 @@
     <ClCompile Include="StdString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IniFileClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="path.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -50,7 +53,13 @@
     <ClInclude Include="StdString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IniFileClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="path.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SmartPointer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Platform.h">

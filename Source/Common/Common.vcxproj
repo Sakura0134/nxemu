@@ -1,17 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
@@ -34,6 +26,7 @@
   <ItemGroup>
     <ClCompile Include="CriticalSection.cpp" />
     <ClCompile Include="FileClass.cpp" />
+    <ClCompile Include="IniFileClass.cpp" />
     <ClCompile Include="LogClass.cpp" />
     <ClCompile Include="path.cpp" />
     <ClCompile Include="Platform.cpp" />
@@ -47,9 +40,11 @@
   <ItemGroup>
     <ClInclude Include="CriticalSection.h" />
     <ClInclude Include="FileClass.h" />
+    <ClInclude Include="IniFileClass.h" />
     <ClInclude Include="LogClass.h" />
     <ClInclude Include="path.h" />
     <ClInclude Include="Platform.h" />
+    <ClInclude Include="SmartPointer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StdString.h" />
     <ClInclude Include="stdtypes.h" />

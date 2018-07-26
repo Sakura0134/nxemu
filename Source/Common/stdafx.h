@@ -7,7 +7,7 @@
 #include "Platform.h"
 #include "StdString.h"
 #include "CriticalSection.h"
-#include "FileClass.h"
+#include "IniFileClass.h"
 #include "path.h"
 #include "LogClass.h"
 #include "TraceModulesCommon.h"
