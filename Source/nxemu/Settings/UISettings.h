@@ -9,6 +9,9 @@ enum UISettingID
 
 void RegisterUISettings (void);
 
+void UISettingsSaveDword(UISettingID Type, uint32_t Value);
 void UISettingsSaveStringIndex(UISettingID Type, uint32_t index, const std::string & Value);
 
+uint32_t UISettingsLoadDword(UISettingID Type);
+bool UISettingsLoadDword(UISettingID Type, uint32_t & Value);
 std::string UISettingsLoadStringIndex(UISettingID Type, uint32_t index);

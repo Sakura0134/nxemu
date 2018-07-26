@@ -11,14 +11,18 @@ public:
 
     CSettings(const char * BaseDirectory);
 
-    //return the values
+    // read the settings
+    uint32_t LoadDword(SettingID Type);
+    bool LoadDword(SettingID Type, uint32_t & Value);
     std::string LoadStringVal(SettingID Type);
     bool LoadStringVal(SettingID Type, std::string & Value);
-    bool LoadStringVal(SettingID Type, char * Buffer, int32_t BufferSize);
+    std::string LoadStringIndex(SettingID Type, uint32_t index);
+    bool LoadStringIndex(SettingID Type, uint32_t index, std::string & Value);
 
     //Update the settings
-    void SaveString(SettingID Type, const std::string & Value);
-    void SaveString(SettingID Type, const char * Buffer);
+    void SaveDword(SettingID Type, uint32_t Value);
+    void SaveString(SettingID Type, const char * Value);
+    void SaveStringIndex(SettingID Type, uint32_t index, const char * Buffer);
 
 private:
     CSettings(void);                          // Disable default constructor
