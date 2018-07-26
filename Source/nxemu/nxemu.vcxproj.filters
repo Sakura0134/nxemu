@@ -19,6 +19,12 @@
     <Filter Include="Header Files\UserInterface">
       <UniqueIdentifier>{48b66fcb-0c54-4e9d-9098-ee01317b9352}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Settings">
+      <UniqueIdentifier>{df74373c-bab8-43c7-be22-fb1ee5ff22a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Settings">
+      <UniqueIdentifier>{22a71407-8e83-40ca-861b-20dc05351498}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -30,20 +36,17 @@
     <ClCompile Include="UserInterface\MainMenu.cpp">
       <Filter>Source Files\UserInterface</Filter>
     </ClCompile>
-    <ClCompile Include="UserInterface\CMainGui.cpp">
-      <Filter>Source Files\UserInterface</Filter>
-    </ClCompile>
     <ClCompile Include="UserInterface\Notification.cpp">
       <Filter>Source Files\UserInterface</Filter>
     </ClCompile>
     <ClCompile Include="UserInterface\MenuItem.cpp">
       <Filter>Source Files\UserInterface</Filter>
     </ClCompile>
+    <ClCompile Include="Settings\UISettings.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UserInterface\CMainGui.h">
-      <Filter>Header Files\UserInterface</Filter>
-    </ClInclude>
     <ClInclude Include="UserInterface\Notification.h">
       <Filter>Header Files\UserInterface</Filter>
     </ClInclude>
@@ -61,6 +64,12 @@
     </ClInclude>
     <ClInclude Include="..\nxemu-core\Version.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\MainMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\UISettings.h">
+      <Filter>Header Files\Settings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

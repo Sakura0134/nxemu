@@ -1,7 +1,7 @@
 #pragma once
 
-#include <nxemu-core/Settings/SettingType/SettingsType-Base.h>
-#include <nxemu-core/Settings/SettingsID.h>
+#include <nxemu-core\Settings\SettingType\SettingsType-Base.h>
+#include <nxemu-core\Settings\SettingsID.h>
 #include <map>
 
 class CSettings
