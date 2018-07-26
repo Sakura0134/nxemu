@@ -51,7 +51,7 @@
     <ClInclude Include="Notification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Settings.h">
+    <ClInclude Include="Settings\Settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Settings\SettingsID.h">
@@ -77,7 +77,7 @@
     <ClCompile Include="SystemGlobals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Settings.cpp">
+    <ClCompile Include="Settings\Settings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp">

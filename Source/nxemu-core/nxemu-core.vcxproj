@@ -35,7 +35,7 @@
     <ClInclude Include="Language\Language.h" />
     <ClInclude Include="Language\LanguageStringID.h" />
     <ClInclude Include="Notification.h" />
-    <ClInclude Include="Settings.h" />
+    <ClInclude Include="Settings\Settings.h" />
     <ClInclude Include="Settings\SettingsID.h" />
     <ClInclude Include="Settings\SettingType\SettingsType-Base.h" />
     <ClInclude Include="Settings\SettingType\SettingsType-TempString.h" />
@@ -47,7 +47,7 @@
   <ItemGroup>
     <ClCompile Include="AppInit.cpp" />
     <ClCompile Include="Language\Language.cpp" />
-    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Settings\Settings.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp" />
     <ClCompile Include="SystemGlobals.cpp" />
   </ItemGroup>
