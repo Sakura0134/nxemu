@@ -1,6 +1,6 @@
 #pragma once
 #include "string.h"
-#include "LanguageStringID.h"
+#include <nxemu-core\Language\LanguageStringID.h>
 #include <map>
 #include <string>
 

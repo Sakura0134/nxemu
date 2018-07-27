@@ -82,6 +82,27 @@ LRESULT CMainGui::OnDestory(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
     return 0;
 }
 
+LRESULT CMainGui::OnLoadDir(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+    wchar_t Buffer[MAX_PATH], Directory[MAX_PATH];
+    BROWSEINFOW bi;
+
+    std::wstring wTitle = wGS(MSG_SELECT_GAME_DIR);
+    bi.hwndOwner = m_hWnd;
+    bi.pidlRoot = NULL;
+    bi.pszDisplayName = Buffer;
+    bi.lpszTitle = wTitle.c_str();
+    bi.ulFlags = BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS;
+    bi.lpfn = NULL;
+    bi.lParam = NULL;
+
+    LPITEMIDLIST pidl = SHBrowseForFolderW(&bi);
+    if (pidl != NULL && SHGetPathFromIDListW(pidl, Directory))
+    {
+    }
+    return 0;
+}
+
 LRESULT CMainGui::OnFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     DestroyWindow(m_hWnd);

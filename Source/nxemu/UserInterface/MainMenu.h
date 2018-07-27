@@ -11,6 +11,7 @@ public:
     enum MainMenuID
     {
         //File Menu
+        ID_FILE_LOAD_DIR,
         ID_FILE_EXIT,
     };
 

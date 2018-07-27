@@ -14,6 +14,7 @@ class CMainGui
     BEGIN_MSG_MAP(CMainGui)
         MESSAGE_HANDLER(WM_CREATE, OnCreate)
         MESSAGE_HANDLER(WM_DESTROY, OnDestory)
+        COMMAND_ID_HANDLER(CMainMenu::ID_FILE_LOAD_DIR, OnLoadDir)
         COMMAND_ID_HANDLER(CMainMenu::ID_FILE_EXIT, OnFileExit)
     END_MSG_MAP()
 
@@ -35,6 +36,7 @@ private:
 
     LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+    LRESULT OnLoadDir(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
     LRESULT OnFileExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
 
     static LRESULT __stdcall MainGui_Proc(HWND, UINT, WPARAM, LPARAM);

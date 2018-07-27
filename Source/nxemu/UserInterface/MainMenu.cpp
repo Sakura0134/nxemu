@@ -35,6 +35,8 @@ void CMainMenu::FillOutMenu(HMENU hMenu)
     CGuard Guard(m_CS);
     
     MenuItemList FileMenu;
+    FileMenu.push_back(MenuItem(ID_FILE_LOAD_DIR, MENU_LOAD_DIR));
+    FileMenu.push_back(MenuItem(MenuItem::SPLITER));
     FileMenu.push_back(MenuItem(ID_FILE_EXIT, MENU_EXIT));
 
     MenuItemList MainTitleMenu;

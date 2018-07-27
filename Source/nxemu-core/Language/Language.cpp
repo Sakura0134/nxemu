@@ -19,7 +19,10 @@ void CLanguage::LoadDefaultStrings(void)
     *********************************************************************************/
     //File Menu
     DefaultString(MENU_FILE, "&File");
-    DefaultString(MENU_EXIT, "E&xit");   
+    DefaultString(MENU_LOAD_DIR, "&Load Dir...");
+    DefaultString(MENU_EXIT, "E&xit");
+
+    DefaultString(MSG_SELECT_GAME_DIR, "Select directory to load");
 }
 
 void CLanguage::DefaultString(LanguageStringID StringID, const char * string)
