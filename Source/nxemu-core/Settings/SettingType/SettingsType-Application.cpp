@@ -63,6 +63,37 @@ void CSettingTypeApplication::Initialize(void)
     {
         return;
     }
+
+    stdstr SettingsFile, OrigSettingsFile;
+
+    for (int i = 0; i < 100; i++)
+    {
+        OrigSettingsFile = SettingsFile;
+        if (!g_Settings->LoadStringVal(SupportFile_Settings, SettingsFile) && i > 0)
+        {
+            break;
+        }
+        if (SettingsFile == OrigSettingsFile)
+        {
+            break;
+        }
+        if (m_SettingsIniFile)
+        {
+            delete m_SettingsIniFile;
+        }
+#ifdef _WIN32
+        CPath SettingsDir(CPath(SettingsFile).GetDriveDirectory(), "");
+#else
+        CPath SettingsDir(CPath(SettingsFile).GetDirectory(), "");
+#endif
+        if (!SettingsDir.DirectoryExists())
+        {
+            SettingsDir.DirectoryCreate();
+        }
+
+        m_SettingsIniFile = new CIniFile(SettingsFile.c_str());
+    }
+
     m_SettingsIniFile->SetAutoFlush(false);
 }
 

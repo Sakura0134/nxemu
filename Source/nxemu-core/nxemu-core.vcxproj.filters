@@ -75,6 +75,12 @@
     <ClInclude Include="Settings\SettingType\SettingsType-ApplicationIndex.h">
       <Filter>Header Files\Settings\SettingType</Filter>
     </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-ApplicationPath.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-RelativePath.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -96,6 +102,12 @@
       <Filter>Source Files\Settings\SettingType</Filter>
     </ClCompile>
     <ClCompile Include="Settings\SettingType\SettingsType-ApplicationIndex.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-ApplicationPath.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-RelativePath.cpp">
       <Filter>Source Files\Settings\SettingType</Filter>
     </ClCompile>
   </ItemGroup>

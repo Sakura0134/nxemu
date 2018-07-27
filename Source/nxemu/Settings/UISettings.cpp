@@ -1,10 +1,14 @@
 #include "UISettings.h"
 #include <nxemu-core\Settings\SettingsID.h>
 #include <nxemu-core\Settings\Settings.h>
+#include <nxemu-core\Settings\SettingType\SettingsType-Application.h>
+#include <nxemu-core\Settings\SettingType\SettingsType-ApplicationIndex.h>
 #include <nxemu-core\SystemGlobals.h>
 
 void RegisterUISettings (void)
 {
+    g_Settings->AddHandler((SettingID)(FirstUISettings + Directory_RecentGameDirCount), new CSettingTypeApplication("", "Remembered Rom Dirs", (uint32_t)10));
+    g_Settings->AddHandler((SettingID)(FirstUISettings + Directory_RecentGameDirIndex), new CSettingTypeApplicationIndex("Recent Dir", "Recent Dir", Default_None));
 }
 
 void UISettingsSaveDword(UISettingID Type, uint32_t Value)

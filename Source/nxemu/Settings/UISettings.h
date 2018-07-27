@@ -4,7 +4,8 @@
 
 enum UISettingID
 {
-    toadd
+    Directory_RecentGameDirCount,
+    Directory_RecentGameDirIndex,
 };
 
 void RegisterUISettings (void);

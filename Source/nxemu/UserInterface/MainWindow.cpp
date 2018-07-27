@@ -1,5 +1,8 @@
 #include "MainWindow.h"
+#include <Common\path.h>
 #include <Common\StdString.h>
+#include <nxemu-core\Settings\SettingType\SettingsType-Application.h>
+#include <nxemu\Settings\UISettings.h>
 #include <Windows.h>
 
 CMainGui::CMainGui(const wchar_t * WindowTitle) :
@@ -82,23 +85,85 @@ LRESULT CMainGui::OnDestory(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
     return 0;
 }
 
+void CMainGui::AddRecentDir(const char * GameDir)
+{
+    if (GameDir == NULL) { return; }
+
+    //Get Information about the stored rom list
+    size_t MaxRememberedDirs = UISettingsLoadDword(Directory_RecentGameDirCount);
+    strlist RecentDirs;
+    for (uint32_t i = 0; i < MaxRememberedDirs; i++)
+    {
+        stdstr RecentDir = UISettingsLoadStringIndex(Directory_RecentGameDirIndex, i);
+        if (RecentDir.empty())
+        {
+            break;
+        }
+        RecentDirs.push_back(RecentDir);
+    }
+
+    //See if the dir is already in the list if so then move it to the top of the list
+    for (strlist::iterator iter = RecentDirs.begin(); iter != RecentDirs.end(); iter++)
+    {
+        if (_stricmp(GameDir, iter->c_str()) != 0)
+        {
+            continue;
+        }
+        RecentDirs.erase(iter);
+        break;
+    }
+    RecentDirs.push_front(GameDir);
+    if (RecentDirs.size() > MaxRememberedDirs)
+    {
+        RecentDirs.pop_back();
+    }
+
+    uint32_t i = 0;
+    for (strlist::iterator iter = RecentDirs.begin(); iter != RecentDirs.end(); iter++)
+    {
+        UISettingsSaveStringIndex(Directory_RecentGameDirIndex, i++, *iter);
+    }
+    CSettingTypeApplication::Flush();
+}
+
+int CALLBACK SelectDirCallBack(HWND hwnd, DWORD uMsg, DWORD /*lp*/, DWORD lpData)
+{
+    switch (uMsg)
+    {
+    case BFFM_INITIALIZED:
+        // WParam is TRUE since you are passing a path.
+        // It would be FALSE if you were passing a pidl.
+        if (lpData)
+        {
+            SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
+        }
+        break;
+    }
+    return 0;
+}
+
 LRESULT CMainGui::OnLoadDir(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     wchar_t Buffer[MAX_PATH], Directory[MAX_PATH];
-    BROWSEINFOW bi;
 
+    stdstr RecentDir = UISettingsLoadStringIndex(Directory_RecentGameDirIndex, 0);
     std::wstring wTitle = wGS(MSG_SELECT_GAME_DIR);
+
+    BROWSEINFOW bi = { 0 };
     bi.hwndOwner = m_hWnd;
     bi.pidlRoot = NULL;
     bi.pszDisplayName = Buffer;
     bi.lpszTitle = wTitle.c_str();
     bi.ulFlags = BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS;
-    bi.lpfn = NULL;
-    bi.lParam = NULL;
+    bi.lpfn = RecentDir.length() > 0 ? (BFFCALLBACK)SelectDirCallBack : NULL;
+    bi.lParam = (LPARAM)(RecentDir.length() > 0 ? RecentDir.c_str() : NULL);
 
     LPITEMIDLIST pidl = SHBrowseForFolderW(&bi);
     if (pidl != NULL && SHGetPathFromIDListW(pidl, Directory))
     {
+        stdstr path;
+        CPath SelectedDir(path.FromUTF16(Directory), "");
+        AddRecentDir(SelectedDir);
     }
     return 0;
 }

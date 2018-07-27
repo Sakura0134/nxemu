@@ -9,7 +9,9 @@ class CSettings
 public:
     typedef void(*SettingChangedFunc)(void *);
 
-    CSettings(const char * BaseDirectory);
+    CSettings(void);
+
+    bool Initialize(const char * BaseDirectory);
 
     // read the settings
     uint32_t LoadDword(SettingID Type);
@@ -24,17 +26,30 @@ public:
     void SaveString(SettingID Type, const char * Value);
     void SaveStringIndex(SettingID Type, uint32_t index, const char * Buffer);
 
+    //Register Notification of change
+    void RegisterChangeCB(SettingID Type, void * Data, SettingChangedFunc Func);
+    void UnregisterChangeCB(SettingID Type, void * Data, SettingChangedFunc Func);
+
+    void AddHandler(SettingID TypeID, CSettingType * Handler);
+
 private:
-    CSettings(void);                          // Disable default constructor
     CSettings(const CSettings&);              // Disable copy constructor
     CSettings& operator=(const CSettings&);   // Disable assignment
 
+    struct SETTING_CHANGED_CB
+    {
+        void * Data;
+        SettingChangedFunc Func;
+        SETTING_CHANGED_CB * Next;
+    };
+
+    typedef std::map<SettingID, SETTING_CHANGED_CB *> SETTING_CALLBACK;
     typedef std::map<SettingID, CSettingType *> SETTING_MAP;
     typedef SETTING_MAP::iterator SETTING_HANDLER;
 
     void AddHowToHandleSetting(const char * BaseDirectory);
-    void AddHandler(SettingID TypeID, CSettingType * Handler);
     void UnknownSetting(SettingID Type);
 
     SETTING_MAP m_SettingInfo;
+    SETTING_CALLBACK m_Callback;
 };

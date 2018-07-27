@@ -33,6 +33,7 @@ private:
 
     void Create(const wchar_t * WindowTitle);
     bool RegisterWinClass(void);
+    void AddRecentDir(const char * GameDir);
 
     LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

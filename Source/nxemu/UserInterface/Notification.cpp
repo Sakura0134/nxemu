@@ -1,5 +1,6 @@
 #include "Notification.h"
 #include <Common\StdString.h>
+#include <nxemu\Settings\UISettings.h>
 #include <Windows.h>
 
 CNotificationImp & Notify(void)
@@ -28,4 +29,5 @@ void CNotificationImp::BreakPoint(const char * FileName, uint32_t LineNumber)
 
 void CNotificationImp::AppInitDone(void)
 {
+    RegisterUISettings();
 }

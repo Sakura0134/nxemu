@@ -13,6 +13,10 @@ enum SettingID
 
     //Command Settings
     Cmd_BaseDirectory,
+    
+    //Support Files
+    SupportFile_Settings,
+    SupportFile_SettingsDefault,
 
     FirstUISettings = MaxPluginSetting, LastUISettings = FirstUISettings + MaxPluginSetting,
 };

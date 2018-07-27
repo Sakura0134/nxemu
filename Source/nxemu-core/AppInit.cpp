@@ -39,7 +39,13 @@ bool AppInit(CNotification * Notify, const char * BaseDirectory)
     }
 
     WriteTrace(TraceAppInit, TraceDebug, "Settings up settings");
-    g_Settings = new CSettings(BaseDirectory);
+
+    g_Settings = new CSettings();
+    if (!g_Settings->Initialize(BaseDirectory))
+    {
+        WriteTrace(TraceAppInit, TraceError, "Settings failed to initialize");
+        return false;
+    }
 
     g_Lang = new CLanguage;
     g_Notify->AppInitDone();
