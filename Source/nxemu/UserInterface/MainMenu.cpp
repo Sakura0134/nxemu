@@ -1,6 +1,7 @@
 #include "MainMenu.h"
 #include "MainWindow.h"
 #include <Common\StdString.h>
+#include <nxemu\Settings\UISettings.h>
 
 CMainMenu::CMainMenu(CMainGui * hMainWindow) :
     m_Gui(hMainWindow),
@@ -34,8 +35,28 @@ void CMainMenu::FillOutMenu(HMENU hMenu)
 {
     CGuard Guard(m_CS);
     
+    /* Recent Dir
+    ****************/
+    MenuItemList RecentDirMenu;
+    uint32_t DirsToRemember = UISettingsLoadDword(Directory_RecentGameDirCount);
+    for (uint32_t i = 0; i < DirsToRemember; i++)
+    {
+        std::string LastDir = UISettingsLoadStringIndex(Directory_RecentGameDirIndex, i);
+        if (LastDir.empty())
+        {
+            break;
+        }
+
+        stdstr_f MenuString("&%d %s", i + 1, LastDir.c_str());
+        RecentDirMenu.push_back(MenuItem(ID_RECENT_DIR_START + i, EMPTY_STRING, NULL, MenuString.ToUTF16(CP_ACP).c_str()));
+    }
+
     MenuItemList FileMenu;
     FileMenu.push_back(MenuItem(ID_FILE_LOAD_DIR, MENU_LOAD_DIR));
+    FileMenu.push_back(MenuItem(MenuItem::SPLITER));
+    MenuItem RecentDirItem(MenuItem::SUB_MENU, MENU_RECENT_DIR, &RecentDirMenu, MenuItem::EMPTY_STDSTR);
+    RecentDirItem.SetItemEnabled(RecentDirMenu.size() > 0);
+    FileMenu.push_back(RecentDirItem);
     FileMenu.push_back(MenuItem(MenuItem::SPLITER));
     FileMenu.push_back(MenuItem(ID_FILE_EXIT, MENU_EXIT));
 

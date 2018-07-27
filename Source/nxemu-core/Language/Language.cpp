@@ -20,6 +20,7 @@ void CLanguage::LoadDefaultStrings(void)
     //File Menu
     DefaultString(MENU_FILE, "&File");
     DefaultString(MENU_LOAD_DIR, "&Load Dir...");
+    DefaultString(MENU_RECENT_DIR, "Recent Dir");
     DefaultString(MENU_EXIT, "E&xit");
 
     DefaultString(MSG_SELECT_GAME_DIR, "Select directory to load");

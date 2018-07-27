@@ -13,6 +13,10 @@ public:
         //File Menu
         ID_FILE_LOAD_DIR,
         ID_FILE_EXIT,
+
+        //Recent Dir
+        ID_RECENT_DIR_START,
+        ID_RECENT_DIR_END = ID_RECENT_DIR_START + 20,
     };
 
     CMainMenu(CMainGui * Window);
