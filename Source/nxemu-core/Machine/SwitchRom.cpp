@@ -1,5 +1,7 @@
 #include <nxemu-core\SystemGlobals.h>
+#include <nxemu-core\Machine\SwitchSystem.h>
 #include <Common\path.h>
+#include <memory>
 
 bool IsNsoFile(const CPath & NsoFile);
 
@@ -30,7 +32,15 @@ bool LaunchSwitchRom(const char * SwitchFile)
     {
         return false;
     }
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    if (g_BaseMachine != NULL)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
 
+    std::auto_ptr<CSwitchSystem> SwitchSystem(new CSwitchSystem());
+    if (SwitchSystem.get() == NULL)
+    {
+        return false;
+    }
     return true;
 }
