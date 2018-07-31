@@ -31,6 +31,12 @@
     <Filter Include="Source Files\Language">
       <UniqueIdentifier>{87a3cb0b-94b8-43e0-8895-80950233b2f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Machine">
+      <UniqueIdentifier>{95e00816-1d33-4b20-b285-781703694838}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Machine">
+      <UniqueIdentifier>{75895140-141e-4a08-8431-71c1390bcf35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -81,6 +87,9 @@
     <ClInclude Include="Settings\SettingType\SettingsType-RelativePath.h">
       <Filter>Header Files\Settings\SettingType</Filter>
     </ClInclude>
+    <ClInclude Include="Machine\SwitchRom.h">
+      <Filter>Header Files\Machine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -109,6 +118,12 @@
     </ClCompile>
     <ClCompile Include="Settings\SettingType\SettingsType-RelativePath.cpp">
       <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Machine\SwitchRom.cpp">
+      <Filter>Source Files\Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="Machine\nso.cpp">
+      <Filter>Source Files\Machine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include <Common\path.h>
 #include <Common\StdString.h>
+#include <nxemu-core\Machine\SwitchRom.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-Application.h>
 #include <nxemu\Settings\UISettings.h>
 #include <Windows.h>
@@ -163,7 +164,10 @@ LRESULT CMainGui::OnLoadDir(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/
     {
         stdstr path;
         CPath SelectedDir(path.FromUTF16(Directory), "");
-        AddRecentDir(SelectedDir);
+        if (LaunchSwitchRom(SelectedDir))
+        {
+            AddRecentDir(SelectedDir);
+        }
     }
     return 0;
 }
@@ -171,6 +175,17 @@ LRESULT CMainGui::OnLoadDir(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/
 LRESULT CMainGui::OnFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     DestroyWindow(m_hWnd);
+    return 0;
+}
+
+LRESULT CMainGui::OnRecentDir(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+    uint32_t Offset = wID - CMainMenu::ID_RECENT_DIR_START;
+    std::string SelectedDir = UISettingsLoadStringIndex(Directory_RecentGameDirIndex, Offset);
+    if (LaunchSwitchRom(SelectedDir.c_str()))
+    {
+        AddRecentDir(SelectedDir.c_str());
+    }
     return 0;
 }
 

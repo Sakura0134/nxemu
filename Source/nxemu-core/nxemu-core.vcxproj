@@ -34,6 +34,7 @@
     <ClInclude Include="AppInit.h" />
     <ClInclude Include="Language\Language.h" />
     <ClInclude Include="Language\LanguageStringID.h" />
+    <ClInclude Include="Machine\SwitchRom.h" />
     <ClInclude Include="Notification.h" />
     <ClInclude Include="Settings\Settings.h" />
     <ClInclude Include="Settings\SettingsID.h" />
@@ -51,6 +52,8 @@
   <ItemGroup>
     <ClCompile Include="AppInit.cpp" />
     <ClCompile Include="Language\Language.cpp" />
+    <ClCompile Include="Machine\nso.cpp" />
+    <ClCompile Include="Machine\SwitchRom.cpp" />
     <ClCompile Include="Settings\Settings.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-Application.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-ApplicationIndex.cpp" />
