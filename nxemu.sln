@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3rd Party", "3rd Party", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTL", "Source\3rdParty\WTL\WTL.vcxproj", "{D973899B-E108-4D17-B6F6-D189357E80DE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lz4", "Source\3rdParty\lz4\lz4.vcxproj", "{20F15EB4-E65B-4D48-AA18-C7DAD16279CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,11 +43,16 @@ Global
 		{D973899B-E108-4D17-B6F6-D189357E80DE}.Debug|x64.Build.0 = Debug|x64
 		{D973899B-E108-4D17-B6F6-D189357E80DE}.Release|x64.ActiveCfg = Release|x64
 		{D973899B-E108-4D17-B6F6-D189357E80DE}.Release|x64.Build.0 = Release|x64
+		{20F15EB4-E65B-4D48-AA18-C7DAD16279CC}.Debug|x64.ActiveCfg = Debug|x64
+		{20F15EB4-E65B-4D48-AA18-C7DAD16279CC}.Debug|x64.Build.0 = Debug|x64
+		{20F15EB4-E65B-4D48-AA18-C7DAD16279CC}.Release|x64.ActiveCfg = Release|x64
+		{20F15EB4-E65B-4D48-AA18-C7DAD16279CC}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D973899B-E108-4D17-B6F6-D189357E80DE} = {1E337F45-8342-4343-BFF8-9D23F4E90242}
+		{20F15EB4-E65B-4D48-AA18-C7DAD16279CC} = {1E337F45-8342-4343-BFF8-9D23F4E90242}
 	EndGlobalSection
 EndGlobal
