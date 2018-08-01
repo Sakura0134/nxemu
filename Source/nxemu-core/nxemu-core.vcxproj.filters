@@ -93,6 +93,9 @@
     <ClInclude Include="Machine\SwitchSystem.h">
       <Filter>Header Files\Machine</Filter>
     </ClInclude>
+    <ClInclude Include="Machine\PageTable.h">
+      <Filter>Header Files\Machine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -129,6 +132,9 @@
       <Filter>Source Files\Machine</Filter>
     </ClCompile>
     <ClCompile Include="Machine\SwitchSystem.cpp">
+      <Filter>Source Files\Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="Machine\PageTable.cpp">
       <Filter>Source Files\Machine</Filter>
     </ClCompile>
   </ItemGroup>
