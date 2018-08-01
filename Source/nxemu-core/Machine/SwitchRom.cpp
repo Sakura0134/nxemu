@@ -42,5 +42,9 @@ bool LaunchSwitchRom(const char * SwitchFile)
     {
         return false;
     }
+    if (GameDir && !SwitchSystem->LoadGameDir(SwitchFile))
+    {
+        return false;
+    }
     return true;
 }

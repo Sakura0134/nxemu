@@ -32,6 +32,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AppInit.h" />
+    <ClInclude Include="hle\ProcessMemory.h" />
     <ClInclude Include="Language\Language.h" />
     <ClInclude Include="Language\LanguageStringID.h" />
     <ClInclude Include="Machine\PageTable.h" />
@@ -53,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp" />
+    <ClCompile Include="hle\ProcessMemory.cpp" />
     <ClCompile Include="Language\Language.cpp" />
     <ClCompile Include="Machine\nso.cpp" />
     <ClCompile Include="Machine\PageTable.cpp" />
@@ -70,6 +72,9 @@
     <None Include="Version.h.in" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\3rdParty\lz4\lz4.vcxproj">
+      <Project>{20f15eb4-e65b-4d48-aa18-c7dad16279cc}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\UpdateVersion\UpdateVersion.vcxproj">
       <Project>{1968162c-0793-491d-91a1-81645a24d399}</Project>
     </ProjectReference>
