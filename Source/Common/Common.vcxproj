@@ -31,6 +31,7 @@
     <ClCompile Include="MemoryManagement.cpp" />
     <ClCompile Include="path.cpp" />
     <ClCompile Include="Platform.cpp" />
+    <ClCompile Include="sha256.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -46,6 +47,7 @@
     <ClInclude Include="MemoryManagement.h" />
     <ClInclude Include="path.h" />
     <ClInclude Include="Platform.h" />
+    <ClInclude Include="sha256.h" />
     <ClInclude Include="SmartPointer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StdString.h" />
