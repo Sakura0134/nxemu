@@ -51,5 +51,6 @@ bool LaunchSwitchRom(const char * SwitchFile)
         return false;
     }
     g_BaseMachine = SwitchSystem.release();
+    g_BaseMachine->StartEmulation();
     return true;
 }

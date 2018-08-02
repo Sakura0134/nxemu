@@ -3,7 +3,9 @@
 #include <Common\path.h>
 #include <Common\FileClass.h>
 
-CSwitchSystem::CSwitchSystem()
+CSwitchSystem::CSwitchSystem() :
+    m_EndEmulation(false),
+    m_EmulationThread(stEmulationThread)
 {
 }
 
@@ -14,6 +16,21 @@ CSwitchSystem::~CSwitchSystem()
 bool CSwitchSystem::Initialize(void)
 {
     return true;
+}
+
+void CSwitchSystem::StartEmulation(void)
+{
+    m_EmulationThread.Start(this);
+}
+
+void CSwitchSystem::EmulationThread(void)
+{
+    bool & Done = m_EndEmulation;
+    while (!Done)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
 }
 
 bool CSwitchSystem::LoadGameDir(const char * GameDir)
