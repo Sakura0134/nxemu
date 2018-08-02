@@ -2,6 +2,8 @@
 #include <Common\Thread.h>
 #include <Common\path.h>
 #include <nxemu-core\hle\ProcessMemory.h>
+#include <nxemu-core\hle\HleKernel.h>
+#include <nxemu-core\hle\SystemThread.h>
 
 class CSwitchSystem 
 {
@@ -22,6 +24,7 @@ private:
 
     static uint32_t stEmulationThread(void * _this) { ((CSwitchSystem*)_this)->EmulationThread(); return 0; }
 
+    CHleKernel m_Kernel;
     CProcessMemory m_ProcessMemory;
     bool m_EndEmulation;
     CThread m_EmulationThread;

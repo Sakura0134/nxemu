@@ -4,6 +4,7 @@
 #include <Common\FileClass.h>
 
 CSwitchSystem::CSwitchSystem() :
+    m_Kernel(*this),
     m_EndEmulation(false),
     m_EmulationThread(stEmulationThread)
 {
@@ -28,6 +29,7 @@ void CSwitchSystem::EmulationThread(void)
     bool & Done = m_EndEmulation;
     while (!Done)
     {
+        CSystemThread* thread = m_Kernel.SystemThreads().begin()->second;
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return;
     }

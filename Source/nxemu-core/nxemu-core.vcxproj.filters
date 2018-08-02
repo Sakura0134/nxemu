@@ -105,6 +105,12 @@
     <ClInclude Include="hle\ProcessMemory.h">
       <Filter>Header Files\hle</Filter>
     </ClInclude>
+    <ClInclude Include="hle\HleKernel.h">
+      <Filter>Header Files\hle</Filter>
+    </ClInclude>
+    <ClInclude Include="hle\SystemThread.h">
+      <Filter>Header Files\hle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -147,6 +153,12 @@
       <Filter>Source Files\Machine</Filter>
     </ClCompile>
     <ClCompile Include="hle\ProcessMemory.cpp">
+      <Filter>Source Files\hle</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\HleKernel.cpp">
+      <Filter>Source Files\hle</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\SystemThread.cpp">
       <Filter>Source Files\hle</Filter>
     </ClCompile>
   </ItemGroup>
