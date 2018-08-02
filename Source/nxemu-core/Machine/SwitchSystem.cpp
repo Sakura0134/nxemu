@@ -11,6 +11,11 @@ CSwitchSystem::~CSwitchSystem()
 {
 }
 
+bool CSwitchSystem::Initialize(void)
+{
+    return true;
+}
+
 bool CSwitchSystem::LoadGameDir(const char * GameDir)
 {
     uint64_t end_addr, base_addr = CProcessMemory::GetAddressSpaceBaseAddr();

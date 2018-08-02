@@ -8,6 +8,7 @@ public:
     CSwitchSystem();
     ~CSwitchSystem();
 
+    bool Initialize(void);
     bool LoadGameDir(const char * GameDir);
 
 private:

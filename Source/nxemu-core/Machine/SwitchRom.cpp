@@ -46,5 +46,10 @@ bool LaunchSwitchRom(const char * SwitchFile)
     {
         return false;
     }
+    if (!SwitchSystem->Initialize())
+    {
+        return false;
+    }
+    g_BaseMachine = SwitchSystem.release();
     return true;
 }
