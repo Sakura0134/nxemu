@@ -4,7 +4,7 @@
 #include <Common\FileClass.h>
 
 CSwitchSystem::CSwitchSystem() :
-    m_Kernel(*this),
+    m_Kernel(*this,m_ProcessMemory),
     m_EndEmulation(false),
     m_EmulationThread(stEmulationThread)
 {
@@ -46,6 +46,10 @@ bool CSwitchSystem::LoadGameDir(const char * GameDir)
     for (bool FoundFile = SubSdk.FindFirst(); FoundFile; FoundFile = SubSdk.FindNext())
     {
         if (!LoadNsoFile(SubSdk, (end_addr + 0xFFF) & ~0xFFF, end_addr)) { return false; }
+    }
+    if (!m_Kernel.AddSystemThread("main", base_addr))
+    {
+        return false;
     }
     return true;
 }
