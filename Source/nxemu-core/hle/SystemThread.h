@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <nxemu-core\hle\ProcessMemory.h>
 
 class CHleKernel;
 
