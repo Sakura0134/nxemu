@@ -37,6 +37,7 @@
     <ClInclude Include="hle\SystemThread.h" />
     <ClInclude Include="Language\Language.h" />
     <ClInclude Include="Language\LanguageStringID.h" />
+    <ClInclude Include="Machine\Arm64Opcode.h" />
     <ClInclude Include="Machine\CPU\CPUExecutor.h" />
     <ClInclude Include="Machine\PageTable.h" />
     <ClInclude Include="Machine\Registers.h" />

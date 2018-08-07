@@ -123,6 +123,9 @@
     <ClInclude Include="Machine\Registers.h">
       <Filter>Header Files\Machine</Filter>
     </ClInclude>
+    <ClInclude Include="Machine\Arm64Opcode.h">
+      <Filter>Header Files\Machine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
