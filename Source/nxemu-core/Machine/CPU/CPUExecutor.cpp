@@ -1,7 +1,8 @@
 #include <nxemu-core\Machine\CPU\CPUExecutor.h>
 #include <nxemu-core\SystemGlobals.h>
 
-CPUExecutor::CPUExecutor()
+CPUExecutor::CPUExecutor() :
+    m_Reg(this)
 {
 }
 
