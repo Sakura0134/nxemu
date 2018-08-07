@@ -37,6 +37,7 @@
     <ClInclude Include="hle\SystemThread.h" />
     <ClInclude Include="Language\Language.h" />
     <ClInclude Include="Language\LanguageStringID.h" />
+    <ClInclude Include="Machine\CPU\CPUExecutor.h" />
     <ClInclude Include="Machine\PageTable.h" />
     <ClInclude Include="Machine\SwitchRom.h" />
     <ClInclude Include="Machine\SwitchSystem.h" />
@@ -60,6 +61,7 @@
     <ClCompile Include="hle\ProcessMemory.cpp" />
     <ClCompile Include="hle\SystemThread.cpp" />
     <ClCompile Include="Language\Language.cpp" />
+    <ClCompile Include="Machine\CPU\CPUExecutor.cpp" />
     <ClCompile Include="Machine\nso.cpp" />
     <ClCompile Include="Machine\PageTable.cpp" />
     <ClCompile Include="Machine\SwitchRom.cpp" />

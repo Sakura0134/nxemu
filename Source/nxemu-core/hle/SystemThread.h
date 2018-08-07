@@ -1,10 +1,12 @@
 #pragma once
 #include <map>
+#include <nxemu-core\Machine\CPU\CPUExecutor.h>
 #include <nxemu-core\hle\ProcessMemory.h>
 
 class CHleKernel;
 
-class CSystemThread
+class CSystemThread :
+    public CPUExecutor
 {
 public:
     CSystemThread(CHleKernel * m_Kernel, CProcessMemory &ProcessMemory, const char * name, uint64_t entry_point, uint32_t thread_id);

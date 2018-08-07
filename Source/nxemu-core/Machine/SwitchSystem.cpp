@@ -30,8 +30,7 @@ void CSwitchSystem::EmulationThread(void)
     while (!Done)
     {
         CSystemThread* thread = m_Kernel.SystemThreads().begin()->second;
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        return;
+        thread->Execute(Done);
     }
 }
 
