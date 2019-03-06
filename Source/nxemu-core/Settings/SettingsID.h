@@ -18,6 +18,11 @@ enum SettingID
     SupportFile_Settings,
     SupportFile_SettingsDefault,
 
+
+    //Logging
+    Debugger_TraceAppInit,
+    Debugger_TraceAppCleanup,
+    Debugger_TraceGameFile,
     FirstUISettings = MaxPluginSetting, LastUISettings = FirstUISettings + MaxPluginSetting,
 };
 

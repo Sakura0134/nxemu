@@ -1,9 +1,11 @@
 #pragma once
 #include <string>
+#include <nxemu\UserInterface\Debugger\Debugger.h>
 #include "MainMenu.h"
 #include "WTLApp.h"
 
-class CMainGui
+class CMainGui :
+    public CDebuggerUI
 {
     enum
     {
@@ -16,6 +18,7 @@ class CMainGui
         MESSAGE_HANDLER(WM_DESTROY, OnDestory)
         COMMAND_ID_HANDLER(CMainMenu::ID_FILE_OPEN_ROM, OnOpenRom)
         COMMAND_ID_HANDLER(CMainMenu::ID_FILE_EXIT, OnFileExit)
+        COMMAND_ID_HANDLER(CMainMenu::ID_DEBUGGER_LOGGING, OnDebugLogging)
     END_MSG_MAP()
 
 public:
@@ -39,6 +42,7 @@ private:
     LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnOpenRom(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
     LRESULT OnFileExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+    LRESULT OnDebugLogging(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
     
     static LRESULT __stdcall MainGui_Proc(HWND, UINT, WPARAM, LPARAM);
 

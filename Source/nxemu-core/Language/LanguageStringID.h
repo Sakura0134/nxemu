@@ -9,5 +9,8 @@ enum LanguageStringID
     MENU_RECENT_DIR = 1003,
     MENU_EXIT = 1004,
 
+	MENU_DEBUG = 1080,
+    MENU_DEBUG_LOGGING = 1083,
+
     MSG_SELECT_GAME_DIR = 2000,
 };

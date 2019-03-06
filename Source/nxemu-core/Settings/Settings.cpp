@@ -1,4 +1,5 @@
 #include <nxemu-core\SystemGlobals.h>
+#include <nxemu-core\Trace.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-Application.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-ApplicationPath.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-RelativePath.h>
@@ -36,8 +37,13 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
     AddHandler(Cmd_BaseDirectory, new CSettingTypeTempString(BaseDirectory));
 
     //Support Files
-    AddHandler(SupportFile_Settings, new CSettingTypeApplicationPath("", "ConfigFile", SupportFile_SettingsDefault));
+    AddHandler(SupportFile_Settings, new CSettingTypeApplicationPath("Settings", "ConfigFile", SupportFile_SettingsDefault));
     AddHandler(SupportFile_SettingsDefault, new CSettingTypeRelativePath("Config", "NXEmu.cfg"));
+
+    //Logging
+    AddHandler(Debugger_TraceAppInit, new CSettingTypeApplication("Logging", "App Init", (uint32_t)g_ModuleLogLevel[TraceAppInit]));
+    AddHandler(Debugger_TraceAppCleanup, new CSettingTypeApplication("Logging", "App Cleanup", (uint32_t)g_ModuleLogLevel[TraceAppCleanup]));
+    AddHandler(Debugger_TraceGameFile, new CSettingTypeApplication("Logging", "Game File", (uint32_t)g_ModuleLogLevel[TraceGameFile]));
 }
 
 uint32_t CSettings::LoadDword(SettingID Type)

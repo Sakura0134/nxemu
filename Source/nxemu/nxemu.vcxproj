@@ -30,6 +30,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Settings\UISettings.cpp" />
+    <ClCompile Include="UserInterface\Debugger\Debugger-Logging.cpp" />
     <ClCompile Include="UserInterface\MainMenu.cpp" />
     <ClCompile Include="UserInterface\MainWindow.cpp" />
     <ClCompile Include="UserInterface\MenuItem.cpp" />
@@ -39,6 +40,7 @@
     <ClInclude Include="..\nxemu-core\Version.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Settings\UISettings.h" />
+    <ClInclude Include="UserInterface\Debugger\Debugger.h" />
     <ClInclude Include="UserInterface\MainMenu.h" />
     <ClInclude Include="UserInterface\MainWindow.h" />
     <ClInclude Include="UserInterface\MenuItem.h" />

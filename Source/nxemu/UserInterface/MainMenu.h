@@ -17,6 +17,8 @@ public:
         //Recent Dir
         ID_RECENT_DIR_START,
         ID_RECENT_DIR_END = ID_RECENT_DIR_START + 20,
+
+        ID_DEBUGGER_LOGGING,
     };
 
     CMainMenu(CMainGui * Window);

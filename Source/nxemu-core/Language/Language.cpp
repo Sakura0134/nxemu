@@ -22,6 +22,8 @@ void CLanguage::LoadDefaultStrings(void)
     DefaultString(MENU_OPEN_ROM, "&Open Rom...");
     DefaultString(MENU_RECENT_DIR, "Recent Dir");
     DefaultString(MENU_EXIT, "E&xit");
+    DefaultString(MENU_DEBUG, "Debug");
+    DefaultString(MENU_DEBUG_LOGGING, "Logging...");
 
     DefaultString(MSG_SELECT_GAME_DIR, "Select directory to load");
 }

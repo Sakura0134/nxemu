@@ -25,6 +25,12 @@
     <Filter Include="Header Files\Settings">
       <UniqueIdentifier>{22a71407-8e83-40ca-861b-20dc05351498}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\UserInterface\Debugger">
+      <UniqueIdentifier>{656c657a-7412-4e43-8f40-52836c3573b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UserInterface\Debugger">
+      <UniqueIdentifier>{c68e515b-6d0b-42c5-8318-8b4dee79a67a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -44,6 +50,9 @@
     </ClCompile>
     <ClCompile Include="Settings\UISettings.cpp">
       <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface\Debugger\Debugger-Logging.cpp">
+      <Filter>Source Files\UserInterface\Debugger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="Settings\UISettings.h">
       <Filter>Header Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\Debugger\Debugger.h">
+      <Filter>Header Files\UserInterface\Debugger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
