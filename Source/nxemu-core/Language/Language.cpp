@@ -19,7 +19,7 @@ void CLanguage::LoadDefaultStrings(void)
     *********************************************************************************/
     //File Menu
     DefaultString(MENU_FILE, "&File");
-    DefaultString(MENU_LOAD_DIR, "&Load Dir...");
+    DefaultString(MENU_OPEN_ROM, "&Open Rom...");
     DefaultString(MENU_RECENT_DIR, "Recent Dir");
     DefaultString(MENU_EXIT, "E&xit");
 

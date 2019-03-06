@@ -42,6 +42,17 @@ bool CMainGui::RegisterWinClass(void)
     return true;
 }
 
+std::string CMainGui::ChooseFileToOpen(HWND hParent)
+{
+    CPath FileName;
+    const char * Filter = "Switch Files (*.xci)\0*.xci\0All files (*.*)\0*.*\0";
+    if (FileName.SelectFile(hParent, CPath(CPath::MODULE_DIRECTORY), Filter, true))
+    {
+        return FileName;
+    }
+    return "";
+}
+
 void CMainGui::Create(const wchar_t * WindowTitle)
 {
     CreateWindowExW(WS_EX_ACCEPTFILES, m_ClassName.c_str(), WindowTitle, WS_OVERLAPPED | WS_CLIPCHILDREN |
@@ -86,45 +97,15 @@ LRESULT CMainGui::OnDestory(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
     return 0;
 }
 
-void CMainGui::AddRecentDir(const char * GameDir)
+LRESULT CMainGui::OnOpenRom(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-    if (GameDir == NULL) { return; }
-
-    //Get Information about the stored rom list
-    size_t MaxRememberedDirs = UISettingsLoadDword(Directory_RecentGameDirCount);
-    strlist RecentDirs;
-    for (uint32_t i = 0; i < MaxRememberedDirs; i++)
+    std::string File = ChooseFileToOpen(m_hWnd);
+    if (File.length() == 0)
     {
-        stdstr RecentDir = UISettingsLoadStringIndex(Directory_RecentGameDirIndex, i);
-        if (RecentDir.empty())
-        {
-            break;
-        }
-        RecentDirs.push_back(RecentDir);
+        return 0;
     }
-
-    //See if the dir is already in the list if so then move it to the top of the list
-    for (strlist::iterator iter = RecentDirs.begin(); iter != RecentDirs.end(); iter++)
-    {
-        if (_stricmp(GameDir, iter->c_str()) != 0)
-        {
-            continue;
-        }
-        RecentDirs.erase(iter);
-        break;
-    }
-    RecentDirs.push_front(GameDir);
-    if (RecentDirs.size() > MaxRememberedDirs)
-    {
-        RecentDirs.pop_back();
-    }
-
-    uint32_t i = 0;
-    for (strlist::iterator iter = RecentDirs.begin(); iter != RecentDirs.end(); iter++)
-    {
-        UISettingsSaveStringIndex(Directory_RecentGameDirIndex, i++, *iter);
-    }
-    CSettingTypeApplication::Flush();
+    LaunchSwitchRom(File.c_str());
+    return 0;
 }
 
 int CALLBACK SelectDirCallBack(HWND hwnd, DWORD uMsg, DWORD /*lp*/, DWORD lpData)
@@ -143,49 +124,9 @@ int CALLBACK SelectDirCallBack(HWND hwnd, DWORD uMsg, DWORD /*lp*/, DWORD lpData
     return 0;
 }
 
-LRESULT CMainGui::OnLoadDir(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
-{
-    wchar_t Buffer[MAX_PATH], Directory[MAX_PATH];
-
-    stdstr RecentDir = UISettingsLoadStringIndex(Directory_RecentGameDirIndex, 0);
-    std::wstring wTitle = wGS(MSG_SELECT_GAME_DIR);
-
-    BROWSEINFOW bi = { 0 };
-    bi.hwndOwner = m_hWnd;
-    bi.pidlRoot = NULL;
-    bi.pszDisplayName = Buffer;
-    bi.lpszTitle = wTitle.c_str();
-    bi.ulFlags = BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS;
-    bi.lpfn = RecentDir.length() > 0 ? (BFFCALLBACK)SelectDirCallBack : NULL;
-    bi.lParam = (LPARAM)(RecentDir.length() > 0 ? RecentDir.c_str() : NULL);
-
-    LPITEMIDLIST pidl = SHBrowseForFolderW(&bi);
-    if (pidl != NULL && SHGetPathFromIDListW(pidl, Directory))
-    {
-        stdstr path;
-        CPath SelectedDir(path.FromUTF16(Directory), "");
-        if (LaunchSwitchRom(SelectedDir))
-        {
-            AddRecentDir(SelectedDir);
-        }
-    }
-    return 0;
-}
-
 LRESULT CMainGui::OnFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     DestroyWindow(m_hWnd);
-    return 0;
-}
-
-LRESULT CMainGui::OnRecentDir(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
-{
-    uint32_t Offset = wID - CMainMenu::ID_RECENT_DIR_START;
-    std::string SelectedDir = UISettingsLoadStringIndex(Directory_RecentGameDirIndex, Offset);
-    if (LaunchSwitchRom(SelectedDir.c_str()))
-    {
-        AddRecentDir(SelectedDir.c_str());
-    }
     return 0;
 }
 

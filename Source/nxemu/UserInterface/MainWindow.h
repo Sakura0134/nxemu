@@ -14,9 +14,8 @@ class CMainGui
     BEGIN_MSG_MAP(CMainGui)
         MESSAGE_HANDLER(WM_CREATE, OnCreate)
         MESSAGE_HANDLER(WM_DESTROY, OnDestory)
-        COMMAND_ID_HANDLER(CMainMenu::ID_FILE_LOAD_DIR, OnLoadDir)
+        COMMAND_ID_HANDLER(CMainMenu::ID_FILE_OPEN_ROM, OnOpenRom)
         COMMAND_ID_HANDLER(CMainMenu::ID_FILE_EXIT, OnFileExit)
-        COMMAND_RANGE_HANDLER(CMainMenu::ID_RECENT_DIR_START, CMainMenu::ID_RECENT_DIR_END, OnRecentDir)
     END_MSG_MAP()
 
 public:
@@ -34,14 +33,13 @@ private:
 
     void Create(const wchar_t * WindowTitle);
     bool RegisterWinClass(void);
-    void AddRecentDir(const char * GameDir);
+    std::string ChooseFileToOpen(HWND hParent);
 
     LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-    LRESULT OnLoadDir(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+    LRESULT OnOpenRom(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
     LRESULT OnFileExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
-    LRESULT OnRecentDir(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
-
+    
     static LRESULT __stdcall MainGui_Proc(HWND, UINT, WPARAM, LPARAM);
 
     CMainMenu m_Menu;

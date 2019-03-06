@@ -52,7 +52,7 @@ void CMainMenu::FillOutMenu(HMENU hMenu)
     }
 
     MenuItemList FileMenu;
-    FileMenu.push_back(MenuItem(ID_FILE_LOAD_DIR, MENU_LOAD_DIR));
+    FileMenu.push_back(MenuItem(ID_FILE_OPEN_ROM, MENU_OPEN_ROM));
     FileMenu.push_back(MenuItem(MenuItem::SPLITER));
     MenuItem RecentDirItem(MenuItem::SUB_MENU, MENU_RECENT_DIR, &RecentDirMenu, MenuItem::EMPTY_STDSTR);
     RecentDirItem.SetItemEnabled(RecentDirMenu.size() > 0);

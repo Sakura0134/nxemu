@@ -11,7 +11,7 @@ public:
     enum MainMenuID
     {
         //File Menu
-        ID_FILE_LOAD_DIR,
+        ID_FILE_OPEN_ROM,
         ID_FILE_EXIT,
 
         //Recent Dir
