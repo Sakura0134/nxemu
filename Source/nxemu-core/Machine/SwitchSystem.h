@@ -11,8 +11,7 @@ public:
     CSwitchSystem();
     ~CSwitchSystem();
 
-    bool Initialize(void);
-    bool LoadGameDir(const char * GameDir);
+    bool LoadGame(const char * GamePath);
     void StartEmulation(void);
 
 private:
