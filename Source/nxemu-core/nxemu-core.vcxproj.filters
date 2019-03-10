@@ -138,6 +138,9 @@
     <ClInclude Include="FileFormat\xci.h">
       <Filter>Header Files\FileFormat</Filter>
     </ClInclude>
+    <ClInclude Include="Machine\SwitchKeys.h">
+      <Filter>Header Files\Machine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -199,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="FileFormat\xci.cpp">
       <Filter>Source Files\FileFormat</Filter>
+    </ClCompile>
+    <ClCompile Include="Machine\SwitchKeys.cpp">
+      <Filter>Source Files\Machine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

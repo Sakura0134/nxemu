@@ -4,6 +4,7 @@
 #include <nxemu-core\hle\ProcessMemory.h>
 #include <nxemu-core\hle\HleKernel.h>
 #include <nxemu-core\hle\SystemThread.h>
+#include <nxemu-core\Machine\SwitchKeys.h>
 
 class CSwitchSystem 
 {
@@ -28,4 +29,5 @@ private:
     CProcessMemory m_ProcessMemory;
     bool m_EndEmulation;
     CThread m_EmulationThread;
+	CSwitchKeys m_Keys;
 };

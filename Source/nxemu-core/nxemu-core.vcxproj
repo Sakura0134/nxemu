@@ -43,6 +43,7 @@
     <ClInclude Include="Machine\CPU\CPUExecutor.h" />
     <ClInclude Include="Machine\PageTable.h" />
     <ClInclude Include="Machine\Registers.h" />
+    <ClInclude Include="Machine\SwitchKeys.h" />
     <ClInclude Include="Machine\SwitchRom.h" />
     <ClInclude Include="Machine\SwitchSystem.h" />
     <ClInclude Include="Notification.h" />
@@ -71,6 +72,7 @@
     <ClCompile Include="Machine\nso.cpp" />
     <ClCompile Include="Machine\PageTable.cpp" />
     <ClCompile Include="Machine\Registers.cpp" />
+    <ClCompile Include="Machine\SwitchKeys.cpp" />
     <ClCompile Include="Machine\SwitchRom.cpp" />
     <ClCompile Include="Machine\SwitchSystem.cpp" />
     <ClCompile Include="Settings\Settings.cpp" />
