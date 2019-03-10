@@ -51,3 +51,9 @@ bool CSwitchSystem::LoadGame(const char * GamePath)
 	return false;
 }
 
+bool CSwitchSystem::LoadXCI(const CPath & XciFile)
+{
+	g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
