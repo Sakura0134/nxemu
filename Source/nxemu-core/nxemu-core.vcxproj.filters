@@ -49,6 +49,12 @@
     <Filter Include="Header Files\Machine\CPU">
       <UniqueIdentifier>{cec7a91a-8bf2-40da-b646-02d2ccf9b4ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\FileFormat">
+      <UniqueIdentifier>{d996f889-be39-47f2-b9fc-70900f3bcea7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FileFormat">
+      <UniqueIdentifier>{71927cf8-11d1-4a84-a64c-d43f6cfa3470}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -126,6 +132,9 @@
     <ClInclude Include="Machine\Arm64Opcode.h">
       <Filter>Header Files\Machine</Filter>
     </ClInclude>
+    <ClInclude Include="FileFormat\formats.h">
+      <Filter>Header Files\FileFormat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -181,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="Machine\Registers.cpp">
       <Filter>Source Files\Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="FileFormat\formats.cpp">
+      <Filter>Source Files\FileFormat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,7 @@ private:
     CSwitchSystem(const CSwitchSystem&);             // Disable copy constructor
     CSwitchSystem& operator=(const CSwitchSystem&);	 // Disable assignment
 
+	bool LoadXCI(const CPath & XciFile);
     bool LoadNsoFile(const CPath & NsoFile, uint64_t base_addr, uint64_t &end_addr);
     void EmulationThread(void);
 

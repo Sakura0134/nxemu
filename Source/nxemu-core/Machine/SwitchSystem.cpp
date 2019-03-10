@@ -1,4 +1,5 @@
 #include <nxemu-core\Machine\SwitchSystem.h>
+#include <nxemu-core\FileFormat\formats.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <Common\path.h>
 #include <Common\FileClass.h>
@@ -31,6 +32,21 @@ void CSwitchSystem::EmulationThread(void)
 
 bool CSwitchSystem::LoadGame(const char * GamePath)
 {
+	SwitchFileType type = IdentifyFileType(GamePath);
+
+	if (type == sft_Unknown)
+	{
+		return false;
+	}
+	switch (type)
+	{
+	case sft_XCI:
+		if (!LoadXCI(GamePath)) { return false; }
+		break;
+	default:
+		g_Notify->BreakPoint(__FILE__, __LINE__);
+		return false;
+	}
 	g_Notify->BreakPoint(__FILE__, __LINE__);
 	return false;
 }

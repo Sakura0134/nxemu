@@ -32,6 +32,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AppInit.h" />
+    <ClInclude Include="FileFormat\formats.h" />
     <ClInclude Include="hle\HleKernel.h" />
     <ClInclude Include="hle\ProcessMemory.h" />
     <ClInclude Include="hle\SystemThread.h" />
@@ -59,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp" />
+    <ClCompile Include="FileFormat\formats.cpp" />
     <ClCompile Include="hle\HleKernel.cpp" />
     <ClCompile Include="hle\ProcessMemory.cpp" />
     <ClCompile Include="hle\SystemThread.cpp" />
