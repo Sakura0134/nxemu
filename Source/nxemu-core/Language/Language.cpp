@@ -25,6 +25,10 @@ void CLanguage::LoadDefaultStrings(void)
     DefaultString(MENU_DEBUG, "Debug");
     DefaultString(MENU_DEBUG_LOGGING, "Logging...");
 
+	//Options Menu
+	DefaultString(MENU_OPTIONS, "&Options");
+	DefaultString(MENU_SWITCH_KEYS, "Switch &Keys...");
+
     DefaultString(MSG_SELECT_GAME_DIR, "Select directory to load");
 }
 

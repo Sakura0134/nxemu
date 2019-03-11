@@ -4,6 +4,7 @@
 #include <nxemu-core\Machine\SwitchRom.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-Application.h>
 #include <nxemu\Settings\UISettings.h>
+#include <nxemu\UserInterface\SwitchKeysConfig.h>
 #include <Windows.h>
 
 CMainGui::CMainGui(const wchar_t * WindowTitle) :
@@ -134,6 +135,13 @@ LRESULT CMainGui::OnDebugLogging(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWnd
 {
     EditLoggingOptions(m_hWnd);
     return 0;
+}
+
+LRESULT CMainGui::OnSwitchKeys(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	CKeysConfig KeysConfig;
+	KeysConfig.Display(m_hWnd);
+	return 0;
 }
 
 LRESULT CMainGui::MainGui_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

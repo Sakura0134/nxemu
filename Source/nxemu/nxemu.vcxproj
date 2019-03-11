@@ -35,6 +35,7 @@
     <ClCompile Include="UserInterface\MainWindow.cpp" />
     <ClCompile Include="UserInterface\MenuItem.cpp" />
     <ClCompile Include="UserInterface\Notification.cpp" />
+    <ClCompile Include="UserInterface\SwitchKeysConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\nxemu-core\Version.h" />
@@ -45,6 +46,7 @@
     <ClInclude Include="UserInterface\MainWindow.h" />
     <ClInclude Include="UserInterface\MenuItem.h" />
     <ClInclude Include="UserInterface\Notification.h" />
+    <ClInclude Include="UserInterface\SwitchKeysConfig.h" />
     <ClInclude Include="UserInterface\WTLApp.h" />
   </ItemGroup>
   <ItemGroup>

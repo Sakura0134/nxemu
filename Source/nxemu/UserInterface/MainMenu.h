@@ -14,7 +14,10 @@ public:
         ID_FILE_OPEN_ROM,
         ID_FILE_EXIT,
 
-        //Recent Dir
+		//Options Menu
+		ID_OPTIONS_SWITCH_KEYS,
+		
+		//Recent Dir
         ID_RECENT_DIR_START,
         ID_RECENT_DIR_END = ID_RECENT_DIR_START + 20,
 

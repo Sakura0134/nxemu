@@ -60,8 +60,12 @@ void CMainMenu::FillOutMenu(HMENU hMenu)
     FileMenu.push_back(MenuItem(MenuItem::SPLITER));
     FileMenu.push_back(MenuItem(ID_FILE_EXIT, MENU_EXIT));
 
+	MenuItemList OptionsMenu;
+	OptionsMenu.push_back(MenuItem(ID_OPTIONS_SWITCH_KEYS, MENU_SWITCH_KEYS));
+	
     MenuItemList MainTitleMenu;
     MainTitleMenu.push_back(MenuItem(MenuItem::SUB_MENU, MENU_FILE, &FileMenu));
+	MainTitleMenu.push_back(MenuItem(MenuItem::SUB_MENU, MENU_OPTIONS, &OptionsMenu));
 
     MenuItemList DebugMenu;
     DebugMenu.push_back(MenuItem(ID_DEBUGGER_LOGGING, MENU_DEBUG_LOGGING));
