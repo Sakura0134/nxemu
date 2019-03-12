@@ -23,14 +23,14 @@ class CIniFileBase
         }
     };
 
-    typedef std::map<std::string, long> FILELOC;
+    typedef std::map<std::string, long, insensitive_compare> FILELOC;
     typedef FILELOC::iterator FILELOC_ITR;
     typedef std::map<std::string, std::string, insensitive_compare> KeyValueList;
-    typedef std::list<std::string> strlist;
 
 public:
-    typedef std::map<std::string, std::string>           KeyValueData;
-    typedef std::vector<std::string>               SectionList;
+    typedef std::map<std::string, std::string> KeyValueData;
+    typedef std::vector<std::string> SectionList;
+	typedef std::list<std::string> strlist;
 
 protected:
     CFileBase & m_File;
@@ -121,4 +121,4 @@ protected:
     CFileStorage  m_FileObject;
 };
 
-typedef CIniFileT<CFile>   CIniFile;
+typedef CIniFileT<CFile> CIniFile;
