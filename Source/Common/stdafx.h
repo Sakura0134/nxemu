@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "memtest.h"
 #include "Platform.h"
 #include "StdString.h"
 #include "CriticalSection.h"
