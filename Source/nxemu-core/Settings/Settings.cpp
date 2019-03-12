@@ -1,3 +1,4 @@
+#include <Common\MemTest.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-Application.h>
@@ -8,6 +9,27 @@
 
 CSettings::CSettings()
 {
+}
+
+CSettings::~CSettings()
+{
+    CSettingTypeApplication::CleanUp();
+
+    for (SETTING_MAP::iterator iter = m_SettingInfo.begin(); iter != m_SettingInfo.end(); iter++)
+    {
+        delete iter->second;
+    }
+
+    for (SETTING_CALLBACK::iterator cb_iter = m_Callback.begin(); cb_iter != m_Callback.end(); cb_iter++)
+    {
+        SETTING_CHANGED_CB * item = cb_iter->second;
+        while (item != NULL)
+        {
+            SETTING_CHANGED_CB * current_item = item;
+            item = item->Next;
+            delete current_item;
+        }
+    }
 }
 
 bool CSettings::Initialize(const char * BaseDirectory)
@@ -39,6 +61,8 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
     //Support Files
     AddHandler(SupportFile_Settings, new CSettingTypeApplicationPath("Settings", "ConfigFile", SupportFile_SettingsDefault));
     AddHandler(SupportFile_SettingsDefault, new CSettingTypeRelativePath("Config", "NXEmu.cfg"));
+	AddHandler(SupportFile_Keys, new CSettingTypeApplicationPath("Settings", "KeyFile", SupportFile_KeysDefault));
+	AddHandler(SupportFile_KeysDefault, new CSettingTypeRelativePath("Config", "switch.keys"));
 
     //Logging
     AddHandler(Debugger_TraceAppInit, new CSettingTypeApplication("Logging", "App Init", (uint32_t)g_ModuleLogLevel[TraceAppInit]));
@@ -89,8 +113,15 @@ bool CSettings::LoadStringVal(SettingID Type, std::string & Value)
         UnknownSetting(Type);
         return 0;
     }
-
-    return FindInfo->second->Load(0, Value);
+    if (FindInfo->second->IndexBasedSetting())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    else
+    {
+        return FindInfo->second->Load(0, Value);
+    }
+    return false;
 }
 
 std::string CSettings::LoadStringIndex(SettingID Type, uint32_t index)
@@ -137,6 +168,7 @@ void CSettings::SaveDword(SettingID Type, uint32_t Value)
     {
         FindInfo->second->Save(0, Value);
     }
+    NotifyCallBacks(Type);
 }
 
 void CSettings::SaveString(SettingID Type, const char * Value)
@@ -147,7 +179,15 @@ void CSettings::SaveString(SettingID Type, const char * Value)
         //if not found do nothing
         UnknownSetting(Type);
     }
-    FindInfo->second->Save(0, Value);
+    else if (FindInfo->second->IndexBasedSetting())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    else
+    {
+        FindInfo->second->Save(0, Value);
+    }
+    NotifyCallBacks(Type);
 }
 
 void CSettings::SaveStringIndex(SettingID Type, uint32_t index, const char * Buffer)
@@ -166,6 +206,7 @@ void CSettings::SaveStringIndex(SettingID Type, uint32_t index, const char * Buf
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
+    NotifyCallBacks(Type);
 }
 
 void CSettings::RegisterChangeCB(SettingID Type, void * Data, SettingChangedFunc Func)
@@ -244,10 +285,22 @@ void CSettings::UnregisterChangeCB(SettingID Type, void * Data, SettingChangedFu
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
-void CSettings::UnknownSetting(SettingID /*Type*/)
+
+void CSettings::NotifyCallBacks(SettingID Type)
 {
-#ifdef _DEBUG
-    g_Notify->BreakPoint(__FILE__, __LINE__);
-#endif
+    SETTING_CALLBACK::iterator Callback = m_Callback.find(Type);
+    if (Callback == m_Callback.end())
+    {
+        return;
+    }
+
+    for (SETTING_CHANGED_CB * item = Callback->second; item != NULL; item = item->Next)
+    {
+        item->Func(item->Data);
+    }
 }
 
+void CSettings::UnknownSetting(SettingID /*Type*/)
+{
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+}

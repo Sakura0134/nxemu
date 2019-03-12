@@ -10,6 +10,7 @@ public:
     typedef void(*SettingChangedFunc)(void *);
 
     CSettings(void);
+    ~CSettings();
 
     bool Initialize(const char * BaseDirectory);
 
@@ -30,6 +31,8 @@ public:
     void RegisterChangeCB(SettingID Type, void * Data, SettingChangedFunc Func);
     void UnregisterChangeCB(SettingID Type, void * Data, SettingChangedFunc Func);
 
+    //Notification
+    void NotifyCallBacks(SettingID Type);
     void AddHandler(SettingID TypeID, CSettingType * Handler);
 
 private:

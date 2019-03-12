@@ -17,6 +17,8 @@ enum SettingID
     //Support Files
     SupportFile_Settings,
     SupportFile_SettingsDefault,
+	SupportFile_Keys,
+	SupportFile_KeysDefault,
 
 
     //Logging
