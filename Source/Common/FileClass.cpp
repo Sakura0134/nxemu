@@ -53,7 +53,7 @@ CFile::~CFile()
 #endif
     {
         Close();
-}
+    }
 }
 
 bool CFile::Open(const char * lpszFileName, uint32_t nOpenFlags)
@@ -193,7 +193,7 @@ bool CFile::Close()
     return bError;
 }
 
-uint32_t CFile::SeekToEnd(void)
+uint64_t CFile::SeekToEnd(void)
 {
     return Seek(0, CFile::end);
 }
@@ -276,15 +276,17 @@ uint32_t CFile::Read(void* lpBuf, uint32_t nCount)
 #endif
 }
 
-int32_t CFile::Seek(int32_t lOff, SeekPosition nFrom)
+uint64_t CFile::Seek(int64_t lOff, SeekPosition nFrom)
 {
 #ifdef USE_WINDOWS_API
-    ULONG dwNew = ::SetFilePointer(m_hFile, lOff, NULL, (ULONG)nFrom);
+	LONG lDistanceToMove = (LONG)(lOff & 0xFFFFFFFF);
+	LONG lpDistanceToMoveHigh = (LONG)(lOff >> 32);
+    ULONG dwNew = ::SetFilePointer(m_hFile, lDistanceToMove, &lpDistanceToMoveHigh, (ULONG)nFrom);
     if (dwNew == (ULONG)-1)
     {
-        return -1;
+        return (uint64_t )-1;
     }
-    return dwNew;
+    return ((uint64_t)lpDistanceToMoveHigh << 32) | dwNew;
 #else
     if (m_hFile == NULL)
     {
@@ -307,7 +309,7 @@ int32_t CFile::Seek(int32_t lOff, SeekPosition nFrom)
 #endif
 }
 
-uint32_t CFile::GetPosition() const
+uint64_t CFile::GetPosition() const
 {
 #ifdef USE_WINDOWS_API
     return ::SetFilePointer(m_hFile, 0, NULL, FILE_CURRENT);
@@ -316,16 +318,18 @@ uint32_t CFile::GetPosition() const
 #endif
 }
 
-bool CFile::SetLength(uint32_t dwNewLen)
+bool CFile::SetLength(uint64_t dwNewLen)
 {
-    Seek((int32_t)dwNewLen, begin);
+    Seek(dwNewLen, begin);
     return SetEndOfFile();
 }
 
-uint32_t CFile::GetLength() const
+uint64_t CFile::GetLength() const
 {
 #ifdef USE_WINDOWS_API
-    return GetFileSize(m_hFile, 0);
+	DWORD HiWord = 0;
+	DWORD LoWord = GetFileSize(m_hFile, &HiWord);
+	return ((uint64_t)HiWord << 32) | (uint64_t)LoWord;
 #else
     uint32_t pos = GetPosition();
     fseek((FILE *)m_hFile, 0, SEEK_END);

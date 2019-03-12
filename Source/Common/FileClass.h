@@ -24,10 +24,10 @@ public:
 
     virtual bool Open(const char * lpszFileName, uint32_t nOpenFlags ) = 0;
 
-    virtual uint32_t GetPosition() const = 0;
-    virtual int32_t Seek(int32_t lOff, SeekPosition nFrom) = 0;
-    virtual bool SetLength(uint32_t dwNewLen) = 0;
-    virtual uint32_t GetLength() const = 0;
+    virtual uint64_t GetPosition() const = 0;
+    virtual uint64_t Seek(int64_t lOff, SeekPosition nFrom) = 0;
+    virtual bool SetLength(uint64_t dwNewLen) = 0;
+    virtual uint64_t GetLength() const = 0;
 
     virtual uint32_t Read(void* lpBuf, uint32_t nCount) = 0;
     virtual bool Write(const void* lpBuf, uint32_t nCount) = 0;
@@ -58,14 +58,14 @@ public:
     // Operations
     virtual bool Open(const char * lpszFileName, uint32_t nOpenFlags );
 
-    uint32_t SeekToEnd   ( void );
-    void  SeekToBegin ( void );
+	uint64_t SeekToEnd ( void );
+    void SeekToBegin ( void );
 
     // Overridables
-    virtual uint32_t GetPosition() const;
-    virtual int32_t Seek(int32_t lOff, SeekPosition nFrom);
-    virtual bool SetLength(uint32_t dwNewLen);
-    virtual uint32_t GetLength() const;
+    virtual uint64_t GetPosition() const;
+    virtual uint64_t Seek(int64_t lOff, SeekPosition nFrom);
+    virtual bool SetLength(uint64_t dwNewLen);
+    virtual uint64_t GetLength() const;
 
     virtual uint32_t Read(void* lpBuf, uint32_t nCount);
     virtual bool Write(const void* lpBuf, uint32_t nCount);
