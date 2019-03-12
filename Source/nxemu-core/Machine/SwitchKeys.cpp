@@ -83,6 +83,70 @@ void CSwitchKeys::LoadKeysIndex(KeysIndex & keys)
 	}
 }
 
+bool CSwitchKeys::SaveKeys(const Keys & keys)
+{
+	struct
+	{
+		KeyType type;
+		const char * key;
+	}
+	Items[] =
+	{
+		{ HeaderKey,"header_key" },
+		{ KeyAreaKeyApplicationSource, "key_area_key_application_source"},
+		{ AesKekGenerationSource, "aes_key_generation_source" },
+		{ AesKeyGenerationSource, "aes_kek_generation_source" },
+	};
+
+	for (size_t i = 0, n = sizeof(Items) / sizeof(Items[0]); i < n; i++)
+	{
+		Keys::const_iterator itr = keys.find(Items[i].type);
+		if (itr == keys.end())
+		{
+			return false;
+		}
+		const KeyData & data = itr->second;
+		if (!SaveKey(m_KeyFile, data, Items[i].key))
+		{
+			return false;
+		}
+	}
+    return true;
+}
+
+bool CSwitchKeys::SaveKeysIndex(const KeysIndex & keys)
+{
+	struct
+	{
+		KeyType type;
+		uint32_t index;
+		const char * key;
+	}
+	Items[] =
+	{
+		{ MasterKey, 0, "master_key_00" },
+		{ MasterKey, 1, "master_key_01" },
+		{ MasterKey, 2, "master_key_02" },
+		{ MasterKey, 3, "master_key_03" },
+		{ MasterKey, 4, "master_key_04" },
+		{ MasterKey, 5, "master_key_05" },
+	};
+
+	for (size_t i = 0, n = sizeof(Items) / sizeof(Items[0]); i < n; i++)
+	{
+		KeysIndex::const_iterator itr = keys.find(KeyTypeIndex(Items[i].type, Items[i].index));
+		if (itr != keys.end())
+		{
+			const KeyData & data = itr->second;
+			if (!SaveKey(m_KeyFile, data, Items[i].key))
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 bool CSwitchKeys::ValidKey(KeyType type, const KeyData & key)
 {
 	struct 
@@ -152,6 +216,19 @@ bool CSwitchKeys::ValidKeyIndex(KeyType type, uint32_t index, const KeyData & ke
 		}
 	}
 	return false;
+}
+
+bool CSwitchKeys::SaveKey(CIniFile & KeyFile, const KeyData & data, const char * name)
+{
+	std::string KeyValue;
+	for (size_t i = 0, n = data.size(); i < n; i++)
+	{
+		char value[3];
+		sprintf(value, "%02X", data[i]);
+		KeyValue += value;
+	}
+	KeyFile.SaveString("", name, KeyValue.c_str());
+	return true;
 }
 
 CSwitchKeys::KeyData CSwitchKeys::KeyValueData(const std::string &KeyValue)

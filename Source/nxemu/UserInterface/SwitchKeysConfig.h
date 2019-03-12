@@ -24,6 +24,11 @@ public:
 	LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
 private:
+	bool AddKey(CSwitchKeys::Keys & keys, CSwitchKeys::KeyType type, int nID);
+	bool AddKeyIndex(CSwitchKeys::KeysIndex & keys, CSwitchKeys::KeyType type, uint32_t index, int nID);
+	bool ValidKey(CSwitchKeys::KeyType type, int nID);
+	bool ValidKeyIndex(CSwitchKeys::KeyType type, uint32_t index, int nID);
+	bool GetKeyData(int nID, CSwitchKeys::KeyData &data);
 	void SetKeyData(int nID, const CSwitchKeys::KeyData &data);
 
 	static INT_PTR CALLBACK StartDialogProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam);
