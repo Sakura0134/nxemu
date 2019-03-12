@@ -122,6 +122,12 @@ void CTraceLog::CloseTrace(void)
 {
     CGuard Guard(m_CS);
     m_Modules.clear();
+
+    if (g_ModuleLogLevel)
+    {
+        delete g_ModuleLogLevel;
+        g_ModuleLogLevel = NULL;
+    }
 }
 
 void CTraceLog::FlushTrace(void)

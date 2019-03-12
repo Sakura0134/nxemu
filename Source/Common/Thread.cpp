@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <sys/syscall.h>
+#else
+#include <Windows.h>
 #endif
 
 CThread::CThread(CTHREAD_START_ROUTINE lpStartAddress) :
