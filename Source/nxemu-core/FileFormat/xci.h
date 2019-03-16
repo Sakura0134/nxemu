@@ -5,7 +5,11 @@
 class CXci
 {
 public:
+	CXci(CSwitchKeys & Keys, const CPath & File);
+	~CXci();
+
 	static bool IsXciFile(const CPath & XciFile);
+	inline bool Valid(void) const { return m_Valid; }
 
 private:
 	CXci(void);                    // Disable default constructor
@@ -35,5 +39,6 @@ private:
 		uint32_t NormalAreaEndAddress;
 		uint8_t GamecardInfo[0x70];
 	};
+	bool m_Valid;
 };
 

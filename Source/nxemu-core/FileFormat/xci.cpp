@@ -4,6 +4,15 @@
 #include <nxemu-core\Trace.h>
 #include <set>
 
+CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
+	m_Valid(false)
+{
+}
+
+CXci::~CXci()
+{
+}
+
 bool CXci::IsXciFile(const CPath & File)
 {
 	if (!File.Exists() || _stricmp(File.GetExtension().c_str(), "xci") != 0)

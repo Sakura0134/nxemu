@@ -17,7 +17,7 @@ bool LaunchSwitchRom(const char * GamePath)
 		return false;
     }
 
-	if (SwitchSystem->LoadGame(GamePath))
+	if (!SwitchSystem->LoadGame(GamePath))
 	{
 		g_Notify->BreakPoint(__FILE__, __LINE__);
 		return false;

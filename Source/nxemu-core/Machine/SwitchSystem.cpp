@@ -1,5 +1,6 @@
 #include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\FileFormat\formats.h>
+#include <nxemu-core\FileFormat\xci.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <Common\path.h>
 #include <Common\FileClass.h>
@@ -53,6 +54,11 @@ bool CSwitchSystem::LoadGame(const char * GamePath)
 
 bool CSwitchSystem::LoadXCI(const CPath & XciFile)
 {
+	std::auto_ptr<CXci> xci(new CXci(m_Keys, XciFile));
+	if (xci.get() == NULL || !xci->Valid())
+	{
+		return false;
+	}
 	g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }
