@@ -39,6 +39,9 @@ private:
 		uint32_t NormalAreaEndAddress;
 		uint8_t GamecardInfo[0x70];
 	};
+
+	GamecardHeader m_Header;
 	bool m_Valid;
+	CFile m_ReadFile;
 };
 
