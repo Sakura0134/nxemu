@@ -68,6 +68,7 @@
     <ClCompile Include="hle\ProcessMemory.cpp" />
     <ClCompile Include="hle\SystemThread.cpp" />
     <ClCompile Include="Language\Language.cpp" />
+    <ClCompile Include="LaunchRunFile.cpp" />
     <ClCompile Include="Machine\CPU\CPUExecutor.cpp" />
     <ClCompile Include="Machine\nso.cpp" />
     <ClCompile Include="Machine\PageTable.cpp" />

@@ -206,6 +206,9 @@
     <ClCompile Include="Machine\SwitchKeys.cpp">
       <Filter>Source Files\Machine</Filter>
     </ClCompile>
+    <ClCompile Include="LaunchRunFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Version.h.in">
