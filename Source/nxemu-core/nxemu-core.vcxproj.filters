@@ -141,6 +141,9 @@
     <ClInclude Include="Machine\SwitchKeys.h">
       <Filter>Header Files\Machine</Filter>
     </ClInclude>
+    <ClInclude Include="Settings\SettingType\SettingsType-SelectedDirectory.h">
+      <Filter>Header Files\Settings\SettingType</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -208,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="LaunchRunFile.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\SettingType\SettingsType-SelectedDirectory.cpp">
+      <Filter>Source Files\Settings\SettingType</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

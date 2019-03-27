@@ -15,6 +15,8 @@ public:
     bool Initialize(const char * BaseDirectory);
 
     // read the settings
+    bool LoadBool(SettingID Type);
+    bool LoadBool(SettingID Type, bool & Value);
     uint32_t LoadDword(SettingID Type);
     bool LoadDword(SettingID Type, uint32_t & Value);
     std::string LoadStringVal(SettingID Type);
@@ -23,6 +25,7 @@ public:
     bool LoadStringIndex(SettingID Type, uint32_t index, std::string & Value);
 
     //Update the settings
+    void SaveBool(SettingID Type, bool Value);
     void SaveDword(SettingID Type, uint32_t Value);
     void SaveString(SettingID Type, const char * Value);
     void SaveStringIndex(SettingID Type, uint32_t index, const char * Buffer);
@@ -30,6 +33,9 @@ public:
     //Register Notification of change
     void RegisterChangeCB(SettingID Type, void * Data, SettingChangedFunc Func);
     void UnregisterChangeCB(SettingID Type, void * Data, SettingChangedFunc Func);
+
+    // information about setting
+    bool IsSettingSet(SettingID Type);
 
     //Notification
     void NotifyCallBacks(SettingID Type);

@@ -65,7 +65,6 @@ void CSettingTypeApplication::Initialize(void)
     }
 
     stdstr SettingsFile, OrigSettingsFile;
-
     for (int i = 0; i < 100; i++)
     {
         OrigSettingsFile = SettingsFile;
@@ -129,6 +128,31 @@ void CSettingTypeApplication::CleanUp()
     }
 }
 
+bool CSettingTypeApplication::Load(uint32_t /*Index*/, bool & Value) const
+{
+    bool bRes = false;
+
+    uint32_t dwValue = 0;
+    bRes = m_SettingsIniFile ? m_SettingsIniFile->GetNumber(SectionName(), m_KeyNameIdex.c_str(), Value, dwValue) : false;
+    if (bRes)
+    {
+        Value = dwValue != 0;
+    }
+
+    if (!bRes && m_DefaultSetting != Default_None)
+    {
+        if (m_DefaultSetting == Default_Constant)
+        {
+            Value = m_DefaultValue != 0;
+        }
+        else
+        {
+            g_Settings->LoadBool(m_DefaultSetting, Value);
+        }
+    }
+    return bRes;
+}
+
 bool CSettingTypeApplication::Load(uint32_t /*Index*/, uint32_t & Value) const
 {
     bool bRes = m_SettingsIniFile->GetNumber(SectionName(), m_KeyNameIdex.c_str(), Value, Value);
@@ -155,6 +179,21 @@ bool CSettingTypeApplication::Load(uint32_t Index, std::string & Value) const
 }
 
 //return the default values
+void CSettingTypeApplication::LoadDefault(uint32_t /*Index*/, bool & Value) const
+{
+    if (m_DefaultSetting != Default_None)
+    {
+        if (m_DefaultSetting == Default_Constant)
+        {
+            Value = m_DefaultValue != 0;
+        }
+        else
+        {
+            g_Settings->LoadBool(m_DefaultSetting, Value);
+        }
+    }
+}
+
 void CSettingTypeApplication::LoadDefault(uint32_t /*Index*/, uint32_t & Value) const
 {
     if (m_DefaultSetting != Default_None)
@@ -172,6 +211,20 @@ void CSettingTypeApplication::LoadDefault(uint32_t /*Index*/, std::string & Valu
 }
 
 //Update the settings
+void CSettingTypeApplication::Save(uint32_t /*Index*/, bool Value)
+{
+    if (m_DefaultSetting != Default_None &&
+        ((m_DefaultSetting == Default_Constant && m_DefaultValue == (uint32_t)Value) ||
+        (m_DefaultSetting != Default_Constant && g_Settings->LoadBool(m_DefaultSetting) == Value)))
+    {
+        m_SettingsIniFile->SaveString(SectionName(), m_KeyNameIdex.c_str(), NULL);
+    }
+    else
+    {
+        m_SettingsIniFile->SaveNumber(SectionName(), m_KeyNameIdex.c_str(), Value);
+    }
+}
+
 void CSettingTypeApplication::Save(uint32_t /*Index*/, uint32_t Value)
 {
     if (m_DefaultSetting != Default_None &&

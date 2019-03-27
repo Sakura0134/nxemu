@@ -20,11 +20,21 @@ enum SettingID
 	SupportFile_Keys,
 	SupportFile_KeysDefault,
 
+    //Directory settings
+    Directory_Log,
+    Directory_LogInitial,
+    Directory_LogSelected,
+    Directory_LogUseSelected,
 
     //Logging
+    Debugger_TraceAutoFlush,
+    Debugger_TraceMD5,
+    Debugger_TraceThread,
+    Debugger_TracePath,
+    Debugger_TraceSettings,
     Debugger_TraceAppInit,
     Debugger_TraceAppCleanup,
     Debugger_TraceGameFile,
+
     FirstUISettings = MaxPluginSetting, LastUISettings = FirstUISettings + MaxPluginSetting,
 };
-

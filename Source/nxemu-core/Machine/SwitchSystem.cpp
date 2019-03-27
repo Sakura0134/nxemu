@@ -2,6 +2,7 @@
 #include <nxemu-core\FileFormat\formats.h>
 #include <nxemu-core\FileFormat\xci.h>
 #include <nxemu-core\SystemGlobals.h>
+#include <nxemu-core\Trace.h>
 #include <Common\path.h>
 #include <Common\FileClass.h>
 
@@ -54,12 +55,16 @@ bool CSwitchSystem::LoadGame(const char * GamePath)
 
 bool CSwitchSystem::LoadXCI(const CPath & XciFile)
 {
+	WriteTrace(TraceGameFile, TraceInfo, "Start (XciFile: \"%s\")", (const char *)XciFile);
 	std::auto_ptr<CXci> xci(new CXci(m_Keys, XciFile));
 	if (xci.get() == NULL || !xci->Valid())
 	{
+		WriteTrace(TraceGameFile, TraceError, "xci is %s", xci.get() == NULL ? "NULL" : "Not Valid");
+		WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
 		return false;
 	}
 	g_Notify->BreakPoint(__FILE__, __LINE__);
-    return false;
+	WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
+	return false;
 }
 

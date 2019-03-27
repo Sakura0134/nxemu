@@ -1,10 +1,15 @@
+#include <Common\MemTest.h>
 #include "AppInit.h"
 #include <nxemu-core\Trace.h>
 #include <nxemu-core\Settings\Settings.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Language\Language.h>
+#include <nxemu-core\Machine\SwitchSystem.h>
+#include <Common\path.h>
 
 void SetTraceModuleNames(void);
+
+static CTraceFileLog * g_LogFile = NULL;
 
 void InitializeLog(void)
 {
@@ -16,6 +21,18 @@ void InitializeLog(void)
     SetTraceModuleNames();
 }
 
+void AddLogModule(void)
+{
+    CPath LogFilePath(g_Settings->LoadStringVal(Directory_Log).c_str(), "nxemu.log");
+    if (!LogFilePath.DirectoryExists())
+    {
+        LogFilePath.DirectoryCreate();
+    }
+
+    g_LogFile = new CTraceFileLog(LogFilePath, g_Settings->LoadBool(Debugger_TraceAutoFlush), CLog::Log_New, 500);
+    TraceAddModule(g_LogFile);
+}
+
 void SetTraceModuleNames(void)
 {
     TraceSetModuleName(TraceMD5, "MD5");
@@ -25,6 +42,48 @@ void SetTraceModuleNames(void)
     TraceSetModuleName(TraceAppInit, "App Init");
     TraceSetModuleName(TraceAppCleanup, "App Cleanup");
     TraceSetModuleName(TraceUserInterface, "User Interface");
+	TraceSetModuleName(TraceGameFile, "Game File");
+}
+
+void UpdateTraceLevel(void)
+{
+    g_ModuleLogLevel[TraceMD5] = (uint8_t)g_Settings->LoadDword(Debugger_TraceMD5);
+    g_ModuleLogLevel[TraceThread] = (uint8_t)g_Settings->LoadDword(Debugger_TraceThread);
+    g_ModuleLogLevel[TracePath] = (uint8_t)g_Settings->LoadDword(Debugger_TracePath);
+    g_ModuleLogLevel[TraceSettings] = (uint8_t)g_Settings->LoadDword(Debugger_TraceSettings);
+    g_ModuleLogLevel[TraceAppInit] = (uint8_t)g_Settings->LoadDword(Debugger_TraceAppInit);
+    g_ModuleLogLevel[TraceAppCleanup] = (uint8_t)g_Settings->LoadDword(Debugger_TraceAppCleanup);
+    g_ModuleLogLevel[TraceGameFile] = (uint8_t)g_Settings->LoadDword(Debugger_TraceGameFile);
+}
+
+void SetupTrace(void)
+{
+    AddLogModule();
+    g_Settings->RegisterChangeCB(Debugger_TraceMD5, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceThread, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TracePath, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceSettings, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceAppInit, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceAppCleanup, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceGameFile, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    UpdateTraceLevel();
+}
+
+void CleanupTrace(void)
+{
+    g_Settings->UnregisterChangeCB(Debugger_TraceMD5, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceThread, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TracePath, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceSettings, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceAppInit, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceAppCleanup, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceGameFile, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+}
+
+void TraceDone(void)
+{
+    CloseTrace();
+    if (g_LogFile) { delete g_LogFile; g_LogFile = NULL; }
 }
 
 bool AppInit(CNotification * Notify, const char * BaseDirectory)
@@ -47,6 +106,7 @@ bool AppInit(CNotification * Notify, const char * BaseDirectory)
         return false;
     }
 
+    SetupTrace();
     g_Lang = new CLanguage;
     g_Notify->AppInitDone();
     WriteTrace(TraceAppInit, TraceDebug, "Initialized Successfully");
@@ -55,9 +115,21 @@ bool AppInit(CNotification * Notify, const char * BaseDirectory)
 
 void AppCleanup(void)
 {
+    if (g_BaseMachine)
+    {
+        delete g_BaseMachine;
+        g_BaseMachine = NULL;
+    }
     if (g_Lang)
     {
         delete g_Lang;
         g_Lang = NULL;
     }
+    CleanupTrace();
+    if (g_Settings) 
+    {
+        delete g_Settings; 
+        g_Settings = NULL; 
+    }
+    TraceDone();
 }

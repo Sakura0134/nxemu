@@ -4,6 +4,7 @@
 #include <nxemu-core\Settings\SettingType\SettingsType-Application.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-ApplicationPath.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-RelativePath.h>
+#include "SettingType/SettingsType-SelectedDirectory.h"
 #include <nxemu-core\Settings\SettingType\SettingsType-TempString.h>
 #include <nxemu-core\Settings\Settings.h>
 
@@ -64,10 +65,48 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
 	AddHandler(SupportFile_Keys, new CSettingTypeApplicationPath("Settings", "KeyFile", SupportFile_KeysDefault));
 	AddHandler(SupportFile_KeysDefault, new CSettingTypeRelativePath("Config", "switch.keys"));
 
+    //Directory settings
+    AddHandler(Directory_Log, new CSettingTypeSelectedDirectory("Dir:Log", Directory_LogInitial, Directory_LogSelected, Directory_LogUseSelected, Directory_Log));
+    AddHandler(Directory_LogInitial, new CSettingTypeRelativePath("Logs", ""));
+    AddHandler(Directory_LogSelected, new CSettingTypeApplicationPath("Log Directory", "Directory", Directory_LogInitial));
+    AddHandler(Directory_LogUseSelected, new CSettingTypeApplication("Log Directory", "Use Selected", false));
+
     //Logging
+    AddHandler(Debugger_TraceAutoFlush, new CSettingTypeApplication("Logging", "Trace Auto Flush", (uint32_t)false));
+    AddHandler(Debugger_TraceMD5, new CSettingTypeApplication("Logging", "MD5", (uint32_t)g_ModuleLogLevel[TraceMD5]));
+    AddHandler(Debugger_TraceThread, new CSettingTypeApplication("Logging", "Thread", (uint32_t)g_ModuleLogLevel[TraceThread]));
+    AddHandler(Debugger_TracePath, new CSettingTypeApplication("Logging", "Path", (uint32_t)g_ModuleLogLevel[TracePath]));
+    AddHandler(Debugger_TraceSettings, new CSettingTypeApplication("Logging", "Settings", (uint32_t)g_ModuleLogLevel[TraceSettings]));
     AddHandler(Debugger_TraceAppInit, new CSettingTypeApplication("Logging", "App Init", (uint32_t)g_ModuleLogLevel[TraceAppInit]));
     AddHandler(Debugger_TraceAppCleanup, new CSettingTypeApplication("Logging", "App Cleanup", (uint32_t)g_ModuleLogLevel[TraceAppCleanup]));
     AddHandler(Debugger_TraceGameFile, new CSettingTypeApplication("Logging", "Game File", (uint32_t)g_ModuleLogLevel[TraceGameFile]));
+}
+
+bool CSettings::LoadBool(SettingID Type)
+{
+    bool Value = false;
+    LoadBool(Type, Value);
+    return Value;
+}
+
+bool CSettings::LoadBool(SettingID Type, bool & Value)
+{
+    SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
+    if (FindInfo == m_SettingInfo.end())
+    {
+        //if not found do nothing
+        UnknownSetting(Type);
+        return 0;
+    }
+    if (FindInfo->second->IndexBasedSetting())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    else
+    {
+        return FindInfo->second->Load(0, Value);
+    }
+    return false;
 }
 
 uint32_t CSettings::LoadDword(SettingID Type)
@@ -151,6 +190,26 @@ bool CSettings::LoadStringIndex(SettingID Type, uint32_t index, std::string & Va
     return false;
 }
 
+void CSettings::SaveBool(SettingID Type, bool Value)
+{
+    SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
+    if (FindInfo == m_SettingInfo.end())
+    {
+        //if not found do nothing
+        UnknownSetting(Type);
+        return;
+    }
+    if (FindInfo->second->IndexBasedSetting())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    else
+    {
+        FindInfo->second->Save(0, Value);
+    }
+    NotifyCallBacks(Type);
+}
+
 void CSettings::SaveDword(SettingID Type, uint32_t Value)
 {
     SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
@@ -207,6 +266,16 @@ void CSettings::SaveStringIndex(SettingID Type, uint32_t index, const char * Buf
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     NotifyCallBacks(Type);
+}
+
+bool CSettings::IsSettingSet(SettingID Type)
+{
+    SETTING_HANDLER FindInfo = m_SettingInfo.find(Type);
+    if (FindInfo == m_SettingInfo.end())
+    {
+        return false;
+    }
+    return FindInfo->second->IsSettingSet();
 }
 
 void CSettings::RegisterChangeCB(SettingID Type, void * Data, SettingChangedFunc Func)
