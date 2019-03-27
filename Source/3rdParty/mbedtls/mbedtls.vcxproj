@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FE18A6E5-6F6B-455B-8139-2DA41E223D87}</ProjectGuid>
+    <RootNamespace>mbedtls</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(SolutionDir)PropertySheets\Platform.$(Configuration).props" />
+  </ImportGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\Source\3rdParty\mbedtls\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="library\aes.c" />
+    <ClCompile Include="library\arc4.c" />
+    <ClCompile Include="library\blowfish.c" />
+    <ClCompile Include="library\camellia.c" />
+    <ClCompile Include="library\ccm.c" />
+    <ClCompile Include="library\chacha20.c" />
+    <ClCompile Include="library\chachapoly.c" />
+    <ClCompile Include="library\cipher.c" />
+    <ClCompile Include="library\cipher_wrap.c" />
+    <ClCompile Include="library\cmac.c" />
+    <ClCompile Include="library\des.c" />
+    <ClCompile Include="library\gcm.c" />
+    <ClCompile Include="library\platform_util.c" />
+    <ClCompile Include="library\poly1305.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\mbedtls\aes.h" />
+    <ClInclude Include="include\mbedtls\aesni.h" />
+    <ClInclude Include="include\mbedtls\arc4.h" />
+    <ClInclude Include="include\mbedtls\blowfish.h" />
+    <ClInclude Include="include\mbedtls\camellia.h" />
+    <ClInclude Include="include\mbedtls\ccm.h" />
+    <ClInclude Include="include\mbedtls\chacha20.h" />
+    <ClInclude Include="include\mbedtls\chachapoly.h" />
+    <ClInclude Include="include\mbedtls\check_config.h" />
+    <ClInclude Include="include\mbedtls\cipher.h" />
+    <ClInclude Include="include\mbedtls\cipher_internal.h" />
+    <ClInclude Include="include\mbedtls\config.h" />
+    <ClInclude Include="include\mbedtls\des.h" />
+    <ClInclude Include="include\mbedtls\gcm.h" />
+    <ClInclude Include="include\mbedtls\padlock.h" />
+    <ClInclude Include="include\mbedtls\platform.h" />
+    <ClInclude Include="include\mbedtls\platform_time.h" />
+    <ClInclude Include="include\mbedtls\platform_util.h" />
+    <ClInclude Include="include\mbedtls\poly1305.h" />
+  </ItemGroup>
+</Project>
