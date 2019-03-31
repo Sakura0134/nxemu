@@ -1,5 +1,6 @@
 #pragma once
 #include <Common\path.h>
+#include <nxemu-core\FileSystem\PartitionFilesystem.h>
 #include <nxemu-core\Machine\SwitchSystem.h>
 
 class CXci
@@ -19,7 +20,7 @@ private:
 	struct GamecardHeader
 	{
 		uint8_t signature[0x100];
-		uint32_t Magic;
+		uint8_t Magic[4];
 		uint32_t SecureAreaStartAddress;
 		uint32_t BackupAreaStartAddress;
 		uint8_t TitleKEKIndex;
@@ -41,6 +42,7 @@ private:
 	};
 
 	GamecardHeader m_Header;
+	CPartitionFilesystem * m_Partitions;
 	bool m_Valid;
 	CFile m_ReadFile;
 };

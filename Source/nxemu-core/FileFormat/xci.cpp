@@ -6,7 +6,8 @@
 
 CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
 	m_Valid(false),
-	m_Header({0})
+	m_Header({0}),
+	m_Partitions(NULL)
 {
 	WriteTrace(TraceGameFile, TraceInfo, "Start (XciFile: \"%s\")", (const char *)XciFile);
 	if (!XciFile.Exists())
@@ -38,9 +39,18 @@ CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
 		WriteTrace(TraceGameFile, TraceInfo, "Done");
 		return;
 	}
-	if (m_Header.Magic != *((uint32_t *)(&"HEAD")))
+	WriteTrace(TraceGameFile, TraceVerbose, "m_Header.Magic = \"%c%c%c%c\"", m_Header.Magic[0], m_Header.Magic[1], m_Header.Magic[2], m_Header.Magic[3]);
+	if (*((uint32_t *)(&m_Header.Magic[0])) != *((uint32_t *)(&"HEAD")))
 	{
 		WriteTrace(TraceGameFile, TraceError, "Header magic is wrong");
+		WriteTrace(TraceGameFile, TraceInfo, "Done");
+		return;
+	}
+
+	WriteTrace(TraceGameFile, TraceVerbose, "HFS0PartitionOffset: 0x%I64u HFS0HeaderSize: 0x%I64u", m_Header.HFS0PartitionOffset, m_Header.HFS0HeaderSize);
+	m_Partitions = new CPartitionFilesystem(CEncryptedFile(m_ReadFile), 0, m_Header.HFS0PartitionOffset, m_Header.HFS0HeaderSize);
+	if (!m_Partitions->Valid())
+	{
 		WriteTrace(TraceGameFile, TraceInfo, "Done");
 		return;
 	}
@@ -50,6 +60,11 @@ CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
 
 CXci::~CXci()
 {
+	if (m_Partitions != NULL)
+	{
+		delete m_Partitions;
+		m_Partitions = NULL;
+	}
 }
 
 bool CXci::IsXciFile(const CPath & File)
@@ -71,7 +86,7 @@ bool CXci::IsXciFile(const CPath & File)
 	{
 		return false;
 	}
-	if (header.Magic != *((uint32_t *)(&"HEAD")))
+	if (*((uint32_t *)(&header.Magic[0])) != *((uint32_t *)(&"HEAD")))
 	{
 		return false;
 	}

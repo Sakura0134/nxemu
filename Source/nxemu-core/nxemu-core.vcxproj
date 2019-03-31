@@ -25,6 +25,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\3rdParty\mbedtls\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <PreBuildEvent Condition="'$(Platform)'=='x64'">
       <Command>"$(SolutionDir)Source\Script\UpdateVersion.cmd" "$(Configuration)64" "$(SolutionDir)Source\nxemu-core\Version.h.in" "$(SolutionDir)Source\nxemu-core\Version.h"</Command>
@@ -34,6 +35,8 @@
     <ClInclude Include="AppInit.h" />
     <ClInclude Include="FileFormat\formats.h" />
     <ClInclude Include="FileFormat\xci.h" />
+    <ClInclude Include="FileSystem\EncryptedFile.h" />
+    <ClInclude Include="FileSystem\PartitionFilesystem.h" />
     <ClInclude Include="hle\HleKernel.h" />
     <ClInclude Include="hle\ProcessMemory.h" />
     <ClInclude Include="hle\SystemThread.h" />
@@ -59,12 +62,15 @@
     <ClInclude Include="SystemGlobals.h" />
     <ClInclude Include="Trace.h" />
     <ClInclude Include="TraceModules.h" />
+    <ClInclude Include="Util\AESCipher.h" />
     <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp" />
     <ClCompile Include="FileFormat\formats.cpp" />
     <ClCompile Include="FileFormat\xci.cpp" />
+    <ClCompile Include="FileSystem\EncryptedFile.cpp" />
+    <ClCompile Include="FileSystem\PartitionFilesystem.cpp" />
     <ClCompile Include="hle\HleKernel.cpp" />
     <ClCompile Include="hle\ProcessMemory.cpp" />
     <ClCompile Include="hle\SystemThread.cpp" />
@@ -85,6 +91,7 @@
     <ClCompile Include="Settings\SettingType\SettingsType-SelectedDirectory.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp" />
     <ClCompile Include="SystemGlobals.cpp" />
+    <ClCompile Include="Util\AESCipher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Version.h.in" />
@@ -92,6 +99,9 @@
   <ItemGroup>
     <ProjectReference Include="..\3rdParty\lz4\lz4.vcxproj">
       <Project>{20f15eb4-e65b-4d48-aa18-c7dad16279cc}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\3rdParty\mbedtls\mbedtls.vcxproj">
+      <Project>{fe18a6e5-6f6b-455b-8139-2da41e223d87}</Project>
     </ProjectReference>
     <ProjectReference Include="..\UpdateVersion\UpdateVersion.vcxproj">
       <Project>{1968162c-0793-491d-91a1-81645a24d399}</Project>

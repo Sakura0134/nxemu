@@ -55,6 +55,18 @@
     <Filter Include="Source Files\FileFormat">
       <UniqueIdentifier>{71927cf8-11d1-4a84-a64c-d43f6cfa3470}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\FileSystem">
+      <UniqueIdentifier>{6b36500a-fd4d-4e57-850c-a8c20c2764d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FileSystem">
+      <UniqueIdentifier>{68c37e4c-fb9c-4498-8e00-a61757978cbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Util">
+      <UniqueIdentifier>{c3ae7f3d-9803-4a84-a804-9db321562297}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Util">
+      <UniqueIdentifier>{a7fbfff3-9102-40f4-80c5-c01a051f11a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -144,6 +156,15 @@
     <ClInclude Include="Settings\SettingType\SettingsType-SelectedDirectory.h">
       <Filter>Header Files\Settings\SettingType</Filter>
     </ClInclude>
+    <ClInclude Include="FileSystem\PartitionFilesystem.h">
+      <Filter>Header Files\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="FileSystem\EncryptedFile.h">
+      <Filter>Header Files\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\AESCipher.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -214,6 +235,15 @@
     </ClCompile>
     <ClCompile Include="Settings\SettingType\SettingsType-SelectedDirectory.cpp">
       <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSystem\PartitionFilesystem.cpp">
+      <Filter>Source Files\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSystem\EncryptedFile.cpp">
+      <Filter>Source Files\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\AESCipher.cpp">
+      <Filter>Source Files\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
