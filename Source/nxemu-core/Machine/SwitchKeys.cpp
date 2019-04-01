@@ -269,6 +269,26 @@ bool CSwitchKeys::GetKeyIndex(KeyType Type, uint32_t KeyIndex, KeyData & key)
 	return false;
 }
 
+void CSwitchKeys::SetTitleKey(const uint8_t * id, size_t size, KeyData & key)
+{
+	TitleId title(size);
+	memcpy(title.data(), id, size);
+	m_TitleKeys.insert(KeysTitle::value_type(title,key));
+}
+
+bool CSwitchKeys::GetTitleKey(const uint8_t * id, size_t size, KeyData & key)
+{
+	TitleId title(size);
+	memcpy(title.data(), id, size);
+	KeysTitle::const_iterator itr = m_TitleKeys.find(title);
+	if (itr == m_TitleKeys.end())
+	{
+		return false;
+	}
+	key = itr->second;
+	return true;
+}
+
 bool CSwitchKeys::ValidKey(KeyType type, const KeyData & key)
 {
 	struct 

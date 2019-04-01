@@ -24,6 +24,8 @@ public:
 	typedef std::pair<KeyType, uint32_t> KeyTypeIndex;
 	typedef std::map<KeyType, KeyData> Keys;
 	typedef std::map<KeyTypeIndex, KeyData> KeysIndex;
+	typedef std::vector<uint8_t> TitleId;
+	typedef std::map<TitleId, KeyData> KeysTitle;
 
 	CSwitchKeys();
 	~CSwitchKeys();
@@ -34,6 +36,9 @@ public:
 	bool SaveKeysIndex(const KeysIndex & keys);
 	bool GetKeyIndex(KeyType Type, uint32_t KeyIndex, KeyData & key);
 	bool GetKey(KeyType Type, KeyData & key);
+	
+	void SetTitleKey(const uint8_t * id, size_t size, KeyData & key);
+	bool GetTitleKey(const uint8_t * id, size_t size, KeyData & key);
 
 	static bool ValidKey(KeyType type, const KeyData & key);
 	static bool ValidKeyIndex(KeyType type, uint32_t index, const KeyData & key);
@@ -47,4 +52,5 @@ private:
 	
 	KeyData KeyValueData (const std::string &KeyValue);
 	CIniFile m_KeyFile;
+	KeysTitle m_TitleKeys;
 };
