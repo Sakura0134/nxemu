@@ -98,7 +98,8 @@ LRESULT CKeysConfig::OnOkCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, B
 		{ CSwitchKeys::AesKekGenerationSource, IDC_AES_KEK_GENERATION_SOURCE, "Aes Kek Generation Source Invalid" },
 	};
 
-	struct {
+	struct 
+	{
 		CSwitchKeys::KeyType type;
 		int nId;
 		uint32_t index;

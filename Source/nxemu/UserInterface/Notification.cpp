@@ -1,6 +1,7 @@
 #include "Notification.h"
 #include <Common\StdString.h>
 #include <nxemu\Settings\UISettings.h>
+#include <nxemu\UserInterface\SwitchKeysConfig.h>
 #include <Windows.h>
 
 CNotificationImp & Notify(void)
@@ -15,7 +16,7 @@ CNotificationImp::CNotificationImp()
 
 void CNotificationImp::DisplayError(const char * Message) const
 {
-    MessageBox(NULL, Message, "NXEmu - Error", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
+    MessageBoxW(NULL, stdstr(Message).ToUTF16().c_str(), L"Error", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 }
 
 void CNotificationImp::BreakPoint(const char * FileName, uint32_t LineNumber)
@@ -30,4 +31,10 @@ void CNotificationImp::BreakPoint(const char * FileName, uint32_t LineNumber)
 void CNotificationImp::AppInitDone(void)
 {
     RegisterUISettings();
+}
+
+bool CNotificationImp::GetSwitchKeys(void) const
+{
+	CKeysConfig KeysConfig;
+	return KeysConfig.Display(NULL);
 }
