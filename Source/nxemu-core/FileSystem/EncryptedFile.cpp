@@ -20,6 +20,15 @@ CEncryptedFile::CEncryptedFile(const CEncryptedFile& rhs) :
 {
 }
 
+void CEncryptedFile::SetEncrypted(const uint8_t * Key, size_t KeyLen, const std::vector<uint8_t>& IV, size_t BaseOffset)
+{
+	m_Key.resize(KeyLen);
+	memcpy(m_Key.data(), Key, KeyLen);
+	m_IV = IV;
+	m_BaseOffset = BaseOffset;
+	m_Encrypted = true;
+}
+
 uint64_t CEncryptedFile::GetLength() const
 {
 	return m_file.GetLength();
