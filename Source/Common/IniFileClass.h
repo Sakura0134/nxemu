@@ -67,8 +67,9 @@ public:
     virtual ~CIniFileBase(void);
 
     bool IsEmpty();
-    bool IsFileOpen(void);
-    bool DeleteSection(const char * lpSectionName);
+	bool IsFileOpen(void);
+	bool IsReadOnly(void);
+	bool DeleteSection(const char * lpSectionName);
     bool GetString(const char * lpSectionName, const char * lpKeyName, const char * lpDefault, std::string & Value);
     std::string GetString(const char * lpSectionName, const char * lpKeyName, const char * lpDefault);
     uint32_t GetString(const char * lpSectionName, const char * lpKeyName, const char * lpDefault, char * lpReturnedString, uint32_t nSize);
