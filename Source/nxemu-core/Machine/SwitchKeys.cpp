@@ -149,6 +149,61 @@ bool CSwitchKeys::SaveKeysIndex(const KeysIndex & keys)
 	return true;
 }
 
+bool CSwitchKeys::GetKey(KeyType Type, KeyData & key)
+{
+	struct
+	{
+		KeyType type;
+		const char * key;
+	}
+	Items[] =
+	{
+		{ HeaderKey,"header_key" },
+		{ KeyAreaKeyApplicationSource, "key_area_key_application_source" },
+		{ AesKekGenerationSource, "aes_key_generation_source" },
+		{ AesKeyGenerationSource, "aes_kek_generation_source" },
+		{ TitlekekSource, "titlekek_source" },
+	};
+
+	for (;;)
+	{
+		std::string KeyValue;
+
+		bool Found = false;
+		for (size_t i = 0, n = (sizeof(Items) / sizeof(Items[0])); i < n; i++)
+		{
+			if (Items[i].type == Type)
+			{
+				KeyValue = m_KeyFile.GetString("", Items[i].key, "");
+				Found = true;
+			}
+		}
+
+		if (!Found)
+		{
+			g_Notify->BreakPoint(__FILE__, __LINE__);
+			return false;
+		}
+
+		if (!KeyValue.empty())
+		{
+			KeyData data = KeyValueData(KeyValue);
+
+			if (ValidKey(Type, data))
+			{
+				key = data;
+				return true;
+			}
+		}
+
+		if (!g_Notify->GetSwitchKeys())
+		{
+			break;
+		}
+	}
+	return false;
+}
+
 bool CSwitchKeys::ValidKey(KeyType type, const KeyData & key)
 {
 	struct 

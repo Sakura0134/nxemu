@@ -17,6 +17,7 @@ public:
 		TitlekekSource,
 		MasterKey,
 		AreaKey,
+		TitlekekKey,
 	};
 
 	typedef std::vector<uint8_t> KeyData;
@@ -31,6 +32,7 @@ public:
 	void LoadKeysIndex(KeysIndex & keys);
 	bool SaveKeys(const Keys & keys);
 	bool SaveKeysIndex(const KeysIndex & keys);
+	bool GetKey(KeyType Type, KeyData & key);
 
 	static bool ValidKey(KeyType type, const KeyData & key);
 	static bool ValidKeyIndex(KeyType type, uint32_t index, const KeyData & key);
