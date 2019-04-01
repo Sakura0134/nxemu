@@ -101,3 +101,14 @@ bool CPartitionFilesystem::Load(int64_t Offset, uint64_t Size)
 	return true;
 }
 
+const CPartitionFilesystem::VirtualFile * CPartitionFilesystem::GetFile(const char * Name) const
+{
+	for (size_t i = 0, n = m_Files.size(); i < n; i++)
+	{
+		if (strcmp(m_Files[i].Name.c_str(), Name) == 0)
+		{
+			return (VirtualFile *)(&m_Files[i]);
+		}
+	}
+	return NULL;
+}
