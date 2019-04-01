@@ -15,6 +15,7 @@ public:
 	CAESCipher(const uint8_t * key, uint32_t key_bitlen, Mode mode);
 	~CAESCipher();
 
+	bool Decrypt(const uint8_t * Source, uint8_t * Dest, uint32_t Size);
 	bool Transcode(const uint8_t * Source, uint8_t * Dest, uint32_t Size);
 	void SetIV(const uint8_t * iv, size_t iv_len);
 

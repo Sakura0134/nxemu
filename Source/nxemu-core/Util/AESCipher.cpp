@@ -30,6 +30,49 @@ CAESCipher::~CAESCipher()
 	}
 }
 
+bool CAESCipher::Decrypt(const uint8_t * Source, uint8_t * Dest, uint32_t Size)
+{
+	if (!m_valid)
+	{
+		return false;
+	}
+	bool SrcEqualsDst = Source == Dest;
+	std::auto_ptr<uint8_t> temp_dest(NULL);
+	if (SrcEqualsDst)
+	{
+		temp_dest.reset(new uint8_t[Size]);
+		Dest = temp_dest.get();
+		if (Dest == NULL)
+		{
+			return false;
+		}
+	}
+
+	size_t OutLen = 0;
+	mbedtls_cipher_reset((mbedtls_cipher_context_t*)m_CipherDec);
+
+	if (mbedtls_cipher_get_cipher_mode((mbedtls_cipher_context_t*)m_CipherDec) == MBEDTLS_MODE_XTS)
+	{
+		mbedtls_cipher_update((mbedtls_cipher_context_t*)m_CipherDec, (const uint8_t *)Source, Size, (uint8_t *)Dest, &OutLen);
+	}
+	else
+	{
+		unsigned int blk_size = mbedtls_cipher_get_block_size((mbedtls_cipher_context_t*)m_CipherDec);
+		for (int32_t offset = 0; (uint32_t)offset < Size; offset += blk_size)
+		{
+			int32_t len = ((uint32_t)(Size - offset) > blk_size) ? blk_size : (uint32_t)(Size - offset);
+			mbedtls_cipher_update((mbedtls_cipher_context_t*)m_CipherDec, (const uint8_t *)Source + offset, len, (uint8_t *)Dest + offset, &OutLen);
+		}
+	}
+	mbedtls_cipher_finish((mbedtls_cipher_context_t*)m_CipherDec, NULL, NULL);
+
+	if (SrcEqualsDst)
+	{
+		memcpy((void*)Source, Dest, Size);
+	}
+	return true;
+}
+
 bool CAESCipher::Transcode(const uint8_t * Source, uint8_t * Dest, uint32_t Size)
 {
 	if (!m_valid)
