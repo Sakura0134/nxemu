@@ -1,7 +1,8 @@
 #include <nxemu\UserInterface\SwitchKeysConfig.h>
 #include <nxemu-core\SystemGlobals.h>
 
-CKeysConfig::CKeysConfig(void)
+CKeysConfig::CKeysConfig(CSwitchKeys * keys) :
+	m_keys(keys)
 {
 }
 
@@ -11,6 +12,10 @@ CKeysConfig::~CKeysConfig(void)
 
 bool CKeysConfig::Display(void * ParentWindow)
 {
+	if (m_keys == NULL)
+	{
+		return false;
+	}
 	_Module.AddCreateWndData(&m_thunk.cd, this);
 	if (ParentWindow != NULL && ::IsWindowVisible((HWND)ParentWindow) == 0)
 	{
@@ -132,9 +137,11 @@ LRESULT CKeysConfig::OnOkCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, B
 
 	if (AllValid)
 	{
-		CSwitchKeys SwitchKeys;
-		SwitchKeys.SaveKeys(keys);
-		SwitchKeys.SaveKeysIndex(keysIndex);
+		if (!m_keys->SaveKeys(keys) || !m_keys->SaveKeysIndex(keysIndex))
+		{
+			g_Notify->DisplayError("Failed to save keys to file");
+			return 0;
+		}
 		EndDialog(wID);
 		return 0;
 	}

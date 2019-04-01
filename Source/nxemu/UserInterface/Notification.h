@@ -12,7 +12,7 @@ public:
     virtual void AppInitDone(void);
 
 	//Switch Keys
-	virtual bool GetSwitchKeys(void) const;
+	virtual bool GetSwitchKeys(CSwitchKeys * keys) const;
 
 private:
     CNotificationImp(const CNotificationImp&);            // Disable copy constructor

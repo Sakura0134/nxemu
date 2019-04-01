@@ -33,8 +33,8 @@ void CNotificationImp::AppInitDone(void)
     RegisterUISettings();
 }
 
-bool CNotificationImp::GetSwitchKeys(void) const
+bool CNotificationImp::GetSwitchKeys(CSwitchKeys * keys) const
 {
-	CKeysConfig KeysConfig;
+	CKeysConfig KeysConfig(keys);
 	return KeysConfig.Display(NULL);
 }

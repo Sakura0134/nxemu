@@ -139,7 +139,8 @@ LRESULT CMainGui::OnDebugLogging(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWnd
 
 LRESULT CMainGui::OnSwitchKeys(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	CKeysConfig KeysConfig;
+	CSwitchKeys SwitchKeys;
+	CKeysConfig KeysConfig(&SwitchKeys);
 	KeysConfig.Display(m_hWnd);
 	return 0;
 }

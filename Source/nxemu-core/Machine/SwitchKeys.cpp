@@ -115,6 +115,7 @@ bool CSwitchKeys::SaveKeys(const Keys & keys)
 			return false;
 		}
 	}
+	m_KeyFile.FlushChanges();
     return true;
 }
 
@@ -198,7 +199,7 @@ bool CSwitchKeys::GetKey(KeyType Type, KeyData & key)
 			}
 		}
 
-		if (!g_Notify->GetSwitchKeys())
+		if (!g_Notify->GetSwitchKeys(this))
 		{
 			break;
 		}
@@ -363,6 +364,10 @@ bool CSwitchKeys::ValidKeyIndex(KeyType type, uint32_t index, const KeyData & ke
 
 bool CSwitchKeys::SaveKey(CIniFile & KeyFile, const KeyData & data, const char * name)
 {
+	if (!KeyFile.IsFileOpen() || KeyFile.IsReadOnly())
+	{
+		return false;
+	}
 	std::string KeyValue;
 	for (size_t i = 0, n = data.size(); i < n; i++)
 	{

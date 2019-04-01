@@ -5,6 +5,8 @@
 #define __interface struct
 #endif
 
+class CSwitchKeys;
+
 __interface CNotification
 {
 public:
@@ -13,7 +15,7 @@ public:
     virtual void BreakPoint(const char * FileName, uint32_t LineNumber) = 0;
 
 	//Switch Keys
-	virtual bool GetSwitchKeys(void) const = 0;
+	virtual bool GetSwitchKeys(CSwitchKeys * keys) const = 0;
 
 	virtual void AppInitDone(void) = 0;
 };

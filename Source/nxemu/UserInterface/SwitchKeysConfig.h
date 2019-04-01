@@ -14,7 +14,7 @@ public:
 
 	enum { IDD = IDD_Settings_keys };
 
-	CKeysConfig(void);
+	CKeysConfig(CSwitchKeys * keys);
 	~CKeysConfig(void);
 
 	bool Display(void * ParentWindow);
@@ -32,4 +32,5 @@ private:
 	void SetKeyData(int nID, const CSwitchKeys::KeyData &data);
 
 	static INT_PTR CALLBACK StartDialogProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam);
+	CSwitchKeys * m_keys;
 };
