@@ -14,6 +14,7 @@ public:
 		KeyAreaKeyApplicationSource,
 		AesKeyGenerationSource,
 		AesKekGenerationSource,
+		TitlekekSource,
 		MasterKey,
 		AreaKey,
 	};

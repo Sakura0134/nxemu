@@ -42,6 +42,7 @@ LRESULT	CKeysConfig::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lPa
 		{ CSwitchKeys::KeyAreaKeyApplicationSource, IDC_KEY_AREA_KEY_APPLICATION_SOURCE },
 		{ CSwitchKeys::AesKeyGenerationSource, IDC_AES_KEY_GENERATION_SOURCE },
 		{ CSwitchKeys::AesKekGenerationSource, IDC_AES_KEK_GENERATION_SOURCE },
+		{ CSwitchKeys::TitlekekSource, IDC_TITLE_KEK_SOURCE },
 	};
 
 	for (size_t i = 0, n = sizeof(KeyItems) / sizeof(KeyItems[0]); i < n; i++)
@@ -96,6 +97,7 @@ LRESULT CKeysConfig::OnOkCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, B
 		{ CSwitchKeys::KeyAreaKeyApplicationSource, IDC_KEY_AREA_KEY_APPLICATION_SOURCE, "key area key application source Invalid" },
 		{ CSwitchKeys::AesKeyGenerationSource, IDC_AES_KEY_GENERATION_SOURCE, "Aes Key Generation Source Invalid" },
 		{ CSwitchKeys::AesKekGenerationSource, IDC_AES_KEK_GENERATION_SOURCE, "Aes Kek Generation Source Invalid" },
+		{ CSwitchKeys::TitlekekSource, IDC_TITLE_KEK_SOURCE, "Title Kek Source Invalid" },
 	};
 
 	struct 

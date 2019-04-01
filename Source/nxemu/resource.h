@@ -20,6 +20,7 @@
 #define IDC_KEY_AREA_KEY_APPLICATION_SOURCE 1094
 #define IDC_AES_KEY_GENERATION_SOURCE   1095
 #define IDC_AES_KEK_GENERATION_SOURCE   1096
+#define IDC_TITLE_KEK_SOURCE            1097
 
 // Next default values for new objects
 // 
@@ -27,7 +28,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        107
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1097
+#define _APS_NEXT_CONTROL_VALUE         1098
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
