@@ -3,6 +3,8 @@
 #include <nxemu-core\FileSystem\PartitionFilesystem.h>
 #include <nxemu-core\Machine\SwitchSystem.h>
 
+class NSP;
+
 class CXci
 {
 public:
@@ -43,6 +45,7 @@ private:
 
 	GamecardHeader m_Header;
 	CPartitionFilesystem * m_Partitions;
+	NSP * m_SecurePartition;
 	bool m_Valid;
 	CFile m_ReadFile;
 };

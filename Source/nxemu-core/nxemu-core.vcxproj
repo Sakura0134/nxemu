@@ -34,6 +34,7 @@
   <ItemGroup>
     <ClInclude Include="AppInit.h" />
     <ClInclude Include="FileFormat\formats.h" />
+    <ClInclude Include="FileFormat\nsp.h" />
     <ClInclude Include="FileFormat\xci.h" />
     <ClInclude Include="FileSystem\EncryptedFile.h" />
     <ClInclude Include="FileSystem\PartitionFilesystem.h" />
@@ -68,6 +69,7 @@
   <ItemGroup>
     <ClCompile Include="AppInit.cpp" />
     <ClCompile Include="FileFormat\formats.cpp" />
+    <ClCompile Include="FileFormat\nsp.cpp" />
     <ClCompile Include="FileFormat\xci.cpp" />
     <ClCompile Include="FileSystem\EncryptedFile.cpp" />
     <ClCompile Include="FileSystem\PartitionFilesystem.cpp" />

@@ -165,6 +165,9 @@
     <ClInclude Include="Util\AESCipher.h">
       <Filter>Header Files\Util</Filter>
     </ClInclude>
+    <ClInclude Include="FileFormat\nsp.h">
+      <Filter>Header Files\FileFormat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -244,6 +247,9 @@
     </ClCompile>
     <ClCompile Include="Util\AESCipher.cpp">
       <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="FileFormat\nsp.cpp">
+      <Filter>Source Files\FileFormat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
