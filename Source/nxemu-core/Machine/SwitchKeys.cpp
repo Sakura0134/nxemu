@@ -1,6 +1,8 @@
 #include <nxemu-core\Machine\SwitchKeys.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Settings\Settings.h>
+#include <nxemu-core\Util\AESCipher.h>
+#include <Common\StdString.h>
 #include <Common\sha256.h>
 
 CSwitchKeys::CSwitchKeys() :
@@ -204,6 +206,69 @@ bool CSwitchKeys::GetKey(KeyType Type, KeyData & key)
 	return false;
 }
 
+bool CSwitchKeys::GetKeyIndex(KeyType Type, uint32_t KeyIndex, KeyData & key)
+{
+	if (Type == AreaKey)
+	{
+		KeyData master_key, key_area_key_application_source, aes_kek_generation_source, aes_key_generation_source;
+		if (!GetKeyIndex(MasterKey, KeyIndex, master_key)) { return false; }
+		if (!GetKey(KeyAreaKeyApplicationSource, key_area_key_application_source)) { return false; }
+		if (!GetKey(AesKekGenerationSource, aes_kek_generation_source)) { return false; }
+		if (!GetKey(AesKeyGenerationSource, aes_key_generation_source)) { return false; }
+
+		KeyData AreaKey;
+		if (!GenerateKek(AreaKey, key_area_key_application_source, master_key, aes_kek_generation_source, aes_key_generation_source)) { return false; }
+
+		key = AreaKey;
+		return true;
+	}
+	if (Type == TitlekekKey)
+	{
+		KeyData master_key, title_kek_source;
+		if (!GetKeyIndex(MasterKey, KeyIndex, master_key)) { return false; }
+		if (!GetKey(TitlekekSource, title_kek_source)) { return false; }
+
+		CAESCipher Cipher(master_key.data(), (uint32_t)master_key.size(), CAESCipher::CIPHER_AES_128_ECB);
+		uint8_t Titlekek[0x10];
+		if (!Cipher.Decrypt(title_kek_source.data(), Titlekek, sizeof(Titlekek)))
+		{
+			return false;
+		}
+		key.resize(sizeof(Titlekek));
+		memcpy(key.data(), Titlekek, sizeof(Titlekek));
+		return true;
+	}
+
+	struct
+	{
+		KeyType type;
+		const char * key;
+	}
+	Items[] =
+	{
+		{ MasterKey, "master_key_%02d" },
+	};
+
+	for (size_t i = 0, n = sizeof(Items) / sizeof(Items[0]); i < n; i++)
+	{
+		if (Type == Items[i].type)
+		{
+			stdstr_f KeyName(Items[i].key, KeyIndex);
+			std::string KeyValue = m_KeyFile.GetString("", KeyName.c_str(), "");
+			KeyData data = KeyValueData(KeyValue);
+			if (!ValidKeyIndex(Type, KeyIndex, data))
+			{
+				return false;
+			}
+			key = data;
+			return true;
+		}
+	}
+
+	g_Notify->BreakPoint(__FILE__, __LINE__);
+	return false;
+}
+
 bool CSwitchKeys::ValidKey(KeyType type, const KeyData & key)
 {
 	struct 
@@ -333,3 +398,24 @@ CSwitchKeys::KeyData CSwitchKeys::KeyValueData(const std::string &KeyValue)
 	return data;
 }
 
+bool CSwitchKeys::GenerateKek(KeyData & key, const KeyData & Source, const KeyData & MasterKey, const KeyData & KekSeed, const KeyData & KeySeed)
+{
+	if (MasterKey.size() != 0x10) { return false; }
+	CAESCipher Cipher(&MasterKey[0], (uint32_t)MasterKey.size(), CAESCipher::CIPHER_AES_128_ECB);
+	unsigned char kek[0x10];
+	if (!Cipher.Decrypt(&KekSeed[0], kek, sizeof(kek)))
+	{
+		return false;
+	}
+
+	CAESCipher kek_ctx(kek, sizeof(kek), CAESCipher::CIPHER_AES_128_ECB);
+	unsigned char src_kek[0x10] = { 0 };
+	if (!kek_ctx.Decrypt(&Source[0], src_kek, (uint32_t)Source.size()))
+	{
+		return false;
+	}
+	CAESCipher key_ctx(src_kek, sizeof(src_kek), CAESCipher::CIPHER_AES_128_ECB);
+	key.resize(KeySeed.size());
+	if (!key_ctx.Decrypt(&KeySeed[0], &key[0], (uint32_t)KeySeed.size())) { return false; }
+	return true;
+}

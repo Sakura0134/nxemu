@@ -32,6 +32,7 @@ public:
 	void LoadKeysIndex(KeysIndex & keys);
 	bool SaveKeys(const Keys & keys);
 	bool SaveKeysIndex(const KeysIndex & keys);
+	bool GetKeyIndex(KeyType Type, uint32_t KeyIndex, KeyData & key);
 	bool GetKey(KeyType Type, KeyData & key);
 
 	static bool ValidKey(KeyType type, const KeyData & key);
@@ -41,6 +42,7 @@ private:
 	CSwitchKeys(const CSwitchKeys&);				// Disable copy constructor
 	CSwitchKeys& operator=(const CSwitchKeys&);		// Disable assignment
 
+	static bool GenerateKek(KeyData & key, const KeyData & Source, const KeyData & MasterKey, const KeyData & KekSeed, const KeyData & KeySeed);
 	static bool SaveKey(CIniFile & KeyFile, const KeyData & data, const char * name);
 	
 	KeyData KeyValueData (const std::string &KeyValue);
