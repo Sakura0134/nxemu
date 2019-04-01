@@ -123,10 +123,35 @@ bool CAESCipher::Transcode(const uint8_t * Source, uint8_t * Dest, uint32_t Size
 	return true;
 }
 
+bool CAESCipher::XTSTranscode(const uint8_t * Source, uint8_t * Dest, uint32_t Size, size_t SectorId, uint32_t SectorSize)
+{
+	for (std::size_t i = 0; i < Size; i += SectorSize) 
+	{
+		std::vector<uint8_t> iv = CalculateNintendoTweak(SectorId++);
+		SetIV(iv.data(), iv.size());
+		if (!Transcode(Source + i, Dest + i, SectorSize))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 void CAESCipher::SetIV(const uint8_t * iv, size_t iv_len)
 {
 	if (m_valid && m_CipherDec != NULL)
 	{
 		mbedtls_cipher_set_iv((mbedtls_cipher_context_t*)m_CipherDec, iv, iv_len);
 	}
+}
+
+std::vector<uint8_t> CAESCipher::CalculateNintendoTweak(size_t sector_id)
+{
+	std::vector<uint8_t> out(0x10);
+	for (uint32_t i = 0xF; i <= 0xF; i--)
+	{
+		out[i] = sector_id & 0xFF;
+		sector_id >>= 8;
+	}
+	return out;
 }
