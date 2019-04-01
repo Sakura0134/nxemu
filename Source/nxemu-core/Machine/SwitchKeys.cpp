@@ -25,6 +25,7 @@ void CSwitchKeys::LoadKeys(Keys & keys)
 		{ KeyAreaKeyApplicationSource, "key_area_key_application_source" },
 		{ AesKekGenerationSource, "aes_key_generation_source" },
 		{ AesKeyGenerationSource, "aes_kek_generation_source" },
+		{ TitlekekSource, "titlekek_source" },
 	};
 
 	CIniFile::strlist IniKeys;
@@ -96,6 +97,7 @@ bool CSwitchKeys::SaveKeys(const Keys & keys)
 		{ KeyAreaKeyApplicationSource, "key_area_key_application_source"},
 		{ AesKekGenerationSource, "aes_key_generation_source" },
 		{ AesKeyGenerationSource, "aes_kek_generation_source" },
+		{ TitlekekSource, "titlekek_source" },
 	};
 
 	for (size_t i = 0, n = sizeof(Items) / sizeof(Items[0]); i < n; i++)
