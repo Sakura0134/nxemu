@@ -8,7 +8,9 @@ NCA::NCA() :
 	m_Header({ 0 }),
 	m_Encrypted(false),
 	m_HasRightsId(false),
-	m_exefs(NULL)
+	m_exefs(NULL),
+	m_Romfs(NULL),
+	m_RomfsOffset(0)
 {
 }
 
@@ -19,6 +21,11 @@ NCA::~NCA()
 		delete m_dirs[i];
 	}
 	m_dirs.clear();
+	if (m_Romfs != NULL)
+	{
+		delete m_Romfs;
+		m_Romfs = NULL;
+	}
 }
 
 bool NCA::Load(CSwitchKeys & Keys, CFile & file, int64_t BaseOffset, int64_t FileOffset, uint64_t Size)
@@ -97,7 +104,10 @@ bool NCA::Load(CSwitchKeys & Keys, CFile & file, int64_t BaseOffset, int64_t Fil
 		WriteTrace(TraceGameFile, TraceVerbose, "Sections[%d]: filesystem_type = %s (%d)", i, NCASectionFilesystemTypeName(section.raw.header.filesystem_type), section.raw.header.filesystem_type);
 		if (section.raw.header.filesystem_type == NCASectionFilesystemType::ROMFS)
 		{
-			return false;
+			if (!ReadRomFSSection(Keys, file, BaseOffset + FileOffset, section, m_Header.section_tables[i]))
+			{
+				return false;
+			}
 		}
 		else if (section.raw.header.filesystem_type == NCASectionFilesystemType::PFS0)
 		{
@@ -132,6 +142,37 @@ bool NCA::DecodeHeaderData(CSwitchKeys & Keys, uint8_t * Source, uint8_t * Dest,
 
 	CAESCipher cipher(headr_key.data(), (uint32_t)headr_key.size(), CAESCipher::CIPHER_AES_128_XTS);
 	cipher.XTSTranscode(Source, Dest, size, sector_id, 0x200);
+	return true;
+}
+
+bool NCA::ReadRomFSSection(CSwitchKeys & Keys, CFile & file, int64_t Offset, const NCASectionHeader & section, const NCASectionTable & entry)
+{
+	enum { MEDIA_OFFSET_MULTIPLIER = 0x200 };
+	enum { IVFC_MAX_LEVEL = (sizeof(section.romfs.ivfc.levels) / sizeof(section.romfs.ivfc.levels[0])) };
+	const uint64_t BaseOffset = ((uint64_t)entry.media_offset * MEDIA_OFFSET_MULTIPLIER);
+	const uint64_t ivfc_offset = section.romfs.ivfc.levels[IVFC_MAX_LEVEL - 1].offset;
+	const uint64_t romfs_offset = BaseOffset + ivfc_offset;
+	const uint64_t romfs_size = section.romfs.ivfc.levels[IVFC_MAX_LEVEL - 1].size;
+
+	std::auto_ptr<CEncryptedFile> EncryptedFile(new CEncryptedFile(file));
+	if (!SetupEncryptedFile(*EncryptedFile.get(), Keys, section, romfs_offset))
+	{
+		return false;
+	}
+	
+	if (section.raw.header.crypto_type == NCASectionCryptoType::BKTR)
+	{
+		return false;
+	}
+	else
+	{
+		if (m_Romfs != NULL)
+		{
+			g_Notify->BreakPoint(__FILE__, __LINE__);
+		}
+		m_Romfs = EncryptedFile.release();
+		m_RomfsOffset = Offset + romfs_offset;
+	}
 	return true;
 }
 

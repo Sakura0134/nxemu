@@ -93,14 +93,40 @@ private:
 		uint8_t padding1[0x1B0];
 	};
 
+	struct IVFCLevel 
+	{
+		uint64_t offset;
+		uint64_t size;
+		uint32_t block_size;
+		uint32_t reserved;
+	};
+
+	struct IVFCHeader
+	{
+		uint32_t magic;
+		uint32_t magic_number;
+		uint8_t padding[0x08];
+		IVFCLevel levels[0x06];
+		uint8_t padding1[0x40];
+	};
+
+	struct RomFSSuperblock 
+	{
+		NCASectionHeaderBlock header_block;
+		IVFCHeader ivfc;
+		uint8_t padding[0x118];
+	};
+
 	union NCASectionHeader 
 	{
 		NCASectionRaw raw;
 		PFS0Superblock pfs0;
+		RomFSSuperblock romfs;
 	};
 
 	bool ValidHeader(const NCAHeader & header);
 	bool DecodeHeaderData(CSwitchKeys & Keys, uint8_t * Source, uint8_t * Dest, uint32_t size, size_t sector_id);
+	bool ReadRomFSSection(CSwitchKeys & Keys, CFile & file, int64_t Offset, const NCASectionHeader & section, const NCASectionTable & entry);
 	bool ReadPFS0Section(CSwitchKeys & Keys, CFile & file, int64_t Offset, const NCASectionHeader & section, const NCASectionTable & entry);
 	bool SetupEncryptedFile(CEncryptedFile & EncryptedFile, CSwitchKeys & Keys, const NCASectionHeader & section, size_t StartOffset);
 	bool GetTitleKey(CSwitchKeys & Keys, CSwitchKeys::KeyData & Key);
@@ -113,4 +139,6 @@ private:
 	bool m_HasRightsId;
 	CPartitionFilesystems m_dirs;
 	CPartitionFilesystem * m_exefs;
+	CEncryptedFile * m_Romfs;
+	uint64_t m_RomfsOffset;
 };
