@@ -102,7 +102,7 @@ bool IsNsoFile(const CPath & NsoFile)
     return true;
 }
 
-bool LoadNsoSegement(CProcessMemory & ProcessMemory, uint64_t LoadAddress, CFile & NsoFile, uint32_t CompressSize, uint32_t UnCompressedSize, uint32_t SegmentSize, uint32_t SegmentOffset, bool Compressed, PageTable::MemoryPermission MemoryPermission, bool Check, const uint8_t * Hash, CProcessMemory::MemoryType memType)
+bool LoadNsoSegement(CProcessMemory & ProcessMemory, uint64_t LoadAddress, CFile & NsoFile, uint32_t CompressSize, uint32_t UnCompressedSize, uint32_t SegmentSize, uint32_t SegmentOffset, bool Compressed, CPageTable::MemoryPermission MemoryPermission, bool Check, const uint8_t * Hash, CProcessMemory::MemoryType memType)
 {
     if (!Compressed)
     {
@@ -119,7 +119,7 @@ bool LoadNsoSegement(CProcessMemory & ProcessMemory, uint64_t LoadAddress, CFile
     {
         return false;
     }
-    uint8_t * Segment = ProcessMemory.MapMemory(LoadAddress, (uint32_t)PageTable::PageRoundUp(SegmentSize), MemoryPermission, memType);
+    uint8_t * Segment = ProcessMemory.MapMemory(LoadAddress, (uint32_t)CPageTable::PageRoundUp(SegmentSize), MemoryPermission, memType);
     if (Segment == NULL)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -169,9 +169,9 @@ bool CSwitchSystem::LoadNsoFile(const CPath & NsoFile, uint64_t base_addr, uint6
         return false;
     }
 
-    if (!LoadNsoSegement(m_ProcessMemory, base_addr + header.Text.MemoryOffset, ReadFile, header.TextCompressedSize, header.Text.DecompressedSize, header.Text.DecompressedSize, header.Text.FileOffset, header.Flags.TextCompressed, PageTable::ReadExecute, header.Flags.TextCheck, header.TextHash, CProcessMemory::MemoryType_CodeStatic)) { return false; }
-    if (!LoadNsoSegement(m_ProcessMemory, base_addr + header.rodata.MemoryOffset, ReadFile, header.RodataCompressedSize, header.rodata.DecompressedSize, header.rodata.DecompressedSize, header.rodata.FileOffset, header.Flags.RoDataCompressed, PageTable::Read, header.Flags.RoDataCheck, header.RodataHash, CProcessMemory::MemoryType_CodeMutable)) { return false; }
-    if (!LoadNsoSegement(m_ProcessMemory, base_addr + header.data.MemoryOffset, ReadFile, header.DataCompressedSize, header.data.DecompressedSize, header.data.DecompressedSize + header.BssSize, header.data.FileOffset, header.Flags.DataCompressed, PageTable::ReadWrite, header.Flags.DataCheck, header.DataHash, CProcessMemory::MemoryType_CodeMutable)) { return false; }
+    if (!LoadNsoSegement(m_ProcessMemory, base_addr + header.Text.MemoryOffset, ReadFile, header.TextCompressedSize, header.Text.DecompressedSize, header.Text.DecompressedSize, header.Text.FileOffset, header.Flags.TextCompressed, CPageTable::ReadExecute, header.Flags.TextCheck, header.TextHash, CProcessMemory::MemoryType_CodeStatic)) { return false; }
+    if (!LoadNsoSegement(m_ProcessMemory, base_addr + header.rodata.MemoryOffset, ReadFile, header.RodataCompressedSize, header.rodata.DecompressedSize, header.rodata.DecompressedSize, header.rodata.FileOffset, header.Flags.RoDataCompressed, CPageTable::Read, header.Flags.RoDataCheck, header.RodataHash, CProcessMemory::MemoryType_CodeMutable)) { return false; }
+    if (!LoadNsoSegement(m_ProcessMemory, base_addr + header.data.MemoryOffset, ReadFile, header.DataCompressedSize, header.data.DecompressedSize, header.data.DecompressedSize + header.BssSize, header.data.FileOffset, header.Flags.DataCompressed, CPageTable::ReadWrite, header.Flags.DataCheck, header.DataHash, CProcessMemory::MemoryType_CodeMutable)) { return false; }
 
     if (header.data.MemoryOffset < header.rodata.MemoryOffset || header.data.MemoryOffset < header.rodata.MemoryOffset)
     {
@@ -191,7 +191,7 @@ bool CSwitchSystem::LoadNsoFile(const CPath & NsoFile, uint64_t base_addr, uint6
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return false;
         }
-        end_addr = base_addr + header.data.MemoryOffset + PageTable::PageRoundUp(header.data.DecompressedSize + header.BssSize);
+        end_addr = base_addr + header.data.MemoryOffset + CPageTable::PageRoundUp(header.data.DecompressedSize + header.BssSize);
     }
     else
     {

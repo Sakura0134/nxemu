@@ -6,7 +6,7 @@
 class CProcessMemory
 {
 public:
-    typedef PageTable::MemoryPermission MemoryPermission;
+    typedef CPageTable::MemoryPermission MemoryPermission;
 
     enum MemoryType
     {

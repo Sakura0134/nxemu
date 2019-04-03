@@ -14,13 +14,13 @@ uint8_t * CProcessMemory::MapMemory(uint64_t Address, uint32_t Size, MemoryPermi
         return NULL;
     }
 
-    if ((Address & PageTable::PageMask) != 0)
+    if ((Address & CPageTable::PageMask) != 0)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return NULL;
     }
 
-    if ((Size & PageTable::PageMask) != 0)
+    if ((Size & CPageTable::PageMask) != 0)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return NULL;
