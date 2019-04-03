@@ -27,6 +27,7 @@ public:
     static uint64_t PageRoundDown(uint64_t Value);
     static uint64_t PageRoundUp(uint64_t Value);
 
+    static const char * MemoryPermissionName(MemoryPermission Perm);
 private:
     CPageTable(void);
     CPageTable(const CPageTable&);             // Disable copy constructor
