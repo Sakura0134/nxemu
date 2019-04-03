@@ -4,6 +4,7 @@
 #include <nxemu-core\Machine\SwitchSystem.h>
 
 class NSP;
+class NCA;
 
 class CXci
 {
@@ -46,6 +47,7 @@ private:
 	GamecardHeader m_Header;
 	CPartitionFilesystem * m_Partitions;
 	NSP * m_SecurePartition;
+	NCA * m_Program;
 	bool m_Valid;
 	CFile m_ReadFile;
 };

@@ -171,6 +171,47 @@ bool NSP::ReadNCAs(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset
 	return true;
 }
 
+NCA * NSP::GetNCA(uint64_t title_id, CNMT::ContentRecordType type) const
+{
+	NCAS_TITLEID::const_iterator title_id_iter = m_NcasTitleId.find(title_id);
+	if (title_id_iter == m_NcasTitleId.end())
+	{
+		return NULL;
+	}
+	NCAS_CONTENTTYPE::const_iterator type_iter = title_id_iter->second.find(type);
+	if (type_iter == title_id_iter->second.end())
+	{
+		return NULL;
+	}
+	return type_iter->second;
+}
+
+uint64_t NSP::GetProgramTitleID(void) const
+{
+	uint64_t TitleID = GetFirstTitleID();
+	if ((TitleID & 0x800) == 0)
+	{
+		return TitleID;
+	}
+
+	for (NCAS_TITLEID::const_iterator itr = m_NcasTitleId.begin(); itr != m_NcasTitleId.end(); itr++)
+	{
+		if ((itr->first & 0x800) == 0)
+		{
+			return itr->first;
+		}
+	}
+	return TitleID;
+}
+
+uint64_t NSP::GetFirstTitleID(void) const
+{
+	if (m_NcasTitleId.empty())
+	{
+		return 0;
+	}
+	return m_NcasTitleId.begin()->first;
+}
 
 uint8_t NSP::ToHexNibble(char c)
 {

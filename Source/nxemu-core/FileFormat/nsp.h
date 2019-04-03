@@ -17,6 +17,9 @@ public:
 	NSP(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset, const CPartitionFilesystem::VirtualFile * file);
 	~NSP();
 		
+	NCA * GetNCA(uint64_t title_id, CNMT::ContentRecordType type) const;
+	uint64_t GetProgramTitleID(void) const;
+
 	inline bool Valid(void) const { return m_Valid; }
 
 private:
@@ -28,6 +31,7 @@ private:
 
 	bool ReadTicketKeys(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset, const CPartitionFilesystem::VirtualFile * file);
 	bool ReadNCAs(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset, const CPartitionFilesystem::VirtualFile * file);
+	uint64_t GetFirstTitleID(void) const;
 	static uint8_t ToHexNibble(char c1);
 
 	CPartitionFilesystem * m_Files;

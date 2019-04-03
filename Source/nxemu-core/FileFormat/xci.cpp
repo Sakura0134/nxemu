@@ -9,7 +9,8 @@ CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
 	m_Valid(false),
 	m_Header({0}),
 	m_SecurePartition(NULL),
-	m_Partitions(NULL)
+	m_Partitions(NULL),
+    m_Program(NULL)
 {
 	WriteTrace(TraceGameFile, TraceInfo, "Start (XciFile: \"%s\")", (const char *)XciFile);
 	if (!XciFile.Exists())
@@ -74,6 +75,17 @@ CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
 		WriteTrace(TraceGameFile, TraceInfo, "Done");
 		return;
 	}
+	uint64_t ProgramTitleID = m_SecurePartition->GetProgramTitleID();
+	WriteTrace(TraceGameFile, TraceVerbose, "ProgramTitleID: 0x%I64u", ProgramTitleID);
+	m_Program = m_SecurePartition->GetNCA(ProgramTitleID, CNMT::ContentRecordType::Program);
+	if (m_Program == NULL)
+	{
+		WriteTrace(TraceGameFile, TraceError, "Failed to find Get NCA (ProgramTitleID: 0x%I64u, type: ContentRecordType::Program)", ProgramTitleID);
+		WriteTrace(TraceGameFile, TraceInfo, "Done");
+		return;
+	}
+	WriteTrace(TraceGameFile, TraceVerbose, "xci is valid");
+	m_Valid = true;
 	WriteTrace(TraceGameFile, TraceInfo, "Done");
 }
 
