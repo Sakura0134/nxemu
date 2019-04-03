@@ -80,17 +80,37 @@ private:
 		uint8_t padding[0xB8];
 	};
 
+	struct PFS0Superblock 
+	{
+		NCASectionHeaderBlock header_block;
+		uint8_t hash[0x20];
+		uint32_t size;
+		uint8_t padding[4];
+		uint64_t hash_table_offset;
+		uint64_t hash_table_size;
+		uint64_t pfs0_header_offset;
+		uint64_t pfs0_size;
+		uint8_t padding1[0x1B0];
+	};
+
 	union NCASectionHeader 
 	{
 		NCASectionRaw raw;
+		PFS0Superblock pfs0;
 	};
 
 	bool ValidHeader(const NCAHeader & header);
 	bool DecodeHeaderData(CSwitchKeys & Keys, uint8_t * Source, uint8_t * Dest, uint32_t size, size_t sector_id);
+	bool ReadPFS0Section(CSwitchKeys & Keys, CFile & file, int64_t Offset, const NCASectionHeader & section, const NCASectionTable & entry);
+	bool SetupEncryptedFile(CEncryptedFile & EncryptedFile, CSwitchKeys & Keys, const NCASectionHeader & section, size_t StartOffset);
+	bool GetTitleKey(CSwitchKeys & Keys, CSwitchKeys::KeyData & Key);
+	uint8_t GetCryptoRevision() const;
+	bool IsDirectoryExeFS(CPartitionFilesystem* dir);
 	static const char * NCASectionFilesystemTypeName(NCASectionFilesystemType type);
 
 	NCAHeader m_Header;
 	bool m_Encrypted;
 	bool m_HasRightsId;
 	CPartitionFilesystems m_dirs;
+	CPartitionFilesystem * m_exefs;
 };

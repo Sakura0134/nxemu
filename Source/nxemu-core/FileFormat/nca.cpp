@@ -1,17 +1,24 @@
 #include <nxemu-core\FileFormat\nca.h>
 #include <nxemu-core\Util\AESCipher.h>
+#include <nxemu-core\FileSystem\PartitionFilesystem.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
 
 NCA::NCA() :
 	m_Header({ 0 }),
 	m_Encrypted(false),
-	m_HasRightsId(false)
+	m_HasRightsId(false),
+	m_exefs(NULL)
 {
 }
 
 NCA::~NCA()
 {
+	for (size_t i = 0; i < m_dirs.size(); i++)
+	{
+		delete m_dirs[i];
+	}
+	m_dirs.clear();
 }
 
 bool NCA::Load(CSwitchKeys & Keys, CFile & file, int64_t BaseOffset, int64_t FileOffset, uint64_t Size)
@@ -94,7 +101,10 @@ bool NCA::Load(CSwitchKeys & Keys, CFile & file, int64_t BaseOffset, int64_t Fil
 		}
 		else if (section.raw.header.filesystem_type == NCASectionFilesystemType::PFS0)
 		{
-			return false;
+			if (!ReadPFS0Section(Keys, file, BaseOffset + FileOffset, section, m_Header.section_tables[i]))
+			{
+				return false;
+			}
 		}
 		else
 		{
@@ -122,6 +132,132 @@ bool NCA::DecodeHeaderData(CSwitchKeys & Keys, uint8_t * Source, uint8_t * Dest,
 
 	CAESCipher cipher(headr_key.data(), (uint32_t)headr_key.size(), CAESCipher::CIPHER_AES_128_XTS);
 	cipher.XTSTranscode(Source, Dest, size, sector_id, 0x200);
+	return true;
+}
+
+bool NCA::ReadPFS0Section(CSwitchKeys & Keys, CFile & file, int64_t Offset, const NCASectionHeader & section, const NCASectionTable & entry)
+{
+	WriteTrace(TraceGameFile, TraceVerbose, "Start (Offset: 0x%I64u)", Offset);
+	enum { MEDIA_OFFSET_MULTIPLIER = 0x200 };
+	uint64_t MediaOffset = ((uint64_t)entry.media_offset * MEDIA_OFFSET_MULTIPLIER) + section.pfs0.pfs0_header_offset;
+	uint64_t MediaSize = MEDIA_OFFSET_MULTIPLIER * (entry.media_end_offset - entry.media_offset);
+	WriteTrace(TraceGameFile, TraceVerbose, "MediaOffset: 0x%I64u MediaSize: 0x%I64u", MediaOffset, MediaSize);
+
+	CEncryptedFile EncryptedFile(file);
+	if (!SetupEncryptedFile(EncryptedFile, Keys, section, MediaOffset))
+	{
+		WriteTrace(TraceGameFile, TraceError, "failed to setup encrypted file");
+		WriteTrace(TraceGameFile, TraceVerbose, "Done (res: false)");
+		return false;
+	}
+
+	std::auto_ptr<CPartitionFilesystem> npfs(new CPartitionFilesystem(EncryptedFile, MediaOffset, Offset, MediaSize));
+	if (!npfs->Valid())
+	{
+		WriteTrace(TraceGameFile, TraceError, "npfs is invalid");
+		WriteTrace(TraceGameFile, TraceVerbose, "Done (res: false)");
+		return false;
+	}
+	m_dirs.push_back(npfs.release());
+	if (IsDirectoryExeFS(m_dirs.back()))
+	{
+		WriteTrace(TraceGameFile, TraceError, "directory is exe fs, setting m_exefs");
+		m_exefs = m_dirs.back();
+	}
+	WriteTrace(TraceGameFile, TraceVerbose, "Done (res: true)");
+	return true;
+}
+
+bool NCA::SetupEncryptedFile(CEncryptedFile & EncryptedFile, CSwitchKeys & Keys, const NCASectionHeader & section, size_t StartOffset)
+{
+	if (!m_Encrypted)
+	{
+		return true;
+	}
+
+	CSwitchKeys::KeyData Key;
+	std::vector<uint8_t> iv(16);
+	switch (section.raw.header.crypto_type)
+	{
+	case NCASectionCryptoType::NONE:
+		return true;
+	case NCASectionCryptoType::CTR:
+	case NCASectionCryptoType::BKTR:
+		if (m_HasRightsId)
+		{
+			if (!GetTitleKey(Keys, Key))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			CSwitchKeys::KeyData AreaKey;
+			if (!Keys.GetKeyIndex(CSwitchKeys::AreaKey, GetCryptoRevision(), AreaKey))
+			{
+				g_Notify->BreakPoint(__FILE__, __LINE__);
+				return false;
+			}
+			std::vector<uint8_t> key_area(sizeof(m_Header.key_area));
+			CAESCipher cipher(AreaKey.data(), (uint32_t)AreaKey.size(), CAESCipher::CIPHER_AES_128_ECB);
+			cipher.Transcode(m_Header.key_area, key_area.data(), (uint32_t)key_area.size());
+
+			Key.resize(0x10);
+			memcpy(Key.data(), &key_area[0x20], Key.size());
+		}
+		for (uint32_t i = 0; i < 8; i++)
+		{
+			iv[i] = section.raw.section_ctr[0x8 - i - 1];
+		}
+		EncryptedFile.SetEncrypted(Key.data(), Key.size(), iv, StartOffset);
+		return true;
+	}
+	g_Notify->BreakPoint(__FILE__, __LINE__);
+	return false;
+}
+
+bool NCA::GetTitleKey(CSwitchKeys & Keys, CSwitchKeys::KeyData & Key)
+{
+	if (!Keys.GetTitleKey(m_Header.rights_id, sizeof(m_Header.rights_id), Key))
+	{
+		g_Notify->BreakPoint(__FILE__, __LINE__);
+		return false;
+	}
+	CSwitchKeys::KeyData TitlekekKey;
+	if (!Keys.GetKeyIndex(CSwitchKeys::TitlekekKey, GetCryptoRevision(), TitlekekKey))
+	{
+		g_Notify->BreakPoint(__FILE__, __LINE__);
+		return false;
+	}
+
+	CAESCipher cipher(TitlekekKey.data(), (uint32_t)TitlekekKey.size(), CAESCipher::CIPHER_AES_128_ECB);
+	if (!cipher.Transcode(Key.data(), Key.data(), (uint32_t)Key.size()))
+	{
+		return false;
+	}
+	return true;
+}
+
+uint8_t NCA::GetCryptoRevision() const
+{
+	uint8_t master_key_id = m_Header.crypto_type_2 > m_Header.crypto_type ? m_Header.crypto_type_2 : m_Header.crypto_type;
+	return master_key_id > 0 ? master_key_id - 1 : master_key_id;
+}
+
+bool NCA::IsDirectoryExeFS(CPartitionFilesystem* dir)
+{
+	if (dir == NULL)
+	{
+		return false;
+	}
+	if (dir->GetFile("main") == NULL)
+	{
+		return false;
+	}
+	if (dir->GetFile("main.npdm") == NULL)
+	{
+		return false;
+	}
 	return true;
 }
 
