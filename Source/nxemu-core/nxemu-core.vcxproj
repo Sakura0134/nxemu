@@ -33,6 +33,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AppInit.h" />
+    <ClInclude Include="FileFormat\cnmt.h" />
     <ClInclude Include="FileFormat\formats.h" />
     <ClInclude Include="FileFormat\nca.h" />
     <ClInclude Include="FileFormat\nsp.h" />
@@ -69,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp" />
+    <ClCompile Include="FileFormat\cnmt.cpp" />
     <ClCompile Include="FileFormat\formats.cpp" />
     <ClCompile Include="FileFormat\nca.cpp" />
     <ClCompile Include="FileFormat\nsp.cpp" />

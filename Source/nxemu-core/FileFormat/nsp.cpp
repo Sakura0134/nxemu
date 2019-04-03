@@ -1,6 +1,9 @@
 #include <nxemu-core\FileFormat\nsp.h>
 #include <nxemu-core\FileFormat\nca.h>
+#include <nxemu-core\FileFormat\cnmt.h>
+#include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
+#include <Common\StdString.h>
 
 NSP::NSP(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset, const CPartitionFilesystem::VirtualFile * file) :
 	m_Valid(false),
@@ -127,7 +130,41 @@ bool NSP::ReadNCAs(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset
 				WriteTrace(TraceGameFile, TraceVerbose, "ignoring file \"%s\"", itr0->Name.c_str());
 				continue;
 			}
-			return false;
+
+			size_t CnmtOffset = FileOffset + itr->Offset + Dirs[0]->Offset();
+			CNMT cnmt(EncryptedFile, CnmtOffset, *itr0);
+			WriteTrace(TraceGameFile, TraceVerbose, "Loading \"%s\", CnmtOffset: 0x%I64u cnmt.GetTitleID(): 0x%I64u", itr0->Name.c_str(), CnmtOffset, cnmt.GetTitleID());
+			std::pair<NCAS_TITLEID::iterator, bool> res = m_NcasTitleId.insert(NCAS_TITLEID::value_type(cnmt.GetTitleID(), NCAS_CONTENTTYPE()));
+			if (res.second)
+			{
+				NCAS_CONTENTTYPE & content = res.first->second;
+				content[CNMT::Meta] = nca;
+
+				const CNMT::ContentRecords & records = cnmt.GetContentRecords();
+				for (CNMT::ContentRecords::const_iterator record_itr = records.begin(); record_itr != records.end(); record_itr++)
+				{
+					std::string id_string;
+					for (uint32_t i = 0, n = sizeof(record_itr->nca_id); i < n; i++)
+					{
+						id_string += stdstr_f("%02x", record_itr->nca_id[i]);
+					}
+					stdstr_f NextFileName("%s.nca", id_string.c_str());
+					const CPartitionFilesystem::VirtualFile * NextFile = m_Files->GetFile(NextFileName.c_str());
+					if (NextFile == NULL)
+					{
+						WriteTrace(TraceGameFile, TraceVerbose, "ignoring \"%s\", could not be found in the files", NextFileName.c_str());
+						continue;
+					}
+
+					WriteTrace(TraceGameFile, TraceVerbose, "Loading \"%s\", Type: %d Offset: 0x%I64u Size: 0x%I64u", NextFileName.c_str(), record_itr->type, NextFile->Offset, NextFile->Size);
+					NCA * next_nca = new NCA;
+					if (next_nca->Load(Keys, ReadFile, FileOffset, NextFile->Offset, NextFile->Size))
+					{
+						m_Ncas.push_back(next_nca);
+						content[(CNMT::ContentRecordType)record_itr->type] = next_nca;
+					}
+				}
+			}
 		}
 	}
 	WriteTrace(TraceGameFile, TraceVerbose, "Done (res: True)");
