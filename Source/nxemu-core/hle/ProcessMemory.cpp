@@ -65,6 +65,26 @@ bool CProcessMemory::ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len)
     return true;
 }
 
+bool CProcessMemory::ReadCString(uint64_t Addr, std::string & value)
+{
+    MemoryMap::const_iterator itr = m_MemoryMap.lower_bound(Addr);
+    if (itr != m_MemoryMap.end() && Addr >= itr->second.start_addr && Addr < itr->first)
+    {
+        uint64_t StartIndex = Addr - itr->second.start_addr;
+        for (uint64_t index = StartIndex, endIndex = itr->first - itr->second.start_addr; index < endIndex; index++)
+        {
+            if (itr->second.memory[index] != 0)
+            {
+                continue;
+            }
+            value = std::string((const char *)&itr->second.memory[StartIndex], index - StartIndex);
+            return true;
+        }
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
 bool CProcessMemory::FindAddressMemory(uint64_t Addr, uint32_t len, void *& buffer)
 {
     MemoryMap::const_iterator itr = m_MemoryMap.lower_bound(Addr);
