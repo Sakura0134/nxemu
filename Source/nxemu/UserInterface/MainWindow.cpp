@@ -1,16 +1,19 @@
-#include "MainWindow.h"
-#include <Common\path.h>
-#include <Common\StdString.h>
 #include <nxemu-core\Machine\SwitchRom.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-Application.h>
+#include <nxemu-core\SystemGlobals.h>
 #include <nxemu\Settings\UISettings.h>
+#include <nxemu\UserInterface\MainWindow.h>
 #include <nxemu\UserInterface\SwitchKeysConfig.h>
+#include <Common\path.h>
+#include <Common\StdString.h>
 #include <Windows.h>
 
 CMainGui::CMainGui(const wchar_t * WindowTitle) :
     m_hWnd(NULL),
+    m_hStatusWnd(NULL),
     m_ClassName(L"NXEmu"),
-    m_Menu(this)
+    m_Menu(this),
+    m_ThreadId(GetCurrentThreadId())
 {
     RegisterWinClass();
     Create(WindowTitle);
@@ -84,6 +87,20 @@ void CMainGui::Show(bool Visible)
 LRESULT CMainGui::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
     ResetMenu();
+
+    m_hStatusWnd = (HWND)CreateStatusWindow(WS_CHILD | WS_VISIBLE, "", m_hWnd, StatusBarID);
+    SendMessage((HWND)m_hStatusWnd, SB_SETTEXT, 0, (LPARAM)"");
+
+    RECT clrect, swrect;
+    GetClientRect(m_hWnd, &clrect);
+    GetClientRect((HWND)m_hStatusWnd, &swrect);
+
+    int Parts[2];
+    Parts[0] = (Width - (int)(clrect.right * 0.25));
+    Parts[1] = Width;
+
+    SendMessage((HWND)m_hStatusWnd, SB_SETPARTS, 2, (LPARAM)&Parts[0]);
+    MoveWindow((HWND)m_hStatusWnd, 0, clrect.bottom - swrect.bottom, Width, Height, TRUE);
 
     int X = (GetSystemMetrics(SM_CXSCREEN) - Width) / 2;
     int	Y = (GetSystemMetrics(SM_CYSCREEN) - Height) / 2;
@@ -169,4 +186,27 @@ LRESULT CMainGui::MainGui_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 void CMainGui::ResetMenu()
 {
     SetMenu(m_hWnd, m_Menu.GetHandle());
+}
+
+void CMainGui::SetStatusText(int Panel, const wchar_t * Text)
+{
+    static wchar_t Message[2][500];
+    if (Panel >= 2)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    wchar_t * Msg = Message[Panel];
+
+    memset(Msg, 0, sizeof(Message[0]));
+    _snwprintf(Msg, sizeof(Message[0]) / sizeof(Message[0][0]), L"%s", Text);
+    Msg[(sizeof(Message[0]) / sizeof(Message[0][0])) - 1] = 0;
+    if (GetCurrentThreadId() == m_ThreadId)
+    {
+        SendMessageW((HWND)m_hStatusWnd, SB_SETTEXTW, Panel, (LPARAM)Msg);
+    }
+    else 
+    {
+        PostMessageW((HWND)m_hStatusWnd, SB_SETTEXTW, Panel, (LPARAM)Msg);
+    }
 }

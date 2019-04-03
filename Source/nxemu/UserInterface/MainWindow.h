@@ -13,6 +13,8 @@ class CMainGui :
         Height = 480,
     };
 
+    enum { StatusBarID = 400 };
+
     BEGIN_MSG_MAP(CMainGui)
         MESSAGE_HANDLER(WM_CREATE, OnCreate)
         MESSAGE_HANDLER(WM_DESTROY, OnDestory)
@@ -29,6 +31,8 @@ public:
     WPARAM ProcessAllMessages(void);
     void ResetMenu();
     void Show(bool ShowWindow); //Show or Hide the current window
+    void SetStatusText(int Panel, const wchar_t * Text);
+	HWND hWnd(void) const { return m_hWnd; }
 
 private:
     CMainGui(void);                       // Disable default constructor
@@ -50,6 +54,7 @@ private:
 
     CMainMenu m_Menu;
 
-    HWND m_hWnd;
+    HWND m_hWnd, m_hStatusWnd;
     std::wstring m_ClassName;
+    uint32_t m_ThreadId;
 };
