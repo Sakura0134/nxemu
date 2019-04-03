@@ -40,6 +40,7 @@ public:
         
     uint8_t * MapMemory(uint64_t Address, uint32_t Size, MemoryPermission Perm, MemoryType type);
     bool Read32(uint64_t Addr, uint32_t & value);
+    bool Read64(uint64_t Addr, uint64_t & value);
     bool ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len);
         
 private:

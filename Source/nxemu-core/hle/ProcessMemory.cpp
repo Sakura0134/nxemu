@@ -46,6 +46,13 @@ bool CProcessMemory::Read32(uint64_t Addr, uint32_t & value)
     return ReadBytes(Addr, (uint8_t *)&value, sizeof(value));
 }
 
+bool CProcessMemory::Read64(uint64_t Addr, uint64_t & value)
+{
+    if ((Addr & 7) != 0) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+
+    return ReadBytes(Addr, (uint8_t *)&value, sizeof(value));
+}
+
 bool CProcessMemory::ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len)
 {
     void * ReadBuffer = NULL;
