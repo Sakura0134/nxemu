@@ -2,9 +2,13 @@
 #include <nxemu-core\Machine\SwitchKeys.h>
 #include <nxemu-core\FileSystem\PartitionFilesystem.h>
 
+class NCA;
+
 class NSP
 {
 public:
+	typedef std::vector<NCA *> NCAS;
+
 	NSP(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset, const CPartitionFilesystem::VirtualFile * file);
 	~NSP();
 		
@@ -18,8 +22,10 @@ private:
 	typedef CPartitionFilesystem::VirtualFiles VirtualFiles;
 
 	bool ReadTicketKeys(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset, const CPartitionFilesystem::VirtualFile * file);
+	bool ReadNCAs(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset, const CPartitionFilesystem::VirtualFile * file);
 	static uint8_t ToHexNibble(char c1);
 
 	CPartitionFilesystem * m_Files;
+	NCAS m_Ncas;
 	bool m_Valid;
 };

@@ -1,4 +1,5 @@
 #include <nxemu-core\FileFormat\nsp.h>
+#include <nxemu-core\FileFormat\nca.h>
 #include <nxemu-core\Trace.h>
 
 NSP::NSP(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset, const CPartitionFilesystem::VirtualFile * file) :
@@ -15,12 +16,21 @@ NSP::NSP(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset, const CP
 	}
 
 	if (!ReadTicketKeys(Keys, ReadFile, PartitionOffset, file)) { return;  }
+	if (!ReadNCAs(Keys, ReadFile, PartitionOffset, file)) { return; }
+	m_Valid = true;
     WriteTrace(TraceGameFile, TraceInfo, "Done");
 }
 
 NSP::~NSP()
 {
     WriteTrace(TraceGameFile, TraceInfo, "Start");
+
+	for (size_t i = 0; i < m_Ncas.size(); i++)
+	{
+		delete m_Ncas[i];
+	}
+	m_Ncas.clear();
+
 	if (m_Files != NULL)
 	{
 		delete m_Files;
@@ -70,6 +80,55 @@ bool NSP::ReadTicketKeys(CSwitchKeys & Keys, CFile & ReadFile, int64_t Partition
 		}
 		WriteTrace(TraceGameFile, TraceVerbose, "RightsID: %s key: %02X%02X%02X%02X%02X....", Name.c_str(), Key[0], Key[1], Key[2], Key[3], Key[4]);
 		Keys.SetTitleKey(rights_id.data(), rights_id.size(), Key);
+	}
+	WriteTrace(TraceGameFile, TraceVerbose, "Done (res: True)");
+	return true;
+}
+
+bool NSP::ReadNCAs(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset, const CPartitionFilesystem::VirtualFile * file)
+{
+	WriteTrace(TraceGameFile, TraceVerbose, "Start (Name: \"%s\" PartitionOffset: 0x%I64u )", file->Name.c_str(), PartitionOffset);
+
+	const VirtualFiles & Files = m_Files->GetFiles();
+	size_t FileOffset = PartitionOffset + file->Offset;
+	for (VirtualFiles::const_iterator itr = Files.begin(); itr != Files.end(); itr++)
+	{
+		size_t NameLen = itr->Name.length();
+		if (NameLen < 9 || strcmp(&itr->Name[NameLen - 9], ".cnmt.nca") != 0)
+		{
+			WriteTrace(TraceGameFile, TraceVerbose, "ignoring \"%s\"", itr->Name.c_str());
+			continue;
+		}
+		WriteTrace(TraceGameFile, TraceVerbose, "Loading \"%s\"", itr->Name.c_str());
+		NCA * nca = new NCA;
+		if (!nca->Load(Keys, ReadFile, FileOffset, itr->Offset, itr->Size))
+		{
+			WriteTrace(TraceGameFile, TraceError, "Failed to load \"%s\"", itr->Name.c_str());
+			delete nca;
+			WriteTrace(TraceGameFile, TraceVerbose, "Done (res: false)");
+			return false;
+		}
+		m_Ncas.push_back(nca);
+
+		const NCA::CPartitionFilesystems Dirs = nca->Dirs();
+		if (Dirs.size() < 1)
+		{
+			WriteTrace(TraceGameFile, TraceVerbose, "No directories in \"%s\"", itr->Name.c_str());
+			continue;
+		}
+
+		const VirtualFiles & Files0 = Dirs[0]->GetFiles();
+		CEncryptedFile & EncryptedFile = Dirs[0]->EncryptedFile();
+		for (VirtualFiles::const_iterator itr0 = Files0.begin(); itr0 != Files0.end(); itr0++)
+		{
+			NameLen = itr0->Name.length();
+			if (NameLen < 5 || strcmp(&itr0->Name[NameLen - 5], ".cnmt") != 0)
+			{
+				WriteTrace(TraceGameFile, TraceVerbose, "ignoring file \"%s\"", itr0->Name.c_str());
+				continue;
+			}
+			return false;
+		}
 	}
 	WriteTrace(TraceGameFile, TraceVerbose, "Done (res: True)");
 	return true;
