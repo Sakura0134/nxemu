@@ -1,7 +1,9 @@
 #include <nxemu-core\Machine\SwitchSystem.h>
+#include <nxemu-core\Machine\PageTable.h>
 #include <nxemu-core\FileFormat\formats.h>
 #include <nxemu-core\FileFormat\xci.h>
 #include <nxemu-core\FileFormat\nca.h>
+#include <nxemu-core\FileFormat\ProgramMetadata.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
 #include <Common\path.h>
@@ -85,6 +87,23 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
 	{
 		return false;
 	}
+	uint64_t exefs_offset = exefs->StartAddress() + exefs->Offset();
+	CProgramMetadata metadata(exefs_offset, exefs->EncryptedFile(), npdm);
+
+	uint64_t end_addr, base_addr = CProcessMemory::GetAddressSpaceBaseAddr();
+	if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("rtld"), base_addr, end_addr)) { return false; }
+	if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("main"), CPageTable::PageRoundUp(end_addr), end_addr)) { return false; }
+	const CPartitionFilesystem::VirtualFiles Files = exefs->GetFiles();
+	for (size_t i = 0; i < Files.size(); i++)
+	{
+		if (strnicmp("subsdk", Files[i].Name.c_str(), 6) != 0)
+		{
+			continue;
+		}
+		if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile(Files[i].Name.c_str()), CPageTable::PageRoundUp(end_addr), end_addr)) { return false; }
+	}
+	if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("sdk"), CPageTable::PageRoundUp(end_addr), end_addr)) { return false; }
+
 	g_Notify->BreakPoint(__FILE__, __LINE__);
 	WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
 	return false;

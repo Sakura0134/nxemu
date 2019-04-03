@@ -18,6 +18,7 @@ public:
 
 	const VirtualFile * GetFile(const char * Name) const;
 	inline uint64_t Offset(void) const { return m_Offset; }
+	inline uint64_t StartAddress(void) const { return m_StartAddress; }
 	inline const VirtualFiles & GetFiles(void) const { return m_Files; }
 	inline CEncryptedFile & EncryptedFile() { return m_EncryptedFile; }
 	inline bool Valid() const { return m_Valid; }

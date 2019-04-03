@@ -174,6 +174,9 @@
     <ClInclude Include="FileFormat\cnmt.h">
       <Filter>Header Files\FileFormat</Filter>
     </ClInclude>
+    <ClInclude Include="FileFormat\ProgramMetadata.h">
+      <Filter>Header Files\FileFormat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -261,6 +264,9 @@
       <Filter>Source Files\FileFormat</Filter>
     </ClCompile>
     <ClCompile Include="FileFormat\cnmt.cpp">
+      <Filter>Source Files\FileFormat</Filter>
+    </ClCompile>
+    <ClCompile Include="FileFormat\ProgramMetadata.cpp">
       <Filter>Source Files\FileFormat</Filter>
     </ClCompile>
   </ItemGroup>
