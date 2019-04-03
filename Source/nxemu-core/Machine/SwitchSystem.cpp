@@ -1,6 +1,7 @@
 #include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\FileFormat\formats.h>
 #include <nxemu-core\FileFormat\xci.h>
+#include <nxemu-core\FileFormat\nca.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
 #include <Common\path.h>
@@ -9,12 +10,17 @@
 CSwitchSystem::CSwitchSystem() :
     m_Kernel(*this,m_ProcessMemory),
     m_EndEmulation(false),
-    m_EmulationThread(stEmulationThread)
+    m_EmulationThread(stEmulationThread),
+	m_Xci(NULL)
 {
 }
 
 CSwitchSystem::~CSwitchSystem() 
 {
+	if (m_Xci)
+	{
+		delete m_Xci;
+	}
 }
 
 void CSwitchSystem::StartEmulation(void)
@@ -61,6 +67,22 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
 	{
 		WriteTrace(TraceGameFile, TraceError, "xci is %s", xci.get() == NULL ? "NULL" : "Not Valid");
 		WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
+		return false;
+	}
+	m_Xci = xci.release();
+	NCA * Program = m_Xci->Program();
+	if (Program == NULL)
+	{
+		return false;
+	}
+	CPartitionFilesystem * exefs = Program->exefs();
+	if (exefs == NULL)
+	{
+		return false;
+	}
+	const CPartitionFilesystem::VirtualFile * npdm = exefs->GetFile("main.npdm");
+	if (npdm == NULL)
+	{
 		return false;
 	}
 	g_Notify->BreakPoint(__FILE__, __LINE__);

@@ -13,6 +13,7 @@ public:
 	~CXci();
 
 	static bool IsXciFile(const CPath & XciFile);
+	inline NCA * Program(void) const { return m_Program; }
 	inline bool Valid(void) const { return m_Valid; }
 
 private:

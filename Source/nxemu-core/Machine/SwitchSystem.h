@@ -6,6 +6,8 @@
 #include <nxemu-core\hle\SystemThread.h>
 #include <nxemu-core\Machine\SwitchKeys.h>
 
+class CXci;
+
 class CSwitchSystem 
 {
 public:
@@ -30,4 +32,5 @@ private:
     bool m_EndEmulation;
     CThread m_EmulationThread;
 	CSwitchKeys m_Keys;
+	CXci * m_Xci;
 };
