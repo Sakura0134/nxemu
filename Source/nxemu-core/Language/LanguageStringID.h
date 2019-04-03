@@ -16,4 +16,6 @@ enum LanguageStringID
     MENU_DEBUG_LOGGING = 1083,
 
     MSG_SELECT_GAME_DIR = 2000,
+    MSG_LOADING = 2001,
+
 };

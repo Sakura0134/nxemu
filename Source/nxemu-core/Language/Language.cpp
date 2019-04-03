@@ -29,7 +29,8 @@ void CLanguage::LoadDefaultStrings(void)
 	DefaultString(MENU_OPTIONS, "&Options");
 	DefaultString(MENU_SWITCH_KEYS, "Switch &Keys...");
 
-    DefaultString(MSG_SELECT_GAME_DIR, "Select directory to load");
+	DefaultString(MSG_SELECT_GAME_DIR, "Select directory to load");
+    DefaultString(MSG_LOADING, "Loading");
 }
 
 void CLanguage::DefaultString(LanguageStringID StringID, const char * string)
