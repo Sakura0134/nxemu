@@ -57,8 +57,7 @@ bool CSwitchSystem::LoadGame(const char * GamePath)
 		g_Notify->BreakPoint(__FILE__, __LINE__);
 		return false;
 	}
-	g_Notify->BreakPoint(__FILE__, __LINE__);
-	return false;
+	return true;
 }
 
 bool CSwitchSystem::LoadXCI(const CPath & XciFile)
@@ -103,9 +102,9 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
 		if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile(Files[i].Name.c_str()), CPageTable::PageRoundUp(end_addr), end_addr)) { return false; }
 	}
 	if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("sdk"), CPageTable::PageRoundUp(end_addr), end_addr)) { return false; }
+	g_Notify->DisplayMessage(0, GS(MSG_LOADED_XCI));
 
-	g_Notify->BreakPoint(__FILE__, __LINE__);
-	WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
-	return false;
+	WriteTrace(TraceGameFile, TraceInfo, "Done (res: true)");
+	return true;
 }
 

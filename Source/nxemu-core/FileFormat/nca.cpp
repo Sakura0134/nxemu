@@ -202,7 +202,7 @@ bool NCA::ReadPFS0Section(CSwitchKeys & Keys, CFile & file, int64_t Offset, cons
 	m_dirs.push_back(npfs.release());
 	if (IsDirectoryExeFS(m_dirs.back()))
 	{
-		WriteTrace(TraceGameFile, TraceError, "directory is exe fs, setting m_exefs");
+		WriteTrace(TraceGameFile, TraceVerbose, "directory is exe fs, setting m_exefs");
 		m_exefs = m_dirs.back();
 	}
 	WriteTrace(TraceGameFile, TraceVerbose, "Done (res: true)");

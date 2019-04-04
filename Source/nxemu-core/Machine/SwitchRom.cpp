@@ -22,7 +22,7 @@ bool LaunchSwitchRom(const char * GamePath)
 		g_Notify->BreakPoint(__FILE__, __LINE__);
 		return false;
 	}
-    g_BaseMachine = SwitchSystem.release();
-    g_BaseMachine->StartEmulation();
+    //g_BaseMachine = SwitchSystem.release();
+    //g_BaseMachine->StartEmulation();
     return true;
 }
