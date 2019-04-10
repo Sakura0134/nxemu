@@ -3,10 +3,11 @@
 //////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 #ifdef _WIN32
+#pragma warning(push)
+#pragma warning(disable : 4091) // warning C4091: 'typedef ': ignored on left of 'tagGPFIDL_FLAGS' when no variable is declared
+#pragma warning(disable : 4996) // warning C4091: 'typedef ': ignored on left of 'tagGPFIDL_FLAGS' when no variable is declared
 #include <Shlobj.h>
 #include <dos.h>
-#pragma warning(push)
-#pragma warning(disable : 4996) // warning C4091: 'typedef ': ignored on left of 'tagGPFIDL_FLAGS' when no variable is declared
 #include <CommDlg.h>
 #pragma warning(pop)
 #else
@@ -317,7 +318,7 @@ void CPath::GetComponents(std::string* pDrive, std::string* pDirectory, std::str
     const char * DriveDir = strrchr(BasePath, DRIVE_DELIMITER);
     if (DriveDir != NULL)
     {
-        int len = sizeof(buff_dir) < (DriveDir - BasePath) ? sizeof(buff_drive) : DriveDir - BasePath;
+        size_t len = sizeof(buff_dir) < (DriveDir - BasePath) ? sizeof(buff_drive) : DriveDir - BasePath;
         strncpy(buff_drive, BasePath, len);
         BasePath += len + 1;
     }
@@ -325,7 +326,7 @@ void CPath::GetComponents(std::string* pDrive, std::string* pDirectory, std::str
     const char * last = strrchr(BasePath, DIRECTORY_DELIMITER);
     if (last != NULL)
     {
-        int len = sizeof(buff_dir) < (last - BasePath) ? sizeof(buff_dir) : last - BasePath;
+        size_t len = sizeof(buff_dir) < (last - BasePath) ? sizeof(buff_dir) : last - BasePath;
         if (len > 0)
         {
             strncpy(buff_dir, BasePath, len);
@@ -1039,7 +1040,7 @@ bool CPath::SelectFile(void * hwndOwner, const char * InitialDir, const char * F
     openfilename.nMaxFile = MAX_PATH;
     openfilename.Flags = OFN_HIDEREADONLY | (FileMustExist ? OFN_FILEMUSTEXIST : 0);
 
-    bool res = GetOpenFileName(&openfilename);
+    bool res = GetOpenFileName(&openfilename) != 0;
     if (CPath(CURRENT_DIRECTORY) != CurrentDir)
     {
         CurrentDir.ChangeDirectory();
