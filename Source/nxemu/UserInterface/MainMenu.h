@@ -11,15 +11,15 @@ public:
     enum MainMenuID
     {
         //File Menu
-        ID_FILE_OPEN_ROM,
+        ID_FILE_OPEN_GAME,
         ID_FILE_EXIT,
 
 		//Options Menu
 		ID_OPTIONS_SWITCH_KEYS,
 		
-		//Recent Dir
-        ID_RECENT_DIR_START,
-        ID_RECENT_DIR_END = ID_RECENT_DIR_START + 20,
+		//Recent Game
+        ID_RECENT_GAME_START,
+        ID_RECENT_GAME_END = ID_RECENT_GAME_START + 20,
 
         ID_DEBUGGER_LOGGING,
     };
@@ -28,9 +28,9 @@ public:
     ~CMainMenu();
 
     HMENU GetHandle(void) { return m_MenuHandle; }
+    void ResetMenu(void);
 
 private:
-    void ResetMenu(void);
     void FillOutMenu(HMENU hMenu);
 
     static bool AddMenu(HMENU hMenu, const MenuItemList & Items);

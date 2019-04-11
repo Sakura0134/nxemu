@@ -7,8 +7,8 @@
 
 void RegisterUISettings (void)
 {
-    g_Settings->AddHandler((SettingID)(FirstUISettings + Directory_RecentGameDirCount), new CSettingTypeApplication("", "Remembered Rom Dirs", (uint32_t)10));
-    g_Settings->AddHandler((SettingID)(FirstUISettings + Directory_RecentGameDirIndex), new CSettingTypeApplicationIndex("Recent Dir", "Recent Dir", Default_None));
+    g_Settings->AddHandler((SettingID)(FirstUISettings + File_RecentGameFileCount), new CSettingTypeApplication("", "Remembered Game Files", (uint32_t)10));
+    g_Settings->AddHandler((SettingID)(FirstUISettings + File_RecentGameFileIndex), new CSettingTypeApplicationIndex("Recent File", "Recent Game", Default_None));
 }
 
 void UISettingsSaveDword(UISettingID Type, uint32_t Value)

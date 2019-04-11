@@ -20,6 +20,9 @@ enum SettingID
 	SupportFile_Keys,
 	SupportFile_KeysDefault,
 
+    //Individual Game Settings
+    Game_File,
+
     //Directory settings
     Directory_Log,
     Directory_LogInitial,

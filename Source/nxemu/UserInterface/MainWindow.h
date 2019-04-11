@@ -18,10 +18,11 @@ class CMainGui :
     BEGIN_MSG_MAP(CMainGui)
         MESSAGE_HANDLER(WM_CREATE, OnCreate)
         MESSAGE_HANDLER(WM_DESTROY, OnDestory)
-        COMMAND_ID_HANDLER(CMainMenu::ID_FILE_OPEN_ROM, OnOpenRom)
+        COMMAND_ID_HANDLER(CMainMenu::ID_FILE_OPEN_GAME, OnOpenGame)
         COMMAND_ID_HANDLER(CMainMenu::ID_FILE_EXIT, OnFileExit)
         COMMAND_ID_HANDLER(CMainMenu::ID_OPTIONS_SWITCH_KEYS, OnSwitchKeys)
         COMMAND_ID_HANDLER(CMainMenu::ID_DEBUGGER_LOGGING, OnDebugLogging)
+        COMMAND_RANGE_HANDLER(CMainMenu::ID_RECENT_GAME_START, CMainMenu::ID_RECENT_GAME_END, OnRecetGame)
     END_MSG_MAP()
 
 public:
@@ -42,15 +43,19 @@ private:
     void Create(const wchar_t * WindowTitle);
     bool RegisterWinClass(void);
     std::string ChooseFileToOpen(HWND hParent);
+    void AddRecentGame(const char * ImagePath);
 
     LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-    LRESULT OnOpenRom(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+    LRESULT OnOpenGame(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
     LRESULT OnFileExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
     LRESULT OnDebugLogging(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
-	LRESULT OnSwitchKeys(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+    LRESULT OnSwitchKeys(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+    LRESULT OnRecetGame(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
 
     static LRESULT __stdcall MainGui_Proc(HWND, UINT, WPARAM, LPARAM);
+
+    static void GameFileChanged(CMainGui * Gui);
 
     CMainMenu m_Menu;
 

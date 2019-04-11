@@ -1,6 +1,7 @@
 #include <nxemu-core\Machine\SwitchRom.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-Application.h>
 #include <nxemu-core\SystemGlobals.h>
+#include <nxemu-core\Settings\Settings.h>
 #include <nxemu\Settings\UISettings.h>
 #include <nxemu\UserInterface\MainWindow.h>
 #include <nxemu\UserInterface\SwitchKeysConfig.h>
@@ -15,12 +16,15 @@ CMainGui::CMainGui(const wchar_t * WindowTitle) :
     m_Menu(this),
     m_ThreadId(GetCurrentThreadId())
 {
+    g_Settings->RegisterChangeCB(Game_File, this, (CSettings::SettingChangedFunc)GameFileChanged);
+
     RegisterWinClass();
     Create(WindowTitle);
 }
 
 CMainGui::~CMainGui()
 {
+    g_Settings->UnregisterChangeCB(Game_File, this, (CSettings::SettingChangedFunc)GameFileChanged);
     if (m_hWnd)
     {
         DestroyWindow((HWND)m_hWnd);
@@ -55,6 +59,48 @@ std::string CMainGui::ChooseFileToOpen(HWND hParent)
         return FileName;
     }
     return "";
+}
+
+void CMainGui::AddRecentGame(const char * ImagePath)
+{
+    if (HIWORD(ImagePath) == NULL) { return; }
+
+    //Get Information about the stored rom list
+    size_t MaxRememberedFiles = UISettingsLoadDword(File_RecentGameFileCount);
+
+    strlist RecentGames;
+    for (uint32_t i = 0; i < MaxRememberedFiles; i++)
+    {
+        stdstr RecentGame = UISettingsLoadStringIndex(File_RecentGameFileIndex, i);
+        if (RecentGame.empty())
+        {
+            break;
+        }
+        RecentGames.push_back(RecentGame);
+    }
+
+    //See if the dir is already in the list if so then move it to the top of the list
+    for (strlist::iterator iter = RecentGames.begin(); iter != RecentGames.end(); iter++)
+    {
+        if (_stricmp(ImagePath, iter->c_str()) != 0)
+        {
+            continue;
+        }
+        RecentGames.erase(iter);
+        break;
+    }
+    RecentGames.push_front(ImagePath);
+    if (RecentGames.size() > MaxRememberedFiles)
+    {
+        RecentGames.pop_back();
+    }
+
+    uint32_t i = 0;
+    for (strlist::iterator iter = RecentGames.begin(); iter != RecentGames.end(); iter++)
+    {
+        UISettingsSaveStringIndex(File_RecentGameFileIndex, i++, *iter);
+    }
+    m_Menu.ResetMenu();
 }
 
 void CMainGui::Create(const wchar_t * WindowTitle)
@@ -115,7 +161,7 @@ LRESULT CMainGui::OnDestory(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
     return 0;
 }
 
-LRESULT CMainGui::OnOpenRom(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+LRESULT CMainGui::OnOpenGame(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     std::string File = ChooseFileToOpen(m_hWnd);
     if (File.length() == 0)
@@ -123,22 +169,6 @@ LRESULT CMainGui::OnOpenRom(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/
         return 0;
     }
     LaunchSwitchRom(File.c_str());
-    return 0;
-}
-
-int CALLBACK SelectDirCallBack(HWND hwnd, DWORD uMsg, DWORD /*lp*/, DWORD lpData)
-{
-    switch (uMsg)
-    {
-    case BFFM_INITIALIZED:
-        // WParam is TRUE since you are passing a path.
-        // It would be FALSE if you were passing a pidl.
-        if (lpData)
-        {
-            SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
-        }
-        break;
-    }
     return 0;
 }
 
@@ -160,6 +190,16 @@ LRESULT CMainGui::OnSwitchKeys(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 	CKeysConfig KeysConfig(&SwitchKeys);
 	KeysConfig.Display(m_hWnd);
 	return 0;
+}
+
+LRESULT CMainGui::OnRecetGame(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+    std::string FileName = UISettingsLoadStringIndex(File_RecentGameFileIndex, LOWORD(wID) - CMainMenu::ID_RECENT_GAME_START);
+    if (FileName.length() > 0)
+    {
+        LaunchSwitchRom(FileName.c_str());
+    }
+    return 0;
 }
 
 LRESULT CMainGui::MainGui_Proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -208,5 +248,14 @@ void CMainGui::SetStatusText(int Panel, const wchar_t * Text)
     else 
     {
         PostMessageW((HWND)m_hStatusWnd, SB_SETTEXTW, Panel, (LPARAM)Msg);
+    }
+}
+
+void CMainGui::GameFileChanged(CMainGui * Gui)
+{
+    std::string FileLoc = g_Settings->LoadStringVal(Game_File);
+    if (FileLoc.length() > 0)
+    {
+        Gui->AddRecentGame(FileLoc.c_str());
     }
 }

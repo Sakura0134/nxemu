@@ -6,6 +6,7 @@
 #include <nxemu-core\FileFormat\ProgramMetadata.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
+#include <nxemu-core\Settings\Settings.h>
 #include <Common\path.h>
 #include <Common\FileClass.h>
 
@@ -103,6 +104,8 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
 	}
 	if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("sdk"), CPageTable::PageRoundUp(end_addr), end_addr)) { return false; }
 	g_Notify->DisplayMessage(0, GS(MSG_LOADED_XCI));
+
+    g_Settings->SaveString(Game_File, XciFile);
 
 	WriteTrace(TraceGameFile, TraceInfo, "Done (res: true)");
 	return true;

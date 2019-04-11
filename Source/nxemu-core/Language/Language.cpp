@@ -19,8 +19,8 @@ void CLanguage::LoadDefaultStrings(void)
     *********************************************************************************/
     //File Menu
     DefaultString(MENU_FILE, "&File");
-    DefaultString(MENU_OPEN_ROM, "&Open Rom...");
-    DefaultString(MENU_RECENT_DIR, "Recent Dir");
+    DefaultString(MENU_OPEN_GAME, "&Open Game...");
+    DefaultString(MENU_RECENT_GAMES, "Recent Games");
     DefaultString(MENU_EXIT, "E&xit");
     DefaultString(MENU_DEBUG, "Debug");
     DefaultString(MENU_DEBUG_LOGGING, "Logging...");

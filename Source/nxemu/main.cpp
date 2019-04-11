@@ -23,7 +23,7 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /
     }
     MainWindow->Show(true);	//Show the main window
     MainWindow->ProcessAllMessages();
-    AppCleanup();
     MainWindow.reset(NULL);
+    AppCleanup();
     return true;
 }

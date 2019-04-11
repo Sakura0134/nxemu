@@ -65,6 +65,9 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
 	AddHandler(SupportFile_Keys, new CSettingTypeApplicationPath("Settings", "KeyFile", SupportFile_KeysDefault));
 	AddHandler(SupportFile_KeysDefault, new CSettingTypeRelativePath("Config", "switch.keys"));
 
+    //Individual Game Settings
+    AddHandler(Game_File, new CSettingTypeTempString(""));
+
     //Directory settings
     AddHandler(Directory_Log, new CSettingTypeSelectedDirectory("Dir:Log", Directory_LogInitial, Directory_LogSelected, Directory_LogUseSelected, Directory_Log));
     AddHandler(Directory_LogInitial, new CSettingTypeRelativePath("Logs", ""));
