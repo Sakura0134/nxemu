@@ -39,6 +39,7 @@
     <ClInclude Include="FileFormat\nca.h" />
     <ClInclude Include="FileFormat\nsp.h" />
     <ClInclude Include="FileFormat\ProgramMetadata.h" />
+    <ClInclude Include="FileFormat\romfs.h" />
     <ClInclude Include="FileFormat\xci.h" />
     <ClInclude Include="FileSystem\EncryptedFile.h" />
     <ClInclude Include="FileSystem\PartitionFilesystem.h" />
@@ -78,6 +79,7 @@
     <ClCompile Include="FileFormat\nca.cpp" />
     <ClCompile Include="FileFormat\nsp.cpp" />
     <ClCompile Include="FileFormat\ProgramMetadata.cpp" />
+    <ClCompile Include="FileFormat\romfs.cpp" />
     <ClCompile Include="FileFormat\xci.cpp" />
     <ClCompile Include="FileSystem\EncryptedFile.cpp" />
     <ClCompile Include="FileSystem\PartitionFilesystem.cpp" />
