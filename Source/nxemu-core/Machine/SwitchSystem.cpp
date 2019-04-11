@@ -3,6 +3,7 @@
 #include <nxemu-core\FileFormat\formats.h>
 #include <nxemu-core\FileFormat\xci.h>
 #include <nxemu-core\FileFormat\nca.h>
+#include <nxemu-core\FileFormat\nacp.h>
 #include <nxemu-core\FileFormat\ProgramMetadata.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
@@ -72,7 +73,7 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
 		return false;
 	}
 	m_Xci = xci.release();
-	NCA * Program = m_Xci->Program();
+	const NCA * Program = m_Xci->Program();
 	if (Program == NULL)
 	{
 		return false;
@@ -96,7 +97,7 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
 	const CPartitionFilesystem::VirtualFiles Files = exefs->GetFiles();
 	for (size_t i = 0; i < Files.size(); i++)
 	{
-		if (strnicmp("subsdk", Files[i].Name.c_str(), 6) != 0)
+		if (_strnicmp("subsdk", Files[i].Name.c_str(), 6) != 0)
 		{
 			continue;
 		}
@@ -105,9 +106,15 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
 	if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("sdk"), CPageTable::PageRoundUp(end_addr), end_addr)) { return false; }
 	g_Notify->DisplayMessage(0, GS(MSG_LOADED_XCI));
 
+    const NACP * Nacp = m_Xci->Nacp();
+    if (Nacp == NULL)
+    {
+        return false;
+    }
     g_Settings->SaveString(Game_File, XciFile);
-
-	WriteTrace(TraceGameFile, TraceInfo, "Done (res: true)");
+    g_Settings->SaveString(Game_Name, Nacp->GetApplicationName().c_str());
+    
+    WriteTrace(TraceGameFile, TraceInfo, "Done (res: true)");
 	return true;
 }
 

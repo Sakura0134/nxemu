@@ -40,7 +40,7 @@ private:
     CMainGui(const CMainGui&);            // Disable copy constructor
     CMainGui& operator=(const CMainGui&); // Disable assignment
 
-    void Create(const wchar_t * WindowTitle);
+    void Create(void);
     bool RegisterWinClass(void);
     std::string ChooseFileToOpen(HWND hParent);
     void AddRecentGame(const char * ImagePath);
@@ -56,10 +56,12 @@ private:
     static LRESULT __stdcall MainGui_Proc(HWND, UINT, WPARAM, LPARAM);
 
     static void GameFileChanged(CMainGui * Gui);
+    static void GameNameChanged(CMainGui * Gui);
 
     CMainMenu m_Menu;
 
     HWND m_hWnd, m_hStatusWnd;
     std::wstring m_ClassName;
     uint32_t m_ThreadId;
+    std::wstring m_WindowTitle;
 };

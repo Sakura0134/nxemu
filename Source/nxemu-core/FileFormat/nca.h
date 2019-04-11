@@ -17,6 +17,8 @@ public:
 	bool Load(CSwitchKeys & Keys, CFile & file, int64_t BaseOffset, int64_t FileOffset, uint64_t Size);
 	inline const CPartitionFilesystems & Dirs(void) const { return m_dirs; }
 	inline CPartitionFilesystem * exefs(void) const { return m_exefs; }
+	inline CEncryptedFile * Romfs(void) const { return m_Romfs; }
+	inline uint64_t RomfsOffset(void) const { return m_RomfsOffset; }
 
 private:
 	NCA(const NCA&);            // Disable copy constructor

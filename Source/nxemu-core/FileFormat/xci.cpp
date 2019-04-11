@@ -2,6 +2,9 @@
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\FileFormat\nsp.h>
+#include <nxemu-core\FileFormat\nca.h>
+#include <nxemu-core\FileFormat\nacp.h>
+#include <nxemu-core\FileFormat\romfs.h>
 #include <nxemu-core\Trace.h>
 #include <set>
 
@@ -10,7 +13,9 @@ CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
 	m_Header({0}),
 	m_SecurePartition(NULL),
 	m_Partitions(NULL),
-    m_Program(NULL)
+    m_Program(NULL),
+    m_Control(NULL),
+    m_Nacp(NULL)
 {
 	WriteTrace(TraceGameFile, TraceInfo, "Start (XciFile: \"%s\")", (const char *)XciFile);
 	if (!XciFile.Exists())
@@ -84,7 +89,20 @@ CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
 		WriteTrace(TraceGameFile, TraceInfo, "Done");
 		return;
 	}
-	WriteTrace(TraceGameFile, TraceVerbose, "xci is valid");
+    m_Control = m_SecurePartition->GetNCA(ProgramTitleID, CNMT::ContentRecordType::Control);
+    if (m_Control == NULL)
+    {
+        WriteTrace(TraceGameFile, TraceError, "Failed to find Get NCA (ProgramTitleID: 0x%I64u, type: ContentRecordType::Control)", ProgramTitleID);
+        WriteTrace(TraceGameFile, TraceInfo, "Done");
+        return;
+    }
+    if (!ParseControlNCA())
+    {
+        WriteTrace(TraceGameFile, TraceError, "Failed to Parse Control NCA");
+        WriteTrace(TraceGameFile, TraceInfo, "Done");
+        return;
+    }
+    WriteTrace(TraceGameFile, TraceVerbose, "xci is valid");
 	m_Valid = true;
 	WriteTrace(TraceGameFile, TraceInfo, "Done");
 }
@@ -127,4 +145,28 @@ bool CXci::IsXciFile(const CPath & File)
 		return false;
 	}
 	return true;
+}
+
+bool CXci::ParseControlNCA(void)
+{
+    if (m_Control == NULL)
+    {
+        return false;
+    }
+    RomFS fs;
+    if (!fs.Load(m_Control->Romfs(), m_Control->RomfsOffset()))
+    {
+        return false;
+    }
+    const RomFS::FILE * nacp_file = fs.GetFile("control.nacp");
+    if (nacp_file == NULL)
+    {
+        return false;
+    }
+    m_Nacp = new NACP;
+    if (!m_Nacp->Load(m_Control->Romfs(), m_Control->RomfsOffset(), nacp_file->offset, nacp_file->size))
+    {
+        return false;
+    }
+    return true;
 }

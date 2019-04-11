@@ -22,6 +22,7 @@ enum SettingID
 
     //Individual Game Settings
     Game_File,
+    Game_Name,
 
     //Directory settings
     Directory_Log,

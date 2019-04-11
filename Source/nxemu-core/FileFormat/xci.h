@@ -5,6 +5,7 @@
 
 class NSP;
 class NCA;
+class NACP;
 
 class CXci
 {
@@ -13,14 +14,17 @@ public:
 	~CXci();
 
 	static bool IsXciFile(const CPath & XciFile);
-	inline NCA * Program(void) const { return m_Program; }
-	inline bool Valid(void) const { return m_Valid; }
+	inline const NCA * Program(void) const { return m_Program; }
+    inline const NACP * Nacp(void) const { return m_Nacp; }
+    inline bool Valid(void) const { return m_Valid; }
 
 private:
 	CXci(void);                    // Disable default constructor
 	CXci(const CXci&);             // Disable copy constructor
     CXci& operator=(const CXci&);  // Disable assignment
 		
+    bool ParseControlNCA(void);
+
 	struct GamecardHeader
 	{
 		uint8_t signature[0x100];
@@ -48,8 +52,10 @@ private:
 	GamecardHeader m_Header;
 	CPartitionFilesystem * m_Partitions;
 	NSP * m_SecurePartition;
-	NCA * m_Program;
-	bool m_Valid;
+    NCA * m_Program;
+    NCA * m_Control;
+    NACP * m_Nacp;
+    bool m_Valid;
 	CFile m_ReadFile;
 };
 

@@ -67,6 +67,7 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
 
     //Individual Game Settings
     AddHandler(Game_File, new CSettingTypeTempString(""));
+    AddHandler(Game_Name, new CSettingTypeTempString(""));
 
     //Directory settings
     AddHandler(Directory_Log, new CSettingTypeSelectedDirectory("Dir:Log", Directory_LogInitial, Directory_LogSelected, Directory_LogUseSelected, Directory_Log));

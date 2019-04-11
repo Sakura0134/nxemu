@@ -14,17 +14,20 @@ CMainGui::CMainGui(const wchar_t * WindowTitle) :
     m_hStatusWnd(NULL),
     m_ClassName(L"NXEmu"),
     m_Menu(this),
-    m_ThreadId(GetCurrentThreadId())
+    m_ThreadId(GetCurrentThreadId()),
+    m_WindowTitle(WindowTitle)
 {
     g_Settings->RegisterChangeCB(Game_File, this, (CSettings::SettingChangedFunc)GameFileChanged);
+    g_Settings->RegisterChangeCB(Game_Name, this, (CSettings::SettingChangedFunc)GameNameChanged);
 
     RegisterWinClass();
-    Create(WindowTitle);
+    Create();
 }
 
 CMainGui::~CMainGui()
 {
     g_Settings->UnregisterChangeCB(Game_File, this, (CSettings::SettingChangedFunc)GameFileChanged);
+    g_Settings->UnregisterChangeCB(Game_Name, this, (CSettings::SettingChangedFunc)GameNameChanged);
     if (m_hWnd)
     {
         DestroyWindow((HWND)m_hWnd);
@@ -103,9 +106,9 @@ void CMainGui::AddRecentGame(const char * ImagePath)
     m_Menu.ResetMenu();
 }
 
-void CMainGui::Create(const wchar_t * WindowTitle)
+void CMainGui::Create(void)
 {
-    CreateWindowExW(WS_EX_ACCEPTFILES, m_ClassName.c_str(), WindowTitle, WS_OVERLAPPED | WS_CLIPCHILDREN |
+    CreateWindowExW(WS_EX_ACCEPTFILES, m_ClassName.c_str(), m_WindowTitle.c_str(), WS_OVERLAPPED | WS_CLIPCHILDREN |
         WS_CLIPSIBLINGS | WS_SYSMENU | WS_MINIMIZEBOX, 0, 0, Width, Height,
         NULL, NULL, GetModuleHandle(NULL), this);
 }
@@ -257,5 +260,18 @@ void CMainGui::GameFileChanged(CMainGui * Gui)
     if (FileLoc.length() > 0)
     {
         Gui->AddRecentGame(FileLoc.c_str());
+    }
+}
+
+void CMainGui::GameNameChanged(CMainGui * Gui)
+{
+    std::string GameName = g_Settings->LoadStringVal(Game_Name);
+    if (GameName.length() > 0)
+    {
+        std::wstring Caption;
+        Caption += stdstr(GameName).ToUTF16();
+        Caption += L" | ";
+        Caption += Gui->m_WindowTitle;
+        SetWindowTextW(Gui->m_hWnd, Caption.c_str());
     }
 }
