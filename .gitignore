@@ -29,3 +29,5 @@ Thumbs.db
 /build
 /ipch
 /Source/nxemu-core/Version.h
+/Config/NXEmu.cfg
+/Config/switch.keys

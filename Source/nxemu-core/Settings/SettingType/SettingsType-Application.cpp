@@ -80,17 +80,14 @@ void CSettingTypeApplication::Initialize(void)
         {
             delete m_SettingsIniFile;
         }
-#ifdef _WIN32
-        CPath SettingsDir(CPath(SettingsFile).GetDriveDirectory(), "");
-#else
-        CPath SettingsDir(CPath(SettingsFile).GetDirectory(), "");
-#endif
-        if (!SettingsDir.DirectoryExists())
+        CPath SettingPath(SettingsFile.c_str());
+        SettingPath.NormalizePath(BaseDir);
+        if (!SettingPath.DirectoryExists())
         {
-            SettingsDir.DirectoryCreate();
+            SettingPath.DirectoryCreate();
         }
 
-        m_SettingsIniFile = new CIniFile(SettingsFile.c_str());
+        m_SettingsIniFile = new CIniFile(SettingPath);
     }
 
     m_SettingsIniFile->SetAutoFlush(false);
