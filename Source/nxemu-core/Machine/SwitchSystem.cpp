@@ -114,6 +114,11 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
     g_Settings->SaveString(Game_File, XciFile);
     g_Settings->SaveString(Game_Name, Nacp->GetApplicationName().c_str());
     
+	uint32_t ThreadId;
+	if (!m_Kernel.AddSystemThread(ThreadId, "main", base_addr, 0, 0, metadata.GetMainThreadPriority(), 0))
+	{
+		return false;
+	}
     WriteTrace(TraceGameFile, TraceInfo, "Done (res: true)");
 	return true;
 }
