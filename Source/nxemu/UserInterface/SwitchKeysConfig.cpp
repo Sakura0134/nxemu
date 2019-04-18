@@ -1,5 +1,7 @@
 #include <nxemu\UserInterface\SwitchKeysConfig.h>
 #include <nxemu-core\SystemGlobals.h>
+#include <Common\path.h>
+#include <Common\StdString.h>
 
 CKeysConfig::CKeysConfig(CSwitchKeys * keys) :
 	m_keys(keys)
@@ -86,6 +88,87 @@ LRESULT	CKeysConfig::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lPa
 		}
 	}
 	return 0;
+}
+
+LRESULT CKeysConfig::OnLoadCmd(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+    CPath FileName;
+    const char * Filter = "Key File (*.keys)\0*.keys\0All files (*.*)\0*.*\0";
+    if (!FileName.SelectFile(m_hWnd, CPath(CPath::MODULE_DIRECTORY), Filter, true))
+    {
+        return 0;
+    }
+    CIniFile KeyIniFile(FileName);
+    if (!KeyIniFile.IsFileOpen())
+    {
+        return 0;
+    }
+
+    CIniFile::KeyValueData data;
+    KeyIniFile.GetKeyValueData(NULL, data);
+
+    struct
+    {
+        CSwitchKeys::KeyType type;
+        int nId;
+        const char * key;
+    }
+    KeyItems[] =
+    {
+        { CSwitchKeys::HeaderKey, IDC_HEADER_KEY, "header_key" },
+        { CSwitchKeys::KeyAreaKeyApplicationSource, IDC_KEY_AREA_KEY_APPLICATION_SOURCE, "key_area_key_application_source" },
+        { CSwitchKeys::AesKeyGenerationSource, IDC_AES_KEY_GENERATION_SOURCE, "aes_key_generation_source" },
+        { CSwitchKeys::AesKekGenerationSource, IDC_AES_KEK_GENERATION_SOURCE, "aes_kek_generation_source" },
+        { CSwitchKeys::TitlekekSource, IDC_TITLE_KEK_SOURCE, "titlekek_source" },
+    };
+
+    CSwitchKeys::Keys keys;
+    for (size_t i = 0, n = sizeof(KeyItems) / sizeof(KeyItems[0]); i < n; i++)
+    {
+        CIniFile::KeyValueData::const_iterator itr = data.find(KeyItems[i].key);
+        if (itr == data.end())
+        { 
+            continue;
+        }
+        SetDlgItemTextW(m_hWnd, KeyItems[i].nId, stdstr(itr->second).Trim().ToUTF16().c_str());
+        if (!AddKey(keys, KeyItems[i].type, KeyItems[i].nId)) 
+        {
+            SetDlgItemTextW(m_hWnd, KeyItems[i].nId, L"");
+        }
+    }
+
+    struct
+    {
+        CSwitchKeys::KeyType type;
+        int nId;
+        uint32_t index;
+        const char * key;
+    } KeyIndexItems[] =
+    {
+        { CSwitchKeys::MasterKey, IDC_MASTER_KEY_00, 0, "master_key_00" },
+        { CSwitchKeys::MasterKey, IDC_MASTER_KEY_01, 1, "master_key_01" },
+        { CSwitchKeys::MasterKey, IDC_MASTER_KEY_02, 2, "master_key_02" },
+        { CSwitchKeys::MasterKey, IDC_MASTER_KEY_03, 3, "master_key_03" },
+        { CSwitchKeys::MasterKey, IDC_MASTER_KEY_04, 4, "master_key_04" },
+        { CSwitchKeys::MasterKey, IDC_MASTER_KEY_05, 5, "master_key_05" },
+    };
+
+    CSwitchKeys::KeysIndex keysIndex;
+    for (size_t i = 0, n = sizeof(KeyIndexItems) / sizeof(KeyIndexItems[0]); i < n; i++)
+    {
+        CIniFile::KeyValueData::const_iterator itr = data.find(KeyIndexItems[i].key);
+        if (itr == data.end())
+        {
+            continue;
+        }
+        SetDlgItemTextW(m_hWnd, KeyIndexItems[i].nId, stdstr(itr->second).Trim().ToUTF16().c_str());
+        if (!AddKeyIndex(keysIndex, KeyIndexItems[i].type, KeyIndexItems[i].index, KeyIndexItems[i].nId))
+        {
+            SetDlgItemTextW(m_hWnd, KeyItems[i].nId, L"");
+        }
+    }
+
+    return 0;
 }
 
 LRESULT CKeysConfig::OnOkCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
@@ -321,7 +404,7 @@ void CKeysConfig::SetKeyData(int nID, const CSwitchKeys::KeyData &data)
 	for (size_t i = 0, n = data.size(); i < n; i++)
 	{
 		wchar_t value[3];
-		swprintf(value, L"%02X", data[i]);
+		_swprintf(value, L"%02X", data[i]);
 		KeyValue += value;
 	}
 	SetDlgItemTextW(m_hWnd, nID, KeyValue.c_str());

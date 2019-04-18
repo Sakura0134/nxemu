@@ -817,7 +817,7 @@ void CIniFileBase::GetKeyValueData(const char * lpSectionName, KeyValueData & Li
         if (Pos == NULL) { continue; }
         Pos[0] = 0;
 
-        List.insert(KeyValueData::value_type(Input, &Pos[1]));
+        List.insert(KeyValueData::value_type(stdstr(Input).Trim(), &Pos[1]));
     } while (result >= 0);
 }
 

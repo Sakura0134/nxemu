@@ -8,8 +8,9 @@ class CKeysConfig :
 public:
 	BEGIN_MSG_MAP_EX(CKeysConfig)
 		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
-		COMMAND_ID_HANDLER(IDOK, OnOkCmd)
-		COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
+        COMMAND_ID_HANDLER(IDC_LOAD, OnLoadCmd)
+        COMMAND_ID_HANDLER(IDOK, OnOkCmd)
+        COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
 	END_MSG_MAP()
 
 	enum { IDD = IDD_Settings_keys };
@@ -20,8 +21,9 @@ public:
 	bool Display(void * ParentWindow);
 
 	LRESULT	OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-	LRESULT OnOkCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
-	LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+    LRESULT OnLoadCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+    LRESULT OnOkCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+    LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
 private:
 	bool AddKey(CSwitchKeys::Keys & keys, CSwitchKeys::KeyType type, int nID);
