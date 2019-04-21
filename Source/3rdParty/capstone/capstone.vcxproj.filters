@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\include">
+      <UniqueIdentifier>{749c8fdb-df4b-4f37-b064-3bbd561f8dc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\arch">
+      <UniqueIdentifier>{4e1abbb3-8715-4160-ac6b-40d294816e0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\arch\ARM">
+      <UniqueIdentifier>{9d4d2634-8583-4293-9517-d29d80211398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\arch">
+      <UniqueIdentifier>{e1118e6c-6632-4723-909c-06dcba494d74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\arch\Arm">
+      <UniqueIdentifier>{7d9a8208-33eb-4049-96f6-344a20278b3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\arch\AArch64">
+      <UniqueIdentifier>{e687ad11-1675-4fff-8ac6-79365aa0f1ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\arch\AArch64">
+      <UniqueIdentifier>{08b9e402-2ca8-42ee-9b75-d80c972d1756}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MCInst.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MCRegisterInfo.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SStream.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\ARM\ARMDisassembler.c">
+      <Filter>Source Files\arch\ARM</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\ARM\ARMInstPrinter.c">
+      <Filter>Source Files\arch\ARM</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\ARM\ARMMapping.c">
+      <Filter>Source Files\arch\ARM</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\ARM\ARMModule.c">
+      <Filter>Source Files\arch\ARM</Filter>
+    </ClCompile>
+    <ClCompile Include="MCInstrDesc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\AArch64\AArch64BaseInfo.c">
+      <Filter>Source Files\arch\AArch64</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\AArch64\AArch64Disassembler.c">
+      <Filter>Source Files\arch\AArch64</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\AArch64\AArch64InstPrinter.c">
+      <Filter>Source Files\arch\AArch64</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\AArch64\AArch64Mapping.c">
+      <Filter>Source Files\arch\AArch64</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\AArch64\AArch64Module.c">
+      <Filter>Source Files\arch\AArch64</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cs_priv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LEB128.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MathExtras.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MCDisassembler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MCFixedLenDisassembler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MCInst.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MCInstrDesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MCRegisterInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\arm.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\capstone.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\ARM\ARMAddressingModes.h">
+      <Filter>Header Files\arch\Arm</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\ARM\ARMBaseInfo.h">
+      <Filter>Header Files\arch\Arm</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\ARM\ARMDisassembler.h">
+      <Filter>Header Files\arch\Arm</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\ARM\ARMInstPrinter.h">
+      <Filter>Header Files\arch\Arm</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\ARM\ARMMapping.h">
+      <Filter>Header Files\arch\Arm</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\arm64.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\platform.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\AArch64\AArch64AddressingModes.h">
+      <Filter>Header Files\arch\AArch64</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\AArch64\AArch64BaseInfo.h">
+      <Filter>Header Files\arch\AArch64</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\AArch64\AArch64Disassembler.h">
+      <Filter>Header Files\arch\AArch64</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\AArch64\AArch64InstPrinter.h">
+      <Filter>Header Files\arch\AArch64</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\AArch64\AArch64Mapping.h">
+      <Filter>Header Files\arch\AArch64</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="arch\ARM\ARMGenAsmWriter.inc">
+      <Filter>Header Files\arch\Arm</Filter>
+    </None>
+    <None Include="arch\ARM\ARMGenDisassemblerTables.inc">
+      <Filter>Header Files\arch\Arm</Filter>
+    </None>
+    <None Include="arch\ARM\ARMGenInstrInfo.inc">
+      <Filter>Header Files\arch\Arm</Filter>
+    </None>
+    <None Include="arch\ARM\ARMGenRegisterInfo.inc">
+      <Filter>Header Files\arch\Arm</Filter>
+    </None>
+    <None Include="arch\ARM\ARMGenSubtargetInfo.inc">
+      <Filter>Header Files\arch\Arm</Filter>
+    </None>
+    <None Include="arch\AArch64\AArch64GenAsmWriter.inc">
+      <Filter>Header Files\arch\AArch64</Filter>
+    </None>
+    <None Include="arch\AArch64\AArch64GenDisassemblerTables.inc">
+      <Filter>Header Files\arch\AArch64</Filter>
+    </None>
+    <None Include="arch\AArch64\AArch64GenInstrInfo.inc">
+      <Filter>Header Files\arch\AArch64</Filter>
+    </None>
+    <None Include="arch\AArch64\AArch64GenRegisterInfo.inc">
+      <Filter>Header Files\arch\AArch64</Filter>
+    </None>
+    <None Include="arch\AArch64\AArch64GenSubtargetInfo.inc">
+      <Filter>Header Files\arch\AArch64</Filter>
+    </None>
+  </ItemGroup>
+</Project>

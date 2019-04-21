@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lz4", "Source\3rdParty\lz4\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mbedtls", "Source\3rdParty\mbedtls\mbedtls.vcxproj", "{FE18A6E5-6F6B-455B-8139-2DA41E223D87}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "capstone", "Source\3rdParty\capstone\capstone.vcxproj", "{76B12E78-3FE8-4589-A12F-E79BD65F3476}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -53,6 +55,10 @@ Global
 		{FE18A6E5-6F6B-455B-8139-2DA41E223D87}.Debug|x64.Build.0 = Debug|x64
 		{FE18A6E5-6F6B-455B-8139-2DA41E223D87}.Release|x64.ActiveCfg = Release|x64
 		{FE18A6E5-6F6B-455B-8139-2DA41E223D87}.Release|x64.Build.0 = Release|x64
+		{76B12E78-3FE8-4589-A12F-E79BD65F3476}.Debug|x64.ActiveCfg = Debug|x64
+		{76B12E78-3FE8-4589-A12F-E79BD65F3476}.Debug|x64.Build.0 = Debug|x64
+		{76B12E78-3FE8-4589-A12F-E79BD65F3476}.Release|x64.ActiveCfg = Release|x64
+		{76B12E78-3FE8-4589-A12F-E79BD65F3476}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,5 +67,6 @@ Global
 		{D973899B-E108-4D17-B6F6-D189357E80DE} = {1E337F45-8342-4343-BFF8-9D23F4E90242}
 		{20F15EB4-E65B-4D48-AA18-C7DAD16279CC} = {1E337F45-8342-4343-BFF8-9D23F4E90242}
 		{FE18A6E5-6F6B-455B-8139-2DA41E223D87} = {1E337F45-8342-4343-BFF8-9D23F4E90242}
+		{76B12E78-3FE8-4589-A12F-E79BD65F3476} = {1E337F45-8342-4343-BFF8-9D23F4E90242}
 	EndGlobalSection
 EndGlobal

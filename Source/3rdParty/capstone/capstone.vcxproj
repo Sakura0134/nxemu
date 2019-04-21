@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{76B12E78-3FE8-4589-A12F-E79BD65F3476}</ProjectGuid>
+    <RootNamespace>capstone</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(SolutionDir)PropertySheets\Platform.$(Configuration).props" />
+  </ImportGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PreprocessorDefinitions>CAPSTONE_HAS_ARM;CAPSTONE_HAS_ARM64;CAPSTONE_USE_SYS_DYN_MEM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\3rdParty\capstone\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="arch\AArch64\AArch64BaseInfo.c" />
+    <ClCompile Include="arch\AArch64\AArch64Disassembler.c" />
+    <ClCompile Include="arch\AArch64\AArch64InstPrinter.c" />
+    <ClCompile Include="arch\AArch64\AArch64Mapping.c" />
+    <ClCompile Include="arch\AArch64\AArch64Module.c" />
+    <ClCompile Include="arch\ARM\ARMDisassembler.c" />
+    <ClCompile Include="arch\ARM\ARMInstPrinter.c" />
+    <ClCompile Include="arch\ARM\ARMMapping.c" />
+    <ClCompile Include="arch\ARM\ARMModule.c" />
+    <ClCompile Include="cs.c" />
+    <ClCompile Include="MCInst.c" />
+    <ClCompile Include="MCInstrDesc.c" />
+    <ClCompile Include="MCRegisterInfo.c" />
+    <ClCompile Include="SStream.c" />
+    <ClCompile Include="utils.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="arch\AArch64\AArch64AddressingModes.h" />
+    <ClInclude Include="arch\AArch64\AArch64BaseInfo.h" />
+    <ClInclude Include="arch\AArch64\AArch64Disassembler.h" />
+    <ClInclude Include="arch\AArch64\AArch64InstPrinter.h" />
+    <ClInclude Include="arch\AArch64\AArch64Mapping.h" />
+    <ClInclude Include="arch\ARM\ARMAddressingModes.h" />
+    <ClInclude Include="arch\ARM\ARMBaseInfo.h" />
+    <ClInclude Include="arch\ARM\ARMDisassembler.h" />
+    <ClInclude Include="arch\ARM\ARMInstPrinter.h" />
+    <ClInclude Include="arch\ARM\ARMMapping.h" />
+    <ClInclude Include="cs_priv.h" />
+    <ClInclude Include="Include\arm.h" />
+    <ClInclude Include="Include\arm64.h" />
+    <ClInclude Include="Include\capstone.h" />
+    <ClInclude Include="Include\platform.h" />
+    <ClInclude Include="LEB128.h" />
+    <ClInclude Include="MathExtras.h" />
+    <ClInclude Include="MCDisassembler.h" />
+    <ClInclude Include="MCFixedLenDisassembler.h" />
+    <ClInclude Include="MCInst.h" />
+    <ClInclude Include="MCInstrDesc.h" />
+    <ClInclude Include="MCRegisterInfo.h" />
+    <ClInclude Include="SStream.h" />
+    <ClInclude Include="utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="arch\AArch64\AArch64GenAsmWriter.inc" />
+    <None Include="arch\AArch64\AArch64GenDisassemblerTables.inc" />
+    <None Include="arch\AArch64\AArch64GenInstrInfo.inc" />
+    <None Include="arch\AArch64\AArch64GenRegisterInfo.inc" />
+    <None Include="arch\AArch64\AArch64GenSubtargetInfo.inc" />
+    <None Include="arch\ARM\ARMGenAsmWriter.inc" />
+    <None Include="arch\ARM\ARMGenDisassemblerTables.inc" />
+    <None Include="arch\ARM\ARMGenInstrInfo.inc" />
+    <None Include="arch\ARM\ARMGenRegisterInfo.inc" />
+    <None Include="arch\ARM\ARMGenSubtargetInfo.inc" />
+  </ItemGroup>
+</Project>

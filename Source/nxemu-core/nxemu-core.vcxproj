@@ -109,11 +109,17 @@
     <None Include="Version.h.in" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\3rdParty\capstone\capstone.vcxproj">
+      <Project>{76b12e78-3fe8-4589-a12f-e79bd65f3476}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\3rdParty\lz4\lz4.vcxproj">
       <Project>{20f15eb4-e65b-4d48-aa18-c7dad16279cc}</Project>
     </ProjectReference>
     <ProjectReference Include="..\3rdParty\mbedtls\mbedtls.vcxproj">
       <Project>{fe18a6e5-6f6b-455b-8139-2da41e223d87}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{c9b7522e-5aae-41d1-8a34-ea61e17d32bb}</Project>
     </ProjectReference>
     <ProjectReference Include="..\UpdateVersion\UpdateVersion.vcxproj">
       <Project>{1968162c-0793-491d-91a1-81645a24d399}</Project>
