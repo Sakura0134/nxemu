@@ -2,10 +2,12 @@
 #include <Common/CriticalSection.h>
 #include <Windows.h>
 #include "MenuItem.h"
+#include <nxemu-core\Settings\Debug.h>
 
 class CMainGui;
 
-class CMainMenu 
+class CMainMenu :
+    private CDebugSettings
 {
 public:
     enum MainMenuID

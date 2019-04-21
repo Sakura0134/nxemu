@@ -87,9 +87,6 @@
     <ClInclude Include="Notification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Settings\Settings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Settings\SettingsID.h">
       <Filter>Header Files\Settings</Filter>
     </ClInclude>
@@ -183,15 +180,18 @@
     <ClInclude Include="FileFormat\romfs.h">
       <Filter>Header Files\FileFormat</Filter>
     </ClInclude>
+    <ClInclude Include="Settings\Debug.h">
+      <Filter>Header Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings\Settings.h">
+      <Filter>Header Files\Settings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SystemGlobals.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings\Settings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp">
@@ -280,6 +280,12 @@
     </ClCompile>
     <ClCompile Include="FileFormat\romfs.cpp">
       <Filter>Source Files\FileFormat</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\Debug.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings\Settings.cpp">
+      <Filter>Source Files\Settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -69,8 +69,11 @@ void CMainMenu::FillOutMenu(HMENU hMenu)
 	MainTitleMenu.push_back(MenuItem(MenuItem::SUB_MENU, MENU_OPTIONS, &OptionsMenu));
 
     MenuItemList DebugMenu;
-    DebugMenu.push_back(MenuItem(ID_DEBUGGER_LOGGING, MENU_DEBUG_LOGGING));
-    MainTitleMenu.push_back(MenuItem(MenuItem::SUB_MENU, MENU_DEBUG, &DebugMenu));
+    if (HaveDebugger())
+    {
+        DebugMenu.push_back(MenuItem(ID_DEBUGGER_LOGGING, MENU_DEBUG_LOGGING));
+        MainTitleMenu.push_back(MenuItem(MenuItem::SUB_MENU, MENU_DEBUG, &DebugMenu));
+    }
 
     AddMenu(hMenu, MainTitleMenu);
 }

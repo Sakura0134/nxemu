@@ -30,6 +30,9 @@ enum SettingID
     Directory_LogSelected,
     Directory_LogUseSelected,
 
+    //Debugger
+    Debugger_Enabled,
+
     //Logging
     Debugger_TraceAutoFlush,
     Debugger_TraceMD5,

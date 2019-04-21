@@ -75,6 +75,9 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
     AddHandler(Directory_LogSelected, new CSettingTypeApplicationPath("Log Directory", "Directory", Directory_LogInitial));
     AddHandler(Directory_LogUseSelected, new CSettingTypeApplication("Log Directory", "Use Selected", false));
 
+    //Debugger
+    AddHandler(Debugger_Enabled, new CSettingTypeApplication("Debugger", "Debugger", true));
+
     //Logging
     AddHandler(Debugger_TraceAutoFlush, new CSettingTypeApplication("Logging", "Trace Auto Flush", (uint32_t)false));
     AddHandler(Debugger_TraceMD5, new CSettingTypeApplication("Logging", "MD5", (uint32_t)g_ModuleLogLevel[TraceMD5]));

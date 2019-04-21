@@ -56,6 +56,7 @@
     <ClInclude Include="Machine\SwitchRom.h" />
     <ClInclude Include="Machine\SwitchSystem.h" />
     <ClInclude Include="Notification.h" />
+    <ClInclude Include="Settings\Debug.h" />
     <ClInclude Include="Settings\Settings.h" />
     <ClInclude Include="Settings\SettingsID.h" />
     <ClInclude Include="Settings\SettingType\SettingsType-Application.h" />
@@ -95,6 +96,7 @@
     <ClCompile Include="Machine\SwitchKeys.cpp" />
     <ClCompile Include="Machine\SwitchRom.cpp" />
     <ClCompile Include="Machine\SwitchSystem.cpp" />
+    <ClCompile Include="Settings\Debug.cpp" />
     <ClCompile Include="Settings\Settings.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-Application.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-ApplicationIndex.cpp" />
