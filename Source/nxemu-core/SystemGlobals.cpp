@@ -8,3 +8,4 @@ CNotification * g_Notify = NULL;
 CLanguage * g_Lang = NULL;
 CSwitchSystem * g_BaseMachine = NULL;
 CSettings * g_Settings = NULL;
+CDebugger * g_Debugger = NULL;

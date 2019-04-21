@@ -69,6 +69,9 @@
     <ClCompile Include="UserInterface\SwitchKeysConfig.cpp">
       <Filter>Source Files\UserInterface</Filter>
     </ClCompile>
+    <ClCompile Include="UserInterface\Debugger\Debugger.cpp">
+      <Filter>Source Files\UserInterface\Debugger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UserInterface\Notification.h">
