@@ -21,6 +21,7 @@ class CMainGui :
         COMMAND_ID_HANDLER(CMainMenu::ID_FILE_OPEN_GAME, OnOpenGame)
         COMMAND_ID_HANDLER(CMainMenu::ID_FILE_EXIT, OnFileExit)
         COMMAND_ID_HANDLER(CMainMenu::ID_OPTIONS_SWITCH_KEYS, OnSwitchKeys)
+        COMMAND_ID_HANDLER(CMainMenu::ID_DEBUGGER_COMMANDS, OnDebugViewCommands)
         COMMAND_ID_HANDLER(CMainMenu::ID_DEBUGGER_LOGGING, OnDebugLogging)
         COMMAND_RANGE_HANDLER(CMainMenu::ID_RECENT_GAME_START, CMainMenu::ID_RECENT_GAME_END, OnRecetGame)
     END_MSG_MAP()
@@ -49,6 +50,7 @@ private:
     LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnOpenGame(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
     LRESULT OnFileExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
+    LRESULT OnDebugViewCommands(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
     LRESULT OnDebugLogging(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
     LRESULT OnSwitchKeys(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
     LRESULT OnRecetGame(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);

@@ -23,6 +23,7 @@ public:
         ID_RECENT_GAME_START,
         ID_RECENT_GAME_END = ID_RECENT_GAME_START + 20,
 
+        ID_DEBUGGER_COMMANDS,
         ID_DEBUGGER_LOGGING,
     };
 

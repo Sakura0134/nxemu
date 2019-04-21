@@ -23,6 +23,7 @@ void CLanguage::LoadDefaultStrings(void)
     DefaultString(MENU_RECENT_GAMES, "Recent Games");
     DefaultString(MENU_EXIT, "E&xit");
     DefaultString(MENU_DEBUG, "Debug");
+    DefaultString(MENU_DEBUG_COMMANDS_VIEW, "Commands...");
     DefaultString(MENU_DEBUG_LOGGING, "Logging...");
 
 	//Options Menu

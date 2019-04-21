@@ -19,6 +19,8 @@ public:
     bool LoadGame(const char * GamePath);
     void StartEmulation(void);
 
+    const SystemThreadList & SystemThreads(void) const { return m_Kernel.SystemThreads(); }
+
 private:
     CSwitchSystem(const CSwitchSystem&);             // Disable copy constructor
     CSwitchSystem& operator=(const CSwitchSystem&);	 // Disable assignment

@@ -181,6 +181,12 @@ LRESULT CMainGui::OnFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*
     return 0;
 }
 
+LRESULT CMainGui::OnDebugViewCommands(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+    OpenCommandWindow();
+    return 0;
+}
+
 LRESULT CMainGui::OnDebugLogging(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     EditLoggingOptions(m_hWnd);
