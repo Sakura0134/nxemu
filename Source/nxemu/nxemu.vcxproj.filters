@@ -31,6 +31,18 @@
     <Filter Include="Header Files\UserInterface\Debugger">
       <UniqueIdentifier>{c68e515b-6d0b-42c5-8318-8b4dee79a67a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UserInterface\WTLControls">
+      <UniqueIdentifier>{2fabc877-e4e0-4393-ab34-738b8554cb8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UserInterface\WTLControls\ClistCtrl">
+      <UniqueIdentifier>{1bc739eb-0ba0-4e3e-9297-b4312493d194}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Bitmaps">
+      <UniqueIdentifier>{585ec688-3992-4717-9ab6-867f56e7c6f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Icons">
+      <UniqueIdentifier>{5b96a8bd-b88f-4240-ad71-f123dd114d8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -89,6 +101,30 @@
     <ClInclude Include="UserInterface\SwitchKeysConfig.h">
       <Filter>Header Files\UserInterface</Filter>
     </ClInclude>
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\DragDrop.h">
+      <Filter>Header Files\UserInterface\WTLControls\ClistCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\DropArrows.h">
+      <Filter>Header Files\UserInterface\WTLControls\ClistCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\ListCombo.h">
+      <Filter>Header Files\UserInterface\WTLControls\ClistCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\ListCtrl.h">
+      <Filter>Header Files\UserInterface\WTLControls\ClistCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\ListDate.h">
+      <Filter>Header Files\UserInterface\WTLControls\ClistCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\ListEdit.h">
+      <Filter>Header Files\UserInterface\WTLControls\ClistCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\ListTypes.h">
+      <Filter>Header Files\UserInterface\WTLControls\ClistCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\TitleTip.h">
+      <Filter>Header Files\UserInterface\WTLControls\ClistCtrl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
@@ -99,5 +135,16 @@
     <None Include="..\nxemu-core\Version.h.in">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="UserInterface\Icons\divider.cur">
+      <Filter>Resource Files\Icons</Filter>
+    </None>
+    <None Include="UserInterface\Icons\hand.cur">
+      <Filter>Resource Files\Icons</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="UserInterface\Bitmaps\ListItems.bmp">
+      <Filter>Resource Files\Bitmaps</Filter>
+    </Image>
   </ItemGroup>
 </Project>

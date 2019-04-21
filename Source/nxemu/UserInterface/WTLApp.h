@@ -42,3 +42,4 @@ public:
 extern WTLModule _Module;
 
 #include "resource.h"
+#include "WTLControls\ClistCtrl\ListCtrl.h"

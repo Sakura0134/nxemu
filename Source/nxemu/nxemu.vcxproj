@@ -48,6 +48,14 @@
     <ClInclude Include="UserInterface\Notification.h" />
     <ClInclude Include="UserInterface\SwitchKeysConfig.h" />
     <ClInclude Include="UserInterface\WTLApp.h" />
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\DragDrop.h" />
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\DropArrows.h" />
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\ListCombo.h" />
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\ListCtrl.h" />
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\ListDate.h" />
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\ListEdit.h" />
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\ListTypes.h" />
+    <ClInclude Include="UserInterface\WTLControls\ClistCtrl\TitleTip.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">
@@ -62,6 +70,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\nxemu-core\Version.h.in" />
+    <None Include="UserInterface\Icons\divider.cur" />
+    <None Include="UserInterface\Icons\hand.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="UserInterface\Bitmaps\ListItems.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
