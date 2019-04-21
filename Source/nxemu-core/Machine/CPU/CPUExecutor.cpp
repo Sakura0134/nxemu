@@ -8,11 +8,11 @@ CPUExecutor::CPUExecutor() :
 
 void CPUExecutor::Execute(bool & Done)
 {
-    uint64_t & PROGRAM_COUNTER = m_Reg.m_PROGRAM_COUNTER;
+    /*uint64_t & PROGRAM_COUNTER = m_Reg.m_PROGRAM_COUNTER;
 
     while (!Done)
     {
 		g_Notify->BreakPoint(__FILE__, __LINE__);
         PROGRAM_COUNTER += 4;    
-    }
+    }*/
 }
