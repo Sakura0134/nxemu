@@ -13,3 +13,4 @@
 #include "LogClass.h"
 #include "TraceModulesCommon.h"
 #include "Trace.h"
+#include "SyncEvent.h"
