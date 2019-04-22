@@ -12,6 +12,7 @@ class CCommandList :
 public:
     enum
     {
+        COL_ARROWS = 0,
         COL_ADDRESS = 1,
         COL_COMMAND = 2,
         COL_PARAMETERS = 3,
@@ -39,11 +40,25 @@ public:
 private:
     typedef std::vector<Arm64Opcode> Arm64OpcodeList;
 
+    void AddBranchArrow(int startPos, int endPos);
+    void ClearBranchArrows();
+    void DrawBranchArrows(CDCHandle &dcPaint);
+
+    typedef struct
+    {
+        int32_t startPos;
+        int32_t endPos;
+        int32_t startMargin;
+        int32_t endMargin;
+        int32_t margin;
+    } BRANCHARROW;
+
     CDebuggerUI * m_Debugger;
     uint64_t m_StartAddress;
     uint32_t m_CommandListRows;
     Arm64OpcodeList m_ops;
     std::vector<std::string> m_opAddr;
+    std::vector<BRANCHARROW> m_BranchArrows;
 };
 
 class CDebugCommandsView :

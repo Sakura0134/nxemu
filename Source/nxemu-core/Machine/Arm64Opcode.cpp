@@ -3,7 +3,8 @@
 #include <nxemu-core\SystemGlobals.h>
 
 Arm64Opcode::Arm64Opcode(uint64_t pc, uint32_t insn) :
-    m_pc(pc)
+    m_pc(pc),
+    m_Opc(ARM64_INS_INVALID)
 {
     csh handle;
     cs_err err = cs_open(CS_ARCH_ARM64, CS_MODE_ARM, &handle);
@@ -22,9 +23,269 @@ Arm64Opcode::Arm64Opcode(uint64_t pc, uint32_t insn) :
         return;
     }
 
+    m_Opc = (instruct_t)results[0].id;
     m_Name = results[0].mnemonic;
     m_Param = results[0].op_str;
+    for (uint8_t i = 0, n = results[0].detail->arm64.op_count; i < n; i++)
+    {
+        cs_arm64_op & src_operand = results[0].detail->arm64.operands[i];
+        MCOperand operand;
+        memset(&operand, 0, sizeof(operand));
 
+        operand.type = (arm64_op_type)src_operand.type;
+        operand.shift.type = (arm64_shifter)src_operand.shift.type;
+        operand.shift.value = src_operand.shift.value;
+        operand.Extend = (arm64_extender)src_operand.ext;
+        operand.VectorIndex = src_operand.vector_index;
+        operand.Vess = (arm64_vess)src_operand.vess;
+        operand.Vas = (arm64_vas)src_operand.vas;
+        switch (src_operand.type)
+        {
+        case ARM64_OP_REG:
+            operand.Reg = TranslateArm64Reg((capstone_arm64_reg)src_operand.reg);
+            break;
+        case ARM64_OP_IMM:
+            if (results[0].id == ARM64_INS_MOVK)
+            {
+                operand.ImmVal = src_operand.imm;
+                operand.shift.type = (arm64_shifter)src_operand.shift.type;
+                operand.shift.value = src_operand.shift.value;
+            }
+            else if (src_operand.shift.type == ARM64_SFT_LSL)
+            {
+                operand.ImmVal = src_operand.imm << src_operand.shift.value;
+                operand.shift.type = ARM64_SFT_INVALID;
+                operand.shift.value = 0;
+            }
+            else if (src_operand.shift.type != ARM64_SFT_INVALID)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+            else
+            {
+                operand.ImmVal = src_operand.imm;
+            }
+            break;
+        case ARM64_OP_MEM:
+            operand.mem.base = TranslateArm64Reg((capstone_arm64_reg)src_operand.mem.base);
+            operand.mem.index = TranslateArm64Reg((capstone_arm64_reg)src_operand.mem.index);
+            operand.mem.disp = src_operand.mem.disp;
+            break;
+        case ARM64_OP_REG_MRS:
+        case ARM64_OP_REG_MSR:
+            if (src_operand.shift.type != ARM64_SFT_INVALID)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+            operand.SysReg = (A64SysRegValues)src_operand.imm;
+            break;
+        case ARM64_OP_BARRIER:
+            break;
+        default:
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+
+        m_Operands.push_back(operand);
+    }
     cs_free(results, count);
     cs_close(&handle);
 }
+
+bool Arm64Opcode::IsBranch(void) const
+{
+    switch (Opc())
+    {
+    case ARM64_INS_B:
+    case ARM64_INS_BL:
+        if (Operands() == 1 && Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            return true;
+        }
+        break;
+    case ARM64_INS_CBZ:
+    case ARM64_INS_CBNZ:
+        if (Operands() == 2 && Operand(0).type == Arm64Opcode::ARM64_OP_REG && Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            return true;
+        }
+        break;
+    case ARM64_INS_TBNZ:
+    case ARM64_INS_TBZ:
+        if (Operands() == 3 && Operand(0).type == Arm64Opcode::ARM64_OP_REG && Operand(1).type == Arm64Opcode::ARM64_OP_IMM && Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            return true;
+        }
+        return true;
+    }
+    return false;
+}
+
+uint64_t Arm64Opcode::BranchDest(void) const
+{
+    switch (Opc())
+    {
+    case ARM64_INS_B:
+    case ARM64_INS_BL:
+        if (Operands() == 1 && Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            return Operand(0).ImmVal;
+        }
+    case ARM64_INS_CBZ:
+    case ARM64_INS_CBNZ:
+        if (Operands() == 2 && Operand(0).type == Arm64Opcode::ARM64_OP_REG && Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            return Operand(1).ImmVal;
+        }
+        break;
+    case ARM64_INS_TBNZ:
+    case ARM64_INS_TBZ:
+        if (Operands() == 3 && Operand(0).type == Arm64Opcode::ARM64_OP_REG && Operand(1).type == Arm64Opcode::ARM64_OP_IMM && Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            return Operand(2).ImmVal;
+        }
+        break;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return m_pc + 4;
+}
+
+
+Arm64Opcode::arm64_reg Arm64Opcode::TranslateArm64Reg(capstone_arm64_reg reg)
+{
+    switch (reg)
+    {
+    case CAPSTONE_ARM64_REG_INVALID: return ARM64_REG_INVALID;
+    case CAPSTONE_ARM64_REG_X0: return ARM64_REG_X0;
+    case CAPSTONE_ARM64_REG_X1: return ARM64_REG_X1;
+    case CAPSTONE_ARM64_REG_X2: return ARM64_REG_X2;
+    case CAPSTONE_ARM64_REG_X3: return ARM64_REG_X3;
+    case CAPSTONE_ARM64_REG_X4: return ARM64_REG_X4;
+    case CAPSTONE_ARM64_REG_X5: return ARM64_REG_X5;
+    case CAPSTONE_ARM64_REG_X6: return ARM64_REG_X6;
+    case CAPSTONE_ARM64_REG_X7: return ARM64_REG_X7;
+    case CAPSTONE_ARM64_REG_X8: return ARM64_REG_X8;
+    case CAPSTONE_ARM64_REG_X9: return ARM64_REG_X9;
+    case CAPSTONE_ARM64_REG_X10: return ARM64_REG_X10;
+    case CAPSTONE_ARM64_REG_X11: return ARM64_REG_X11;
+    case CAPSTONE_ARM64_REG_X12: return ARM64_REG_X12;
+    case CAPSTONE_ARM64_REG_X13: return ARM64_REG_X13;
+    case CAPSTONE_ARM64_REG_X14: return ARM64_REG_X14;
+    case CAPSTONE_ARM64_REG_X15: return ARM64_REG_X15;
+    case CAPSTONE_ARM64_REG_X16: return ARM64_REG_X16;
+    case CAPSTONE_ARM64_REG_X17: return ARM64_REG_X17;
+    case CAPSTONE_ARM64_REG_X18: return ARM64_REG_X18;
+    case CAPSTONE_ARM64_REG_X19: return ARM64_REG_X19;
+    case CAPSTONE_ARM64_REG_X20: return ARM64_REG_X20;
+    case CAPSTONE_ARM64_REG_X21: return ARM64_REG_X21;
+    case CAPSTONE_ARM64_REG_X22: return ARM64_REG_X22;
+    case CAPSTONE_ARM64_REG_X23: return ARM64_REG_X23;
+    case CAPSTONE_ARM64_REG_X24: return ARM64_REG_X24;
+    case CAPSTONE_ARM64_REG_X25: return ARM64_REG_X25;
+    case CAPSTONE_ARM64_REG_X26: return ARM64_REG_X26;
+    case CAPSTONE_ARM64_REG_X27: return ARM64_REG_X27;
+    case CAPSTONE_ARM64_REG_X28: return ARM64_REG_X28;
+    case CAPSTONE_ARM64_REG_X29: return ARM64_REG_X29;
+    case CAPSTONE_ARM64_REG_X30: return ARM64_REG_X30;
+    case CAPSTONE_ARM64_REG_XZR: return ARM64_REG_XZR;
+    case CAPSTONE_ARM64_REG_W0: return ARM64_REG_W0;
+    case CAPSTONE_ARM64_REG_W1: return ARM64_REG_W1;
+    case CAPSTONE_ARM64_REG_W2: return ARM64_REG_W2;
+    case CAPSTONE_ARM64_REG_W3: return ARM64_REG_W3;
+    case CAPSTONE_ARM64_REG_W4: return ARM64_REG_W4;
+    case CAPSTONE_ARM64_REG_W5: return ARM64_REG_W5;
+    case CAPSTONE_ARM64_REG_W6: return ARM64_REG_W6;
+    case CAPSTONE_ARM64_REG_W7: return ARM64_REG_W7;
+    case CAPSTONE_ARM64_REG_W8: return ARM64_REG_W8;
+    case CAPSTONE_ARM64_REG_W9: return ARM64_REG_W9;
+    case CAPSTONE_ARM64_REG_W10: return ARM64_REG_W10;
+    case CAPSTONE_ARM64_REG_W11: return ARM64_REG_W11;
+    case CAPSTONE_ARM64_REG_W12: return ARM64_REG_W12;
+    case CAPSTONE_ARM64_REG_W13: return ARM64_REG_W13;
+    case CAPSTONE_ARM64_REG_W14: return ARM64_REG_W14;
+    case CAPSTONE_ARM64_REG_W15: return ARM64_REG_W15;
+    case CAPSTONE_ARM64_REG_W16: return ARM64_REG_W16;
+    case CAPSTONE_ARM64_REG_W17: return ARM64_REG_W17;
+    case CAPSTONE_ARM64_REG_W18: return ARM64_REG_W18;
+    case CAPSTONE_ARM64_REG_W19: return ARM64_REG_W19;
+    case CAPSTONE_ARM64_REG_W20: return ARM64_REG_W20;
+    case CAPSTONE_ARM64_REG_W21: return ARM64_REG_W21;
+    case CAPSTONE_ARM64_REG_W22: return ARM64_REG_W22;
+    case CAPSTONE_ARM64_REG_W23: return ARM64_REG_W23;
+    case CAPSTONE_ARM64_REG_W24: return ARM64_REG_W24;
+    case CAPSTONE_ARM64_REG_W25: return ARM64_REG_W25;
+    case CAPSTONE_ARM64_REG_W26: return ARM64_REG_W26;
+    case CAPSTONE_ARM64_REG_W27: return ARM64_REG_W27;
+    case CAPSTONE_ARM64_REG_W28: return ARM64_REG_W28;
+    case CAPSTONE_ARM64_REG_W29: return ARM64_REG_W29;
+    case CAPSTONE_ARM64_REG_W30: return ARM64_REG_W30;
+    case CAPSTONE_ARM64_REG_WZR: return ARM64_REG_WZR;
+    case CAPSTONE_ARM64_REG_Q0: return ARM64_REG_Q0;
+    case CAPSTONE_ARM64_REG_Q1: return ARM64_REG_Q1;
+    case CAPSTONE_ARM64_REG_Q2: return ARM64_REG_Q2;
+    case CAPSTONE_ARM64_REG_Q3: return ARM64_REG_Q3;
+    case CAPSTONE_ARM64_REG_Q4: return ARM64_REG_Q4;
+    case CAPSTONE_ARM64_REG_Q5: return ARM64_REG_Q5;
+    case CAPSTONE_ARM64_REG_Q6: return ARM64_REG_Q6;
+    case CAPSTONE_ARM64_REG_Q7: return ARM64_REG_Q7;
+    case CAPSTONE_ARM64_REG_Q8: return ARM64_REG_Q8;
+    case CAPSTONE_ARM64_REG_Q9: return ARM64_REG_Q9;
+    case CAPSTONE_ARM64_REG_Q10: return ARM64_REG_Q10;
+    case CAPSTONE_ARM64_REG_Q11: return ARM64_REG_Q11;
+    case CAPSTONE_ARM64_REG_Q12: return ARM64_REG_Q12;
+    case CAPSTONE_ARM64_REG_Q13: return ARM64_REG_Q13;
+    case CAPSTONE_ARM64_REG_Q14: return ARM64_REG_Q14;
+    case CAPSTONE_ARM64_REG_Q15: return ARM64_REG_Q15;
+    case CAPSTONE_ARM64_REG_Q16: return ARM64_REG_Q16;
+    case CAPSTONE_ARM64_REG_Q17: return ARM64_REG_Q17;
+    case CAPSTONE_ARM64_REG_Q18: return ARM64_REG_Q18;
+    case CAPSTONE_ARM64_REG_Q19: return ARM64_REG_Q19;
+    case CAPSTONE_ARM64_REG_Q20: return ARM64_REG_Q20;
+    case CAPSTONE_ARM64_REG_Q21: return ARM64_REG_Q21;
+    case CAPSTONE_ARM64_REG_Q22: return ARM64_REG_Q22;
+    case CAPSTONE_ARM64_REG_Q23: return ARM64_REG_Q23;
+    case CAPSTONE_ARM64_REG_Q24: return ARM64_REG_Q24;
+    case CAPSTONE_ARM64_REG_Q25: return ARM64_REG_Q25;
+    case CAPSTONE_ARM64_REG_Q26: return ARM64_REG_Q26;
+    case CAPSTONE_ARM64_REG_Q27: return ARM64_REG_Q27;
+    case CAPSTONE_ARM64_REG_Q28: return ARM64_REG_Q28;
+    case CAPSTONE_ARM64_REG_Q29: return ARM64_REG_Q29;
+    case CAPSTONE_ARM64_REG_Q30: return ARM64_REG_Q30;
+    case CAPSTONE_ARM64_REG_Q31: return ARM64_REG_Q31;
+    case CAPSTONE_ARM64_REG_V0: return ARM64_REG_V0;
+    case CAPSTONE_ARM64_REG_V1: return ARM64_REG_V1;
+    case CAPSTONE_ARM64_REG_V2: return ARM64_REG_V2;
+    case CAPSTONE_ARM64_REG_V3: return ARM64_REG_V3;
+    case CAPSTONE_ARM64_REG_V4: return ARM64_REG_V4;
+    case CAPSTONE_ARM64_REG_V5: return ARM64_REG_V5;
+    case CAPSTONE_ARM64_REG_V6: return ARM64_REG_V6;
+    case CAPSTONE_ARM64_REG_V7: return ARM64_REG_V7;
+    case CAPSTONE_ARM64_REG_V8: return ARM64_REG_V8;
+    case CAPSTONE_ARM64_REG_V9: return ARM64_REG_V9;
+    case CAPSTONE_ARM64_REG_V10: return ARM64_REG_V10;
+    case CAPSTONE_ARM64_REG_V11: return ARM64_REG_V11;
+    case CAPSTONE_ARM64_REG_V12: return ARM64_REG_V12;
+    case CAPSTONE_ARM64_REG_V13: return ARM64_REG_V13;
+    case CAPSTONE_ARM64_REG_V14: return ARM64_REG_V14;
+    case CAPSTONE_ARM64_REG_V15: return ARM64_REG_V15;
+    case CAPSTONE_ARM64_REG_V16: return ARM64_REG_V16;
+    case CAPSTONE_ARM64_REG_V17: return ARM64_REG_V17;
+    case CAPSTONE_ARM64_REG_V18: return ARM64_REG_V18;
+    case CAPSTONE_ARM64_REG_V19: return ARM64_REG_V19;
+    case CAPSTONE_ARM64_REG_V20: return ARM64_REG_V20;
+    case CAPSTONE_ARM64_REG_V21: return ARM64_REG_V21;
+    case CAPSTONE_ARM64_REG_V22: return ARM64_REG_V22;
+    case CAPSTONE_ARM64_REG_V23: return ARM64_REG_V23;
+    case CAPSTONE_ARM64_REG_V24: return ARM64_REG_V24;
+    case CAPSTONE_ARM64_REG_V25: return ARM64_REG_V25;
+    case CAPSTONE_ARM64_REG_V26: return ARM64_REG_V26;
+    case CAPSTONE_ARM64_REG_V27: return ARM64_REG_V27;
+    case CAPSTONE_ARM64_REG_V28: return ARM64_REG_V28;
+    case CAPSTONE_ARM64_REG_V29: return ARM64_REG_V29;
+    case CAPSTONE_ARM64_REG_V30: return ARM64_REG_V30;
+    case CAPSTONE_ARM64_REG_V31: return ARM64_REG_V31;
+    case CAPSTONE_ARM64_REG_SP: return ARM64_REG_SP;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return ARM64_REG_INVALID;
+}
+
