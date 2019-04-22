@@ -3,8 +3,12 @@
 #include <map>
 #include <nxemu-core\Machine\PageTable.h>
 
+class CSystemThreadMemory;
+
 class CProcessMemory
 {
+    friend CSystemThreadMemory;
+
 public:
     typedef CPageTable::MemoryPermission MemoryPermission;
 
@@ -37,6 +41,7 @@ public:
     static uint64_t GetAddressSpaceBaseAddr(void) { return 0x0000000008000000; }
 
     CProcessMemory();
+    ~CProcessMemory();
         
     uint8_t * MapMemory(uint64_t Address, uint32_t Size, MemoryPermission Perm, MemoryType type);
     bool Read32(uint64_t Addr, uint32_t & value);

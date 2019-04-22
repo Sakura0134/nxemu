@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <nxemu-core\Machine\CPU\CPUExecutor.h>
+#include <nxemu-core\hle\SystemThreadMemory.h>
 #include <nxemu-core\hle\ProcessMemory.h>
 
 class CHleKernel;
@@ -18,6 +19,7 @@ private:
     CSystemThread& operator=(const CSystemThread&); // Disable assignment
         
     CHleKernel * m_Kernel;
+    CSystemThreadMemory m_ThreadMemory;
     uint32_t m_thread_id;
 	uint32_t m_Priority;
 	std::string m_Name;

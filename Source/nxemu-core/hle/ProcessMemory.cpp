@@ -6,6 +6,10 @@ CProcessMemory::CProcessMemory(void)
 {
 }
 
+CProcessMemory::~CProcessMemory()
+{
+}
+
 uint8_t * CProcessMemory::MapMemory(uint64_t Address, uint32_t Size, MemoryPermission Perm, MemoryType type)
 {
     if (Size == 0)

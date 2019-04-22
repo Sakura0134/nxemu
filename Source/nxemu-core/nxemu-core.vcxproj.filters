@@ -186,6 +186,9 @@
     <ClInclude Include="Settings\Settings.h">
       <Filter>Header Files\Settings</Filter>
     </ClInclude>
+    <ClInclude Include="hle\SystemThreadMemory.h">
+      <Filter>Header Files\hle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -286,6 +289,9 @@
     </ClCompile>
     <ClCompile Include="Settings\Settings.cpp">
       <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\SystemThreadMemory.cpp">
+      <Filter>Source Files\hle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

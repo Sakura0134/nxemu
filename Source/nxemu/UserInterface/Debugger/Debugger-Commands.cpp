@@ -1,3 +1,4 @@
+#include <nxemu-core\Machine\CPU\MemoryManagement.h>
 #include <nxemu-core\Machine\CPU\CPUExecutor.h>
 #include <nxemu\UserInterface\Debugger\Debugger-Commands.h>
 #include <nxemu\UserInterface\Debugger\Debugger.h>
@@ -27,12 +28,21 @@ void CCommandList::ShowAddress(uint64_t address, bool top)
     {
         m_opAddr.clear();
         m_StartAddress = address;
+        MemoryManagement & ThreadMemory = m_Debugger->Executor()->MMU();
+
         for (uint32_t i = 0; i < m_CommandListRows; i++)
         {
             uint64_t opAddr = m_StartAddress + i * 4;
             char AddressStr[100]                ;
             sprintf(AddressStr, "%016I64X", opAddr);
             m_opAddr.push_back(AddressStr);
+
+            uint32_t insn = 0;
+            bool ValidOp = true;
+            if (!ThreadMemory.Read32(opAddr, insn))
+            {
+                ValidOp = false;
+            }
         }
     }
     Invalidate();
