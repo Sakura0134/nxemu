@@ -189,6 +189,9 @@
     <ClInclude Include="hle\SystemThreadMemory.h">
       <Filter>Header Files\hle</Filter>
     </ClInclude>
+    <ClInclude Include="Machine\CPU\MemoryManagement.h">
+      <Filter>Header Files\Machine\CPU</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -292,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="hle\SystemThreadMemory.cpp">
       <Filter>Source Files\hle</Filter>
+    </ClCompile>
+    <ClCompile Include="Machine\Arm64Opcode.cpp">
+      <Filter>Source Files\Machine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

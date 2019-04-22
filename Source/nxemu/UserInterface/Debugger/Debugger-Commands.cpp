@@ -26,6 +26,7 @@ void CCommandList::ShowAddress(uint64_t address, bool top)
     bool bOutOfView = address < m_StartAddress || address > m_StartAddress + (m_CommandListRows - 1) * 4;
     if (bOutOfView || top || m_opAddr.size() == 0)
     {
+        m_ops.clear();
         m_opAddr.clear();
         m_StartAddress = address;
         MemoryManagement & ThreadMemory = m_Debugger->Executor()->MMU();
@@ -43,6 +44,8 @@ void CCommandList::ShowAddress(uint64_t address, bool top)
             {
                 ValidOp = false;
             }
+            Arm64Opcode OpInfo(opAddr, insn);
+            m_ops.push_back(OpInfo);
         }
     }
     Invalidate();
@@ -98,9 +101,12 @@ const char * CCommandList::GetItemText(int nItem, int nSubItem)
         return "";
     }
 
+    Arm64Opcode &op = m_ops[nItem];
     switch (nSubItem)
     {
     case COL_ADDRESS: return m_opAddr[nItem].c_str();
+    case COL_COMMAND: return op.Name();
+    case COL_PARAMETERS: return op.Param();
     }
     return "";
 }
@@ -134,6 +140,7 @@ CDebugCommandsView::CDebugCommandsView(CDebuggerUI * debugger) :
 
 CDebugCommandsView::~CDebugCommandsView()
 {
+    HideWindow();
 }
 
 LRESULT	CDebugCommandsView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)

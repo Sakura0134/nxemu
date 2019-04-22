@@ -2,6 +2,7 @@
 #include <nxemu-core\Settings\Debug.h>
 #include <nxemu\UserInterface\WTLApp.h>
 #include <nxemu\UserInterface\Debugger\DebugDialog.h>
+#include <nxemu-core\Machine\Arm64Opcode.h>
 #include <Common\SyncEvent.h>
 #include <vector>
 
@@ -12,6 +13,8 @@ public:
     enum
     {
         COL_ADDRESS = 1,
+        COL_COMMAND = 2,
+        COL_PARAMETERS = 3,
     };
     DECLARE_WND_CLASS(_T("ListCtrl"))
 
@@ -34,9 +37,12 @@ public:
     bool FixRowsVisible(void);
 
 private:
+    typedef std::vector<Arm64Opcode> Arm64OpcodeList;
+
     CDebuggerUI * m_Debugger;
     uint64_t m_StartAddress;
     uint32_t m_CommandListRows;
+    Arm64OpcodeList m_ops;
     std::vector<std::string> m_opAddr;
 };
 

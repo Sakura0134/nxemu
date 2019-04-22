@@ -1,4 +1,6 @@
 #pragma once
+#include <Common\stdtypes.h>
+#include <string>
 
 class Arm64Opcode
 {
@@ -140,4 +142,14 @@ public:
         //Alias
         ARM64_REG_LR = ARM64_REG_X30,
     } arm64_reg;
+
+    Arm64Opcode(uint64_t pc, uint32_t insn);
+
+    inline const char * Name ( void ) const { return m_Name.c_str(); }
+    inline const char * Param ( void ) const { return m_Param.c_str(); }
+
+private:
+    uint64_t m_pc;
+    std::string m_Name;
+    std::string m_Param;
 };
