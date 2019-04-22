@@ -1,6 +1,7 @@
 #pragma once
 #include <nxemu-core\Debugger.h>
 
+class CDebugCommandsView;
 class CPUExecutor;
 
 class CDebuggerUI :
@@ -19,6 +20,8 @@ private:
     CDebuggerUI& operator=(const CDebuggerUI&);		// Disable assignment
 
     void SetDebugThread(void);
+
+    CDebugCommandsView * m_CommandsView;
 
     CPUExecutor * m_Executor;
 };

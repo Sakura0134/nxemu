@@ -590,7 +590,7 @@ public:
 		return 0;
 	}
 	
-    const char * GetItemText( int nItem, int /*nSubItem*/ )
+    const char * GetItemText( int /*nItem*/, int /*nSubItem*/ )
 	{
 		ATLASSERT( FALSE ); // must be implemented in a derived class
 		return _T( "" );
@@ -643,7 +643,7 @@ public:
 		return m_fntListFont; // may be implemented in a derived class
 	}
 	
-	BOOL GetItemColours( int nItem, int nSubItem, COLORREF& rgbBackground, COLORREF& rgbText )
+	BOOL GetItemColours( int /*nItem*/, int /*nSubItem*/, COLORREF& rgbBackground, COLORREF& rgbText )
 	{
 		rgbBackground = m_rgbBackground;
 		rgbText = m_rgbItemText;

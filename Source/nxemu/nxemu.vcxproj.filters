@@ -72,6 +72,9 @@
     <ClCompile Include="UserInterface\Debugger\Debugger.cpp">
       <Filter>Source Files\UserInterface\Debugger</Filter>
     </ClCompile>
+    <ClCompile Include="UserInterface\Debugger\Debugger-Commands.cpp">
+      <Filter>Source Files\UserInterface\Debugger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UserInterface\Notification.h">
@@ -127,6 +130,12 @@
     </ClInclude>
     <ClInclude Include="UserInterface\WTLControls\ClistCtrl\TitleTip.h">
       <Filter>Header Files\UserInterface\WTLControls\ClistCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\Debugger\DebugDialog.h">
+      <Filter>Header Files\UserInterface\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\Debugger\Debugger-Commands.h">
+      <Filter>Header Files\UserInterface\Debugger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
