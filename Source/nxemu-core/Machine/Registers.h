@@ -11,6 +11,8 @@ class CRegisters
 public:
     CRegisters(CPUExecutor * Executor);
 
+    uint64_t Get64(Arm64Opcode::arm64_reg reg);
+
     void Set64(Arm64Opcode::arm64_reg reg, uint64_t value);
 
 private:

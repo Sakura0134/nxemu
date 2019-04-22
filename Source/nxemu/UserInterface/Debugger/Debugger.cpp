@@ -11,6 +11,10 @@ CDebuggerUI::CDebuggerUI() :
 
 CDebuggerUI::~CDebuggerUI()
 {
+    if (m_CommandsView != NULL)
+    {
+        delete m_CommandsView;
+    }
 }
 
 void CDebuggerUI::OpenCommandWindow(void)

@@ -9,11 +9,16 @@ class CCommandList :
     public CListImpl<CCommandList>
 {
 public:
+    enum
+    {
+        COL_ADDRESS = 1,
+    };
     DECLARE_WND_CLASS(_T("ListCtrl"))
 
     CCommandList(CDebuggerUI * Debugger);
 
     void Attach(HWND hWndNew);
+    void ShowAddress(uint64_t address, bool top);
 
     BEGIN_MSG_MAP_EX(CCommandsList)
         CHAIN_MSG_MAP(CListImpl<CCommandList>)
@@ -23,11 +28,16 @@ public:
     const char * GetItemText(int nItem, int nSubItem);
     UINT GetItemMaxEditLen(int nItem, int nSubItem);
     void DrawCustomItem(CDCHandle dcPaint, int nItem, int nSubItem, CRect& rcSubItem);
+    BOOL GetItemColours(int nItem, int nSubItem, COLORREF& rgbBackground, COLORREF& rgbText);
     BOOL GetItemSelectedColours(int nItem, int nSubItem, COLORREF& rgbSelectedText);
+    void DrawList(CDCHandle dcPaint);
+    bool FixRowsVisible(void);
 
 private:
     CDebuggerUI * m_Debugger;
+    uint64_t m_StartAddress;
     uint32_t m_CommandListRows;
+    std::vector<std::string> m_opAddr;
 };
 
 class CDebugCommandsView :

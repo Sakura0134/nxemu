@@ -15,6 +15,8 @@ public:
     void EditLoggingOptions(void * hWndParent);
     void WaitForStep(void);
 
+    inline CPUExecutor * Executor() { return m_Executor; }
+
 private:
     CDebuggerUI(const CDebuggerUI&);				// Disable copy constructor
     CDebuggerUI& operator=(const CDebuggerUI&);		// Disable assignment

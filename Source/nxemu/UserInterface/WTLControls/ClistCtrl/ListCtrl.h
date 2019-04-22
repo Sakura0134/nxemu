@@ -1926,24 +1926,47 @@ public:
 	{
 		m_oleDragDrop.Revoke();
 		
-		if ( m_wndDropArrows.IsWindow() )
-			m_wndDropArrows.DestroyWindow();
-		
-		if ( m_wndTitleTip.IsWindow() )
-			m_wndTitleTip.DestroyWindow();
-		
-		if ( m_wndItemEdit.IsWindow() )
-			m_wndItemEdit.DestroyWindow();
-		
-		if ( m_wndItemCombo.IsWindow() )
-			m_wndItemCombo.DestroyWindow();
-		
-		if ( m_wndItemDate.IsWindow() )
-			m_wndItemDate.DestroyWindow();
-		
-		if ( m_ttToolTip.IsWindow() )
-			m_ttToolTip.DestroyWindow();
-	}
+        if (!m_ilListItems.IsNull())
+        {
+            m_ilListItems.Destroy();
+        }
+        if (!m_curDivider.IsNull())
+        {
+            m_curDivider.DestroyCursor();
+        }
+        if (!m_curHyperLink.IsNull())
+        {
+            m_curHyperLink.DestroyCursor();
+        }
+        if (m_wndDropArrows.IsWindow())
+        {
+            m_wndDropArrows.DestroyWindow();
+        }
+        if (m_wndTitleTip.IsWindow())
+        {
+            m_wndTitleTip.DestroyWindow();
+        }
+        if (m_wndItemEdit.IsWindow())
+        {
+            m_wndItemEdit.DestroyWindow();
+        }
+        if (m_wndItemCombo.IsWindow())
+        {
+            m_wndItemCombo.DestroyWindow();
+        }
+        if (m_wndItemDate.IsWindow())
+        {
+            m_wndItemDate.DestroyWindow();
+        }
+        if (m_ttToolTip.IsWindow())
+        {
+            m_ttToolTip.DestroyWindow();
+        }
+        else
+        {
+            m_ttToolTip = NULL;
+        }
+    }
 	
 	void OnSetFocus( HWND /*hOldWnd*/ )
 	{
