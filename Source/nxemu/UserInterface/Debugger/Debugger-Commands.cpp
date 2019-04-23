@@ -28,6 +28,7 @@ void CCommandList::ShowAddress(uint64_t address, bool top)
     {
         m_ops.clear();
         m_opAddr.clear();
+        m_ValidOp.clear();
         ClearBranchArrows();
         m_StartAddress = address;
         MemoryManagement & ThreadMemory = m_Debugger->Executor()->MMU();
@@ -45,6 +46,7 @@ void CCommandList::ShowAddress(uint64_t address, bool top)
             {
                 ValidOp = false;
             }
+            m_ValidOp.push_back(ValidOp);
             Arm64Opcode OpInfo(opAddr, insn);
             m_ops.push_back(OpInfo);
             if (OpInfo.IsBranch())
@@ -111,17 +113,16 @@ BOOL CCommandList::GetItemColours(int nItem, int nSubItem, COLORREF& rgbBackgrou
 
 const char * CCommandList::GetItemText(int nItem, int nSubItem)
 {
-    if (nItem < 0 || nItem >= m_opAddr.size())
+    if (nSubItem == COL_ADDRESS && nItem >= 0 && nItem < m_opAddr.size())
     {
-        return "";
+        return m_opAddr[nItem].c_str();
     }
-
-    Arm64Opcode &op = m_ops[nItem];
-    switch (nSubItem)
+    if ((nSubItem == COL_COMMAND || nSubItem == COL_PARAMETERS) && nItem >= 0 && nItem < m_ops.size())
     {
-    case COL_ADDRESS: return m_opAddr[nItem].c_str();
-    case COL_COMMAND: return op.Name();
-    case COL_PARAMETERS: return op.Param();
+        bool Valid = (nItem >= 0 && nItem < m_ValidOp.size()) ? m_ValidOp[nItem] : false;
+        Arm64Opcode &op = m_ops[nItem];
+        if (nSubItem == COL_COMMAND) { return Valid ? op.Name() : "********"; }
+        if (nSubItem == COL_PARAMETERS) { return Valid ? op.Param() : ""; }
     }
     return "";
 }
@@ -314,6 +315,11 @@ CDebugCommandsView::~CDebugCommandsView()
 LRESULT	CDebugCommandsView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
     m_CommandList.Attach(GetDlgItem(IDC_CMD_LIST));
+    m_Scrollbar.Attach(GetDlgItem(IDC_SCRL_BAR));
+
+    // Setup list scrollbar
+    m_Scrollbar.SetScrollRange(0, 100, FALSE);
+    m_Scrollbar.SetScrollPos(50, TRUE);
 
     uint64_t PC = m_Debugger->Executor() != NULL ? m_Debugger->Executor()->Reg().Get64(Arm64Opcode::ARM64_REG_PC) : 0;
     m_CommandList.ShowAddress(PC, TRUE);
@@ -324,6 +330,7 @@ LRESULT	CDebugCommandsView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARA
 
 LRESULT CDebugCommandsView::OnDestroy(void)
 {
+    m_Scrollbar.Detach();
     m_CommandList.Detach();
     m_CommandList = CCommandList(m_Debugger);
     return 0;
@@ -335,3 +342,21 @@ LRESULT CDebugCommandsView::OnCancel(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*
     return TRUE;
 }
     
+
+LRESULT CDebugCommandsView::OnScroll(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+    WORD type = LOWORD(wParam);
+
+    switch (type)
+    {
+    case SB_LINEUP:
+        m_CommandList.ShowAddress(m_CommandList.StartAddress() - 4, TRUE);
+        break;
+    case SB_LINEDOWN:
+        m_CommandList.ShowAddress(m_CommandList.StartAddress() + 4, TRUE);
+        break;
+    }
+
+    return FALSE;
+}
+

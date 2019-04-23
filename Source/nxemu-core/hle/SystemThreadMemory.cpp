@@ -21,7 +21,6 @@ bool CSystemThreadMemory::ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t le
     void * ReadBuffer = NULL;
     if (!FindAddressMemory(Addr, len, ReadBuffer))
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
         return false;
     }
     memcpy(buffer, ReadBuffer, len);

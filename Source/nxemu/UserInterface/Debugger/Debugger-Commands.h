@@ -28,6 +28,7 @@ public:
         CHAIN_MSG_MAP(CListImpl<CCommandList>)
     END_MSG_MAP()
 
+    uint64_t StartAddress(void) const { return m_StartAddress; }
     int GetItemCount();
     const char * GetItemText(int nItem, int nSubItem);
     UINT GetItemMaxEditLen(int nItem, int nSubItem);
@@ -58,6 +59,7 @@ private:
     uint32_t m_CommandListRows;
     Arm64OpcodeList m_ops;
     std::vector<std::string> m_opAddr;
+    std::vector<bool> m_ValidOp;
     std::vector<BRANCHARROW> m_BranchArrows;
 };
 
@@ -74,14 +76,17 @@ public:
 private:
     BEGIN_MSG_MAP_EX(CDebugCommandsView)
         MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+        MESSAGE_HANDLER(WM_VSCROLL, OnScroll)
         COMMAND_HANDLER(IDCANCEL, BN_CLICKED, OnCancel)
         MSG_WM_DESTROY(OnDestroy)
         REFLECT_NOTIFICATIONS()
     END_MSG_MAP()
 
     LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+    LRESULT OnScroll(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnCancel(WORD wNotifyCode, WORD wID, HWND hwnd, BOOL& bHandled);
     LRESULT OnDestroy(void);
 
     CCommandList m_CommandList;
+    CScrollBar m_Scrollbar;
 };
