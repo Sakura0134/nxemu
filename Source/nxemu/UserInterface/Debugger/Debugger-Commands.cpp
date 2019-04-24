@@ -302,7 +302,8 @@ int CCommandList::GetItemCount()
 
 CDebugCommandsView::CDebugCommandsView(CDebuggerUI * debugger) :
     CDebugDialog<CDebugCommandsView>(debugger),
-    m_CommandList(debugger)
+    m_CommandList(debugger),
+    m_RegisterTabs(debugger)
 {
     m_CommandList.RegisterClass();
 }
@@ -315,6 +316,7 @@ CDebugCommandsView::~CDebugCommandsView()
 LRESULT	CDebugCommandsView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
     m_CommandList.Attach(GetDlgItem(IDC_CMD_LIST));
+    m_RegisterTabs.Attach(GetDlgItem(IDC_REG_TABS));
     m_Scrollbar.Attach(GetDlgItem(IDC_SCRL_BAR));
 
     // Setup list scrollbar
@@ -331,9 +333,18 @@ LRESULT	CDebugCommandsView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARA
 LRESULT CDebugCommandsView::OnDestroy(void)
 {
     m_Scrollbar.Detach();
+    m_RegisterTabs.Detach();
     m_CommandList.Detach();
     m_CommandList = CCommandList(m_Debugger);
     return 0;
+}
+
+LRESULT CDebugCommandsView::OnRegisterTabChange(NMHDR* /*pNMHDR*/)
+{
+    int nPage = m_RegisterTabs.GetCurSel();
+    m_RegisterTabs.ShowTab(nPage);
+    m_RegisterTabs.RedrawCurrentTab();
+    return FALSE;
 }
 
 LRESULT CDebugCommandsView::OnCancel(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hwnd*/, BOOL& /*bHandled*/)

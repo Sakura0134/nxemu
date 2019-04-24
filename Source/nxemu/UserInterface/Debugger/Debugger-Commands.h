@@ -3,6 +3,7 @@
 #include <nxemu\UserInterface\WTLApp.h>
 #include <nxemu\UserInterface\Debugger\DebugDialog.h>
 #include <nxemu-core\Machine\Arm64Opcode.h>
+#include "Debugger-RegisterTabs.h"
 #include <Common\SyncEvent.h>
 #include <vector>
 
@@ -78,6 +79,7 @@ private:
         MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
         MESSAGE_HANDLER(WM_VSCROLL, OnScroll)
         COMMAND_HANDLER(IDCANCEL, BN_CLICKED, OnCancel)
+        NOTIFY_HANDLER_EX(IDC_REG_TABS, TCN_SELCHANGE, OnRegisterTabChange)
         MSG_WM_DESTROY(OnDestroy)
         REFLECT_NOTIFICATIONS()
     END_MSG_MAP()
@@ -85,8 +87,11 @@ private:
     LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnScroll(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnCancel(WORD wNotifyCode, WORD wID, HWND hwnd, BOOL& bHandled);
+    LRESULT OnRegisterTabChange(NMHDR* pNMHDR);
     LRESULT OnDestroy(void);
 
     CCommandList m_CommandList;
     CScrollBar m_Scrollbar;
+
+    CRegisterTabs m_RegisterTabs;
 };

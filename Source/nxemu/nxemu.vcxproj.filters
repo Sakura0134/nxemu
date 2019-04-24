@@ -75,6 +75,9 @@
     <ClCompile Include="UserInterface\Debugger\Debugger-Commands.cpp">
       <Filter>Source Files\UserInterface\Debugger</Filter>
     </ClCompile>
+    <ClCompile Include="UserInterface\Debugger\Debugger-RegisterTabs.cpp">
+      <Filter>Source Files\UserInterface\Debugger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UserInterface\Notification.h">
@@ -135,6 +138,9 @@
       <Filter>Header Files\UserInterface\Debugger</Filter>
     </ClInclude>
     <ClInclude Include="UserInterface\Debugger\Debugger-Commands.h">
+      <Filter>Header Files\UserInterface\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\Debugger\Debugger-RegisterTabs.h">
       <Filter>Header Files\UserInterface\Debugger</Filter>
     </ClInclude>
   </ItemGroup>

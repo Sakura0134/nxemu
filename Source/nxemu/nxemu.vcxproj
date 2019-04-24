@@ -32,6 +32,7 @@
     <ClCompile Include="Settings\UISettings.cpp" />
     <ClCompile Include="UserInterface\Debugger\Debugger-Commands.cpp" />
     <ClCompile Include="UserInterface\Debugger\Debugger-Logging.cpp" />
+    <ClCompile Include="UserInterface\Debugger\Debugger-RegisterTabs.cpp" />
     <ClCompile Include="UserInterface\Debugger\Debugger.cpp" />
     <ClCompile Include="UserInterface\MainMenu.cpp" />
     <ClCompile Include="UserInterface\MainWindow.cpp" />
@@ -45,6 +46,7 @@
     <ClInclude Include="Settings\UISettings.h" />
     <ClInclude Include="UserInterface\Debugger\DebugDialog.h" />
     <ClInclude Include="UserInterface\Debugger\Debugger-Commands.h" />
+    <ClInclude Include="UserInterface\Debugger\Debugger-RegisterTabs.h" />
     <ClInclude Include="UserInterface\Debugger\Debugger.h" />
     <ClInclude Include="UserInterface\MainMenu.h" />
     <ClInclude Include="UserInterface\MainWindow.h" />
