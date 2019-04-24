@@ -318,6 +318,7 @@ LRESULT	CDebugCommandsView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARA
     m_CommandList.Attach(GetDlgItem(IDC_CMD_LIST));
     m_RegisterTabs.Attach(GetDlgItem(IDC_REG_TABS));
     m_Scrollbar.Attach(GetDlgItem(IDC_SCRL_BAR));
+    DlgResize_Init(false, true);
 
     // Setup list scrollbar
     m_Scrollbar.SetScrollRange(0, 100, FALSE);
@@ -353,6 +354,16 @@ LRESULT CDebugCommandsView::OnCancel(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*
     return TRUE;
 }
     
+
+LRESULT	CDebugCommandsView::OnSizing(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+    if (m_CommandList.FixRowsVisible())
+    {
+        m_CommandList.ShowAddress(m_CommandList.StartAddress(), true);
+    }
+    m_RegisterTabs.RedrawCurrentTab();
+    return FALSE;
+}
 
 LRESULT CDebugCommandsView::OnScroll(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {

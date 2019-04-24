@@ -66,6 +66,7 @@ private:
 
 class CDebugCommandsView :
     public CDebugDialog<CDebugCommandsView>,
+    public CDialogResize<CDebugCommandsView>,
     public CDebugSettings
 {
 public:
@@ -77,14 +78,25 @@ public:
 private:
     BEGIN_MSG_MAP_EX(CDebugCommandsView)
         MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+        MESSAGE_HANDLER(WM_SIZING, OnSizing)
         MESSAGE_HANDLER(WM_VSCROLL, OnScroll)
         COMMAND_HANDLER(IDCANCEL, BN_CLICKED, OnCancel)
         NOTIFY_HANDLER_EX(IDC_REG_TABS, TCN_SELCHANGE, OnRegisterTabChange)
         MSG_WM_DESTROY(OnDestroy)
+        CHAIN_MSG_MAP(CDialogResize<CDebugCommandsView>)
         REFLECT_NOTIFICATIONS()
     END_MSG_MAP()
 
+    BEGIN_DLGRESIZE_MAP(CDebugCommandsView)
+        DLGRESIZE_CONTROL(IDC_GO_BTN, DLSZ_MOVE_X)
+        DLGRESIZE_CONTROL(IDC_STEP_BTN, DLSZ_MOVE_X)
+        DLGRESIZE_CONTROL(IDC_REG_TABS, DLSZ_MOVE_X)
+        DLGRESIZE_CONTROL(IDC_CMD_LIST, DLSZ_SIZE_X | DLSZ_SIZE_Y)
+        DLGRESIZE_CONTROL(IDC_SCRL_BAR, DLSZ_MOVE_X | DLSZ_SIZE_Y)
+    END_DLGRESIZE_MAP()
+
     LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+    LRESULT OnSizing(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnScroll(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnCancel(WORD wNotifyCode, WORD wID, HWND hwnd, BOOL& bHandled);
     LRESULT OnRegisterTabChange(NMHDR* pNMHDR);
