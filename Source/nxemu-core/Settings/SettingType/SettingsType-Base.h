@@ -8,9 +8,10 @@ enum SettingType
     SettingType_ConstString = 0,
     SettingType_ConstValue = 1,
     SettingType_CfgFile = 2,
-    SettingType_StringVariable = 3,
-    SettingType_RelativePath = 4,
-    SettingType_SelectedDirectory = 5,
+    SettingType_TempBool = 3,
+    SettingType_StringVariable = 4,
+    SettingType_RelativePath = 5,
+    SettingType_SelectedDirectory = 6,
 };
 
 class CSettingType

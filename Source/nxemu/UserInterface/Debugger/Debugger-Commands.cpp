@@ -1,3 +1,5 @@
+#include <nxemu-core\SystemGlobals.h>
+#include <nxemu-core\Settings\Settings.h>
 #include <nxemu-core\Machine\CPU\MemoryManagement.h>
 #include <nxemu-core\Machine\CPU\CPUExecutor.h>
 #include <nxemu\UserInterface\Debugger\Debugger-Commands.h>
@@ -300,10 +302,11 @@ int CCommandList::GetItemCount()
     return m_CommandListRows;
 }
 
-CDebugCommandsView::CDebugCommandsView(CDebuggerUI * debugger) :
+CDebugCommandsView::CDebugCommandsView(CDebuggerUI * debugger, SyncEvent &StepEvent) :
     CDebugDialog<CDebugCommandsView>(debugger),
     m_CommandList(debugger),
-    m_RegisterTabs(debugger)
+    m_RegisterTabs(debugger),
+    m_StepEvent(StepEvent)
 {
     m_CommandList.RegisterClass();
 }
@@ -315,10 +318,17 @@ CDebugCommandsView::~CDebugCommandsView()
 
 LRESULT	CDebugCommandsView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
+    g_Settings->RegisterChangeCB(Debugger_WaitingForStep, this, (CSettings::SettingChangedFunc)StaticWaitingForStepChanged);
+
     m_CommandList.Attach(GetDlgItem(IDC_CMD_LIST));
+    m_StepButton.Attach(GetDlgItem(IDC_STEP_BTN));
+    m_GoButton.Attach(GetDlgItem(IDC_GO_BTN));
     m_RegisterTabs.Attach(GetDlgItem(IDC_REG_TABS));
     m_Scrollbar.Attach(GetDlgItem(IDC_SCRL_BAR));
     DlgResize_Init(false, true);
+
+    m_StepButton.EnableWindow(FALSE);
+    m_GoButton.EnableWindow(FALSE);
 
     // Setup list scrollbar
     m_Scrollbar.SetScrollRange(0, 100, FALSE);
@@ -327,14 +337,26 @@ LRESULT	CDebugCommandsView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARA
     uint64_t PC = m_Debugger->Executor() != NULL ? m_Debugger->Executor()->Reg().Get64(Arm64Opcode::ARM64_REG_PC) : 0;
     m_CommandList.ShowAddress(PC, TRUE);
 
+    if (isStepping())
+    {
+        m_StepButton.EnableWindow(TRUE);
+        m_GoButton.EnableWindow(TRUE);
+    }
     WindowCreated();
     return TRUE;
 }
 
 LRESULT CDebugCommandsView::OnDestroy(void)
 {
+    if (g_Settings)
+    {
+        g_Settings->UnregisterChangeCB(Debugger_WaitingForStep, this, (CSettings::SettingChangedFunc)StaticWaitingForStepChanged);
+    }
+
     m_Scrollbar.Detach();
     m_RegisterTabs.Detach();
+    m_GoButton.Detach();
+    m_StepButton.Detach();
     m_CommandList.Detach();
     m_CommandList = CCommandList(m_Debugger);
     return 0;
@@ -346,6 +368,30 @@ LRESULT CDebugCommandsView::OnRegisterTabChange(NMHDR* /*pNMHDR*/)
     m_RegisterTabs.ShowTab(nPage);
     m_RegisterTabs.RedrawCurrentTab();
     return FALSE;
+}
+
+void CDebugCommandsView::CPUResume()
+{
+    g_Settings->SaveBool(Debugger_SteppingOps, false);
+    if (WaitingForStep())
+    {
+        m_StepEvent.Trigger();
+    }
+}
+
+LRESULT CDebugCommandsView::OnStep(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hwnd*/, BOOL& /*bHandled*/)
+{
+    if (WaitingForStep())
+    {
+        m_StepEvent.Trigger();
+    }
+    return TRUE;
+}
+
+LRESULT CDebugCommandsView::OnGo(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hwnd*/, BOOL& /*bHandled*/)
+{
+    CPUResume();
+    return TRUE;
 }
 
 LRESULT CDebugCommandsView::OnCancel(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hwnd*/, BOOL& /*bHandled*/)
@@ -382,3 +428,23 @@ LRESULT CDebugCommandsView::OnScroll(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lPar
     return FALSE;
 }
 
+void CDebugCommandsView::WaitingForStepChanged(void)
+{
+    if (WaitingForStep())
+    {
+        if (m_Debugger->Executor() != NULL)
+        {
+            CRegisters & Reg = m_Debugger->Executor()->Reg();
+            m_CommandList.ShowAddress(Reg.Get64(Arm64Opcode::ARM64_REG_PC), false);
+        }
+        m_RegisterTabs.RefreshEdits();
+        m_StepButton.EnableWindow(true);
+        m_GoButton.EnableWindow(true);
+    }
+    else
+    {
+        m_StepButton.EnableWindow(false);
+        m_GoButton.EnableWindow(false);
+    }
+    m_CommandList.Invalidate();
+}

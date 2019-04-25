@@ -1,8 +1,10 @@
 #pragma once
+#include <nxemu-core\Settings\Debug.h>
 #include <nxemu-core\Machine\Registers.h>
 #include <nxemu-core\Machine\CPU\MemoryManagement.h>
 
-class CPUExecutor
+class CPUExecutor :
+    protected CDebugSettings
 {    
 public:
     CPUExecutor(MemoryManagement & mmu);

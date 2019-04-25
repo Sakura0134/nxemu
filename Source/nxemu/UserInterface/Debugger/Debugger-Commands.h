@@ -72,7 +72,7 @@ class CDebugCommandsView :
 public:
     enum { IDD = IDD_Debugger_Commands };
 
-    CDebugCommandsView(CDebuggerUI * debugger);
+    CDebugCommandsView(CDebuggerUI * debugger, SyncEvent &StepEvent);
     virtual ~CDebugCommandsView(void);
 
 private:
@@ -80,6 +80,8 @@ private:
         MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
         MESSAGE_HANDLER(WM_SIZING, OnSizing)
         MESSAGE_HANDLER(WM_VSCROLL, OnScroll)
+        COMMAND_HANDLER(IDC_GO_BTN, BN_CLICKED, OnGo)
+        COMMAND_HANDLER(IDC_STEP_BTN, BN_CLICKED, OnStep)
         COMMAND_HANDLER(IDCANCEL, BN_CLICKED, OnCancel)
         NOTIFY_HANDLER_EX(IDC_REG_TABS, TCN_SELCHANGE, OnRegisterTabChange)
         MSG_WM_DESTROY(OnDestroy)
@@ -95,15 +97,25 @@ private:
         DLGRESIZE_CONTROL(IDC_SCRL_BAR, DLSZ_MOVE_X | DLSZ_SIZE_Y)
     END_DLGRESIZE_MAP()
 
+    static void StaticWaitingForStepChanged(CDebugCommandsView * _this) { _this->WaitingForStepChanged(); }
+
     LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnSizing(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnScroll(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+    LRESULT OnGo(WORD wNotifyCode, WORD wID, HWND hwnd, BOOL& bHandled);
     LRESULT OnCancel(WORD wNotifyCode, WORD wID, HWND hwnd, BOOL& bHandled);
+    LRESULT OnStep(WORD wNotifyCode, WORD wID, HWND hwnd, BOOL& bHandled);
     LRESULT OnRegisterTabChange(NMHDR* pNMHDR);
     LRESULT OnDestroy(void);
+
+    void CPUResume();
+    void WaitingForStepChanged(void);
 
     CCommandList m_CommandList;
     CScrollBar m_Scrollbar;
 
     CRegisterTabs m_RegisterTabs;
+    SyncEvent & m_StepEvent;
+    CButton m_StepButton;
+    CButton m_GoButton;
 };

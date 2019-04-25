@@ -4,7 +4,8 @@
 #include <nxemu-core\Settings\SettingType\SettingsType-Application.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-ApplicationPath.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-RelativePath.h>
-#include "SettingType/SettingsType-SelectedDirectory.h"
+#include <nxemu-core\Settings\SettingType\SettingsType-SelectedDirectory.h>
+#include <nxemu-core\Settings\SettingType\SettingsType-TempBool.h>
 #include <nxemu-core\Settings\SettingType\SettingsType-TempString.h>
 #include <nxemu-core\Settings\Settings.h>
 
@@ -77,6 +78,8 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
 
     //Debugger
     AddHandler(Debugger_Enabled, new CSettingTypeApplication("Debugger", "Debugger", true));
+    AddHandler(Debugger_SteppingOps, new CSettingTypeTempBool(false));
+    AddHandler(Debugger_WaitingForStep, new CSettingTypeTempBool(false));
 
     //Logging
     AddHandler(Debugger_TraceAutoFlush, new CSettingTypeApplication("Logging", "Trace Auto Flush", (uint32_t)false));

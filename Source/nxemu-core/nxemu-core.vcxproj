@@ -67,6 +67,7 @@
     <ClInclude Include="Settings\SettingType\SettingsType-Base.h" />
     <ClInclude Include="Settings\SettingType\SettingsType-RelativePath.h" />
     <ClInclude Include="Settings\SettingType\SettingsType-SelectedDirectory.h" />
+    <ClInclude Include="Settings\SettingType\SettingsType-TempBool.h" />
     <ClInclude Include="Settings\SettingType\SettingsType-TempString.h" />
     <ClInclude Include="SystemGlobals.h" />
     <ClInclude Include="Trace.h" />
@@ -107,6 +108,7 @@
     <ClCompile Include="Settings\SettingType\SettingsType-ApplicationPath.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-RelativePath.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-SelectedDirectory.cpp" />
+    <ClCompile Include="Settings\SettingType\SettingsType-TempBool.cpp" />
     <ClCompile Include="Settings\SettingType\SettingsType-TempString.cpp" />
     <ClCompile Include="SystemGlobals.cpp" />
     <ClCompile Include="Util\AESCipher.cpp" />

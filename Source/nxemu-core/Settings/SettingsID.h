@@ -32,6 +32,8 @@ enum SettingID
 
     //Debugger
     Debugger_Enabled,
+    Debugger_SteppingOps,
+    Debugger_WaitingForStep,
 
     //Logging
     Debugger_TraceAutoFlush,
