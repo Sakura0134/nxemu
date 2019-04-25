@@ -15,8 +15,11 @@ public:
     MemoryManagement & MMU(void) { return m_MMU; }
 
 protected:
+    bool ShouldExecuteOp(const Arm64Opcode & op);
+
     CRegisters m_Reg;
     MemoryManagement & m_MMU;
+    bool m_Jumped;
 
 private:
     CPUExecutor(void);                          // Disable default constructor

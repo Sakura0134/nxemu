@@ -5,7 +5,8 @@
 
 CPUExecutor::CPUExecutor(MemoryManagement & mmu) :
     m_Reg(this),
-    m_MMU(mmu)
+    m_MMU(mmu),
+    m_Jumped(false)
 {
 }
 
@@ -16,12 +17,54 @@ void CPUExecutor::Execute(bool & Done)
 
     while (!Done)
     {
-        g_Settings->SaveBool(Debugger_SteppingOps, true);
         if (Stepping)
         {
             g_Debugger->WaitForStep();
         }
-		g_Notify->BreakPoint(__FILE__, __LINE__);
+        uint32_t insn;
+        if (!m_MMU.Read32(PROGRAM_COUNTER, insn))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        Arm64Opcode op(PROGRAM_COUNTER, insn);
+
+        if (!ShouldExecuteOp(op))
+        {
+            PROGRAM_COUNTER += 4;
+            continue;
+        }
+
+        switch (op.Opc())
+        {
+        default:
+            g_Settings->SaveBool(Debugger_SteppingOps, true);
+            if (Stepping)
+            {
+                g_Debugger->WaitForStep();
+            }
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+
+        if (op.IsJump() || m_Jumped)
+        {
+            m_Jumped = false;
+            continue;
+        }
         PROGRAM_COUNTER += 4;    
     }
+}
+
+bool CPUExecutor::ShouldExecuteOp(const Arm64Opcode & op)
+{
+    if (op.cc() == Arm64Opcode::ARM64_CC_INVALID)
+    {
+        return true;
+    }
+
+    switch (op.Opc())
+    {
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    return false;
 }

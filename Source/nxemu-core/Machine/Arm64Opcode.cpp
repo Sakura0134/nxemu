@@ -4,7 +4,8 @@
 
 Arm64Opcode::Arm64Opcode(uint64_t pc, uint32_t insn) :
     m_pc(pc),
-    m_Opc(ARM64_INS_INVALID)
+    m_Opc(ARM64_INS_INVALID),
+    m_cc(ARM64_CC_INVALID)
 {
     csh handle;
     cs_err err = cs_open(CS_ARCH_ARM64, CS_MODE_ARM, &handle);
@@ -26,6 +27,7 @@ Arm64Opcode::Arm64Opcode(uint64_t pc, uint32_t insn) :
     m_Opc = (instruct_t)results[0].id;
     m_Name = results[0].mnemonic;
     m_Param = results[0].op_str;
+    m_cc = (Arm64Opcode::arm64_cc)results[0].detail->arm64.cc;
     for (uint8_t i = 0, n = results[0].detail->arm64.op_count; i < n; i++)
     {
         cs_arm64_op & src_operand = results[0].detail->arm64.operands[i];
@@ -149,6 +151,15 @@ uint64_t Arm64Opcode::BranchDest(void) const
     return m_pc + 4;
 }
 
+bool Arm64Opcode::IsJump(void) const
+{
+    switch (Opc())
+    {
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+}
 
 Arm64Opcode::arm64_reg Arm64Opcode::TranslateArm64Reg(capstone_arm64_reg reg)
 {

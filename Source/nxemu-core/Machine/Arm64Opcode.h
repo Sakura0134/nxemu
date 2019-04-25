@@ -608,6 +608,31 @@ public:
         //Alias
         ARM64_REG_LR = ARM64_REG_X30,
     } arm64_reg;
+
+    //> ARM64 condition code
+    typedef enum arm64_cc 
+    {
+        ARM64_CC_INVALID = 0,
+        ARM64_CC_EQ = 1,     // Equal
+        ARM64_CC_NE = 2,     // Not equal:                 Not equal, or unordered
+        ARM64_CC_HS = 3,     // Unsigned higher or same:   >, ==, or unordered
+        ARM64_CC_LO = 4,     // Unsigned lower or same:    Less than
+        ARM64_CC_MI = 5,     // Minus, negative:           Less than
+        ARM64_CC_PL = 6,     // Plus, positive or zero:    >, ==, or unordered
+        ARM64_CC_VS = 7,     // Overflow:                  Unordered
+        ARM64_CC_VC = 8,     // No overflow:               Ordered
+        ARM64_CC_HI = 9,     // Unsigned higher:           Greater than, or unordered
+        ARM64_CC_LS = 10,     // Unsigned lower or same:    Less than or equal
+        ARM64_CC_GE = 11,     // Greater than or equal:     Greater than or equal
+        ARM64_CC_LT = 12,     // Less than:                 Less than, or unordered
+        ARM64_CC_GT = 13,     // Signed greater than:       Greater than
+        ARM64_CC_LE = 14,     // Signed less than or equal: <, ==, or unordered
+        ARM64_CC_AL = 15,     // Always (unconditional):    Always (unconditional)
+        ARM64_CC_NV = 16,     // Always (unconditional):   Always (unconditional)
+                              // Note the NV exists purely to disassemble 0b1111. Execution
+                              // is "always".
+    } arm64_cc;
+
     enum arm64_op_type 
     {
         ARM64_OP_INVALID = 0, // = CS_OP_INVALID (Uninitialized).
@@ -1328,7 +1353,9 @@ public:
     inline instruct_t Opc(void) const { return m_Opc; }
     inline size_t Operands(void) const { return m_Operands.size(); }
     inline const MCOperand & Operand(uint32_t index) const { return m_Operands[index]; }
+    inline arm64_cc cc(void) const { return m_cc; }
 
+    bool IsJump(void) const;
     bool IsBranch(void) const;
     uint64_t BranchDest(void) const;
 
@@ -1616,4 +1643,5 @@ private:
     std::string m_Param;
     instruct_t m_Opc;
     MCOperands m_Operands;
+    arm64_cc m_cc;
 };
