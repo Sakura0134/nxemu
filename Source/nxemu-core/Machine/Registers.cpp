@@ -3,7 +3,8 @@
 
 CRegisters::CRegisters(CPUExecutor * Executor) :
     m_Executor(Executor),
-    m_PROGRAM_COUNTER(0)
+    m_PROGRAM_COUNTER(0),
+    m_pstate({ 0 })
 {
     memset(m_xregs, 0, sizeof(m_xregs));
     for (size_t i = 0, n = sizeof(m_wregs) / sizeof(m_wregs[0]); i < n; i++)
@@ -106,3 +107,64 @@ void CRegisters::Set64(Arm64Opcode::arm64_reg reg, uint64_t value)
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
+
+void CRegisters::SetConditionFlags(bool n, bool z, bool c, bool v)
+{
+    m_pstate.N = n;
+    m_pstate.Z = z;
+    m_pstate.C = c;
+    m_pstate.V = v;
+}
+
+bool CRegisters::ConditionSet(Arm64Opcode::arm64_cc cc)
+{
+    switch (cc)
+    {
+    case Arm64Opcode::ARM64_CC_NE: return m_pstate.Z == 0;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
+bool CRegisters::Is64bitReg(Arm64Opcode::arm64_reg reg)
+{
+    switch (reg)
+    {
+    case Arm64Opcode::ARM64_REG_X0:
+    case Arm64Opcode::ARM64_REG_X1:
+    case Arm64Opcode::ARM64_REG_X2:
+    case Arm64Opcode::ARM64_REG_X3:
+    case Arm64Opcode::ARM64_REG_X4:
+    case Arm64Opcode::ARM64_REG_X5:
+    case Arm64Opcode::ARM64_REG_X6:
+    case Arm64Opcode::ARM64_REG_X7:
+    case Arm64Opcode::ARM64_REG_X8:
+    case Arm64Opcode::ARM64_REG_X9:
+    case Arm64Opcode::ARM64_REG_X10:
+    case Arm64Opcode::ARM64_REG_X11:
+    case Arm64Opcode::ARM64_REG_X12:
+    case Arm64Opcode::ARM64_REG_X13:
+    case Arm64Opcode::ARM64_REG_X14:
+    case Arm64Opcode::ARM64_REG_X15:
+    case Arm64Opcode::ARM64_REG_X16:
+    case Arm64Opcode::ARM64_REG_X17:
+    case Arm64Opcode::ARM64_REG_X18:
+    case Arm64Opcode::ARM64_REG_X19:
+    case Arm64Opcode::ARM64_REG_X20:
+    case Arm64Opcode::ARM64_REG_X21:
+    case Arm64Opcode::ARM64_REG_X22:
+    case Arm64Opcode::ARM64_REG_X23:
+    case Arm64Opcode::ARM64_REG_X24:
+    case Arm64Opcode::ARM64_REG_X25:
+    case Arm64Opcode::ARM64_REG_X26:
+    case Arm64Opcode::ARM64_REG_X27:
+    case Arm64Opcode::ARM64_REG_X28:
+    case Arm64Opcode::ARM64_REG_X29:
+    case Arm64Opcode::ARM64_REG_X30:
+    case Arm64Opcode::ARM64_REG_XZR:
+        return true;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
