@@ -67,6 +67,12 @@
     <Filter Include="Source Files\Util">
       <UniqueIdentifier>{a7fbfff3-9102-40f4-80c5-c01a051f11a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Machine\Interpreter">
+      <UniqueIdentifier>{f3f891da-2725-4159-b013-165570239fd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Machine\Interpreter">
+      <UniqueIdentifier>{e8e2d918-14bd-482f-a696-e964f2ce637b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -195,6 +201,9 @@
     <ClInclude Include="Settings\SettingType\SettingsType-TempBool.h">
       <Filter>Header Files\Settings\SettingType</Filter>
     </ClInclude>
+    <ClInclude Include="Machine\Interpreter\ArmInterpreterOps64.h">
+      <Filter>Header Files\Machine\Interpreter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -304,6 +313,9 @@
     </ClCompile>
     <ClCompile Include="Settings\SettingType\SettingsType-TempBool.cpp">
       <Filter>Source Files\Settings\SettingType</Filter>
+    </ClCompile>
+    <ClCompile Include="Machine\Interpreter\ArmInterpreterOps64.cpp">
+      <Filter>Source Files\Machine\Interpreter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,5 @@
 #include <nxemu-core\Machine\CPU\CPUExecutor.h>
+#include <nxemu-core\Machine\Interpreter\ArmInterpreterOps64.h>
 #include <nxemu-core\Settings\Settings.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Debugger.h>
@@ -36,6 +37,7 @@ void CPUExecutor::Execute(bool & Done)
 
         switch (op.Opc())
         {
+        case Arm64Opcode::ARM64_INS_B: Arm64Op::B(*this, op); break;
         default:
             g_Settings->SaveBool(Debugger_SteppingOps, true);
             if (Stepping)
