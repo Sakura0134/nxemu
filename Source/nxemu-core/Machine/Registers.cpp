@@ -108,6 +108,11 @@ void CRegisters::Set64(Arm64Opcode::arm64_reg reg, uint64_t value)
     }
 }
 
+CRegisters::PSTATE CRegisters::GetPstate() const
+{
+    return m_pstate;
+}
+
 void CRegisters::SetConditionFlags(bool n, bool z, bool c, bool v)
 {
     m_pstate.N = n;

@@ -111,10 +111,40 @@ void CGPRTab32::RefreshValues(CPUExecutor * Executor)
     }
 }
 
+CPStateTab::CPStateTab(HWND hParent, const RECT & rcDispay)
+{
+    CreateTab(hParent, rcDispay);
+    for (int i = 0, n = sizeof(RegisterIds) / sizeof(RegisterIds[0]); i < n; i++)
+    {
+        m_Register[i].Attach(GetDlgItem(RegisterIds[i]));
+    }
+}
+
+CPStateTab::~CPStateTab()
+{
+    DestroyWindow();
+}
+
+void CPStateTab::RefreshValues(CPUExecutor * Executor)
+{
+    CRegisters * Reg = Executor ? &Executor->Reg() : NULL;
+    if (Reg)
+    {
+        const CRegisters::PSTATE & pstate = Reg->GetPstate();
+        m_Register[0].SetWindowText(stdstr_f("0x%08X", pstate.value).c_str());
+        m_Register[1].SetWindowText(stdstr_f("%d", pstate.N).c_str());
+        m_Register[2].SetWindowText(stdstr_f("%d", pstate.Z).c_str());
+        m_Register[3].SetWindowText(stdstr_f("%d", pstate.C).c_str());
+        m_Register[4].SetWindowText(stdstr_f("%d", pstate.V).c_str());
+        m_Register[5].SetWindowText(stdstr_f("%d", pstate.EL).c_str());
+    }
+}
+
 CRegisterTabs::CRegisterTabs(CDebuggerUI * Debugger) :
     m_Debugger(Debugger),
     m_GPRTab64(NULL),
-    m_GPRTab32(NULL)
+    m_GPRTab32(NULL),
+    m_PStateTab(NULL)
 {
 }
 
@@ -130,9 +160,11 @@ void CRegisterTabs::Attach(HWND hWndNew)
     CRect pageRect = GetPageRect();
     m_GPRTab64 = new CGPRTab64(parentWin, pageRect);
     m_GPRTab32 = new CGPRTab32(parentWin, pageRect);
+    m_PStateTab = new CPStateTab(parentWin, pageRect);
 
     AddTab("GPR-64 (X)", m_GPRTab64);
     AddTab("GPR-32 (W)", m_GPRTab32);
+    AddTab("PState", m_PStateTab);
     RefreshEdits();
     RedrawCurrentTab();
 }
@@ -143,6 +175,8 @@ void CRegisterTabs::Detach(void)
     m_GPRTab64 = NULL;
     delete m_GPRTab32;
     m_GPRTab32 = NULL;
+    delete m_PStateTab;
+    m_PStateTab = NULL;
     m_TabWindows.clear();
 
     CTabCtrl::Detach();
@@ -153,6 +187,7 @@ void CRegisterTabs::RefreshEdits()
     CPUExecutor * Executor = m_Debugger->Executor();
     m_GPRTab64->RefreshValues(Executor);
     m_GPRTab32->RefreshValues(Executor);
+    m_PStateTab->RefreshValues(Executor);
 }
 
 CRect CRegisterTabs::GetPageRect()

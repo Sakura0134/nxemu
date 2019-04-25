@@ -80,6 +80,34 @@ private:
     CEdit m_Register[sizeof(RegisterIds) / sizeof(RegisterIds[0])];
 };
 
+class CPStateTab :
+    public CRegisterTabImpl<CPStateTab>
+{
+    BEGIN_MSG_MAP_EX(CPStateTab)
+    END_MSG_MAP()
+
+    enum { IDD = IDD_Debugger_RegPSTATE };
+
+public:
+    CPStateTab(HWND hParent, const RECT & rcDispay);
+    ~CPStateTab();
+
+    void RefreshValues(CPUExecutor * Executor);
+
+private:
+    CPStateTab(void);                       // Disable default constructor
+    CPStateTab(const CPStateTab&);             // Disable copy constructor
+    CPStateTab& operator=(const CPStateTab&);  // Disable assignment
+
+    static constexpr WORD RegisterIds[] =
+    {
+        IDC_PSTATE_EDIT,   IDC_PSTATE_N_EDIT,  IDC_PSTATE_Z_EDIT,  IDC_PSTATE_C_EDIT,
+        IDC_PSTATE_V_EDIT, IDC_PSTATE_EL_EDIT,  
+    };
+
+    CEdit m_Register[sizeof(RegisterIds) / sizeof(RegisterIds[0])];
+};
+
 class CRegisterTabs :
     public CTabCtrl
 {
@@ -106,4 +134,5 @@ private:
     std::vector<CWindow*> m_TabWindows;
     CGPRTab64 * m_GPRTab64;
     CGPRTab32 * m_GPRTab32;
+    CPStateTab * m_PStateTab;
 };

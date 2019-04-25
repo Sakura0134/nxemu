@@ -39,6 +39,7 @@ public:
 
     uint32_t Get32(Arm64Opcode::arm64_reg reg);
     uint64_t Get64(Arm64Opcode::arm64_reg reg);
+    PSTATE GetPstate() const;
 
     void Set64(Arm64Opcode::arm64_reg reg, uint64_t value);
 
