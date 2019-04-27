@@ -158,6 +158,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_B:
         return true;
     case ARM64_INS_CMP:
+    case ARM64_INS_MOV:
         return false;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);

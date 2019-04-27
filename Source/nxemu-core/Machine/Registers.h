@@ -41,12 +41,14 @@ public:
     uint64_t Get64(Arm64Opcode::arm64_reg reg);
     PSTATE GetPstate() const;
 
+    void Set32(Arm64Opcode::arm64_reg reg, uint32_t value);
     void Set64(Arm64Opcode::arm64_reg reg, uint64_t value);
 
     void SetConditionFlags(bool n, bool z, bool c, bool v);
     bool ConditionSet(Arm64Opcode::arm64_cc cc);
 
     static bool Is64bitReg(Arm64Opcode::arm64_reg reg);
+    static bool Is32bitReg(Arm64Opcode::arm64_reg reg);
 
 private:
     CRegisters(void);                         // Disable default constructor

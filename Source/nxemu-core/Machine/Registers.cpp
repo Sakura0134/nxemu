@@ -98,6 +98,46 @@ uint64_t CRegisters::Get64(Arm64Opcode::arm64_reg reg)
     return 0;
 }
 
+void CRegisters::Set32(Arm64Opcode::arm64_reg reg, uint32_t value)
+{
+    switch (reg)
+    {
+    case Arm64Opcode::ARM64_REG_W0: m_xregs[0] = value; break;
+    case Arm64Opcode::ARM64_REG_W1: m_xregs[1] = value; break;
+    case Arm64Opcode::ARM64_REG_W2: m_xregs[2] = value; break;
+    case Arm64Opcode::ARM64_REG_W3: m_xregs[3] = value; break;
+    case Arm64Opcode::ARM64_REG_W4: m_xregs[4] = value; break;
+    case Arm64Opcode::ARM64_REG_W5: m_xregs[5] = value; break;
+    case Arm64Opcode::ARM64_REG_W6: m_xregs[6] = value; break;
+    case Arm64Opcode::ARM64_REG_W7: m_xregs[7] = value; break;
+    case Arm64Opcode::ARM64_REG_W8: m_xregs[8] = value; break;
+    case Arm64Opcode::ARM64_REG_W9: m_xregs[9] = value; break;
+    case Arm64Opcode::ARM64_REG_W10: m_xregs[10] = value; break;
+    case Arm64Opcode::ARM64_REG_W11: m_xregs[11] = value; break;
+    case Arm64Opcode::ARM64_REG_W12: m_xregs[12] = value; break;
+    case Arm64Opcode::ARM64_REG_W13: m_xregs[13] = value; break;
+    case Arm64Opcode::ARM64_REG_W14: m_xregs[14] = value; break;
+    case Arm64Opcode::ARM64_REG_W15: m_xregs[15] = value; break;
+    case Arm64Opcode::ARM64_REG_W16: m_xregs[16] = value; break;
+    case Arm64Opcode::ARM64_REG_W17: m_xregs[17] = value; break;
+    case Arm64Opcode::ARM64_REG_W18: m_xregs[18] = value; break;
+    case Arm64Opcode::ARM64_REG_W19: m_xregs[19] = value; break;
+    case Arm64Opcode::ARM64_REG_W20: m_xregs[20] = value; break;
+    case Arm64Opcode::ARM64_REG_W21: m_xregs[21] = value; break;
+    case Arm64Opcode::ARM64_REG_W22: m_xregs[22] = value; break;
+    case Arm64Opcode::ARM64_REG_W23: m_xregs[23] = value; break;
+    case Arm64Opcode::ARM64_REG_W24: m_xregs[24] = value; break;
+    case Arm64Opcode::ARM64_REG_W25: m_xregs[25] = value; break;
+    case Arm64Opcode::ARM64_REG_W26: m_xregs[26] = value; break;
+    case Arm64Opcode::ARM64_REG_W27: m_xregs[27] = value; break;
+    case Arm64Opcode::ARM64_REG_W28: m_xregs[28] = value; break;
+    case Arm64Opcode::ARM64_REG_W29: m_xregs[29] = value; break;
+    case Arm64Opcode::ARM64_REG_W30: m_xregs[30] = value; break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void CRegisters::Set64(Arm64Opcode::arm64_reg reg, uint64_t value)
 {
     switch (reg)
@@ -126,6 +166,48 @@ bool CRegisters::ConditionSet(Arm64Opcode::arm64_cc cc)
     switch (cc)
     {
     case Arm64Opcode::ARM64_CC_NE: return m_pstate.Z == 0;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
+bool CRegisters::Is32bitReg(Arm64Opcode::arm64_reg reg)
+{
+    switch (reg)
+    {
+    case Arm64Opcode::ARM64_REG_W0:
+    case Arm64Opcode::ARM64_REG_W1:
+    case Arm64Opcode::ARM64_REG_W2:
+    case Arm64Opcode::ARM64_REG_W3:
+    case Arm64Opcode::ARM64_REG_W4:
+    case Arm64Opcode::ARM64_REG_W5:
+    case Arm64Opcode::ARM64_REG_W6:
+    case Arm64Opcode::ARM64_REG_W7:
+    case Arm64Opcode::ARM64_REG_W8:
+    case Arm64Opcode::ARM64_REG_W9:
+    case Arm64Opcode::ARM64_REG_W10:
+    case Arm64Opcode::ARM64_REG_W11:
+    case Arm64Opcode::ARM64_REG_W12:
+    case Arm64Opcode::ARM64_REG_W13:
+    case Arm64Opcode::ARM64_REG_W14:
+    case Arm64Opcode::ARM64_REG_W15:
+    case Arm64Opcode::ARM64_REG_W16:
+    case Arm64Opcode::ARM64_REG_W17:
+    case Arm64Opcode::ARM64_REG_W18:
+    case Arm64Opcode::ARM64_REG_W19:
+    case Arm64Opcode::ARM64_REG_W20:
+    case Arm64Opcode::ARM64_REG_W21:
+    case Arm64Opcode::ARM64_REG_W22:
+    case Arm64Opcode::ARM64_REG_W23:
+    case Arm64Opcode::ARM64_REG_W24:
+    case Arm64Opcode::ARM64_REG_W25:
+    case Arm64Opcode::ARM64_REG_W26:
+    case Arm64Opcode::ARM64_REG_W27:
+    case Arm64Opcode::ARM64_REG_W28:
+    case Arm64Opcode::ARM64_REG_W29:
+    case Arm64Opcode::ARM64_REG_W30:
+    case Arm64Opcode::ARM64_REG_WZR:
+        return true;
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;

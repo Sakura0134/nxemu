@@ -39,6 +39,7 @@ void CPUExecutor::Execute(bool & Done)
         {
         case Arm64Opcode::ARM64_INS_B: Arm64Op::B(*this, op); break;
         case Arm64Opcode::ARM64_INS_CMP: Arm64Op::Cmp(*this, op); break;
+        case Arm64Opcode::ARM64_INS_MOV: Arm64Op::Mov(*this, op); break;
         default:
             g_Settings->SaveBool(Debugger_SteppingOps, true);
             if (Stepping)

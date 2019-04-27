@@ -7,4 +7,5 @@ class Arm64Op
 public:
     static void B(CPUExecutor & core, const Arm64Opcode &op);
     static void Cmp(CPUExecutor & core, const Arm64Opcode &op);
+    static void Mov(CPUExecutor & core, const Arm64Opcode &op);
 };
