@@ -1354,6 +1354,7 @@ public:
     inline size_t Operands(void) const { return m_Operands.size(); }
     inline const MCOperand & Operand(uint32_t index) const { return m_Operands[index]; }
     inline arm64_cc cc(void) const { return m_cc; }
+    inline bool UpdateFlags(void) const { return m_UpdateFlags; }
     inline bool WriteBack(void) const { return m_WriteBack; }
 
     bool IsJump(void) const;
@@ -1645,5 +1646,6 @@ private:
     bool m_WriteBack;
     instruct_t m_Opc;
     MCOperands m_Operands;
+    bool m_UpdateFlags;
     arm64_cc m_cc;
 };

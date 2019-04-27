@@ -6,6 +6,7 @@ Arm64Opcode::Arm64Opcode(uint64_t pc, uint32_t insn) :
     m_pc(pc),
     m_WriteBack(false),
     m_Opc(ARM64_INS_INVALID),
+    m_UpdateFlags(false),
     m_cc(ARM64_CC_INVALID)
 {
     csh handle;
@@ -30,6 +31,7 @@ Arm64Opcode::Arm64Opcode(uint64_t pc, uint32_t insn) :
     m_Param = results[0].op_str;
     m_cc = (Arm64Opcode::arm64_cc)results[0].detail->arm64.cc;
     m_WriteBack = results[0].detail->arm64.writeback;
+    m_UpdateFlags = results[0].detail->arm64.update_flags;
     for (uint8_t i = 0, n = results[0].detail->arm64.op_count; i < n; i++)
     {
         cs_arm64_op & src_operand = results[0].detail->arm64.operands[i];
@@ -164,6 +166,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_CMP:
     case ARM64_INS_LDR:
     case ARM64_INS_MOV:
+    case ARM64_INS_SUB:
     case ARM64_INS_SXTW:
         return false;
     default:
