@@ -10,4 +10,5 @@ public:
     static void Cmp(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldr(CPUExecutor & core, const Arm64Opcode &op);
     static void Mov(CPUExecutor & core, const Arm64Opcode &op);
+    static void Sxtw(CPUExecutor & core, const Arm64Opcode &op);
 };
