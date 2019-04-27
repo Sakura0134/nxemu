@@ -142,6 +142,38 @@ void CRegisters::Set64(Arm64Opcode::arm64_reg reg, uint64_t value)
 {
     switch (reg)
     {
+    case Arm64Opcode::ARM64_REG_X0: m_xregs[0] = value; break;
+    case Arm64Opcode::ARM64_REG_X1: m_xregs[1] = value; break;
+    case Arm64Opcode::ARM64_REG_X2: m_xregs[2] = value; break;
+    case Arm64Opcode::ARM64_REG_X3: m_xregs[3] = value; break;
+    case Arm64Opcode::ARM64_REG_X4: m_xregs[4] = value; break;
+    case Arm64Opcode::ARM64_REG_X5: m_xregs[5] = value; break;
+    case Arm64Opcode::ARM64_REG_X6: m_xregs[6] = value; break;
+    case Arm64Opcode::ARM64_REG_X7: m_xregs[7] = value; break;
+    case Arm64Opcode::ARM64_REG_X8: m_xregs[8] = value; break;
+    case Arm64Opcode::ARM64_REG_X9: m_xregs[9] = value; break;
+    case Arm64Opcode::ARM64_REG_X10: m_xregs[10] = value; break;
+    case Arm64Opcode::ARM64_REG_X11: m_xregs[11] = value; break;
+    case Arm64Opcode::ARM64_REG_X12: m_xregs[12] = value; break;
+    case Arm64Opcode::ARM64_REG_X13: m_xregs[13] = value; break;
+    case Arm64Opcode::ARM64_REG_X14: m_xregs[14] = value; break;
+    case Arm64Opcode::ARM64_REG_X15: m_xregs[15] = value; break;
+    case Arm64Opcode::ARM64_REG_X16: m_xregs[16] = value; break;
+    case Arm64Opcode::ARM64_REG_X17: m_xregs[17] = value; break;
+    case Arm64Opcode::ARM64_REG_X18: m_xregs[18] = value; break;
+    case Arm64Opcode::ARM64_REG_X19: m_xregs[19] = value; break;
+    case Arm64Opcode::ARM64_REG_X20: m_xregs[20] = value; break;
+    case Arm64Opcode::ARM64_REG_X21: m_xregs[21] = value; break;
+    case Arm64Opcode::ARM64_REG_X22: m_xregs[22] = value; break;
+    case Arm64Opcode::ARM64_REG_X23: m_xregs[23] = value; break;
+    case Arm64Opcode::ARM64_REG_X24: m_xregs[24] = value; break;
+    case Arm64Opcode::ARM64_REG_X25: m_xregs[25] = value; break;
+    case Arm64Opcode::ARM64_REG_X26: m_xregs[26] = value; break;
+    case Arm64Opcode::ARM64_REG_X27: m_xregs[27] = value; break;
+    case Arm64Opcode::ARM64_REG_X28: m_xregs[28] = value; break;
+    case Arm64Opcode::ARM64_REG_X29: m_xregs[29] = value; break;
+    case Arm64Opcode::ARM64_REG_X30: m_xregs[30] = value; break;
+    case Arm64Opcode::ARM64_REG_SP: m_xregs[31] = value; break;
     case Arm64Opcode::ARM64_REG_PC: m_PROGRAM_COUNTER = value; break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);

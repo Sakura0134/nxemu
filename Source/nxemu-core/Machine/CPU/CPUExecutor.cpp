@@ -38,6 +38,7 @@ void CPUExecutor::Execute(bool & Done)
         switch (op.Opc())
         {
         case Arm64Opcode::ARM64_INS_B: Arm64Op::B(*this, op); break;
+        case Arm64Opcode::ARM64_INS_BL: Arm64Op::Bl(*this, op); break;
         case Arm64Opcode::ARM64_INS_CMP: Arm64Op::Cmp(*this, op); break;
         case Arm64Opcode::ARM64_INS_MOV: Arm64Op::Mov(*this, op); break;
         default:
