@@ -5,6 +5,7 @@
 class Arm64Op
 {
 public:
+    static void Add(CPUExecutor & core, const Arm64Opcode &op);
     static void B(CPUExecutor & core, const Arm64Opcode &op);
     static void Bl(CPUExecutor & core, const Arm64Opcode &op);
     static void Cmp(CPUExecutor & core, const Arm64Opcode &op);
