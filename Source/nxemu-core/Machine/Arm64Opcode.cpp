@@ -4,6 +4,7 @@
 
 Arm64Opcode::Arm64Opcode(uint64_t pc, uint32_t insn) :
     m_pc(pc),
+    m_WriteBack(false),
     m_Opc(ARM64_INS_INVALID),
     m_cc(ARM64_CC_INVALID)
 {
@@ -28,6 +29,7 @@ Arm64Opcode::Arm64Opcode(uint64_t pc, uint32_t insn) :
     m_Name = results[0].mnemonic;
     m_Param = results[0].op_str;
     m_cc = (Arm64Opcode::arm64_cc)results[0].detail->arm64.cc;
+    m_WriteBack = results[0].detail->arm64.writeback;
     for (uint8_t i = 0, n = results[0].detail->arm64.op_count; i < n; i++)
     {
         cs_arm64_op & src_operand = results[0].detail->arm64.operands[i];
@@ -159,6 +161,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_BL:
         return true;
     case ARM64_INS_CMP:
+    case ARM64_INS_LDR:
     case ARM64_INS_MOV:
         return false;
     default:

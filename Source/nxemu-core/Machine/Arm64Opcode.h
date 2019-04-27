@@ -1354,6 +1354,7 @@ public:
     inline size_t Operands(void) const { return m_Operands.size(); }
     inline const MCOperand & Operand(uint32_t index) const { return m_Operands[index]; }
     inline arm64_cc cc(void) const { return m_cc; }
+    inline bool WriteBack(void) const { return m_WriteBack; }
 
     bool IsJump(void) const;
     bool IsBranch(void) const;
@@ -1641,6 +1642,7 @@ private:
     uint64_t m_pc;
     std::string m_Name;
     std::string m_Param;
+    bool m_WriteBack;
     instruct_t m_Opc;
     MCOperands m_Operands;
     arm64_cc m_cc;
