@@ -193,6 +193,26 @@ void Arm64Op::Sub(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Movz(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
+    {
+        if (CRegisters::Is32bitReg(op.Operand(0).Reg) && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            Reg.Set32(op.Operand(0).Reg, (uint32_t)op.Operand(1).ImmVal);
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Sxtw(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();
