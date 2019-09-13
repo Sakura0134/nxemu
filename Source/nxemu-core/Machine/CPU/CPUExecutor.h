@@ -10,6 +10,7 @@ public:
     CPUExecutor(MemoryManagement & mmu);
 
     void Execute(bool & Done);
+    void Jumped(void);
 
     CRegisters & Reg(void) { return m_Reg; }
     MemoryManagement & MMU(void) { return m_MMU; }

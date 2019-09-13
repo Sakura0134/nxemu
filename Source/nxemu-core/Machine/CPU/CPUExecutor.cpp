@@ -40,6 +40,7 @@ void CPUExecutor::Execute(bool & Done)
         case Arm64Opcode::ARM64_INS_ADD: Arm64Op::Add(*this, op); break;
         case Arm64Opcode::ARM64_INS_B: Arm64Op::B(*this, op); break;
         case Arm64Opcode::ARM64_INS_BL: Arm64Op::Bl(*this, op); break;
+        case Arm64Opcode::ARM64_INS_CBZ: Arm64Op::Cbz(*this, op); break;
         case Arm64Opcode::ARM64_INS_CMP: Arm64Op::Cmp(*this, op); break;
         case Arm64Opcode::ARM64_INS_LDR: Arm64Op::Ldr(*this, op); break;
         case Arm64Opcode::ARM64_INS_MOV: Arm64Op::Mov(*this, op); break;
@@ -62,6 +63,11 @@ void CPUExecutor::Execute(bool & Done)
         }
         PROGRAM_COUNTER += 4;    
     }
+}
+
+void CPUExecutor::Jumped(void)
+{
+    m_Jumped = true;
 }
 
 bool CPUExecutor::ShouldExecuteOp(const Arm64Opcode & op)

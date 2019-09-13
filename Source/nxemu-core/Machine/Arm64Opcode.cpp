@@ -170,6 +170,9 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_SUB:
     case ARM64_INS_SXTW:
         return false;
+    //Conditional jump, return false as does not always jump
+    case ARM64_INS_CBZ:
+        return false;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return false;
