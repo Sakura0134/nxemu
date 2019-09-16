@@ -14,6 +14,8 @@ public:
 
 	bool Read32(uint64_t Addr, uint32_t & value);
     bool ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len);
+    bool Write8(uint64_t Addr, uint8_t value);
+    bool WriteBytes(uint64_t Addr, const uint8_t * buffer, uint32_t len);
 
 private:
     CSystemThreadMemory();                                      // Disable default constructor

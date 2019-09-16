@@ -27,6 +27,22 @@ bool CSystemThreadMemory::ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t le
     return true;
 }
 
+bool CSystemThreadMemory::Write8(uint64_t Addr, uint8_t value)
+{
+    return WriteBytes(Addr, (uint8_t *)&value, sizeof(value));
+}
+
+bool CSystemThreadMemory::WriteBytes(uint64_t Addr, const uint8_t * buffer, uint32_t len)
+{
+    void * WriteBuffer = NULL;
+    if (!FindAddressMemory(Addr, len, WriteBuffer))
+    {
+        return false;
+    }
+    memcpy(WriteBuffer, buffer, len);
+    return true;
+}
+
 bool CSystemThreadMemory::FindAddressMemory(uint64_t Addr, uint32_t len, void *& buffer)
 {
     MemoryMap & ProcessMemory = m_ProcessMemory.m_MemoryMap;
