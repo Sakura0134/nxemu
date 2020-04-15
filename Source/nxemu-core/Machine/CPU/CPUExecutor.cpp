@@ -45,6 +45,7 @@ void CPUExecutor::Execute(bool & Done)
         case Arm64Opcode::ARM64_INS_LDR: Arm64Op::Ldr(*this, op); break;
         case Arm64Opcode::ARM64_INS_MOV: Arm64Op::Mov(*this, op); break;
         case Arm64Opcode::ARM64_INS_MOVZ: Arm64Op::Movz(*this, op); break;
+        case Arm64Opcode::ARM64_INS_STRB: Arm64Op::Strb(*this, op); break;
         case Arm64Opcode::ARM64_INS_STURB: Arm64Op::Sturb(*this, op); break;
         case Arm64Opcode::ARM64_INS_SUB: Arm64Op::Sub(*this, op); break;
         case Arm64Opcode::ARM64_INS_SXTW: Arm64Op::Sxtw(*this, op); break;
