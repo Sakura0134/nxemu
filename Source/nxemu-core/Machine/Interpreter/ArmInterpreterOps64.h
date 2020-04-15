@@ -15,6 +15,7 @@ public:
     static void Mov(CPUExecutor & core, const Arm64Opcode &op);
     static void Movz(CPUExecutor & core, const Arm64Opcode &op);
     static void Neg(CPUExecutor & core, const Arm64Opcode &op);
+    static void Orr(CPUExecutor & core, const Arm64Opcode &op);
     static void Strb(CPUExecutor & core, const Arm64Opcode &op);
     static void Sturb(CPUExecutor & core, const Arm64Opcode &op);
     static void Sub(CPUExecutor & core, const Arm64Opcode &op);
