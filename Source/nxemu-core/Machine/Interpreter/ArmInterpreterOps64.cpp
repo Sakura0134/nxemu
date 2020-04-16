@@ -306,10 +306,21 @@ void Arm64Op::Sub(CPUExecutor & core, const Arm64Opcode &op)
             a = Reg.Get64(op.Operand(1).Reg);
             b = op.Operand(2).ImmVal;
         }
-        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(2).Reg))
         {
             a = Reg.Get64(op.Operand(1).Reg);
-            b = Reg.Get64(op.Operand(2).Reg);
+            if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                b = Reg.Get64(op.Operand(2).Reg);
+            }
+            else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                b = Reg.Get64(op.Operand(2).Reg) << op.Operand(2).shift.value;
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
         }
         else
         {
