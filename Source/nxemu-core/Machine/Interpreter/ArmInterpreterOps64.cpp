@@ -18,6 +18,10 @@ void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
             {
                 Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) + Reg.Get64(op.Operand(2).Reg));
             }
+            else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) + (Reg.Get64(op.Operand(2).Reg) << op.Operand(2).shift.value));
+            }
             else
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -74,6 +78,43 @@ void Arm64Op::B(CPUExecutor & core, const Arm64Opcode &op)
     {
         CRegisters & Reg = core.Reg();
         Reg.Set64(Arm64Opcode::ARM64_REG_PC, op.Operand(0).ImmVal);
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
+void Arm64Op::Bfi(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(3).type == Arm64Opcode::ARM64_OP_IMM)
+    {
+        if (CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
+        {
+            int64_t lsb = op.Operand(2).ImmVal;
+            int64_t width = op.Operand(3).ImmVal;
+
+            if (lsb < 0 || lsb > 63)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+            if (width < 1 || width > 64)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+
+            uint64_t signbit = ((uint64_t)1 << width) - 1;
+            uint64_t OrigialValue = Reg.Get64(op.Operand(0).Reg) & (~(signbit << lsb));
+            Reg.Set64(op.Operand(0).Reg, OrigialValue | (Reg.Get64(op.Operand(1).Reg) & signbit) << lsb);
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
     }
     else
     {
@@ -139,6 +180,25 @@ void Arm64Op::Cmp(CPUExecutor & core, const Arm64Opcode &op)
     bool c = a >= b; //if the result of a subtraction is positive or zero
     bool v = ((((a ^ b) & (a ^ result)) >> 20) & 0x80000000) != 0;
     Reg.SetConditionFlags(n, z, c, v);
+}
+
+void Arm64Op::Dup(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG)
+    {
+        // this is wrong, it is intilizing the vector to 0 in boot.
+        //When vector registers are being used this code needs to be fixed
+        if (Reg.Get64(op.Operand(1).Reg) != 0)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
 }
 
 void Arm64Op::Ldr(CPUExecutor & core, const Arm64Opcode &op)

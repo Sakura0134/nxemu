@@ -8,9 +8,11 @@ public:
     static void Add(CPUExecutor & core, const Arm64Opcode &op);
     static void And(CPUExecutor & core, const Arm64Opcode &op);
     static void B(CPUExecutor & core, const Arm64Opcode &op);
+    static void Bfi(CPUExecutor & core, const Arm64Opcode &op);
     static void Bl(CPUExecutor & core, const Arm64Opcode &op);
     static void Cbz(CPUExecutor & core, const Arm64Opcode &op);
     static void Cmp(CPUExecutor & core, const Arm64Opcode &op);
+    static void Dup(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldr(CPUExecutor & core, const Arm64Opcode &op);
     static void Lsr(CPUExecutor & core, const Arm64Opcode &op);
     static void Mov(CPUExecutor & core, const Arm64Opcode &op);
