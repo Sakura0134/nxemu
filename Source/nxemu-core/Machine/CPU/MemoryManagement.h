@@ -8,4 +8,5 @@ __interface MemoryManagement
     virtual bool Write8(uint64_t Addr, uint8_t value) = 0;
     virtual bool Write16(uint64_t Addr, uint16_t value) = 0;
     virtual bool Write32(uint64_t Addr, uint32_t value) = 0;
+    virtual bool WriteBytes(uint64_t Addr, const uint8_t * buffer, uint32_t len) = 0;
 };

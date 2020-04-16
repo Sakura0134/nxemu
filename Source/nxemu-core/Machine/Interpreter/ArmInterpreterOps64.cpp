@@ -446,6 +446,22 @@ void Arm64Op::Stp(CPUExecutor & core, const Arm64Opcode &op)
             MMU.Write32(target_addr, Reg.Get32(op.Operand(0).Reg));
             MMU.Write32(target_addr + 4, Reg.Get32(op.Operand(1).Reg));
         }
+        else if (CRegisters::Is128bitReg(op.Operand(0).Reg) && CRegisters::Is128bitReg(op.Operand(1).Reg))
+        {
+            uint64_t data[4];
+
+            Reg.Get128(op.Operand(0).Reg, data[0], data[1]);
+            Reg.Get128(op.Operand(1).Reg, data[2], data[3]);
+
+            if ((target_addr & 0x7) != 0)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+            if (!MMU.WriteBytes(target_addr, (uint8_t*)&data[0], sizeof(data)))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
