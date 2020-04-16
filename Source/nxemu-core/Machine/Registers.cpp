@@ -316,6 +316,39 @@ bool CRegisters::Is64bitReg(Arm64Opcode::arm64_reg reg)
     case Arm64Opcode::ARM64_REG_X30:
     case Arm64Opcode::ARM64_REG_XZR:
         return true;
+    case Arm64Opcode::ARM64_REG_W0:
+    case Arm64Opcode::ARM64_REG_W1:
+    case Arm64Opcode::ARM64_REG_W2:
+    case Arm64Opcode::ARM64_REG_W3:
+    case Arm64Opcode::ARM64_REG_W4:
+    case Arm64Opcode::ARM64_REG_W5:
+    case Arm64Opcode::ARM64_REG_W6:
+    case Arm64Opcode::ARM64_REG_W7:
+    case Arm64Opcode::ARM64_REG_W8:
+    case Arm64Opcode::ARM64_REG_W9:
+    case Arm64Opcode::ARM64_REG_W10:
+    case Arm64Opcode::ARM64_REG_W11:
+    case Arm64Opcode::ARM64_REG_W12:
+    case Arm64Opcode::ARM64_REG_W13:
+    case Arm64Opcode::ARM64_REG_W14:
+    case Arm64Opcode::ARM64_REG_W15:
+    case Arm64Opcode::ARM64_REG_W16:
+    case Arm64Opcode::ARM64_REG_W17:
+    case Arm64Opcode::ARM64_REG_W18:
+    case Arm64Opcode::ARM64_REG_W19:
+    case Arm64Opcode::ARM64_REG_W20:
+    case Arm64Opcode::ARM64_REG_W21:
+    case Arm64Opcode::ARM64_REG_W22:
+    case Arm64Opcode::ARM64_REG_W23:
+    case Arm64Opcode::ARM64_REG_W24:
+    case Arm64Opcode::ARM64_REG_W25:
+    case Arm64Opcode::ARM64_REG_W26:
+    case Arm64Opcode::ARM64_REG_W27:
+    case Arm64Opcode::ARM64_REG_W28:
+    case Arm64Opcode::ARM64_REG_W29:
+    case Arm64Opcode::ARM64_REG_W30:
+    case Arm64Opcode::ARM64_REG_WZR:
+        return false;
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
