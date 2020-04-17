@@ -80,6 +80,66 @@ private:
     CEdit m_Register[sizeof(RegisterIds) / sizeof(RegisterIds[0])];
 };
 
+class CRegQTab :
+    public CRegisterTabImpl<CRegQTab>
+{
+    BEGIN_MSG_MAP_EX(CRegQTab)
+    END_MSG_MAP()
+
+    enum { IDD = IDD_Debugger_RegVFP };
+
+public:
+    CRegQTab(HWND hParent, const RECT & rcDispay);
+    ~CRegQTab();
+
+    void RefreshValues(CPUExecutor * Executor);
+
+private:
+    CRegQTab(void);                       // Disable default constructor
+    CRegQTab(const CRegQTab&);            // Disable copy constructor
+    CRegQTab& operator=(const CRegQTab&); // Disable assignment
+
+    static constexpr WORD RegisterIds[] =
+    {
+        IDC_Q0_EDIT,  IDC_Q1_EDIT,  IDC_Q2_EDIT,  IDC_Q3_EDIT,
+        IDC_Q4_EDIT,  IDC_Q5_EDIT,  IDC_Q6_EDIT,  IDC_Q7_EDIT,
+        IDC_Q8_EDIT,  IDC_Q9_EDIT,  IDC_Q10_EDIT, IDC_Q11_EDIT,
+        IDC_Q12_EDIT, IDC_Q13_EDIT, IDC_Q14_EDIT, IDC_Q15_EDIT,
+    };
+
+    CEdit m_Register[sizeof(RegisterIds) / sizeof(RegisterIds[0])];
+};
+
+class CRegQTab2 :
+    public CRegisterTabImpl<CRegQTab2>
+{
+    BEGIN_MSG_MAP_EX(CRegQTab2)
+    END_MSG_MAP()
+
+    enum { IDD = IDD_Debugger_RegVFP2 };
+
+public:
+    CRegQTab2(HWND hParent, const RECT & rcDispay);
+    ~CRegQTab2();
+
+    void RefreshValues(CPUExecutor * Executor);
+
+private:
+    CRegQTab2(void);                       // Disable default constructor
+    CRegQTab2(const CRegQTab2&);            // Disable copy constructor
+    CRegQTab2& operator=(const CRegQTab2&); // Disable assignment
+
+    static constexpr WORD RegisterIds[] =
+    {
+        IDC_Q16_EDIT, IDC_Q17_EDIT, IDC_Q18_EDIT, IDC_Q19_EDIT,
+        IDC_Q20_EDIT, IDC_Q21_EDIT, IDC_Q22_EDIT, IDC_Q23_EDIT,
+        IDC_Q24_EDIT, IDC_Q25_EDIT, IDC_Q26_EDIT, IDC_Q27_EDIT,
+        IDC_Q28_EDIT, IDC_Q29_EDIT, IDC_Q30_EDIT, IDC_Q31_EDIT,
+    };
+
+    CEdit m_Register[sizeof(RegisterIds) / sizeof(RegisterIds[0])];
+};
+
 class CPStateTab :
     public CRegisterTabImpl<CPStateTab>
 {
@@ -134,5 +194,7 @@ private:
     std::vector<CWindow*> m_TabWindows;
     CGPRTab64 * m_GPRTab64;
     CGPRTab32 * m_GPRTab32;
+    CRegQTab * m_RegQTab;
+    CRegQTab2 * m_RegQTab2;
     CPStateTab * m_PStateTab;
 };

@@ -111,6 +111,78 @@ void CGPRTab32::RefreshValues(CPUExecutor * Executor)
     }
 }
 
+CRegQTab::CRegQTab(HWND hParent, const RECT & rcDispay)
+{
+    CreateTab(hParent, rcDispay);
+    for (int i = 0, n = sizeof(RegisterIds) / sizeof(RegisterIds[0]); i < n; i++)
+    {
+        m_Register[i].Attach(GetDlgItem(RegisterIds[i]));
+    }
+}
+
+CRegQTab::~CRegQTab()
+{
+    DestroyWindow();
+}
+
+void CRegQTab::RefreshValues(CPUExecutor * Executor)
+{
+    static constexpr Arm64Opcode::arm64_reg Register[sizeof(m_Register) / sizeof(m_Register[0])] =
+    {
+        Arm64Opcode::ARM64_REG_Q0,  Arm64Opcode::ARM64_REG_Q1,  Arm64Opcode::ARM64_REG_Q2,  Arm64Opcode::ARM64_REG_Q3,
+        Arm64Opcode::ARM64_REG_Q4,  Arm64Opcode::ARM64_REG_Q5,  Arm64Opcode::ARM64_REG_Q6,  Arm64Opcode::ARM64_REG_Q7,
+        Arm64Opcode::ARM64_REG_Q8,  Arm64Opcode::ARM64_REG_Q9,  Arm64Opcode::ARM64_REG_Q10, Arm64Opcode::ARM64_REG_Q11,
+        Arm64Opcode::ARM64_REG_Q12, Arm64Opcode::ARM64_REG_Q13, Arm64Opcode::ARM64_REG_Q14, Arm64Opcode::ARM64_REG_Q15,
+    };
+
+    CRegisters * Reg = Executor ? &Executor->Reg() : NULL;
+    if (Reg)
+    {
+        for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
+        {
+            uint64_t hiValue, loValue;
+            Reg->Get128(Register[i], hiValue, loValue);
+            m_Register[i].SetWindowText(stdstr_f("0x%08X-%08X-%08X-%08X", (uint32_t)(hiValue >> 0x32), (uint32_t)(hiValue & 0xFFFFFFFF), (uint32_t)(loValue >> 0x32), (uint32_t)(loValue & 0xFFFFFFFF)).c_str());
+        }
+    }
+}
+
+CRegQTab2::CRegQTab2(HWND hParent, const RECT & rcDispay)
+{
+    CreateTab(hParent, rcDispay);
+    for (int i = 0, n = sizeof(RegisterIds) / sizeof(RegisterIds[0]); i < n; i++)
+    {
+        m_Register[i].Attach(GetDlgItem(RegisterIds[i]));
+    }
+}
+
+CRegQTab2::~CRegQTab2()
+{
+    DestroyWindow();
+}
+
+void CRegQTab2::RefreshValues(CPUExecutor * Executor)
+{
+    static constexpr Arm64Opcode::arm64_reg Register[sizeof(m_Register) / sizeof(m_Register[0])] =
+    {
+        Arm64Opcode::ARM64_REG_Q16, Arm64Opcode::ARM64_REG_Q17, Arm64Opcode::ARM64_REG_Q18, Arm64Opcode::ARM64_REG_Q19,
+        Arm64Opcode::ARM64_REG_Q20, Arm64Opcode::ARM64_REG_Q21, Arm64Opcode::ARM64_REG_Q22, Arm64Opcode::ARM64_REG_Q23,
+        Arm64Opcode::ARM64_REG_Q24, Arm64Opcode::ARM64_REG_Q25, Arm64Opcode::ARM64_REG_Q26, Arm64Opcode::ARM64_REG_Q27,
+        Arm64Opcode::ARM64_REG_Q28, Arm64Opcode::ARM64_REG_Q29, Arm64Opcode::ARM64_REG_Q30, Arm64Opcode::ARM64_REG_Q31,
+    };
+
+    CRegisters * Reg = Executor ? &Executor->Reg() : NULL;
+    if (Reg)
+    {
+        for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
+        {
+            uint64_t hiValue, loValue;
+            Reg->Get128(Register[i], hiValue, loValue);
+            m_Register[i].SetWindowText(stdstr_f("0x%08X-%08X-%08X-%08X", (uint32_t)(hiValue >> 0x32), (uint32_t)(hiValue & 0xFFFFFFFF), (uint32_t)(loValue >> 0x32), (uint32_t)(loValue & 0xFFFFFFFF)).c_str());
+        }
+    }
+}
+
 CPStateTab::CPStateTab(HWND hParent, const RECT & rcDispay)
 {
     CreateTab(hParent, rcDispay);
@@ -160,10 +232,14 @@ void CRegisterTabs::Attach(HWND hWndNew)
     CRect pageRect = GetPageRect();
     m_GPRTab64 = new CGPRTab64(parentWin, pageRect);
     m_GPRTab32 = new CGPRTab32(parentWin, pageRect);
+    m_RegQTab = new CRegQTab(parentWin, pageRect);
+    m_RegQTab2 = new CRegQTab2(parentWin, pageRect);
     m_PStateTab = new CPStateTab(parentWin, pageRect);
 
     AddTab("GPR-64 (X)", m_GPRTab64);
     AddTab("GPR-32 (W)", m_GPRTab32);
+    AddTab("VFP (Q0-Q15)", m_RegQTab);
+    AddTab("VFP (Q16-Q31)", m_RegQTab2);
     AddTab("PState", m_PStateTab);
     RefreshEdits();
     RedrawCurrentTab();
@@ -175,6 +251,10 @@ void CRegisterTabs::Detach(void)
     m_GPRTab64 = NULL;
     delete m_GPRTab32;
     m_GPRTab32 = NULL;
+    delete m_RegQTab;
+    m_RegQTab = NULL;
+    delete m_RegQTab2;
+    m_RegQTab2 = NULL;
     delete m_PStateTab;
     m_PStateTab = NULL;
     m_TabWindows.clear();
@@ -187,6 +267,8 @@ void CRegisterTabs::RefreshEdits()
     CPUExecutor * Executor = m_Debugger->Executor();
     m_GPRTab64->RefreshValues(Executor);
     m_GPRTab32->RefreshValues(Executor);
+    m_RegQTab->RefreshValues(Executor);
+    m_RegQTab2->RefreshValues(Executor);
     m_PStateTab->RefreshValues(Executor);
 }
 
