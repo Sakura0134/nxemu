@@ -303,9 +303,27 @@ void Arm64Op::Mov(CPUExecutor & core, const Arm64Opcode &op)
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
     {
-        if (op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+        if (op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
         {
-            Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg));
+            if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+            {
+                Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg));
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+        else if (op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) )
+        {
+            if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+            {
+                Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg));
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
         }
         else
         {

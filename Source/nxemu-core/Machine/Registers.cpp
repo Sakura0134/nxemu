@@ -389,6 +389,7 @@ bool CRegisters::Is64bitReg(Arm64Opcode::arm64_reg reg)
     case Arm64Opcode::ARM64_REG_X29:
     case Arm64Opcode::ARM64_REG_X30:
     case Arm64Opcode::ARM64_REG_XZR:
+    case Arm64Opcode::ARM64_REG_SP:
         return true;
     case Arm64Opcode::ARM64_REG_Q0:
     case Arm64Opcode::ARM64_REG_Q1:
