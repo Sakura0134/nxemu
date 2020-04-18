@@ -449,6 +449,19 @@ void Arm64Op::Orr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Ret(CPUExecutor & core, const Arm64Opcode &op)
+{
+    if (op.Operands() == 0)
+    {
+        CRegisters & Reg = core.Reg();
+        Reg.Set64(Arm64Opcode::ARM64_REG_PC, Reg.Get64(Arm64Opcode::ARM64_REG_LR));
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Stp(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
