@@ -183,6 +183,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_SXTW:
         return false;
     //Conditional jump, return false as does not always jump
+    case ARM64_INS_CBNZ:
     case ARM64_INS_CBZ:
         return false;
     default:
