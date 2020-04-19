@@ -709,7 +709,11 @@ void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
             }
         }
 
-        if (CRegisters::Is32bitReg(op.Operand(0).Reg))
+        if (CRegisters::Is64bitReg(op.Operand(0).Reg))
+        {
+            MMU.Write64(target_addr, Reg.Get64(op.Operand(0).Reg));
+        }
+        else if (CRegisters::Is32bitReg(op.Operand(0).Reg))
         {
             MMU.Write32(target_addr, Reg.Get32(op.Operand(0).Reg));
         }
@@ -720,7 +724,14 @@ void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
 
         if (op.WriteBack())
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            if (CRegisters::Is64bitReg(op.Operand(1).mem.base))
+            {
+                Reg.Set64(op.Operand(1).mem.base, op.Operands() == 3 ? target_addr + op.Operand(2).ImmVal : target_addr);
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
         }
     }
     else
