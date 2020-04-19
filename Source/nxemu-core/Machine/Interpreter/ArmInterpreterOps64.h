@@ -16,6 +16,7 @@ public:
     static void Cmp(CPUExecutor & core, const Arm64Opcode &op);
     static void Dup(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldr(CPUExecutor & core, const Arm64Opcode &op);
+    static void Ldur(CPUExecutor & core, const Arm64Opcode &op);
     static void Lsr(CPUExecutor & core, const Arm64Opcode &op);
     static void Mov(CPUExecutor & core, const Arm64Opcode &op);
     static void Movk(CPUExecutor & core, const Arm64Opcode &op);

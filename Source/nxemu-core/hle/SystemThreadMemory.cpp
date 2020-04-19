@@ -16,6 +16,11 @@ bool CSystemThreadMemory::Read32(uint64_t Addr, uint32_t & value)
     return ReadBytes(Addr, (uint8_t *)&value, sizeof(value));
 }
 
+bool CSystemThreadMemory::Read64(uint64_t Addr, uint64_t & value)
+{
+    return ReadBytes(Addr, (uint8_t *)&value, sizeof(value));
+}
+
 bool CSystemThreadMemory::ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len)
 {
     void * ReadBuffer = NULL;
