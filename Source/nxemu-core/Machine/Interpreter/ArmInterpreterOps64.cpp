@@ -215,6 +215,11 @@ void Arm64Op::Cmp(CPUExecutor & core, const Arm64Opcode &op)
         a = Reg.Get64(op.Operand(0).Reg);
         b = op.Operand(1).ImmVal;
     }
+    else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg) && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(1).Reg))
+    {
+        a = Reg.Get64(op.Operand(0).Reg);
+        b = Reg.Get64(op.Operand(1).Reg);
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
