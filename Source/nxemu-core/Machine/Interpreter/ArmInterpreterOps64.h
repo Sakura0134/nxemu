@@ -18,6 +18,7 @@ public:
     static void Cset(CPUExecutor & core, const Arm64Opcode &op);
     static void Dup(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldr(CPUExecutor & core, const Arm64Opcode &op);
+    static void Ldrb(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldrsw(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldur(CPUExecutor & core, const Arm64Opcode &op);
     static void Lsr(CPUExecutor & core, const Arm64Opcode &op);

@@ -12,6 +12,7 @@ public:
     CSystemThreadMemory(CProcessMemory &ProcessMemory, CPUExecutor * Executor);
     ~CSystemThreadMemory();
 
+    bool Read8(uint64_t Addr, uint8_t & value);
 	bool Read32(uint64_t Addr, uint32_t & value);
 	bool Read64(uint64_t Addr, uint64_t & value);
     bool ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len);

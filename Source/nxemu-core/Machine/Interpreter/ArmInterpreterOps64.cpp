@@ -345,6 +345,45 @@ void Arm64Op::Ldr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Ldrb(CPUExecutor & core, const Arm64Opcode &op)
+{
+    MemoryManagement & MMU = core.MMU();
+
+    if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM))
+    {
+        CRegisters & Reg = core.Reg();
+        uint64_t index = 0;
+        if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+
+        if (op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        uint64_t load_addr = Reg.Get64(op.Operand(1).mem.base) + op.Operand(1).mem.disp + index;
+        if (CRegisters::Is32bitReg(op.Operand(0).Reg))
+        {
+            uint8_t value;
+            if (!MMU.Read8(load_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set32(op.Operand(0).Reg, value);
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        if (op.WriteBack())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Ldrsw(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();
