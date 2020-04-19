@@ -99,6 +99,7 @@ bool CPUExecutor::ShouldExecuteOp(const Arm64Opcode & op)
     switch (op.Opc())
     {
     case Arm64Opcode::ARM64_INS_B: return m_Reg.ConditionSet(op.cc());
+    case Arm64Opcode::ARM64_INS_CSET: return true;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
