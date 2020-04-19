@@ -149,6 +149,19 @@ void Arm64Op::Bl(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Br(CPUExecutor & core, const Arm64Opcode &op)
+{
+    if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
+    {
+        CRegisters & Reg = core.Reg();
+        Reg.Set64(Arm64Opcode::ARM64_REG_PC, Reg.Get64(op.Operand(0).Reg));
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Cbnz(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();
