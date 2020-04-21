@@ -283,6 +283,40 @@ void Arm64Op::Dup(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Ldp(CPUExecutor & core, const Arm64Opcode &op)
+{
+    MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM)
+    {
+        uint64_t load_addr = Reg.Get64(op.Operand(2).mem.base) + op.Operand(2).mem.disp;
+
+        if (CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
+        {
+            uint64_t value;
+            if (!MMU.Read64(load_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set64(op.Operand(0).Reg, value);
+
+            if (!MMU.Read64(load_addr + 8, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set64(op.Operand(1).Reg, value);
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+
+        if (op.WriteBack())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Ldr(CPUExecutor & core, const Arm64Opcode &op)
 {
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
