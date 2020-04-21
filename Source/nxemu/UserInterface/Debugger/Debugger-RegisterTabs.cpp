@@ -1,7 +1,7 @@
 #include "Debugger-RegisterTabs.h"
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Machine\Registers.h>
-#include <nxemu-core\hle\SystemThread.h>
+#include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <Common\StdString.h>
 #include "Debugger-RegisterTabs.h"
 #include <nxemu-core\Machine\CPU\CPUExecutor.h>

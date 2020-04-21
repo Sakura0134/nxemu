@@ -3,7 +3,7 @@
 #include <Common\path.h>
 #include <nxemu-core\hle\ProcessMemory.h>
 #include <nxemu-core\hle\HleKernel.h>
-#include <nxemu-core\hle\SystemThread.h>
+#include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\Machine\SwitchKeys.h>
 #include <nxemu-core\FileSystem\EncryptedFile.h>
 #include <nxemu-core\FileSystem\PartitionFilesystem.h>

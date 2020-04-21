@@ -1,6 +1,6 @@
 #pragma once
 #include <nxemu-core\hle\ProcessMemory.h>
-#include <nxemu-core\hle\SystemThread.h>
+#include <nxemu-core\hle\Kernel\SystemThread.h>
 
 class CSwitchSystem;
 

@@ -73,6 +73,12 @@
     <Filter Include="Source Files\Machine\Interpreter">
       <UniqueIdentifier>{e8e2d918-14bd-482f-a696-e964f2ce637b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\hle\Kernel">
+      <UniqueIdentifier>{7205a9e6-ef60-4a7a-ae54-a04568474996}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\hle\Kernel">
+      <UniqueIdentifier>{f9ad8ee1-997e-4318-ba34-d192e54ffa12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -133,9 +139,6 @@
       <Filter>Header Files\hle</Filter>
     </ClInclude>
     <ClInclude Include="hle\HleKernel.h">
-      <Filter>Header Files\hle</Filter>
-    </ClInclude>
-    <ClInclude Include="hle\SystemThread.h">
       <Filter>Header Files\hle</Filter>
     </ClInclude>
     <ClInclude Include="Machine\CPU\CPUExecutor.h">
@@ -204,6 +207,9 @@
     <ClInclude Include="Machine\Interpreter\ArmInterpreterOps64.h">
       <Filter>Header Files\Machine\Interpreter</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Kernel\SystemThread.h">
+      <Filter>Header Files\hle\Kernel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -246,9 +252,6 @@
       <Filter>Source Files\hle</Filter>
     </ClCompile>
     <ClCompile Include="hle\HleKernel.cpp">
-      <Filter>Source Files\hle</Filter>
-    </ClCompile>
-    <ClCompile Include="hle\SystemThread.cpp">
       <Filter>Source Files\hle</Filter>
     </ClCompile>
     <ClCompile Include="Machine\CPU\CPUExecutor.cpp">
@@ -316,6 +319,9 @@
     </ClCompile>
     <ClCompile Include="Machine\Interpreter\ArmInterpreterOps64.cpp">
       <Filter>Source Files\Machine\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Kernel\SystemThread.cpp">
+      <Filter>Source Files\hle\Kernel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
