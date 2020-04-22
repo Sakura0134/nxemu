@@ -45,6 +45,7 @@
     <ClInclude Include="FileSystem\PartitionFilesystem.h" />
     <ClInclude Include="hle\HleKernel.h" />
     <ClInclude Include="hle\Kernel\SystemThread.h" />
+    <ClInclude Include="hle\Memory\MemoryTypes.h" />
     <ClInclude Include="hle\ProcessMemory.h" />
     <ClInclude Include="hle\SystemThreadMemory.h" />
     <ClInclude Include="Language\Language.h" />

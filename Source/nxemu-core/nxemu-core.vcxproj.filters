@@ -79,6 +79,9 @@
     <Filter Include="Header Files\hle\Kernel">
       <UniqueIdentifier>{f9ad8ee1-997e-4318-ba34-d192e54ffa12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hle\Memory">
+      <UniqueIdentifier>{aa78bd83-2a0e-4ad2-92fb-2466706c580a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -209,6 +212,9 @@
     </ClInclude>
     <ClInclude Include="hle\Kernel\SystemThread.h">
       <Filter>Header Files\hle\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="hle\Memory\MemoryTypes.h">
+      <Filter>Header Files\hle\Memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

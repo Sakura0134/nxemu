@@ -1,6 +1,7 @@
 #pragma once
 #include <Common\stdtypes.h>
 #include <nxemu-core\FileSystem\PartitionFilesystem.h>
+#include <nxemu-core\hle\Memory\MemoryTypes.h>
 
 class CProgramMetadata
 {
@@ -9,6 +10,7 @@ public:
 
     inline uint8_t GetMainThreadPriority(void) const { return m_Header.main_thread_priority; }
     inline bool Is64bit(void) const { return ((Flags *)(&m_Header.flags))->Is64BitInstructions != 0; }
+    inline ProgramAddressSpaceType GetAddressSpaceType(void) const { return (ProgramAddressSpaceType)((Flags *)(&m_Header.flags))->AddressSpaceType; }
 
 private:
     CProgramMetadata(void);                                // Disable default constructor
