@@ -9,6 +9,7 @@ public:
     CProgramMetadata(uint64_t offset, CEncryptedFile &EncryptedFile, const CPartitionFilesystem::VirtualFile * npdm);
 
     inline uint8_t GetMainThreadPriority(void) const { return m_Header.main_thread_priority; }
+    inline uint32_t GetMainThreadStackSize(void) const { return m_Header.main_stack_size; }
     inline bool Is64bit(void) const { return ((Flags *)(&m_Header.flags))->Is64BitInstructions != 0; }
     inline ProgramAddressSpaceType GetAddressSpaceType(void) const { return (ProgramAddressSpaceType)((Flags *)(&m_Header.flags))->AddressSpaceType; }
 
