@@ -9,7 +9,20 @@ CSystemThread::CSystemThread(CHleKernel * m_Kernel, CProcessMemory &ProcessMemor
 	m_Priority(Priority),
 	m_Name(name != NULL ? name : "")
 {
+    if (!m_ThreadMemory.Initialize(StackTop, StackSize))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    m_Reg.Set64(Arm64Opcode::ARM64_REG_SP, StackTop);
     m_Reg.Set64(Arm64Opcode::ARM64_REG_PC, entry_point);
+
+    for (size_t i = 0; i < 31; i++)
+    {
+        m_Reg.Set64((Arm64Opcode::arm64_reg)(Arm64Opcode::ARM64_REG_X0 + i), 0);
+    }
+    m_Reg.Set64(Arm64Opcode::ARM64_REG_X0, ThreadContext);
+    m_Reg.SetConditionFlags(false, false, false, false);
 }
 
 CSystemThread::~CSystemThread()
