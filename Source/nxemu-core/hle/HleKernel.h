@@ -10,7 +10,7 @@ public:
     CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory);
     ~CHleKernel();
 
-	bool AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t Priority, uint32_t ProcessorId);
+	bool AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
     const SystemThreadList & SystemThreads(void) const { return m_SystemThreads; }
 
 private:

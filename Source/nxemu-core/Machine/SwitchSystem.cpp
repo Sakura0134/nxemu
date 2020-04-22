@@ -154,8 +154,9 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
     g_Settings->SaveString(Game_File, XciFile);
     g_Settings->SaveString(Game_Name, Nacp->GetApplicationName().c_str());
 
-    uint32_t ThreadId;
-    if (!m_Kernel.AddSystemThread(ThreadId, "main", base_addr, 0, 0, Metadata->GetMainThreadPriority(), 0))
+    uint32_t ThreadHandle;
+    uint64_t StackAreaVaddrEnd = m_ProcessMemory.GetTlsIoRegionBase() + m_ProcessMemory.GetTlsIoRegionSize();
+    if (!m_Kernel.AddSystemThread(ThreadHandle, "main", base_addr, 0, StackAreaVaddrEnd, Metadata->GetMainThreadStackSize(), Metadata->GetMainThreadPriority(), 0))
     {
         return false;
     }

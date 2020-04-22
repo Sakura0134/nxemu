@@ -20,16 +20,17 @@ CHleKernel::~CHleKernel()
     m_SystemThreads.clear();
 }
 
-bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t Priority, uint32_t ProcessorId)
+bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId)
 {
 	ThreadHandle = GetNewHandle();
-	CSystemThread * thread = new CSystemThread(this, m_ProcessMemory, name, entry_point, ThreadHandle, CreateNewThreadID(), ThreadContext, StackTop, Priority, ProcessorId);
-    if (thread == NULL)
+	CSystemThread * Thread = new CSystemThread(this, m_ProcessMemory, name, entry_point, ThreadHandle, CreateNewThreadID(), ThreadContext, StackTop, StackSize, Priority, ProcessorId);
+    if (Thread == NULL)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return false;
     }
-	m_SystemThreads.insert(SystemThreadList::value_type(ThreadHandle, thread));
+    Thread->Reg().Set64(Arm64Opcode::ARM64_REG_X1, ThreadHandle);
+	m_SystemThreads.insert(SystemThreadList::value_type(ThreadHandle, Thread));
     return true;
 }
 
