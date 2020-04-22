@@ -8,6 +8,7 @@ public:
     CProgramMetadata(uint64_t offset, CEncryptedFile &EncryptedFile, const CPartitionFilesystem::VirtualFile * npdm);
 
     inline uint8_t GetMainThreadPriority(void) const { return m_Header.main_thread_priority; }
+    inline bool Is64bit(void) const { return ((Flags *)(&m_Header.flags))->Is64BitInstructions != 0; }
 
 private:
     CProgramMetadata(void);                                // Disable default constructor
@@ -31,6 +32,12 @@ private:
         uint32_t aci_size;
         uint32_t acid_offset;
         uint32_t acid_size;
+    };
+
+    struct Flags
+    {
+        unsigned Is64BitInstructions : 1;
+        unsigned AddressSpaceType : 3;
     };
 
     Header m_Header;
