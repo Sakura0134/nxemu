@@ -108,6 +108,13 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
         WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
         return false;
     }
+    if (!m_ProcessMemory.Initialize(Metadata->GetAddressSpaceType(), Metadata->Is64bit()))
+    {
+        WriteTrace(TraceGameFile, TraceError, "failed to Initialize process memory");
+        WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
+        return false;
+    }
+
     uint64_t exefs_offset = exefs->StartAddress() + exefs->Offset();
     uint64_t end_addr, base_addr = m_ProcessMemory.GetAddressSpaceBaseAddr();
     if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("rtld"), base_addr, end_addr))

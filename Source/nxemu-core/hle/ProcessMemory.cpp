@@ -2,7 +2,17 @@
 #include <nxemu-core/SystemGlobals.h>
 #include <Common/MemoryManagement.h>
 
-CProcessMemory::CProcessMemory(void)
+CProcessMemory::CProcessMemory(void) :
+    m_CodeRegionStart(0),
+    m_CodeRegionSize(0),
+    m_MapRegionBase(0),
+    m_MapRegionSize(0),
+    m_HeapRegionBase(0),
+    m_HeapRegionSize(0),
+    m_NewMapRegionBase(0),
+    m_NewMapRegionSize(0),
+    m_TlsIoRegionBase(0),
+    m_TlsIoRegionSize(0)
 {
 }
 
@@ -10,7 +20,36 @@ CProcessMemory::~CProcessMemory()
 {
 }
 
-uint8_t * CProcessMemory::MapMemory(uint64_t Address, uint32_t Size, MemoryPermission Perm, MemoryType type)
+bool CProcessMemory::Initialize(ProgramAddressSpaceType Type, bool Is64bit)
+{
+    if (!Is64bit)
+    {
+        return false;
+    }
+
+    switch (Type)
+    {
+    case ProgramAddressSpace_Is39Bit:
+        m_CodeRegionStart = 0x8000000;
+        m_CodeRegionSize = 0x80000000;
+        m_MapRegionSize = 0x1000000000;
+        m_HeapRegionSize = 0x180000000;
+        m_NewMapRegionSize = 0x80000000;
+        m_TlsIoRegionSize = 0x1000000000;
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+
+    m_MapRegionBase = m_CodeRegionStart + m_CodeRegionSize;
+    m_HeapRegionBase = m_MapRegionBase + m_MapRegionSize;
+    m_NewMapRegionBase = m_HeapRegionBase + m_HeapRegionSize;
+    m_TlsIoRegionBase = m_NewMapRegionBase + m_NewMapRegionSize;
+    return true;
+}
+
+uint8_t * CProcessMemory::MapMemory(uint64_t Address, uint32_t Size, MemoryPermission /*Perm*/, MemoryType type)
 {
     if (Size == 0)
     {
