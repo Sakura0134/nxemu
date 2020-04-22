@@ -6,6 +6,7 @@
 class NSP;
 class NCA;
 class NACP;
+class CProgramMetadata;
 
 class CXci
 {
@@ -16,6 +17,7 @@ public:
 	static bool IsXciFile(const CPath & XciFile);
 	inline const NCA * Program(void) const { return m_Program; }
     inline const NACP * Nacp(void) const { return m_Nacp; }
+    inline const CProgramMetadata * Metadata(void) const { return m_MetaData; }
     inline bool Valid(void) const { return m_Valid; }
 
 private:
@@ -55,6 +57,7 @@ private:
     NCA * m_Program;
     NCA * m_Control;
     NACP * m_Nacp;
+    CProgramMetadata * m_MetaData;
     bool m_Valid;
 	CFile m_ReadFile;
 };

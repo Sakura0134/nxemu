@@ -76,24 +76,52 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
     const NCA * Program = m_Xci->Program();
     if (Program == NULL)
     {
+        WriteTrace(TraceGameFile, TraceError, "Failed to find Program");
+        WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
         return false;
     }
     CPartitionFilesystem * exefs = Program->exefs();
     if (exefs == NULL)
     {
+        WriteTrace(TraceGameFile, TraceError, "Failed to find exefs");
+        WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
         return false;
     }
-    const CPartitionFilesystem::VirtualFile * npdm = exefs->GetFile("main.npdm");
-    if (npdm == NULL)
+    const NACP * Nacp = m_Xci->Nacp();
+    if (Nacp == NULL)
     {
+        WriteTrace(TraceGameFile, TraceError, "Failed to get Nacp");
+        WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
+        return false;
+    }
+    const CProgramMetadata * Metadata = m_Xci->Metadata();
+    if (Metadata == NULL)
+    {
+        WriteTrace(TraceGameFile, TraceError, "Failed to get Metadata");
+        WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
+        return false;
+    }
+
+    if (!Metadata->Is64bit())
+    {
+        WriteTrace(TraceGameFile, TraceError, "XCI is not 64bit");
+        WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
         return false;
     }
     uint64_t exefs_offset = exefs->StartAddress() + exefs->Offset();
-    CProgramMetadata metadata(exefs_offset, exefs->EncryptedFile(), npdm);
-
-    uint64_t end_addr, base_addr = CProcessMemory::GetAddressSpaceBaseAddr();
-    if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("rtld"), base_addr, end_addr)) { return false; }
-    if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("main"), CPageTable::PageRoundUp(end_addr), end_addr)) { return false; }
+    uint64_t end_addr, base_addr = m_ProcessMemory.GetAddressSpaceBaseAddr();
+    if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("rtld"), base_addr, end_addr))
+    {
+        WriteTrace(TraceGameFile, TraceError, "Failed to load rtld");
+        WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
+        return false;
+    }
+    if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("main"), CPageTable::PageRoundUp(end_addr), end_addr))
+    {
+        WriteTrace(TraceGameFile, TraceError, "Failed to load main");
+        WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
+        return false;
+    }
     const CPartitionFilesystem::VirtualFiles Files = exefs->GetFiles();
     for (size_t i = 0; i < Files.size(); i++)
     {
@@ -101,25 +129,29 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
         {
             continue;
         }
-        if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile(Files[i].Name.c_str()), CPageTable::PageRoundUp(end_addr), end_addr)) { return false; }
+        if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile(Files[i].Name.c_str()), CPageTable::PageRoundUp(end_addr), end_addr))
+        {
+            WriteTrace(TraceGameFile, TraceError, "Failed to load %s", Files[i].Name.c_str());
+            WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
+            return false;
+        }
     }
-    if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("sdk"), CPageTable::PageRoundUp(end_addr), end_addr)) { return false; }
-    g_Notify->DisplayMessage(0, GS(MSG_LOADED_XCI));
-
-    const NACP * Nacp = m_Xci->Nacp();
-    if (Nacp == NULL)
+    if (!LoadNSOModule(exefs_offset, exefs->EncryptedFile(), exefs->GetFile("sdk"), CPageTable::PageRoundUp(end_addr), end_addr))
     {
+        WriteTrace(TraceGameFile, TraceError, "Failed to load sdk");
+        WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
         return false;
     }
+
+    g_Notify->DisplayMessage(0, GS(MSG_LOADED_XCI));
     g_Settings->SaveString(Game_File, XciFile);
     g_Settings->SaveString(Game_Name, Nacp->GetApplicationName().c_str());
 
     uint32_t ThreadId;
-    if (!m_Kernel.AddSystemThread(ThreadId, "main", base_addr, 0, 0, metadata.GetMainThreadPriority(), 0))
+    if (!m_Kernel.AddSystemThread(ThreadId, "main", base_addr, 0, 0, Metadata->GetMainThreadPriority(), 0))
     {
         return false;
     }
     WriteTrace(TraceGameFile, TraceInfo, "Done (res: true)");
     return true;
 }
-

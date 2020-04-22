@@ -5,6 +5,7 @@
 #include <nxemu-core\FileFormat\nca.h>
 #include <nxemu-core\FileFormat\nacp.h>
 #include <nxemu-core\FileFormat\romfs.h>
+#include <nxemu-core\FileFormat\ProgramMetadata.h>
 #include <nxemu-core\Trace.h>
 #include <set>
 
@@ -15,9 +16,10 @@ CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
 	m_Partitions(NULL),
     m_Program(NULL),
     m_Control(NULL),
-    m_Nacp(NULL)
+    m_Nacp(NULL),
+    m_MetaData(NULL)
 {
-	WriteTrace(TraceGameFile, TraceInfo, "Start (XciFile: \"%s\")", (const char *)XciFile);
+	WriteTrace(TraceGameFile, TraceDebug, "Start (XciFile: \"%s\")", (const char *)XciFile);
 	if (!XciFile.Exists())
 	{
 		WriteTrace(TraceGameFile, TraceError, "XciFile (\"%s\") - does not exist", (const char *)XciFile);
@@ -102,9 +104,27 @@ CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
         WriteTrace(TraceGameFile, TraceInfo, "Done");
         return;
     }
+
+    CPartitionFilesystem * exefs = m_Program->exefs();
+    if (exefs == NULL)
+    {
+        WriteTrace(TraceGameFile, TraceError, "Failed to find exefs");
+        WriteTrace(TraceGameFile, TraceInfo, "Done");
+        return;
+    }
+    const CPartitionFilesystem::VirtualFile * npdm = exefs->GetFile("main.npdm");
+    if (npdm == NULL)
+    {
+        WriteTrace(TraceGameFile, TraceError, "Failed to find main.npdm in exefs");
+        WriteTrace(TraceGameFile, TraceInfo, "Done");
+        return;
+    }
+    uint64_t exefs_offset = exefs->StartAddress() + exefs->Offset();
+    m_MetaData = new CProgramMetadata(exefs_offset, exefs->EncryptedFile(), npdm);
+
     WriteTrace(TraceGameFile, TraceVerbose, "xci is valid");
 	m_Valid = true;
-	WriteTrace(TraceGameFile, TraceInfo, "Done");
+	WriteTrace(TraceGameFile, TraceDebug, "Done");
 }
 
 CXci::~CXci()
