@@ -936,6 +936,18 @@ void Arm64Op::Sturb(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Svc(CPUExecutor & core, const Arm64Opcode &op)
+{
+    if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
+    {
+        core.ServiceCall((uint32_t)op.Operand(0).ImmVal);
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Sxtw(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();

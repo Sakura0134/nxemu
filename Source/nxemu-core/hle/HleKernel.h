@@ -7,6 +7,11 @@ class CSwitchSystem;
 class CHleKernel
 {
 public:   
+    enum SvcGetCall
+    {
+		SvcQueryMemory = 0x06,
+    };
+
     CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory);
     ~CHleKernel();
 

@@ -9,6 +9,8 @@ class CPUExecutor :
 public:
     CPUExecutor(MemoryManagement & mmu);
 
+    virtual void ServiceCall(uint32_t index) = 0;
+
     void Execute(bool & Done);
     void Jumped(void);
 

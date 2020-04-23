@@ -17,6 +17,8 @@ private:
     CSystemThread();                               // Disable default constructor
     CSystemThread(const CSystemThread&);            // Disable copy constructor
     CSystemThread& operator=(const CSystemThread&); // Disable assignment
+
+    void ServiceCall(uint32_t index);
         
     CHleKernel * m_Kernel;
     CSystemThreadMemory m_ThreadMemory;
