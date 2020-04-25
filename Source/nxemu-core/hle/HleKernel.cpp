@@ -46,3 +46,59 @@ uint64_t CHleKernel::CreateNewThreadID()
 	return ThreadId;
 }
 
+const char * CHleKernel::SvcGetCallStr(SvcGetCall svcCall)
+{
+    switch (svcCall)
+    {
+    case svcSetHeapSize: return "SetHeapSize";
+    case svcSetMemoryPermission: return "SetMemoryPermission";
+    case svcSetMemoryAttribute: return "SetMemoryAttribute";
+    case svcMapMemory: return "MapMemory";
+    case svcUnmapMemory: return "UnmapMemory";
+    case svcQueryMemory: return "QueryMemory";
+    case svcExitProcess: return "ExitProcess";
+    case svcCreateThread: return "CreateThread";
+    case svcStartThread: return "StartThread";
+    case svcExitThread: return "ExitThread";
+    case svcSleepThread: return "SleepThread";
+    case svcGetThreadPriority: return "GetThreadPriority";
+    case svcSetThreadPriority: return "SetThreadPriority";
+    case svcGetThreadCoreMask: return "GetThreadCoreMask";
+    case svcSetThreadCoreMask: return "SetThreadCoreMask";
+    case svcGetCurrentProcessorNumber: return "GetCurrentProcessorNumber";
+    case svcSignalEvent: return "SignalEvent";
+    case svcClearEvent: return "ClearEvent";
+    case svcMapSharedMemory: return "MapSharedMemory";
+    case svcUnmapSharedMemory: return "UnmapSharedMemory";
+    case svcCreateTransferMemory: return "CreateTransferMemory";
+    case svcCloseHandle: return "CloseHandle";
+    case svcResetSignal: return "ResetSignal";
+    case svcWaitSynchronization: return "WaitSynchronization";
+    case svcCancelSynchronization: return "CancelSynchronization";
+    case svcArbitrateLock: return "ArbitrateLock";
+    case svcArbitrateUnlock: return "ArbitrateUnlock";
+    case svcWaitProcessWideKeyAtomic: return "WaitProcessWideKeyAtomic";
+    case svcSignalProcessWideKey: return "SignalProcessWideKey";
+    case svcGetSystemTick: return "GetSystemTick";
+    case svcConnectToNamedPort: return "ConnectToNamedPort";
+    case svcSendSyncRequestLight: return "SendSyncRequestLight";
+    case svcSendSyncRequest: return "SendSyncRequest";
+    case svcSendSyncRequestWithUserBuffer: return "SendSyncRequestWithUserBuffer";
+    case svcSendAsyncRequestWithUserBuffer: return "SendAsyncRequestWithUserBuffer";
+    case svcGetProcessId: return "GetProcessId";
+    case svcGetThreadId: return "GetThreadId";
+    case svcBreak: return "Break";
+    case svcOutputDebugString: return "OutputDebugString";
+    case svcReturnFromException: return "ReturnFromException";
+    case svcGetInfo: return "GetInfo";
+    case svcFlushEntireDataCache: return "FlushEntireDataCache";
+    case scvFlushDataCache: return "FlushDataCache";
+    case svcMapPhysicalMemory: return "MapPhysicalMemory";
+    case svcUnmapPhysicalMemory: return "UnmapPhysicalMemory";
+    case svcGetDebugFutureThreadInfo: return "GetDebugFutureThreadInfo";
+    case svcGetLastThreadInfo: return "GetLastThreadInfo";
+    }
+    static stdstr unknown;
+    unknown.Format("Unknown (0x%X)", svcCall);
+    return unknown.c_str();
+}

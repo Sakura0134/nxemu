@@ -6,6 +6,7 @@
 #include <nxemu-core\Language\Language.h>
 #include <nxemu-core\Machine\SwitchSystem.h>
 #include <Common\path.h>
+#include "Version.h"
 
 void SetTraceModuleNames(void);
 
@@ -42,7 +43,8 @@ void SetTraceModuleNames(void)
     TraceSetModuleName(TraceAppInit, "App Init");
     TraceSetModuleName(TraceAppCleanup, "App Cleanup");
     TraceSetModuleName(TraceUserInterface, "User Interface");
-	TraceSetModuleName(TraceGameFile, "Game File");
+    TraceSetModuleName(TraceServiceCall, "Service Call");
+    TraceSetModuleName(TraceGameFile, "Game File");
 }
 
 void UpdateTraceLevel(void)
@@ -53,6 +55,7 @@ void UpdateTraceLevel(void)
     g_ModuleLogLevel[TraceSettings] = (uint8_t)g_Settings->LoadDword(Debugger_TraceSettings);
     g_ModuleLogLevel[TraceAppInit] = (uint8_t)g_Settings->LoadDword(Debugger_TraceAppInit);
     g_ModuleLogLevel[TraceAppCleanup] = (uint8_t)g_Settings->LoadDword(Debugger_TraceAppCleanup);
+    g_ModuleLogLevel[TraceServiceCall] = (uint8_t)g_Settings->LoadDword(Debugger_TraceServiceCall);
     g_ModuleLogLevel[TraceGameFile] = (uint8_t)g_Settings->LoadDword(Debugger_TraceGameFile);
 }
 
@@ -65,8 +68,10 @@ void SetupTrace(void)
     g_Settings->RegisterChangeCB(Debugger_TraceSettings, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
     g_Settings->RegisterChangeCB(Debugger_TraceAppInit, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
     g_Settings->RegisterChangeCB(Debugger_TraceAppCleanup, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceServiceCall, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
     g_Settings->RegisterChangeCB(Debugger_TraceGameFile, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
     UpdateTraceLevel();
+    WriteTrace(TraceAppInit, TraceInfo, "Application Starting %s", VER_FILE_VERSION_STR);
 }
 
 void CleanupTrace(void)
@@ -77,6 +82,7 @@ void CleanupTrace(void)
     g_Settings->UnregisterChangeCB(Debugger_TraceSettings, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
     g_Settings->UnregisterChangeCB(Debugger_TraceAppInit, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
     g_Settings->UnregisterChangeCB(Debugger_TraceAppCleanup, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceServiceCall, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
     g_Settings->UnregisterChangeCB(Debugger_TraceGameFile, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
 }
 

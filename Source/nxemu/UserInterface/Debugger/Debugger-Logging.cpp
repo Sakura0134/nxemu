@@ -59,15 +59,18 @@ public:
     {
         m_cmbTraceAppInit.Attach(GetDlgItem(IDC_CMB_TRACE_APPINIT));
         m_cmbTraceAppCleanup.Attach(GetDlgItem(IDC_CMB_TRACE_APPCLEANUP));
+        m_cmbTraceServiceCall.Attach(GetDlgItem(IDC_CMB_TRACE_SERVICECALL));
         m_cmbTraceGameFile.Attach(GetDlgItem(IDC_CMB_TRACE_GAMEFILE));
 
-        struct {
+        struct 
+        {
             CComboBox & cmb;
             SettingID SettingId;
         } TraceCMB[] =
         {
             { m_cmbTraceAppInit, Debugger_TraceAppInit },
             { m_cmbTraceAppCleanup, Debugger_TraceAppCleanup },
+            { m_cmbTraceServiceCall, Debugger_TraceServiceCall },
             { m_cmbTraceGameFile, Debugger_TraceGameFile },
         };
 
@@ -93,6 +96,7 @@ public:
         {
             { m_cmbTraceAppInit, Debugger_TraceAppInit },
             { m_cmbTraceAppCleanup, Debugger_TraceAppCleanup },
+            { m_cmbTraceServiceCall, Debugger_TraceServiceCall },
             { m_cmbTraceGameFile, Debugger_TraceGameFile },
         };
         for (size_t i = 0, n = sizeof(TraceCMB) / sizeof(TraceCMB[0]); i < n; i++)
@@ -110,6 +114,7 @@ private:
 
     CComboBox m_cmbTraceAppInit;
     CComboBox m_cmbTraceAppCleanup;
+    CComboBox m_cmbTraceServiceCall;
     CComboBox m_cmbTraceGameFile;
 };
 

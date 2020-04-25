@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Header Files\Settings">
       <UniqueIdentifier>{2398d593-4fe0-4c06-9747-96bad5e16c6a}</UniqueIdentifier>
     </Filter>
@@ -216,6 +212,9 @@
     <ClInclude Include="hle\Memory\MemoryTypes.h">
       <Filter>Header Files\hle\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Kernel\ResultCode.h">
+      <Filter>Header Files\hle\Kernel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -327,6 +326,9 @@
       <Filter>Source Files\Machine\Interpreter</Filter>
     </ClCompile>
     <ClCompile Include="hle\Kernel\SystemThread.cpp">
+      <Filter>Source Files\hle\Kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Kernel\ResultCode.cpp">
       <Filter>Source Files\hle\Kernel</Filter>
     </ClCompile>
   </ItemGroup>

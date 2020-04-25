@@ -89,6 +89,7 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
     AddHandler(Debugger_TraceSettings, new CSettingTypeApplication("Logging", "Settings", (uint32_t)g_ModuleLogLevel[TraceSettings]));
     AddHandler(Debugger_TraceAppInit, new CSettingTypeApplication("Logging", "App Init", (uint32_t)g_ModuleLogLevel[TraceAppInit]));
     AddHandler(Debugger_TraceAppCleanup, new CSettingTypeApplication("Logging", "App Cleanup", (uint32_t)g_ModuleLogLevel[TraceAppCleanup]));
+    AddHandler(Debugger_TraceServiceCall, new CSettingTypeApplication("Logging", "Service Call", (uint32_t)g_ModuleLogLevel[TraceServiceCall]));
     AddHandler(Debugger_TraceGameFile, new CSettingTypeApplication("Logging", "Game File", (uint32_t)g_ModuleLogLevel[TraceGameFile]));
 }
 
