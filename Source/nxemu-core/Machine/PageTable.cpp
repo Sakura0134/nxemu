@@ -14,13 +14,13 @@ const char * CPageTable::MemoryPermissionName(MemoryPermission Perm)
 {
     switch (Perm)
     {
-    case Invalid: return "Invalid";
-    case Unmapped: return "Unmapped";
-    case Read: return "Read";
-    case Write: return "Write";
-    case Execute: return "Execute";
-    case ReadWrite: return "ReadWrite";
-    case ReadExecute: return "ReadExecute";
+    case MemoryPermission_Invalid: return "Invalid";
+    case MemoryPermission_Unmapped: return "Unmapped";
+    case MemoryPermission_Read: return "Read";
+    case MemoryPermission_Write: return "Write";
+    case MemoryPermission_Execute: return "Execute";
+    case MemoryPermission_ReadWrite: return "ReadWrite";
+    case MemoryPermission_ReadExecute: return "ReadExecute";
     }
     return "Unknown";
 }

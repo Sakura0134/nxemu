@@ -87,7 +87,7 @@ typedef struct {
     uint64_t size;
 } ELF_SYM;
 
-bool LoadNsoSegement(CProcessMemory & ProcessMemory, uint64_t LoadAddress, CEncryptedFile &EncryptedFile, uint64_t FileOffset, uint32_t CompressSize, uint32_t UnCompressedSize, uint32_t SegmentSize, uint32_t SegmentOffset, uint32_t BssSize, bool Compressed, CProcessMemory::MemoryPermission MemoryPermission, bool Check, const uint8_t * Hash, CProcessMemory::MemoryType memType)
+bool LoadNsoSegement(CProcessMemory & ProcessMemory, uint64_t LoadAddress, CEncryptedFile &EncryptedFile, uint64_t FileOffset, uint32_t CompressSize, uint32_t UnCompressedSize, uint32_t SegmentSize, uint32_t SegmentOffset, uint32_t BssSize, bool Compressed, MemoryPermission MemoryPermission, bool Check, const uint8_t * Hash, MemoryType memType)
 {
 	if (!Compressed)
 	{
@@ -144,7 +144,7 @@ bool CSwitchSystem::LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile
 	{
 		return false;
 	}
-	WriteTrace(TraceGameFile, TraceInfo, "Start (NsoFile: %s base_addr: 0x%I64X)", file->Name.c_str(), base_addr);
+	WriteTrace(TraceGameFile, TraceDebug, "Start (NsoFile: %s base_addr: 0x%I64X)", file->Name.c_str(), base_addr);
 	g_Notify->DisplayMessage(0, stdstr_f("%s: %s", GS(MSG_LOADING), file->Name.c_str()).c_str());
 
 	NSO_HEADER header;
@@ -155,8 +155,8 @@ bool CSwitchSystem::LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile
 	WriteTrace(TraceGameFile, TraceDebug, "Read only data Section - MemoryOffset: 0x%I64X DecompressedSize: 0x%I64X", header.rodata.MemoryOffset, header.rodata.DecompressedSize);
 	WriteTrace(TraceGameFile, TraceDebug, "Data Section - MemoryOffset: 0x%I64X DecompressedSize: 0x%I64X", header.data.MemoryOffset, header.data.DecompressedSize);
 
-	if (!LoadNsoSegement(m_ProcessMemory, base_addr + header.Text.MemoryOffset, EncryptedFile, offset, header.TextCompressedSize, header.Text.DecompressedSize, header.Text.DecompressedSize, header.Text.FileOffset + file->Offset, 0, header.Flags.TextCompressed, CPageTable::ReadExecute, header.Flags.TextCheck, header.TextHash, CProcessMemory::MemoryType_CodeStatic)) { return false; }
-	if (!LoadNsoSegement(m_ProcessMemory, base_addr + header.rodata.MemoryOffset, EncryptedFile, offset, header.RodataCompressedSize, header.rodata.DecompressedSize, header.rodata.DecompressedSize, header.rodata.FileOffset + file->Offset, 0, header.Flags.RoDataCompressed, CPageTable::Read, header.Flags.RoDataCheck, header.RodataHash, CProcessMemory::MemoryType_CodeMutable)) { return false; }
+	if (!LoadNsoSegement(m_ProcessMemory, base_addr + header.Text.MemoryOffset, EncryptedFile, offset, header.TextCompressedSize, header.Text.DecompressedSize, header.Text.DecompressedSize, (uint32_t)(header.Text.FileOffset + file->Offset), 0, header.Flags.TextCompressed, MemoryPermission_ReadExecute, header.Flags.TextCheck, header.TextHash, MemoryType_CodeStatic)) { return false; }
+	if (!LoadNsoSegement(m_ProcessMemory, base_addr + header.rodata.MemoryOffset, EncryptedFile, offset, header.RodataCompressedSize, header.rodata.DecompressedSize, header.rodata.DecompressedSize, (uint32_t)(header.rodata.FileOffset + file->Offset), 0, header.Flags.RoDataCompressed, MemoryPermission_Read, header.Flags.RoDataCheck, header.RodataHash, MemoryType_CodeMutable)) { return false; }
 	if (header.data.MemoryOffset < header.rodata.MemoryOffset || header.data.MemoryOffset < header.rodata.MemoryOffset)
 	{
 		g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -186,7 +186,7 @@ bool CSwitchSystem::LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile
 		}
 	}
 	WriteTrace(TraceGameFile, TraceDebug, "BssSize: 0x%I64X", BssSize);
-	if (!LoadNsoSegement(m_ProcessMemory, base_addr + header.data.MemoryOffset, EncryptedFile, offset, header.DataCompressedSize, header.data.DecompressedSize, header.data.DecompressedSize, header.data.FileOffset + file->Offset, BssSize, header.Flags.DataCompressed, CPageTable::ReadWrite, header.Flags.DataCheck, header.DataHash, CProcessMemory::MemoryType_CodeMutable)) { return false; }
+	if (!LoadNsoSegement(m_ProcessMemory, base_addr + header.data.MemoryOffset, EncryptedFile, offset, header.DataCompressedSize, header.data.DecompressedSize, header.data.DecompressedSize, (uint32_t)(header.data.FileOffset + file->Offset), BssSize, header.Flags.DataCompressed, MemoryPermission_ReadWrite, header.Flags.DataCheck, header.DataHash, MemoryType_CodeMutable)) { return false; }
 
 	if (Mod0Offset != 0)
 	{
@@ -257,6 +257,6 @@ bool CSwitchSystem::LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile
 	{
 		g_Notify->BreakPoint(__FILE__, __LINE__);
 	}
-	WriteTrace(TraceGameFile, TraceInfo, "Done (Res: True end_addr: 0x%I64X)", end_addr);
+	WriteTrace(TraceGameFile, TraceDebug, "Done (Res: True end_addr: 0x%I64X)", end_addr);
 	return true;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <Common\stdtypes.h>
+#include <nxemu-core\hle\Memory\MemoryTypes.h>
 
 class CPageTable
 {
@@ -10,18 +11,6 @@ public:
         PageSize = 1 << PageBits,
         PageMask = PageSize - 1,
         Lvl1Bit = PageBits,
-    };
-
-    enum MemoryPermission
-    {
-        Reserved = -2,
-        Invalid = -1,
-        Unmapped = 0,
-        Read = 1,
-        Write = 2,
-        Execute = 4,
-        ReadWrite = Read | Write,
-        ReadExecute = Read | Execute
     };
 
     static uint64_t PageRoundDown(uint64_t Value);

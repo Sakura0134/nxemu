@@ -7,3 +7,45 @@ enum ProgramAddressSpaceType
     ProgramAddressSpace_Is32BitNoMap = 2,
     ProgramAddressSpace_Is39Bit = 3,
 };
+
+enum MemoryPermission
+{
+    MemoryPermission_Reserved = -3,
+    MemoryPermission_Invalid = -2,
+    MemoryPermission_Unmapped = -1,
+    MemoryPermission_None = 0,
+    MemoryPermission_Read = 1,
+    MemoryPermission_Write = 2,
+    MemoryPermission_Execute = 4,
+    MemoryPermission_ReadWrite = MemoryPermission_Read | MemoryPermission_Write,
+    MemoryPermission_ReadExecute = MemoryPermission_Read | MemoryPermission_Execute,
+    MemoryPermission_ReadWriteExecute = MemoryPermission_Read | MemoryPermission_Write | MemoryPermission_Execute,
+    MemoryPermission_DontCare = (1u << 28)
+};
+
+enum MemoryType
+{
+    MemoryType_Unmapped = 0,
+    MemoryType_Io = 1,
+    MemoryType_Normal = 2,
+    MemoryType_CodeStatic = 3,
+    MemoryType_CodeMutable = 4,
+    MemoryType_Heap = 5,
+    MemoryType_SharedMemory = 6,
+    MemoryType_WeirdMappedMemory = 7,
+    MemoryType_ModuleCodeStatic = 8,
+    MemoryType_ModuleCodeMutable = 9,
+    MemoryType_IpcBuffer0 = 10,
+    MemoryType_MappedMemory = 11,
+    MemoryType_ThreadLocal = 12,
+    MemoryType_TransferMemoryIsolated = 13,
+    MemoryType_TransferMemory = 14,
+    MemoryType_ProcessMemory = 15,
+    MemoryType_Reserved = 16,
+    MemoryType_IpcBuffer1 = 17,
+    MemoryType_IpcBuffer3 = 18,
+    MemoryType_KernelStack = 19,
+    MemoryType_CodeReadOnly = 20,
+    MemoryType_CodeWritable = 21,
+};
+
