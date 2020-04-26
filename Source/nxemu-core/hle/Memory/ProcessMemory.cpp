@@ -1,6 +1,6 @@
-#include <nxemu-core/hle/ProcessMemory.h>
-#include <nxemu-core/SystemGlobals.h>
-#include <Common/MemoryManagement.h>
+#include <nxemu-core\hle\Memory\ProcessMemory.h>
+#include <nxemu-core\SystemGlobals.h>
+#include <Common\MemoryManagement.h>
 
 CProcessMemory::CProcessMemory(void) :
     m_CodeRegionStart(0),

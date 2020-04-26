@@ -47,8 +47,8 @@
     <ClInclude Include="hle\Kernel\ResultCode.h" />
     <ClInclude Include="hle\Kernel\SystemThread.h" />
     <ClInclude Include="hle\Memory\MemoryTypes.h" />
-    <ClInclude Include="hle\ProcessMemory.h" />
-    <ClInclude Include="hle\SystemThreadMemory.h" />
+    <ClInclude Include="hle\Memory\ProcessMemory.h" />
+    <ClInclude Include="hle\Memory\SystemThreadMemory.h" />
     <ClInclude Include="Language\Language.h" />
     <ClInclude Include="Language\LanguageStringID.h" />
     <ClInclude Include="Machine\Arm64Opcode.h" />
@@ -93,8 +93,8 @@
     <ClCompile Include="hle\HleKernel.cpp" />
     <ClCompile Include="hle\Kernel\ResultCode.cpp" />
     <ClCompile Include="hle\Kernel\SystemThread.cpp" />
-    <ClCompile Include="hle\ProcessMemory.cpp" />
-    <ClCompile Include="hle\SystemThreadMemory.cpp" />
+    <ClCompile Include="hle\Memory\ProcessMemory.cpp" />
+    <ClCompile Include="hle\Memory\SystemThreadMemory.cpp" />
     <ClCompile Include="Language\Language.cpp" />
     <ClCompile Include="LaunchRunFile.cpp" />
     <ClCompile Include="Machine\Arm64Opcode.cpp" />

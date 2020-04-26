@@ -1,4 +1,4 @@
-#include <nxemu-core\hle\SystemThreadMemory.h>
+#include <nxemu-core\hle\Memory\SystemThreadMemory.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CSystemThreadMemory::CSystemThreadMemory(CProcessMemory &ProcessMemory, CPUExecutor * Executor) :

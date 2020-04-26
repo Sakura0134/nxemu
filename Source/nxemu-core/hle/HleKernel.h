@@ -1,5 +1,5 @@
 #pragma once
-#include <nxemu-core\hle\ProcessMemory.h>
+#include <nxemu-core\hle\Memory\ProcessMemory.h>
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 
 class CSwitchSystem;

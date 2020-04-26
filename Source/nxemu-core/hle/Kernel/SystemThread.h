@@ -1,8 +1,8 @@
 #pragma once
 #include <map>
 #include <nxemu-core\Machine\CPU\CPUExecutor.h>
-#include <nxemu-core\hle\SystemThreadMemory.h>
-#include <nxemu-core\hle\ProcessMemory.h>
+#include <nxemu-core\hle\Memory\SystemThreadMemory.h>
+#include <nxemu-core\hle\Memory\ProcessMemory.h>
 
 class CHleKernel;
 

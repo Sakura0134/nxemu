@@ -1,7 +1,7 @@
 #pragma once
 #include <nxemu-core\Machine\CPU\CPUExecutor.h>
 #include <nxemu-core\Machine\CPU\MemoryManagement.h>
-#include <nxemu-core\hle\ProcessMemory.h>
+#include <nxemu-core\hle\Memory\ProcessMemory.h>
 
 class CSystemThreadMemory :
     public MemoryManagement

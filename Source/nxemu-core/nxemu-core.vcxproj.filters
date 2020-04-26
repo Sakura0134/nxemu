@@ -78,6 +78,9 @@
     <Filter Include="Header Files\hle\Memory">
       <UniqueIdentifier>{aa78bd83-2a0e-4ad2-92fb-2466706c580a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\hle\Memory">
+      <UniqueIdentifier>{b3982a6d-a4bd-45f8-8ae6-4d2e195db91d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -133,9 +136,6 @@
     </ClInclude>
     <ClInclude Include="Machine\PageTable.h">
       <Filter>Header Files\Machine</Filter>
-    </ClInclude>
-    <ClInclude Include="hle\ProcessMemory.h">
-      <Filter>Header Files\hle</Filter>
     </ClInclude>
     <ClInclude Include="hle\HleKernel.h">
       <Filter>Header Files\hle</Filter>
@@ -194,9 +194,6 @@
     <ClInclude Include="Settings\Settings.h">
       <Filter>Header Files\Settings</Filter>
     </ClInclude>
-    <ClInclude Include="hle\SystemThreadMemory.h">
-      <Filter>Header Files\hle</Filter>
-    </ClInclude>
     <ClInclude Include="Machine\CPU\MemoryManagement.h">
       <Filter>Header Files\Machine\CPU</Filter>
     </ClInclude>
@@ -214,6 +211,12 @@
     </ClInclude>
     <ClInclude Include="hle\Kernel\ResultCode.h">
       <Filter>Header Files\hle\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="hle\Memory\ProcessMemory.h">
+      <Filter>Header Files\hle\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="hle\Memory\SystemThreadMemory.h">
+      <Filter>Header Files\hle\Memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -252,9 +255,6 @@
     </ClCompile>
     <ClCompile Include="Machine\PageTable.cpp">
       <Filter>Source Files\Machine</Filter>
-    </ClCompile>
-    <ClCompile Include="hle\ProcessMemory.cpp">
-      <Filter>Source Files\hle</Filter>
     </ClCompile>
     <ClCompile Include="hle\HleKernel.cpp">
       <Filter>Source Files\hle</Filter>
@@ -313,9 +313,6 @@
     <ClCompile Include="Settings\Settings.cpp">
       <Filter>Source Files\Settings</Filter>
     </ClCompile>
-    <ClCompile Include="hle\SystemThreadMemory.cpp">
-      <Filter>Source Files\hle</Filter>
-    </ClCompile>
     <ClCompile Include="Machine\Arm64Opcode.cpp">
       <Filter>Source Files\Machine</Filter>
     </ClCompile>
@@ -330,6 +327,12 @@
     </ClCompile>
     <ClCompile Include="hle\Kernel\ResultCode.cpp">
       <Filter>Source Files\hle\Kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Memory\ProcessMemory.cpp">
+      <Filter>Source Files\hle\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Memory\SystemThreadMemory.cpp">
+      <Filter>Source Files\hle\Memory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

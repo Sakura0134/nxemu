@@ -1,7 +1,7 @@
 #pragma once
 #include <Common\Thread.h>
 #include <Common\path.h>
-#include <nxemu-core\hle\ProcessMemory.h>
+#include <nxemu-core\hle\Memory\ProcessMemory.h>
 #include <nxemu-core\hle\HleKernel.h>
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\Machine\SwitchKeys.h>
