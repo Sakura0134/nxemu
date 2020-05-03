@@ -8,11 +8,12 @@ CSystemThread::CSystemThread(CHleKernel * m_Kernel, CProcessMemory &ProcessMemor
     CPUExecutor(m_ThreadMemory),
     m_Kernel(m_Kernel),
     m_ThreadMemory(ProcessMemory, this),
-    m_thread_id(thread_id),
+    m_ThreadId(thread_id),
 	m_Priority(Priority),
+    m_TlsAddress(ProcessMemory.GetTlsIoRegionBase()),
 	m_Name(name != NULL ? name : "")
 {
-    if (!m_ThreadMemory.Initialize(StackTop, StackSize))
+    if (!m_ThreadMemory.Initialize(StackTop, StackSize, m_TlsAddress, 0x1000))
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
@@ -26,6 +27,7 @@ CSystemThread::CSystemThread(CHleKernel * m_Kernel, CProcessMemory &ProcessMemor
     }
     m_Reg.Set64(Arm64Opcode::ARM64_REG_X0, ThreadContext);
     m_Reg.SetConditionFlags(false, false, false, false);
+    m_Reg.Set64(Arm64Opcode::ARM64_REG_TPIDRRO_EL0, m_TlsAddress);
 }
 
 CSystemThread::~CSystemThread()

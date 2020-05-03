@@ -605,6 +605,8 @@ public:
         ARM64_REG_PC,
         ARM64_REG_SP,
 
+        ARM64_REG_TPIDRRO_EL0,
+
         //Alias
         ARM64_REG_LR = ARM64_REG_X30,
     } arm64_reg;

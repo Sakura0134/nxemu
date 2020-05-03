@@ -6,6 +6,9 @@ CSystemThreadMemory::CSystemThreadMemory(CProcessMemory &ProcessMemory, CPUExecu
     m_stackmem(NULL),
     m_StackAddress(0),
     m_StackSize(0),
+    m_tlsAddress(0),
+    m_tlsSize(0),
+    m_tls(NULL),
     m_Executor(Executor)
 {
 }
@@ -17,9 +20,14 @@ CSystemThreadMemory::~CSystemThreadMemory()
         delete m_stackmem;
         m_stackmem = NULL;
     }
+    if (m_tls)
+    {
+        delete m_tls;
+        m_tls = NULL;
+    }
 }
 
-bool CSystemThreadMemory::Initialize(uint64_t StackTop, uint32_t StackSize)
+bool CSystemThreadMemory::Initialize(uint64_t StackTop, uint32_t StackSize, uint64_t TlsAddress, uint32_t TlsSize)
 {
     m_StackAddress = StackTop - StackSize;
     m_StackSize = StackSize;
@@ -31,6 +39,18 @@ bool CSystemThreadMemory::Initialize(uint64_t StackTop, uint32_t StackSize)
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
         memset(m_stackmem, 0, m_StackSize);
+    }
+
+    m_tlsAddress = TlsAddress;
+    m_tlsSize = TlsSize;
+    if (m_tlsSize > 0)
+    {
+        m_tls = new uint8_t[m_tlsSize];
+        if (m_tls == NULL)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        memset(m_tls, 0, m_tlsSize);
     }
     return true;
 }
@@ -97,6 +117,12 @@ bool CSystemThreadMemory::FindAddressMemory(uint64_t Addr, uint32_t len, void *&
     if (Addr >= m_StackAddress && (Addr + len) < (m_StackAddress + m_StackSize))
     {
         buffer = (void *)&m_stackmem[Addr - m_StackAddress];
+        return true;
+    }
+
+    if (Addr >= m_tlsAddress && (Addr + len) < (m_tlsAddress + m_tlsSize))
+    {
+        buffer = (void *)&m_tls[Addr - m_tlsAddress];
         return true;
     }
 

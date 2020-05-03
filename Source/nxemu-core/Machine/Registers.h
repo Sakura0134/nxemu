@@ -62,6 +62,9 @@ private:
     uint32_t * m_wregs[32];
     uint64_t m_vfp_regs[64];
 
+    //CP15
+    uint64_t m_tpidrro_el0; /* User RO Thread register.  */
+
     PSTATE m_pstate;
 
     CPUExecutor * m_Executor;

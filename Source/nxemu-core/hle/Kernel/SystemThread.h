@@ -22,8 +22,9 @@ private:
         
     CHleKernel * m_Kernel;
     CSystemThreadMemory m_ThreadMemory;
-    uint32_t m_thread_id;
+    uint32_t m_ThreadId;
 	uint32_t m_Priority;
+    uint64_t m_TlsAddress;
 	std::string m_Name;
 };
 

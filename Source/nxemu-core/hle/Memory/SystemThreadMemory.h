@@ -10,7 +10,7 @@ public:
     CSystemThreadMemory(CProcessMemory &ProcessMemory, CPUExecutor * Executor);
     ~CSystemThreadMemory();
 
-    bool Initialize(uint64_t StackTop, uint32_t StackSize);
+    bool Initialize(uint64_t StackTop, uint32_t StackSize, uint64_t TlsAddress, uint32_t TlsSize);
     bool Read8(uint64_t Addr, uint8_t & value);
 	bool Read32(uint64_t Addr, uint32_t & value);
 	bool Read64(uint64_t Addr, uint64_t & value);
@@ -32,5 +32,8 @@ private:
     uint8_t * m_stackmem;
     uint64_t m_StackAddress;
     uint32_t m_StackSize;
+    uint64_t m_tlsAddress;
+    uint32_t m_tlsSize;
+    uint8_t * m_tls;
     CPUExecutor * m_Executor;
 };
