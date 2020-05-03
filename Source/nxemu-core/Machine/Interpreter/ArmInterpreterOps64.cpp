@@ -176,6 +176,14 @@ void Arm64Op::Cbnz(CPUExecutor & core, const Arm64Opcode &op)
                 core.Jumped();
             }
         }
+        else if (CRegisters::Is32bitReg(op.Operand(0).Reg))
+        {
+            if (Reg.Get32(op.Operand(0).Reg) != 0)
+            {
+                Reg.Set64(Arm64Opcode::ARM64_REG_PC, op.Operand(1).ImmVal);
+                core.Jumped();
+            }
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
