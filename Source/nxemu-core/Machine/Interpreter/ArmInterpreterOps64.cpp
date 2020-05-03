@@ -314,6 +314,15 @@ void Arm64Op::Ldp(CPUExecutor & core, const Arm64Opcode &op)
             if (!MMU.Read64(load_addr + 8, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set64(op.Operand(1).Reg, value);
         }
+        else if (CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
+        {
+            uint32_t value;
+            if (!MMU.Read32(load_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set32(op.Operand(0).Reg, value);
+
+            if (!MMU.Read32(load_addr + 4, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set32(op.Operand(1).Reg, value);
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -894,7 +903,7 @@ void Arm64Op::Stur(CPUExecutor & core, const Arm64Opcode &op)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
-        
+
         if (CRegisters::Is32bitReg(op.Operand(0).Reg))
         {
             if (!MMU.Write32(target_addr, Reg.Get32(op.Operand(0).Reg)))
