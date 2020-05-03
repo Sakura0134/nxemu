@@ -49,3 +49,6 @@ enum MemoryType
     MemoryType_CodeWritable = 21,
 };
 
+const char * ProgramAddressSpaceTypeName(ProgramAddressSpaceType Type);
+const char * MemoryPermissionName(MemoryPermission Permission);
+const char * MemoryTypeName(MemoryType Type);

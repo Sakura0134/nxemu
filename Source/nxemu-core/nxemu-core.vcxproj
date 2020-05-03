@@ -93,6 +93,7 @@
     <ClCompile Include="hle\HleKernel.cpp" />
     <ClCompile Include="hle\Kernel\ResultCode.cpp" />
     <ClCompile Include="hle\Kernel\SystemThread.cpp" />
+    <ClCompile Include="hle\Memory\MemoryTypes.cpp" />
     <ClCompile Include="hle\Memory\ProcessMemory.cpp" />
     <ClCompile Include="hle\Memory\SystemThreadMemory.cpp" />
     <ClCompile Include="Language\Language.cpp" />

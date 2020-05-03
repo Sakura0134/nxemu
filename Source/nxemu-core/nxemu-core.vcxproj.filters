@@ -334,6 +334,9 @@
     <ClCompile Include="hle\Memory\SystemThreadMemory.cpp">
       <Filter>Source Files\hle\Memory</Filter>
     </ClCompile>
+    <ClCompile Include="hle\Memory\MemoryTypes.cpp">
+      <Filter>Source Files\hle\Memory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Version.h.in">
