@@ -788,7 +788,7 @@ void Arm64Op::Stp(CPUExecutor & core, const Arm64Opcode &op)
         }
         if (op.WriteBack())
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            Reg.Set64(op.Operand(2).mem.base, op.Operands() == 4 ? target_addr + op.Operand(3).ImmVal : target_addr);
         }
     }
     else
