@@ -51,6 +51,8 @@ public:
         MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
         COMMAND_HANDLER_EX(IDC_CMB_TRACE_APPINIT, CBN_SELCHANGE, ItemChanged)
         COMMAND_HANDLER_EX(IDC_CMB_TRACE_APPCLEANUP, CBN_SELCHANGE, ItemChanged)
+        COMMAND_HANDLER_EX(IDC_CMB_TRACE_SERVICECALL, CBN_SELCHANGE, ItemChanged)
+        COMMAND_HANDLER_EX(IDC_CMB_TRACE_MEMORY, CBN_SELCHANGE, ItemChanged)
         COMMAND_HANDLER_EX(IDC_CMB_TRACE_GAMEFILE, CBN_SELCHANGE, ItemChanged)
         CHAIN_MSG_MAP(CPropertyPageImpl<CLogSettings>)
     END_MSG_MAP()
@@ -60,6 +62,7 @@ public:
         m_cmbTraceAppInit.Attach(GetDlgItem(IDC_CMB_TRACE_APPINIT));
         m_cmbTraceAppCleanup.Attach(GetDlgItem(IDC_CMB_TRACE_APPCLEANUP));
         m_cmbTraceServiceCall.Attach(GetDlgItem(IDC_CMB_TRACE_SERVICECALL));
+        m_cmbTraceMemory.Attach(GetDlgItem(IDC_CMB_TRACE_MEMORY));
         m_cmbTraceGameFile.Attach(GetDlgItem(IDC_CMB_TRACE_GAMEFILE));
 
         struct 
@@ -71,6 +74,7 @@ public:
             { m_cmbTraceAppInit, Debugger_TraceAppInit },
             { m_cmbTraceAppCleanup, Debugger_TraceAppCleanup },
             { m_cmbTraceServiceCall, Debugger_TraceServiceCall },
+            { m_cmbTraceMemory, Debugger_TraceMemory },
             { m_cmbTraceGameFile, Debugger_TraceGameFile },
         };
 
@@ -97,6 +101,7 @@ public:
             { m_cmbTraceAppInit, Debugger_TraceAppInit },
             { m_cmbTraceAppCleanup, Debugger_TraceAppCleanup },
             { m_cmbTraceServiceCall, Debugger_TraceServiceCall },
+            { m_cmbTraceMemory, Debugger_TraceMemory },
             { m_cmbTraceGameFile, Debugger_TraceGameFile },
         };
         for (size_t i = 0, n = sizeof(TraceCMB) / sizeof(TraceCMB[0]); i < n; i++)
@@ -115,6 +120,7 @@ private:
     CComboBox m_cmbTraceAppInit;
     CComboBox m_cmbTraceAppCleanup;
     CComboBox m_cmbTraceServiceCall;
+    CComboBox m_cmbTraceMemory;
     CComboBox m_cmbTraceGameFile;
 };
 

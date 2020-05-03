@@ -44,6 +44,7 @@ enum SettingID
     Debugger_TraceAppInit,
     Debugger_TraceAppCleanup,
     Debugger_TraceServiceCall,
+    Debugger_TraceMemory,
     Debugger_TraceGameFile,
 
     FirstUISettings = MaxPluginSetting, LastUISettings = FirstUISettings + MaxPluginSetting,

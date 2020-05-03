@@ -9,5 +9,6 @@ enum TraceModuleNXEmu
     TraceUserInterface,
     TraceGameFile,
     TraceServiceCall,
+    TraceMemory,
     MaxTraceModuleNXEmu,
 };
