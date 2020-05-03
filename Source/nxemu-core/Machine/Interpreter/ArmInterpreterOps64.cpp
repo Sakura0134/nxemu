@@ -27,6 +27,17 @@ void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
         }
+        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(2).Reg) && CRegisters::Is32bitReg(op.Operand(2).Reg))
+        {
+            if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_UXTW)
+            {
+                Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) + (uint32_t)(Reg.Get32(op.Operand(2).Reg)));
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
