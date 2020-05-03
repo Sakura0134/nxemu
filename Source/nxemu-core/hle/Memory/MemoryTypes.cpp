@@ -70,3 +70,17 @@ const char * MemoryTypeName(MemoryType Type)
     unknown.Format("Unknown (0x%X)", Type);
     return unknown.c_str();
 }
+
+const char * MemoryStateName(MemoryState State)
+{
+    switch (State)
+    {
+    case MemoryState_None: return "MemoryState_None";
+    case MemoryState_AllocatedMemory: return "MemoryState_AllocatedMemory";
+    case MemoryState_UnmanagedMemory: return "MemoryState_UnmanagedMemory";
+    }
+
+    static stdstr unknown;
+    unknown.Format("Unknown (0x%X)", State);
+    return unknown.c_str();
+}

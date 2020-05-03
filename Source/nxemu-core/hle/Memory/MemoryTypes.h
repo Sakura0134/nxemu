@@ -49,6 +49,19 @@ enum MemoryType
     MemoryType_CodeWritable = 21,
 };
 
+enum MemoryAttribute
+{
+    MemoryAttr_None = 0,
+};
+
+enum MemoryState
+{
+    MemoryState_None,
+    MemoryState_AllocatedMemory,
+    MemoryState_UnmanagedMemory,
+};
+
 const char * ProgramAddressSpaceTypeName(ProgramAddressSpaceType Type);
 const char * MemoryPermissionName(MemoryPermission Permission);
 const char * MemoryTypeName(MemoryType Type);
+const char * MemoryStateName(MemoryState State);

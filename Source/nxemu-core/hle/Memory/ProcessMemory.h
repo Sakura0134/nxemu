@@ -1,7 +1,7 @@
 #pragma once
 #include <Common\stdtypes.h>
 #include <nxemu-core\Machine\PageTable.h>
-#include <nxemu-core\hle\Memory\MemoryTypes.h>
+#include <nxemu-core\hle\Memory\MemoryRegion.h>
 #include <map>
 
 class CSystemThreadMemory;
@@ -14,7 +14,7 @@ public:
     CProcessMemory();
     ~CProcessMemory();
 
-    static uint64_t GetAddressSpaceBaseAddr(void) { return 0x0000000008000000; }
+    uint64_t GetAddressSpaceBaseAddr(void) const { return m_AddressSpaceBase; }
     uint64_t GetTlsIoRegionBase(void) const { return m_TlsIoRegionBase; }
     uint64_t GetTlsIoRegionSize(void) const { return m_TlsIoRegionSize; }
 
@@ -30,21 +30,19 @@ private:
     CProcessMemory(const CProcessMemory&);
     CProcessMemory& operator=(const CProcessMemory&);
 
-    bool FindAddressMemory(uint64_t Addr, uint32_t len, void *& buffer);
+    bool CreateMemoryRegion(uint64_t Address, uint64_t Size, MemoryRegionMapIter & RegionItr);
+    bool FindMemoryRegion(uint64_t Address, MemoryRegionMapIter & RegionItr);
+    bool FindAddressMemory(uint64_t Address, uint32_t len, void *& buffer);
+    bool SplitMemoryRegion(MemoryRegionMapIter & SplitRegionItr, uint64_t Offset);
 
-    typedef struct
-    {
-        uint64_t start_addr;
-        uint8_t * memory;
-        MemoryType type;
-    } MemoryInfo;
+    static const uint64_t PageBits, PageSize, PageMask;
 
-    typedef std::map<uint64_t, MemoryInfo> MemoryMap;
-
+    uint32_t m_AddressSpaceWidth;
+    uint64_t m_AddressSpaceBase, m_AddressSpaceSize;
     uint64_t m_CodeRegionStart, m_CodeRegionSize;
     uint64_t m_MapRegionBase, m_MapRegionSize;
     uint64_t m_HeapRegionBase, m_HeapRegionSize;
     uint64_t m_NewMapRegionBase, m_NewMapRegionSize;
     uint64_t m_TlsIoRegionBase, m_TlsIoRegionSize;
-    MemoryMap m_MemoryMap;
+    MemoryRegionMap m_MemoryMap;
 };

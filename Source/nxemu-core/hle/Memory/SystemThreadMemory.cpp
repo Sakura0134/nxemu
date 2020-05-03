@@ -3,9 +3,9 @@
 
 CSystemThreadMemory::CSystemThreadMemory(CProcessMemory &ProcessMemory, CPUExecutor * Executor) :
     m_ProcessMemory(ProcessMemory),
-    m_StackBase(0),
-    m_StackSize(0),
     m_stackmem(NULL),
+    m_StackAddress(0),
+    m_StackSize(0),
     m_Executor(Executor)
 {
 }
@@ -21,7 +21,7 @@ CSystemThreadMemory::~CSystemThreadMemory()
 
 bool CSystemThreadMemory::Initialize(uint64_t StackTop, uint32_t StackSize)
 {
-    m_StackBase = StackTop - StackSize;
+    m_StackAddress = StackTop - StackSize;
     m_StackSize = StackSize;
     if (m_StackSize != 0)
     {
@@ -94,22 +94,35 @@ bool CSystemThreadMemory::WriteBytes(uint64_t Addr, const uint8_t * buffer, uint
 
 bool CSystemThreadMemory::FindAddressMemory(uint64_t Addr, uint32_t len, void *& buffer)
 {
-    if (Addr >= m_StackBase && (Addr + len) < (m_StackBase + m_StackSize))
+    if (Addr >= m_StackAddress && (Addr + len) < (m_StackAddress + m_StackSize))
     {
-        buffer = (void *)&m_stackmem[Addr - m_StackBase];
+        buffer = (void *)&m_stackmem[Addr - m_StackAddress];
         return true;
     }
 
-    MemoryMap & ProcessMemory = m_ProcessMemory.m_MemoryMap;
-    MemoryMap::const_iterator itr = ProcessMemory.lower_bound(Addr);
-    if (itr != ProcessMemory.end() && Addr >= itr->second.start_addr && Addr <= itr->first)
+    MemoryRegionMap & ProcessMemory = m_ProcessMemory.m_MemoryMap;
+    MemoryRegionMap::const_iterator itr = ProcessMemory.lower_bound(Addr);
+    if (itr != ProcessMemory.end() && Addr >= itr->second.Address() && Addr <= itr->first)
     {
         if (itr->first < Addr + len)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return false;
         }
-        buffer = (void *)&itr->second.memory[Addr - itr->second.start_addr];
+
+        const MemoryRegion & region = itr->second;
+        switch (region.State())
+        {
+        case MemoryState_AllocatedMemory:
+        case MemoryState_UnmanagedMemory:
+            buffer = (void *)&region.Memory()[Addr - itr->second.Address()];
+            break;
+        case MemoryState_None:
+            return false;
+        default:
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return false;
+        }
         return true;
     }
     return false;

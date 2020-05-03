@@ -6,8 +6,6 @@
 class CSystemThreadMemory :
     public MemoryManagement
 {
-	typedef CProcessMemory::MemoryMap MemoryMap;
-
 public:
     CSystemThreadMemory(CProcessMemory &ProcessMemory, CPUExecutor * Executor);
     ~CSystemThreadMemory();
@@ -32,7 +30,7 @@ private:
 
     CProcessMemory & m_ProcessMemory;
     uint8_t * m_stackmem;
-    uint64_t m_StackBase;
+    uint64_t m_StackAddress;
     uint32_t m_StackSize;
     CPUExecutor * m_Executor;
 };
