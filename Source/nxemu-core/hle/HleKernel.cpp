@@ -20,6 +20,36 @@ CHleKernel::~CHleKernel()
     m_SystemThreads.clear();
 }
 
+ResultCode CHleKernel::QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t MemoryInfoAddr, uint64_t QueryAddr)
+{
+    WriteTrace(TraceServiceCall, TraceVerbose, "Start (MemoryInfoAddr: 0x%I64X QueryAddr: 0x%I64X)", MemoryInfoAddr, QueryAddr);
+
+    QueryMemoryInfo Info = { 0 };
+    if (!ThreadMemory.GetMemoryInfo(QueryAddr, Info))
+    {
+        uint64_t AddrSpaceStart = 0x0000008000000000;
+        uint64_t AddrSpaceSize = 0xFFFFFF8000000000;
+
+        if (QueryAddr < AddrSpaceStart)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        Info.BaseAddress = AddrSpaceStart;
+        Info.Size = AddrSpaceSize;
+        Info.Type = MemoryType_Unmapped;
+        Info.Permission = MemoryPermission_None;
+    }
+
+    WriteTrace(TraceServiceCall, TraceVerbose, "QueryAddr: 0x%I64X base_address: 0x%I64X size: 0x%I64X permission: %d type: %d", QueryAddr, Info.BaseAddress, Info.Size, Info.Permission, Info.Type);
+
+    if (!ThreadMemory.WriteBytes(MemoryInfoAddr, (uint8_t *)&Info, sizeof(Info)))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    WriteTrace(TraceVerbose, TraceDebug, "Done");
+    return RESULT_SUCCESS;
+}
+
 bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId)
 {
 	ThreadHandle = GetNewHandle();

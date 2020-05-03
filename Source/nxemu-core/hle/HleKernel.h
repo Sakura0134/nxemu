@@ -1,6 +1,7 @@
 #pragma once
 #include <nxemu-core\hle\Memory\ProcessMemory.h>
 #include <nxemu-core\hle\Kernel\SystemThread.h>
+#include <nxemu-core\hle\Kernel\ResultCode.h>
 
 class CSwitchSystem;
 
@@ -63,6 +64,8 @@ public:
 
 	bool AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
     const SystemThreadList & SystemThreads(void) const { return m_SystemThreads; }
+
+    ResultCode QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t MemoryInfoAddr, uint64_t QueryAddr);
 
     static const char * SvcGetCallStr(SvcGetCall svcCall);
 

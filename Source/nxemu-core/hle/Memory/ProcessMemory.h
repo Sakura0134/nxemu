@@ -20,6 +20,7 @@ public:
 
     bool Initialize(ProgramAddressSpaceType Type, bool Is64bit);
         
+    bool GetMemoryInfo(uint64_t Address, QueryMemoryInfo & Info);
     uint8_t * MapMemory(uint64_t Address, uint32_t Size, MemoryPermission Perm, MemoryType Type);
     bool Read32(uint64_t Addr, uint32_t & value);
     bool Read64(uint64_t Addr, uint64_t & value);

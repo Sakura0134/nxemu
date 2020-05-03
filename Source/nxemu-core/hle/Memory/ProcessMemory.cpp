@@ -83,6 +83,31 @@ bool CProcessMemory::Initialize(ProgramAddressSpaceType Type, bool Is64bit)
     return true;
 }
 
+bool CProcessMemory::GetMemoryInfo(uint64_t Address, QueryMemoryInfo & Info)
+{
+    MemoryRegionMap::const_iterator itr = m_MemoryMap.lower_bound(Address);
+    if (itr != m_MemoryMap.end() && Address >= itr->second.Address() && (Address & ~3) + 4 < itr->first)
+    {
+        const MemoryRegion & Region = itr->second;
+        Info.BaseAddress = Region.Address();
+        Info.Size = Region.Size();
+        Info.Type = Region.Type();
+        Info.Permission = Region.Permission();
+    }
+    else
+    {
+        Info.BaseAddress = 1ULL << m_AddressSpaceWidth;
+        Info.Size = 0 - Info.BaseAddress;
+        Info.Type = MemoryType_Reserved;
+        Info.Permission = MemoryPermission_None;
+    }
+    if (Info.Permission == MemoryPermission_Unmapped)
+    {
+        Info.Permission = MemoryPermission_None;
+    }
+    return true;
+}
+
 uint8_t * CProcessMemory::MapMemory(uint64_t Address, uint32_t Size, MemoryPermission Perm, MemoryType Type)
 {
     WriteTrace(TraceMemory, TraceInfo, "Start (Address: 0x%I64X Size: 0x%X Perm: %s)", Address, Size, MemoryPermissionName(Perm), MemoryTypeName(Type));

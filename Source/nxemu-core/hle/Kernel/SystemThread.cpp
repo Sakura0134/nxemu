@@ -45,8 +45,16 @@ void CSystemThread::ServiceCall(uint32_t index)
 
     switch (svcCall)
     {
+    case CHleKernel::svcQueryMemory:
+        Result = m_Kernel->QueryMemory(m_ThreadMemory, m_Reg.Get64(Arm64Opcode::ARM64_REG_X0), m_Reg.Get64(Arm64Opcode::ARM64_REG_X2));
+        break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    if (!VoidRes)
+    {
+        m_Reg.Set64(Arm64Opcode::ARM64_REG_X0, Result.Raw);
     }
     WriteTrace(TraceServiceCall, TraceDebug, VoidRes ? "Done" : "Done (Result: %s)", ResultCodeStr(Result));
 }

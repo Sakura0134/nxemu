@@ -1,4 +1,5 @@
 #pragma once
+#include <Common\stdtypes.h>
 
 enum ProgramAddressSpaceType
 {
@@ -60,6 +61,18 @@ enum MemoryState
     MemoryState_AllocatedMemory,
     MemoryState_UnmanagedMemory,
 };
+
+typedef struct
+{
+    uint64_t BaseAddress;
+    uint64_t Size;
+    MemoryType Type;
+    MemoryAttribute Attributes;
+    MemoryPermission Permission;
+    uint32_t DeviceRefCount;
+    uint32_t IpcRefCount;
+    uint32_t Reserved;
+} QueryMemoryInfo;
 
 const char * ProgramAddressSpaceTypeName(ProgramAddressSpaceType Type);
 const char * MemoryPermissionName(MemoryPermission Permission);

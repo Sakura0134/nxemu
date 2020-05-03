@@ -154,3 +154,49 @@ bool CSystemThreadMemory::FindAddressMemory(uint64_t Addr, uint32_t len, void *&
     return false;
 }
 
+bool CSystemThreadMemory::GetMemoryInfo(uint64_t Addr, QueryMemoryInfo & MemoryInfo)
+{
+    uint64_t StackEnd = m_StackAddress + m_StackSize;
+    uint64_t tlsEnd = m_tlsAddress + m_tlsSize;
+    if (Addr >= m_StackAddress && Addr < StackEnd)
+    {
+        MemoryInfo.Type = MemoryType_MappedMemory;
+        MemoryInfo.BaseAddress = m_StackAddress;
+        MemoryInfo.Size = m_StackSize;
+        MemoryInfo.Permission = MemoryPermission_ReadWrite;
+    }
+    else if (Addr >= m_tlsAddress && Addr < tlsEnd)
+    {
+        MemoryInfo.Type = MemoryType_ThreadLocal;
+        MemoryInfo.BaseAddress = m_tlsAddress;
+        MemoryInfo.Size = m_tlsSize;
+        MemoryInfo.Permission = MemoryPermission_ReadWrite;
+    }
+    else
+    {
+        if (!m_ProcessMemory.GetMemoryInfo(Addr, MemoryInfo))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        if (MemoryInfo.BaseAddress < m_StackAddress && Addr >= StackEnd)
+        {
+            MemoryInfo.Size -= StackEnd - MemoryInfo.BaseAddress;
+            MemoryInfo.BaseAddress = StackEnd;
+        }
+        if (MemoryInfo.BaseAddress < m_tlsAddress && Addr >= tlsEnd)
+        {
+            MemoryInfo.Size -= tlsEnd - MemoryInfo.BaseAddress;
+            MemoryInfo.BaseAddress = tlsEnd;
+        }
+        if (MemoryInfo.BaseAddress < m_StackAddress && MemoryInfo.BaseAddress + MemoryInfo.Size > m_StackAddress)
+        {
+            MemoryInfo.Size = m_StackAddress - MemoryInfo.BaseAddress;
+        }
+        if (MemoryInfo.BaseAddress < m_tlsAddress && MemoryInfo.BaseAddress + MemoryInfo.Size > m_tlsAddress)
+        {
+            MemoryInfo.Size = m_tlsAddress - MemoryInfo.BaseAddress;
+        }
+    }
+    return true;
+}
+

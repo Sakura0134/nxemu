@@ -20,6 +20,7 @@ public:
     bool Write32(uint64_t Addr, uint32_t value);
     bool Write64(uint64_t Addr, uint64_t value);
     bool WriteBytes(uint64_t Addr, const uint8_t * buffer, uint32_t len);
+    bool GetMemoryInfo(uint64_t Addr, QueryMemoryInfo & MemoryInfo);
 
 private:
     CSystemThreadMemory();                                      // Disable default constructor
