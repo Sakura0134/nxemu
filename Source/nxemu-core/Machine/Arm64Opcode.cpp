@@ -197,6 +197,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_SUB:
     case ARM64_INS_SVC:
     case ARM64_INS_SXTW:
+    case ARM64_INS_TST:
         return false;
     //Conditional jump, return false as does not always jump
     case ARM64_INS_CBNZ:
