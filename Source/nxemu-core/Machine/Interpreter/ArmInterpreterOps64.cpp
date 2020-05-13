@@ -218,6 +218,14 @@ void Arm64Op::Cbz(CPUExecutor & core, const Arm64Opcode &op)
             core.Jumped();
         }
     }
+    else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(0).Reg) && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+    {
+        if (Reg.Get32(op.Operand(0).Reg) == 0)
+        {
+            Reg.Set64(Arm64Opcode::ARM64_REG_PC, op.Operand(1).ImmVal);
+            core.Jumped();
+        }
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
