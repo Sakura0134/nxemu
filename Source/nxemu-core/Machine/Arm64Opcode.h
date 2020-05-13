@@ -1,10 +1,16 @@
 #pragma once
 #include <Common\stdtypes.h>
+#include <Common\CriticalSection.h>
 #include <string>
 #include <vector>
+#include <map>
+
+class Arm64OpcodeCache;
 
 class Arm64Opcode
 {
+    friend Arm64OpcodeCache;
+
 public:
     typedef enum instruct_t
     {
@@ -1347,307 +1353,363 @@ public:
         arm64_vas Vas;
     };
     typedef std::vector<MCOperand> MCOperands;
+private:
+    class Arm64OpcodeDetail
+    {
+        friend Arm64OpcodeCache;
 
-    Arm64Opcode(uint64_t pc, uint32_t insn);
+    public:
+        Arm64OpcodeDetail(uint64_t pc, uint32_t insn);
 
-    inline const char * Name ( void ) const { return m_Name.c_str(); }
-    inline const char * Param ( void ) const { return m_Param.c_str(); }
-    inline instruct_t Opc(void) const { return m_Opc; }
-    inline size_t Operands(void) const { return m_Operands.size(); }
-    inline const MCOperand & Operand(uint32_t index) const { return m_Operands[index]; }
-    inline arm64_cc cc(void) const { return m_cc; }
-    inline bool UpdateFlags(void) const { return m_UpdateFlags; }
-    inline bool WriteBack(void) const { return m_WriteBack; }
+        inline uint64_t PC(void) const { return m_pc; }
+        inline const char * Name(void) const { return m_Name.c_str(); }
+        inline const char * Param(void) const { return m_Param.c_str(); }
+        inline instruct_t Opc(void) const { return m_Opc; }
+        inline size_t Operands(void) const { return m_Operands.size(); }
+        inline const MCOperand & Operand(uint32_t index) const { return m_Operands[index]; }
+        inline arm64_cc cc(void) const { return m_cc; }
+        inline bool UpdateFlags(void) const { return m_UpdateFlags; }
+        inline bool WriteBack(void) const { return m_WriteBack; }
+
+    private:
+        //> ARM64 registers
+        typedef enum
+        {
+            CAPSTONE_ARM64_REG_INVALID = 0,
+
+            CAPSTONE_ARM64_REG_X29,
+            CAPSTONE_ARM64_REG_X30,
+            CAPSTONE_ARM64_REG_NZCV,
+            CAPSTONE_ARM64_REG_SP,
+            CAPSTONE_ARM64_REG_WSP,
+            CAPSTONE_ARM64_REG_WZR,
+            CAPSTONE_ARM64_REG_XZR,
+            CAPSTONE_ARM64_REG_B0,
+            CAPSTONE_ARM64_REG_B1,
+            CAPSTONE_ARM64_REG_B2,
+            CAPSTONE_ARM64_REG_B3,
+            CAPSTONE_ARM64_REG_B4,
+            CAPSTONE_ARM64_REG_B5,
+            CAPSTONE_ARM64_REG_B6,
+            CAPSTONE_ARM64_REG_B7,
+            CAPSTONE_ARM64_REG_B8,
+            CAPSTONE_ARM64_REG_B9,
+            CAPSTONE_ARM64_REG_B10,
+            CAPSTONE_ARM64_REG_B11,
+            CAPSTONE_ARM64_REG_B12,
+            CAPSTONE_ARM64_REG_B13,
+            CAPSTONE_ARM64_REG_B14,
+            CAPSTONE_ARM64_REG_B15,
+            CAPSTONE_ARM64_REG_B16,
+            CAPSTONE_ARM64_REG_B17,
+            CAPSTONE_ARM64_REG_B18,
+            CAPSTONE_ARM64_REG_B19,
+            CAPSTONE_ARM64_REG_B20,
+            CAPSTONE_ARM64_REG_B21,
+            CAPSTONE_ARM64_REG_B22,
+            CAPSTONE_ARM64_REG_B23,
+            CAPSTONE_ARM64_REG_B24,
+            CAPSTONE_ARM64_REG_B25,
+            CAPSTONE_ARM64_REG_B26,
+            CAPSTONE_ARM64_REG_B27,
+            CAPSTONE_ARM64_REG_B28,
+            CAPSTONE_ARM64_REG_B29,
+            CAPSTONE_ARM64_REG_B30,
+            CAPSTONE_ARM64_REG_B31,
+            CAPSTONE_ARM64_REG_D0,
+            CAPSTONE_ARM64_REG_D1,
+            CAPSTONE_ARM64_REG_D2,
+            CAPSTONE_ARM64_REG_D3,
+            CAPSTONE_ARM64_REG_D4,
+            CAPSTONE_ARM64_REG_D5,
+            CAPSTONE_ARM64_REG_D6,
+            CAPSTONE_ARM64_REG_D7,
+            CAPSTONE_ARM64_REG_D8,
+            CAPSTONE_ARM64_REG_D9,
+            CAPSTONE_ARM64_REG_D10,
+            CAPSTONE_ARM64_REG_D11,
+            CAPSTONE_ARM64_REG_D12,
+            CAPSTONE_ARM64_REG_D13,
+            CAPSTONE_ARM64_REG_D14,
+            CAPSTONE_ARM64_REG_D15,
+            CAPSTONE_ARM64_REG_D16,
+            CAPSTONE_ARM64_REG_D17,
+            CAPSTONE_ARM64_REG_D18,
+            CAPSTONE_ARM64_REG_D19,
+            CAPSTONE_ARM64_REG_D20,
+            CAPSTONE_ARM64_REG_D21,
+            CAPSTONE_ARM64_REG_D22,
+            CAPSTONE_ARM64_REG_D23,
+            CAPSTONE_ARM64_REG_D24,
+            CAPSTONE_ARM64_REG_D25,
+            CAPSTONE_ARM64_REG_D26,
+            CAPSTONE_ARM64_REG_D27,
+            CAPSTONE_ARM64_REG_D28,
+            CAPSTONE_ARM64_REG_D29,
+            CAPSTONE_ARM64_REG_D30,
+            CAPSTONE_ARM64_REG_D31,
+            CAPSTONE_ARM64_REG_H0,
+            CAPSTONE_ARM64_REG_H1,
+            CAPSTONE_ARM64_REG_H2,
+            CAPSTONE_ARM64_REG_H3,
+            CAPSTONE_ARM64_REG_H4,
+            CAPSTONE_ARM64_REG_H5,
+            CAPSTONE_ARM64_REG_H6,
+            CAPSTONE_ARM64_REG_H7,
+            CAPSTONE_ARM64_REG_H8,
+            CAPSTONE_ARM64_REG_H9,
+            CAPSTONE_ARM64_REG_H10,
+            CAPSTONE_ARM64_REG_H11,
+            CAPSTONE_ARM64_REG_H12,
+            CAPSTONE_ARM64_REG_H13,
+            CAPSTONE_ARM64_REG_H14,
+            CAPSTONE_ARM64_REG_H15,
+            CAPSTONE_ARM64_REG_H16,
+            CAPSTONE_ARM64_REG_H17,
+            CAPSTONE_ARM64_REG_H18,
+            CAPSTONE_ARM64_REG_H19,
+            CAPSTONE_ARM64_REG_H20,
+            CAPSTONE_ARM64_REG_H21,
+            CAPSTONE_ARM64_REG_H22,
+            CAPSTONE_ARM64_REG_H23,
+            CAPSTONE_ARM64_REG_H24,
+            CAPSTONE_ARM64_REG_H25,
+            CAPSTONE_ARM64_REG_H26,
+            CAPSTONE_ARM64_REG_H27,
+            CAPSTONE_ARM64_REG_H28,
+            CAPSTONE_ARM64_REG_H29,
+            CAPSTONE_ARM64_REG_H30,
+            CAPSTONE_ARM64_REG_H31,
+            CAPSTONE_ARM64_REG_Q0,
+            CAPSTONE_ARM64_REG_Q1,
+            CAPSTONE_ARM64_REG_Q2,
+            CAPSTONE_ARM64_REG_Q3,
+            CAPSTONE_ARM64_REG_Q4,
+            CAPSTONE_ARM64_REG_Q5,
+            CAPSTONE_ARM64_REG_Q6,
+            CAPSTONE_ARM64_REG_Q7,
+            CAPSTONE_ARM64_REG_Q8,
+            CAPSTONE_ARM64_REG_Q9,
+            CAPSTONE_ARM64_REG_Q10,
+            CAPSTONE_ARM64_REG_Q11,
+            CAPSTONE_ARM64_REG_Q12,
+            CAPSTONE_ARM64_REG_Q13,
+            CAPSTONE_ARM64_REG_Q14,
+            CAPSTONE_ARM64_REG_Q15,
+            CAPSTONE_ARM64_REG_Q16,
+            CAPSTONE_ARM64_REG_Q17,
+            CAPSTONE_ARM64_REG_Q18,
+            CAPSTONE_ARM64_REG_Q19,
+            CAPSTONE_ARM64_REG_Q20,
+            CAPSTONE_ARM64_REG_Q21,
+            CAPSTONE_ARM64_REG_Q22,
+            CAPSTONE_ARM64_REG_Q23,
+            CAPSTONE_ARM64_REG_Q24,
+            CAPSTONE_ARM64_REG_Q25,
+            CAPSTONE_ARM64_REG_Q26,
+            CAPSTONE_ARM64_REG_Q27,
+            CAPSTONE_ARM64_REG_Q28,
+            CAPSTONE_ARM64_REG_Q29,
+            CAPSTONE_ARM64_REG_Q30,
+            CAPSTONE_ARM64_REG_Q31,
+            CAPSTONE_ARM64_REG_S0,
+            CAPSTONE_ARM64_REG_S1,
+            CAPSTONE_ARM64_REG_S2,
+            CAPSTONE_ARM64_REG_S3,
+            CAPSTONE_ARM64_REG_S4,
+            CAPSTONE_ARM64_REG_S5,
+            CAPSTONE_ARM64_REG_S6,
+            CAPSTONE_ARM64_REG_S7,
+            CAPSTONE_ARM64_REG_S8,
+            CAPSTONE_ARM64_REG_S9,
+            CAPSTONE_ARM64_REG_S10,
+            CAPSTONE_ARM64_REG_S11,
+            CAPSTONE_ARM64_REG_S12,
+            CAPSTONE_ARM64_REG_S13,
+            CAPSTONE_ARM64_REG_S14,
+            CAPSTONE_ARM64_REG_S15,
+            CAPSTONE_ARM64_REG_S16,
+            CAPSTONE_ARM64_REG_S17,
+            CAPSTONE_ARM64_REG_S18,
+            CAPSTONE_ARM64_REG_S19,
+            CAPSTONE_ARM64_REG_S20,
+            CAPSTONE_ARM64_REG_S21,
+            CAPSTONE_ARM64_REG_S22,
+            CAPSTONE_ARM64_REG_S23,
+            CAPSTONE_ARM64_REG_S24,
+            CAPSTONE_ARM64_REG_S25,
+            CAPSTONE_ARM64_REG_S26,
+            CAPSTONE_ARM64_REG_S27,
+            CAPSTONE_ARM64_REG_S28,
+            CAPSTONE_ARM64_REG_S29,
+            CAPSTONE_ARM64_REG_S30,
+            CAPSTONE_ARM64_REG_S31,
+            CAPSTONE_ARM64_REG_W0,
+            CAPSTONE_ARM64_REG_W1,
+            CAPSTONE_ARM64_REG_W2,
+            CAPSTONE_ARM64_REG_W3,
+            CAPSTONE_ARM64_REG_W4,
+            CAPSTONE_ARM64_REG_W5,
+            CAPSTONE_ARM64_REG_W6,
+            CAPSTONE_ARM64_REG_W7,
+            CAPSTONE_ARM64_REG_W8,
+            CAPSTONE_ARM64_REG_W9,
+            CAPSTONE_ARM64_REG_W10,
+            CAPSTONE_ARM64_REG_W11,
+            CAPSTONE_ARM64_REG_W12,
+            CAPSTONE_ARM64_REG_W13,
+            CAPSTONE_ARM64_REG_W14,
+            CAPSTONE_ARM64_REG_W15,
+            CAPSTONE_ARM64_REG_W16,
+            CAPSTONE_ARM64_REG_W17,
+            CAPSTONE_ARM64_REG_W18,
+            CAPSTONE_ARM64_REG_W19,
+            CAPSTONE_ARM64_REG_W20,
+            CAPSTONE_ARM64_REG_W21,
+            CAPSTONE_ARM64_REG_W22,
+            CAPSTONE_ARM64_REG_W23,
+            CAPSTONE_ARM64_REG_W24,
+            CAPSTONE_ARM64_REG_W25,
+            CAPSTONE_ARM64_REG_W26,
+            CAPSTONE_ARM64_REG_W27,
+            CAPSTONE_ARM64_REG_W28,
+            CAPSTONE_ARM64_REG_W29,
+            CAPSTONE_ARM64_REG_W30,
+            CAPSTONE_ARM64_REG_X0,
+            CAPSTONE_ARM64_REG_X1,
+            CAPSTONE_ARM64_REG_X2,
+            CAPSTONE_ARM64_REG_X3,
+            CAPSTONE_ARM64_REG_X4,
+            CAPSTONE_ARM64_REG_X5,
+            CAPSTONE_ARM64_REG_X6,
+            CAPSTONE_ARM64_REG_X7,
+            CAPSTONE_ARM64_REG_X8,
+            CAPSTONE_ARM64_REG_X9,
+            CAPSTONE_ARM64_REG_X10,
+            CAPSTONE_ARM64_REG_X11,
+            CAPSTONE_ARM64_REG_X12,
+            CAPSTONE_ARM64_REG_X13,
+            CAPSTONE_ARM64_REG_X14,
+            CAPSTONE_ARM64_REG_X15,
+            CAPSTONE_ARM64_REG_X16,
+            CAPSTONE_ARM64_REG_X17,
+            CAPSTONE_ARM64_REG_X18,
+            CAPSTONE_ARM64_REG_X19,
+            CAPSTONE_ARM64_REG_X20,
+            CAPSTONE_ARM64_REG_X21,
+            CAPSTONE_ARM64_REG_X22,
+            CAPSTONE_ARM64_REG_X23,
+            CAPSTONE_ARM64_REG_X24,
+            CAPSTONE_ARM64_REG_X25,
+            CAPSTONE_ARM64_REG_X26,
+            CAPSTONE_ARM64_REG_X27,
+            CAPSTONE_ARM64_REG_X28,
+
+            CAPSTONE_ARM64_REG_V0,
+            CAPSTONE_ARM64_REG_V1,
+            CAPSTONE_ARM64_REG_V2,
+            CAPSTONE_ARM64_REG_V3,
+            CAPSTONE_ARM64_REG_V4,
+            CAPSTONE_ARM64_REG_V5,
+            CAPSTONE_ARM64_REG_V6,
+            CAPSTONE_ARM64_REG_V7,
+            CAPSTONE_ARM64_REG_V8,
+            CAPSTONE_ARM64_REG_V9,
+            CAPSTONE_ARM64_REG_V10,
+            CAPSTONE_ARM64_REG_V11,
+            CAPSTONE_ARM64_REG_V12,
+            CAPSTONE_ARM64_REG_V13,
+            CAPSTONE_ARM64_REG_V14,
+            CAPSTONE_ARM64_REG_V15,
+            CAPSTONE_ARM64_REG_V16,
+            CAPSTONE_ARM64_REG_V17,
+            CAPSTONE_ARM64_REG_V18,
+            CAPSTONE_ARM64_REG_V19,
+            CAPSTONE_ARM64_REG_V20,
+            CAPSTONE_ARM64_REG_V21,
+            CAPSTONE_ARM64_REG_V22,
+            CAPSTONE_ARM64_REG_V23,
+            CAPSTONE_ARM64_REG_V24,
+            CAPSTONE_ARM64_REG_V25,
+            CAPSTONE_ARM64_REG_V26,
+            CAPSTONE_ARM64_REG_V27,
+            CAPSTONE_ARM64_REG_V28,
+            CAPSTONE_ARM64_REG_V29,
+            CAPSTONE_ARM64_REG_V30,
+            CAPSTONE_ARM64_REG_V31,
+
+            CAPSTONE_ARM64_REG_ENDING,		// <-- mark the end of the list of registers
+
+                                            //> alias registers
+
+                                            CAPSTONE_ARM64_REG_IP1 = CAPSTONE_ARM64_REG_X16,
+                                            CAPSTONE_ARM64_REG_IP0 = CAPSTONE_ARM64_REG_X17,
+                                            CAPSTONE_ARM64_REG_FP = CAPSTONE_ARM64_REG_X29,
+                                            CAPSTONE_ARM64_REG_LR = CAPSTONE_ARM64_REG_X30,
+        } capstone_arm64_reg;
+
+        arm64_reg TranslateArm64Reg(capstone_arm64_reg reg);
+
+        uint64_t m_pc;
+        std::string m_Name;
+        std::string m_Param;
+        bool m_WriteBack;
+        instruct_t m_Opc;
+        MCOperands m_Operands;
+        bool m_UpdateFlags;
+        arm64_cc m_cc;
+    };
+
+public:
+    Arm64Opcode(Arm64OpcodeCache &cache, uint64_t pc, uint32_t insn);
+
+    inline uint64_t PC(void) const { return m_Details->PC(); }
+    inline const char * Name ( void ) const { return m_Details->Name(); }
+    inline const char * Param ( void ) const { return m_Details->Param(); }
+    inline instruct_t Opc(void) const { return m_Details->Opc(); }
+    inline size_t Operands(void) const { return m_Details->Operands(); }
+    inline const MCOperand & Operand(uint32_t index) const { return m_Details->Operand(index); }
+    inline arm64_cc cc(void) const { return m_Details->cc(); }
+    inline bool UpdateFlags(void) const { return m_Details->UpdateFlags(); }
+    inline bool WriteBack(void) const { return m_Details->WriteBack(); }
 
     bool IsJump(void) const;
     bool IsBranch(void) const;
     uint64_t BranchDest(void) const;
 
 private:
-    //> ARM64 registers
-    typedef enum 
+    Arm64OpcodeDetail * m_Details;
+};
+
+class Arm64OpcodeCache
+{
+    struct OpcodeKey
     {
-        CAPSTONE_ARM64_REG_INVALID = 0,
+        uint64_t pc;
+        uint32_t insn;
 
-        CAPSTONE_ARM64_REG_X29,
-        CAPSTONE_ARM64_REG_X30,
-        CAPSTONE_ARM64_REG_NZCV,
-        CAPSTONE_ARM64_REG_SP,
-        CAPSTONE_ARM64_REG_WSP,
-        CAPSTONE_ARM64_REG_WZR,
-        CAPSTONE_ARM64_REG_XZR,
-        CAPSTONE_ARM64_REG_B0,
-        CAPSTONE_ARM64_REG_B1,
-        CAPSTONE_ARM64_REG_B2,
-        CAPSTONE_ARM64_REG_B3,
-        CAPSTONE_ARM64_REG_B4,
-        CAPSTONE_ARM64_REG_B5,
-        CAPSTONE_ARM64_REG_B6,
-        CAPSTONE_ARM64_REG_B7,
-        CAPSTONE_ARM64_REG_B8,
-        CAPSTONE_ARM64_REG_B9,
-        CAPSTONE_ARM64_REG_B10,
-        CAPSTONE_ARM64_REG_B11,
-        CAPSTONE_ARM64_REG_B12,
-        CAPSTONE_ARM64_REG_B13,
-        CAPSTONE_ARM64_REG_B14,
-        CAPSTONE_ARM64_REG_B15,
-        CAPSTONE_ARM64_REG_B16,
-        CAPSTONE_ARM64_REG_B17,
-        CAPSTONE_ARM64_REG_B18,
-        CAPSTONE_ARM64_REG_B19,
-        CAPSTONE_ARM64_REG_B20,
-        CAPSTONE_ARM64_REG_B21,
-        CAPSTONE_ARM64_REG_B22,
-        CAPSTONE_ARM64_REG_B23,
-        CAPSTONE_ARM64_REG_B24,
-        CAPSTONE_ARM64_REG_B25,
-        CAPSTONE_ARM64_REG_B26,
-        CAPSTONE_ARM64_REG_B27,
-        CAPSTONE_ARM64_REG_B28,
-        CAPSTONE_ARM64_REG_B29,
-        CAPSTONE_ARM64_REG_B30,
-        CAPSTONE_ARM64_REG_B31,
-        CAPSTONE_ARM64_REG_D0,
-        CAPSTONE_ARM64_REG_D1,
-        CAPSTONE_ARM64_REG_D2,
-        CAPSTONE_ARM64_REG_D3,
-        CAPSTONE_ARM64_REG_D4,
-        CAPSTONE_ARM64_REG_D5,
-        CAPSTONE_ARM64_REG_D6,
-        CAPSTONE_ARM64_REG_D7,
-        CAPSTONE_ARM64_REG_D8,
-        CAPSTONE_ARM64_REG_D9,
-        CAPSTONE_ARM64_REG_D10,
-        CAPSTONE_ARM64_REG_D11,
-        CAPSTONE_ARM64_REG_D12,
-        CAPSTONE_ARM64_REG_D13,
-        CAPSTONE_ARM64_REG_D14,
-        CAPSTONE_ARM64_REG_D15,
-        CAPSTONE_ARM64_REG_D16,
-        CAPSTONE_ARM64_REG_D17,
-        CAPSTONE_ARM64_REG_D18,
-        CAPSTONE_ARM64_REG_D19,
-        CAPSTONE_ARM64_REG_D20,
-        CAPSTONE_ARM64_REG_D21,
-        CAPSTONE_ARM64_REG_D22,
-        CAPSTONE_ARM64_REG_D23,
-        CAPSTONE_ARM64_REG_D24,
-        CAPSTONE_ARM64_REG_D25,
-        CAPSTONE_ARM64_REG_D26,
-        CAPSTONE_ARM64_REG_D27,
-        CAPSTONE_ARM64_REG_D28,
-        CAPSTONE_ARM64_REG_D29,
-        CAPSTONE_ARM64_REG_D30,
-        CAPSTONE_ARM64_REG_D31,
-        CAPSTONE_ARM64_REG_H0,
-        CAPSTONE_ARM64_REG_H1,
-        CAPSTONE_ARM64_REG_H2,
-        CAPSTONE_ARM64_REG_H3,
-        CAPSTONE_ARM64_REG_H4,
-        CAPSTONE_ARM64_REG_H5,
-        CAPSTONE_ARM64_REG_H6,
-        CAPSTONE_ARM64_REG_H7,
-        CAPSTONE_ARM64_REG_H8,
-        CAPSTONE_ARM64_REG_H9,
-        CAPSTONE_ARM64_REG_H10,
-        CAPSTONE_ARM64_REG_H11,
-        CAPSTONE_ARM64_REG_H12,
-        CAPSTONE_ARM64_REG_H13,
-        CAPSTONE_ARM64_REG_H14,
-        CAPSTONE_ARM64_REG_H15,
-        CAPSTONE_ARM64_REG_H16,
-        CAPSTONE_ARM64_REG_H17,
-        CAPSTONE_ARM64_REG_H18,
-        CAPSTONE_ARM64_REG_H19,
-        CAPSTONE_ARM64_REG_H20,
-        CAPSTONE_ARM64_REG_H21,
-        CAPSTONE_ARM64_REG_H22,
-        CAPSTONE_ARM64_REG_H23,
-        CAPSTONE_ARM64_REG_H24,
-        CAPSTONE_ARM64_REG_H25,
-        CAPSTONE_ARM64_REG_H26,
-        CAPSTONE_ARM64_REG_H27,
-        CAPSTONE_ARM64_REG_H28,
-        CAPSTONE_ARM64_REG_H29,
-        CAPSTONE_ARM64_REG_H30,
-        CAPSTONE_ARM64_REG_H31,
-        CAPSTONE_ARM64_REG_Q0,
-        CAPSTONE_ARM64_REG_Q1,
-        CAPSTONE_ARM64_REG_Q2,
-        CAPSTONE_ARM64_REG_Q3,
-        CAPSTONE_ARM64_REG_Q4,
-        CAPSTONE_ARM64_REG_Q5,
-        CAPSTONE_ARM64_REG_Q6,
-        CAPSTONE_ARM64_REG_Q7,
-        CAPSTONE_ARM64_REG_Q8,
-        CAPSTONE_ARM64_REG_Q9,
-        CAPSTONE_ARM64_REG_Q10,
-        CAPSTONE_ARM64_REG_Q11,
-        CAPSTONE_ARM64_REG_Q12,
-        CAPSTONE_ARM64_REG_Q13,
-        CAPSTONE_ARM64_REG_Q14,
-        CAPSTONE_ARM64_REG_Q15,
-        CAPSTONE_ARM64_REG_Q16,
-        CAPSTONE_ARM64_REG_Q17,
-        CAPSTONE_ARM64_REG_Q18,
-        CAPSTONE_ARM64_REG_Q19,
-        CAPSTONE_ARM64_REG_Q20,
-        CAPSTONE_ARM64_REG_Q21,
-        CAPSTONE_ARM64_REG_Q22,
-        CAPSTONE_ARM64_REG_Q23,
-        CAPSTONE_ARM64_REG_Q24,
-        CAPSTONE_ARM64_REG_Q25,
-        CAPSTONE_ARM64_REG_Q26,
-        CAPSTONE_ARM64_REG_Q27,
-        CAPSTONE_ARM64_REG_Q28,
-        CAPSTONE_ARM64_REG_Q29,
-        CAPSTONE_ARM64_REG_Q30,
-        CAPSTONE_ARM64_REG_Q31,
-        CAPSTONE_ARM64_REG_S0,
-        CAPSTONE_ARM64_REG_S1,
-        CAPSTONE_ARM64_REG_S2,
-        CAPSTONE_ARM64_REG_S3,
-        CAPSTONE_ARM64_REG_S4,
-        CAPSTONE_ARM64_REG_S5,
-        CAPSTONE_ARM64_REG_S6,
-        CAPSTONE_ARM64_REG_S7,
-        CAPSTONE_ARM64_REG_S8,
-        CAPSTONE_ARM64_REG_S9,
-        CAPSTONE_ARM64_REG_S10,
-        CAPSTONE_ARM64_REG_S11,
-        CAPSTONE_ARM64_REG_S12,
-        CAPSTONE_ARM64_REG_S13,
-        CAPSTONE_ARM64_REG_S14,
-        CAPSTONE_ARM64_REG_S15,
-        CAPSTONE_ARM64_REG_S16,
-        CAPSTONE_ARM64_REG_S17,
-        CAPSTONE_ARM64_REG_S18,
-        CAPSTONE_ARM64_REG_S19,
-        CAPSTONE_ARM64_REG_S20,
-        CAPSTONE_ARM64_REG_S21,
-        CAPSTONE_ARM64_REG_S22,
-        CAPSTONE_ARM64_REG_S23,
-        CAPSTONE_ARM64_REG_S24,
-        CAPSTONE_ARM64_REG_S25,
-        CAPSTONE_ARM64_REG_S26,
-        CAPSTONE_ARM64_REG_S27,
-        CAPSTONE_ARM64_REG_S28,
-        CAPSTONE_ARM64_REG_S29,
-        CAPSTONE_ARM64_REG_S30,
-        CAPSTONE_ARM64_REG_S31,
-        CAPSTONE_ARM64_REG_W0,
-        CAPSTONE_ARM64_REG_W1,
-        CAPSTONE_ARM64_REG_W2,
-        CAPSTONE_ARM64_REG_W3,
-        CAPSTONE_ARM64_REG_W4,
-        CAPSTONE_ARM64_REG_W5,
-        CAPSTONE_ARM64_REG_W6,
-        CAPSTONE_ARM64_REG_W7,
-        CAPSTONE_ARM64_REG_W8,
-        CAPSTONE_ARM64_REG_W9,
-        CAPSTONE_ARM64_REG_W10,
-        CAPSTONE_ARM64_REG_W11,
-        CAPSTONE_ARM64_REG_W12,
-        CAPSTONE_ARM64_REG_W13,
-        CAPSTONE_ARM64_REG_W14,
-        CAPSTONE_ARM64_REG_W15,
-        CAPSTONE_ARM64_REG_W16,
-        CAPSTONE_ARM64_REG_W17,
-        CAPSTONE_ARM64_REG_W18,
-        CAPSTONE_ARM64_REG_W19,
-        CAPSTONE_ARM64_REG_W20,
-        CAPSTONE_ARM64_REG_W21,
-        CAPSTONE_ARM64_REG_W22,
-        CAPSTONE_ARM64_REG_W23,
-        CAPSTONE_ARM64_REG_W24,
-        CAPSTONE_ARM64_REG_W25,
-        CAPSTONE_ARM64_REG_W26,
-        CAPSTONE_ARM64_REG_W27,
-        CAPSTONE_ARM64_REG_W28,
-        CAPSTONE_ARM64_REG_W29,
-        CAPSTONE_ARM64_REG_W30,
-        CAPSTONE_ARM64_REG_X0,
-        CAPSTONE_ARM64_REG_X1,
-        CAPSTONE_ARM64_REG_X2,
-        CAPSTONE_ARM64_REG_X3,
-        CAPSTONE_ARM64_REG_X4,
-        CAPSTONE_ARM64_REG_X5,
-        CAPSTONE_ARM64_REG_X6,
-        CAPSTONE_ARM64_REG_X7,
-        CAPSTONE_ARM64_REG_X8,
-        CAPSTONE_ARM64_REG_X9,
-        CAPSTONE_ARM64_REG_X10,
-        CAPSTONE_ARM64_REG_X11,
-        CAPSTONE_ARM64_REG_X12,
-        CAPSTONE_ARM64_REG_X13,
-        CAPSTONE_ARM64_REG_X14,
-        CAPSTONE_ARM64_REG_X15,
-        CAPSTONE_ARM64_REG_X16,
-        CAPSTONE_ARM64_REG_X17,
-        CAPSTONE_ARM64_REG_X18,
-        CAPSTONE_ARM64_REG_X19,
-        CAPSTONE_ARM64_REG_X20,
-        CAPSTONE_ARM64_REG_X21,
-        CAPSTONE_ARM64_REG_X22,
-        CAPSTONE_ARM64_REG_X23,
-        CAPSTONE_ARM64_REG_X24,
-        CAPSTONE_ARM64_REG_X25,
-        CAPSTONE_ARM64_REG_X26,
-        CAPSTONE_ARM64_REG_X27,
-        CAPSTONE_ARM64_REG_X28,
+        bool operator==(const OpcodeKey &o) const
+        {
+            return pc == o.pc && insn == o.insn;
+        }
 
-        CAPSTONE_ARM64_REG_V0,
-        CAPSTONE_ARM64_REG_V1,
-        CAPSTONE_ARM64_REG_V2,
-        CAPSTONE_ARM64_REG_V3,
-        CAPSTONE_ARM64_REG_V4,
-        CAPSTONE_ARM64_REG_V5,
-        CAPSTONE_ARM64_REG_V6,
-        CAPSTONE_ARM64_REG_V7,
-        CAPSTONE_ARM64_REG_V8,
-        CAPSTONE_ARM64_REG_V9,
-        CAPSTONE_ARM64_REG_V10,
-        CAPSTONE_ARM64_REG_V11,
-        CAPSTONE_ARM64_REG_V12,
-        CAPSTONE_ARM64_REG_V13,
-        CAPSTONE_ARM64_REG_V14,
-        CAPSTONE_ARM64_REG_V15,
-        CAPSTONE_ARM64_REG_V16,
-        CAPSTONE_ARM64_REG_V17,
-        CAPSTONE_ARM64_REG_V18,
-        CAPSTONE_ARM64_REG_V19,
-        CAPSTONE_ARM64_REG_V20,
-        CAPSTONE_ARM64_REG_V21,
-        CAPSTONE_ARM64_REG_V22,
-        CAPSTONE_ARM64_REG_V23,
-        CAPSTONE_ARM64_REG_V24,
-        CAPSTONE_ARM64_REG_V25,
-        CAPSTONE_ARM64_REG_V26,
-        CAPSTONE_ARM64_REG_V27,
-        CAPSTONE_ARM64_REG_V28,
-        CAPSTONE_ARM64_REG_V29,
-        CAPSTONE_ARM64_REG_V30,
-        CAPSTONE_ARM64_REG_V31,
+        bool operator<(const OpcodeKey &o) const
+        {
+            return pc < o.pc || (pc == o.pc && insn < o.insn);
+        }
+    };
 
-        CAPSTONE_ARM64_REG_ENDING,		// <-- mark the end of the list of registers
+    typedef std::map<OpcodeKey, Arm64Opcode::Arm64OpcodeDetail *> OPCODE_CACHE;
+public:
+    Arm64OpcodeCache();
+    ~Arm64OpcodeCache();
 
-                                //> alias registers
+    Arm64Opcode::Arm64OpcodeDetail * GetOpcodeDetail(uint64_t pc, uint32_t insn);
 
-                                CAPSTONE_ARM64_REG_IP1 = CAPSTONE_ARM64_REG_X16,
-                                CAPSTONE_ARM64_REG_IP0 = CAPSTONE_ARM64_REG_X17,
-                                CAPSTONE_ARM64_REG_FP = CAPSTONE_ARM64_REG_X29,
-                                CAPSTONE_ARM64_REG_LR = CAPSTONE_ARM64_REG_X30,
-    } capstone_arm64_reg;
+private:
+    Arm64OpcodeCache(const Arm64OpcodeCache&);
+    Arm64OpcodeCache& operator=(const Arm64OpcodeCache&);
 
-    arm64_reg TranslateArm64Reg(capstone_arm64_reg reg);
-
-    uint64_t m_pc;
-    std::string m_Name;
-    std::string m_Param;
-    bool m_WriteBack;
-    instruct_t m_Opc;
-    MCOperands m_Operands;
-    bool m_UpdateFlags;
-    arm64_cc m_cc;
+    CriticalSection m_CacheCS;
+    OPCODE_CACHE m_OpcodeCache;
 };

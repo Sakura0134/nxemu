@@ -59,6 +59,7 @@ private:
     uint64_t m_StartAddress;
     uint32_t m_CommandListRows;
     Arm64OpcodeList m_ops;
+    Arm64OpcodeCache m_OpcodeCache;
     std::vector<std::string> m_opAddr;
     std::vector<bool> m_ValidOp;
     std::vector<BRANCHARROW> m_BranchArrows;

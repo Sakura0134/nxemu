@@ -2,7 +2,7 @@
 #include <capstone\Include\capstone.h>
 #include <nxemu-core\SystemGlobals.h>
 
-Arm64Opcode::Arm64Opcode(uint64_t pc, uint32_t insn) :
+Arm64Opcode::Arm64OpcodeDetail::Arm64OpcodeDetail(uint64_t pc, uint32_t insn) :
     m_pc(pc),
     m_WriteBack(false),
     m_Opc(ARM64_INS_INVALID),
@@ -97,6 +97,11 @@ Arm64Opcode::Arm64Opcode(uint64_t pc, uint32_t insn) :
     cs_close(&handle);
 }
 
+Arm64Opcode::Arm64Opcode(Arm64OpcodeCache &cache, uint64_t pc, uint32_t insn) :
+    m_Details(cache.GetOpcodeDetail(pc, insn))
+{
+}
+
 bool Arm64Opcode::IsBranch(void) const
 {
     switch (Opc())
@@ -152,7 +157,7 @@ uint64_t Arm64Opcode::BranchDest(void) const
         break;
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
-    return m_pc + 4;
+    return PC() + 4;
 }
 
 bool Arm64Opcode::IsJump(void) const
@@ -202,7 +207,49 @@ bool Arm64Opcode::IsJump(void) const
     }
 }
 
-Arm64Opcode::arm64_reg Arm64Opcode::TranslateArm64Reg(capstone_arm64_reg reg)
+Arm64OpcodeCache::Arm64OpcodeCache()
+{
+}
+
+Arm64OpcodeCache::~Arm64OpcodeCache()
+{
+    CGuard guard(m_CacheCS);
+
+    for (OPCODE_CACHE::const_iterator itr = m_OpcodeCache.begin(); itr != m_OpcodeCache.end(); itr++)
+    {
+        delete itr->second;
+    }
+    m_OpcodeCache.clear();
+}
+
+Arm64Opcode::Arm64OpcodeDetail * Arm64OpcodeCache::GetOpcodeDetail(uint64_t pc, uint32_t insn)
+{
+    Arm64Opcode::Arm64OpcodeDetail * Details = NULL;
+    OpcodeKey key{ pc,insn };
+    {
+        CGuard guard(m_CacheCS);
+        OPCODE_CACHE::const_iterator itr = m_OpcodeCache.find(key);
+        if (itr != m_OpcodeCache.end())
+        {
+            Details = itr->second;
+        }
+    }
+    if (Details == NULL)
+    {
+        Details = new Arm64Opcode::Arm64OpcodeDetail(pc, insn);
+        {
+            CGuard guard(m_CacheCS);
+            OPCODE_CACHE::_Pairib res = m_OpcodeCache.insert(OPCODE_CACHE::value_type(key, Details));
+            if (!res.second)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+    }
+    return Details;
+}
+
+Arm64Opcode::arm64_reg Arm64Opcode::Arm64OpcodeDetail::TranslateArm64Reg(capstone_arm64_reg reg)
 {
     switch (reg)
     {

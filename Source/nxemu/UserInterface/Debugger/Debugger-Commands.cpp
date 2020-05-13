@@ -49,7 +49,7 @@ void CCommandList::ShowAddress(uint64_t address, bool top)
                 ValidOp = false;
             }
             m_ValidOp.push_back(ValidOp);
-            Arm64Opcode OpInfo(opAddr, insn);
+            Arm64Opcode OpInfo(m_OpcodeCache, opAddr, insn);
             m_ops.push_back(OpInfo);
             if (OpInfo.IsBranch())
             {
@@ -358,7 +358,6 @@ LRESULT CDebugCommandsView::OnDestroy(void)
     m_GoButton.Detach();
     m_StepButton.Detach();
     m_CommandList.Detach();
-    m_CommandList = CCommandList(m_Debugger);
     return 0;
 }
 

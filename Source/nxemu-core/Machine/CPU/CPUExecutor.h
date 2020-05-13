@@ -23,6 +23,7 @@ protected:
     CRegisters m_Reg;
     MemoryManagement & m_MMU;
     bool m_Jumped;
+    Arm64OpcodeCache m_OpcodeCache;
 
 private:
     CPUExecutor(void);                          // Disable default constructor

@@ -15,6 +15,7 @@ void CPUExecutor::Execute(bool & Done)
 {
     uint64_t & PROGRAM_COUNTER = m_Reg.m_PROGRAM_COUNTER;
     const bool & Stepping = isStepping();
+    Arm64OpcodeCache & OpcodeCache = m_OpcodeCache;
 
     while (!Done)
     {
@@ -27,7 +28,7 @@ void CPUExecutor::Execute(bool & Done)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
-        Arm64Opcode op(PROGRAM_COUNTER, insn);
+        Arm64Opcode op(OpcodeCache, PROGRAM_COUNTER, insn);
 
         if (!ShouldExecuteOp(op))
         {
