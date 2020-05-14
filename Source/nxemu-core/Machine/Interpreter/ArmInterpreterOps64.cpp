@@ -1170,3 +1170,17 @@ void Arm64Op::Udiv(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Umaddl(CPUExecutor & core, const Arm64Opcode &op)
+{
+    if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && op.Operand(3).type == Arm64Opcode::ARM64_OP_REG &&
+        CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && CRegisters::Is32bitReg(op.Operand(2).Reg) && CRegisters::Is64bitReg(op.Operand(3).Reg))
+    {
+        CRegisters & Reg = core.Reg();
+        Reg.Set64(op.Operand(0).Reg, (uint64_t)(Reg.Get32(op.Operand(1).Reg) * Reg.Get32(op.Operand(2).Reg))+ Reg.Get64(op.Operand(3).Reg));
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
