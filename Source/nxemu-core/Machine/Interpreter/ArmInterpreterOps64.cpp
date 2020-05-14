@@ -1145,6 +1145,9 @@ void Arm64Op::Msr(CPUExecutor & core, const Arm64Opcode &op)
         case Arm64Opcode::A64SysReg_FPCR:
             Reg.SetFPCR((uint32_t)Reg.Get64(op.Operand(1).Reg));
             break;
+        case Arm64Opcode::A64SysReg_FPSR:
+            Reg.SetFPSR((uint32_t)Reg.Get64(op.Operand(1).Reg));
+            break;
         default:
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }

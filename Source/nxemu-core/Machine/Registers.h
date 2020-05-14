@@ -46,6 +46,7 @@ public:
     void Set64(Arm64Opcode::arm64_reg reg, uint64_t value);
     void Set128(Arm64Opcode::arm64_reg reg, uint64_t hiValue, uint64_t loValue);
     void SetFPCR(uint32_t value);
+    void SetFPSR(uint32_t value);
 
     void SetConditionFlags(bool n, bool z, bool c, bool v);
     bool ConditionSet(Arm64Opcode::arm64_cc cc);
@@ -64,6 +65,7 @@ private:
     uint32_t * m_wregs[32];
     uint64_t m_vfp_regs[64];
     uint32_t m_fpcr;
+    uint32_t m_fpsr;
 
     //CP15
     uint64_t m_tpidrro_el0; /* User RO Thread register.  */
