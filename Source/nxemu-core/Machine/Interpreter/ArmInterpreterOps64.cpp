@@ -1023,6 +1023,10 @@ void Arm64Op::Orr(CPUExecutor & core, const Arm64Opcode &op)
         {
             Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) | op.Operand(2).ImmVal);
         }
+        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+        {
+            Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) | Reg.Get64(op.Operand(2).Reg));
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
