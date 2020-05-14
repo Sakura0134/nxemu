@@ -30,6 +30,7 @@ public:
     static void Ldur(CPUExecutor & core, const Arm64Opcode &op);
     static void Lsl(CPUExecutor & core, const Arm64Opcode &op);
     static void Lsr(CPUExecutor & core, const Arm64Opcode &op);
+    static void Madd(CPUExecutor & core, const Arm64Opcode &op);
     static void Mov(CPUExecutor & core, const Arm64Opcode &op);
     static void Movk(CPUExecutor & core, const Arm64Opcode &op);
     static void Movz(CPUExecutor & core, const Arm64Opcode &op);
