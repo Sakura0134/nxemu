@@ -1134,6 +1134,27 @@ void Arm64Op::Movz(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Msr(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG_MSR && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(1).Reg))
+    {
+        switch (op.Operand(0).SysReg)
+        {
+        case Arm64Opcode::A64SysReg_FPCR:
+            Reg.SetFPCR((uint32_t)Reg.Get64(op.Operand(1).Reg));
+            break;
+        default:
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Msub(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();

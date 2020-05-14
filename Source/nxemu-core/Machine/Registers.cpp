@@ -5,6 +5,7 @@ CRegisters::CRegisters(CPUExecutor * Executor) :
     m_Executor(Executor),
     m_PROGRAM_COUNTER(0),
     m_pstate({ 0 }),
+    m_fpcr(0),
     m_tpidrro_el0(0)
 {
     memset(m_xregs, 0, sizeof(m_xregs));
@@ -264,6 +265,11 @@ void CRegisters::Set128(Arm64Opcode::arm64_reg reg, uint64_t hiValue, uint64_t l
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
+}
+
+void CRegisters::SetFPCR(uint32_t value)
+{
+    m_fpcr = value;
 }
 
 CRegisters::PSTATE CRegisters::GetPstate() const
