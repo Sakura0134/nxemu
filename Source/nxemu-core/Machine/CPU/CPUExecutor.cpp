@@ -81,6 +81,7 @@ void CPUExecutor::Execute(bool & Done)
         case Arm64Opcode::ARM64_INS_SUB: Arm64Op::Sub(*this, op); break;
         case Arm64Opcode::ARM64_INS_SVC: Arm64Op::Svc(*this, op); break;
         case Arm64Opcode::ARM64_INS_SXTW: Arm64Op::Sxtw(*this, op); break;
+        case Arm64Opcode::ARM64_INS_TBZ: Arm64Op::Tbz(*this, op); break;
         case Arm64Opcode::ARM64_INS_TST: Arm64Op::Tst(*this, op); break;
         case Arm64Opcode::ARM64_INS_UDIV: Arm64Op::Udiv(*this, op); break;
         case Arm64Opcode::ARM64_INS_UMADDL: Arm64Op::Umaddl(*this, op); break;

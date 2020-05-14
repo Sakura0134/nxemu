@@ -48,6 +48,7 @@ public:
     static void Sub(CPUExecutor & core, const Arm64Opcode &op);
     static void Svc(CPUExecutor & core, const Arm64Opcode &op);
     static void Sxtw(CPUExecutor & core, const Arm64Opcode &op);
+    static void Tbz(CPUExecutor & core, const Arm64Opcode &op);
     static void Tst(CPUExecutor & core, const Arm64Opcode &op);
     static void Udiv(CPUExecutor & core, const Arm64Opcode &op);
     static void Umaddl(CPUExecutor & core, const Arm64Opcode &op);

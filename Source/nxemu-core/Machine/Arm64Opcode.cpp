@@ -214,6 +214,7 @@ bool Arm64Opcode::IsJump(void) const
     //Conditional jump, return false as does not always jump
     case ARM64_INS_CBNZ:
     case ARM64_INS_CBZ:
+    case ARM64_INS_TBZ:
         return false;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
