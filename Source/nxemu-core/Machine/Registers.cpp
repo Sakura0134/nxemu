@@ -225,6 +225,47 @@ void CRegisters::Set64(Arm64Opcode::arm64_reg reg, uint64_t value)
     }
 }
 
+void CRegisters::Set128(Arm64Opcode::arm64_reg reg, uint64_t hiValue, uint64_t loValue)
+{
+    switch (reg)
+    {
+    case Arm64Opcode::ARM64_REG_Q0: m_vfp_regs[1] = loValue; m_vfp_regs[0] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q1: m_vfp_regs[3] = loValue; m_vfp_regs[2] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q2: m_vfp_regs[5] = loValue; m_vfp_regs[4] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q3: m_vfp_regs[7] = loValue; m_vfp_regs[6] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q4: m_vfp_regs[9] = loValue; m_vfp_regs[8] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q5: m_vfp_regs[11] = loValue; m_vfp_regs[10] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q6: m_vfp_regs[13] = loValue; m_vfp_regs[12] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q7: m_vfp_regs[15] = loValue; m_vfp_regs[14] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q8: m_vfp_regs[17] = loValue; m_vfp_regs[16] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q9: m_vfp_regs[19] = loValue; m_vfp_regs[18] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q10: m_vfp_regs[21] = loValue; m_vfp_regs[20] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q11: m_vfp_regs[23] = loValue; m_vfp_regs[22] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q12: m_vfp_regs[25] = loValue; m_vfp_regs[24] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q13: m_vfp_regs[27] = loValue; m_vfp_regs[26] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q14: m_vfp_regs[29] = loValue; m_vfp_regs[28] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q15: m_vfp_regs[31] = loValue; m_vfp_regs[30] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q16: m_vfp_regs[33] = loValue; m_vfp_regs[32] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q17: m_vfp_regs[35] = loValue; m_vfp_regs[34] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q18: m_vfp_regs[37] = loValue; m_vfp_regs[36] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q19: m_vfp_regs[39] = loValue; m_vfp_regs[38] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q20: m_vfp_regs[41] = loValue; m_vfp_regs[40] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q21: m_vfp_regs[43] = loValue; m_vfp_regs[42] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q22: m_vfp_regs[45] = loValue; m_vfp_regs[44] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q23: m_vfp_regs[47] = loValue; m_vfp_regs[46] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q24: m_vfp_regs[49] = loValue; m_vfp_regs[48] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q25: m_vfp_regs[51] = loValue; m_vfp_regs[50] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q26: m_vfp_regs[53] = loValue; m_vfp_regs[52] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q27: m_vfp_regs[55] = loValue; m_vfp_regs[54] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q28: m_vfp_regs[57] = loValue; m_vfp_regs[56] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q29: m_vfp_regs[59] = loValue; m_vfp_regs[58] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q30: m_vfp_regs[61] = loValue; m_vfp_regs[60] = hiValue; break;
+    case Arm64Opcode::ARM64_REG_Q31: m_vfp_regs[63] = loValue; m_vfp_regs[62] = hiValue; break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 CRegisters::PSTATE CRegisters::GetPstate() const
 {
     return m_pstate;

@@ -44,6 +44,7 @@ public:
 
     void Set32(Arm64Opcode::arm64_reg reg, uint32_t value);
     void Set64(Arm64Opcode::arm64_reg reg, uint64_t value);
+    void Set128(Arm64Opcode::arm64_reg reg, uint64_t hiValue, uint64_t loValue);
 
     void SetConditionFlags(bool n, bool z, bool c, bool v);
     bool ConditionSet(Arm64Opcode::arm64_cc cc);
