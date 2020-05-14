@@ -28,6 +28,7 @@
     <ClCompile Include="FileClass.cpp" />
     <ClCompile Include="IniFileClass.cpp" />
     <ClCompile Include="LogClass.cpp" />
+    <ClCompile Include="Maths.cpp" />
     <ClCompile Include="MemoryManagement.cpp" />
     <ClCompile Include="MemTest.cpp" />
     <ClCompile Include="path.cpp" />
@@ -46,6 +47,7 @@
     <ClInclude Include="FileClass.h" />
     <ClInclude Include="IniFileClass.h" />
     <ClInclude Include="LogClass.h" />
+    <ClInclude Include="Maths.h" />
     <ClInclude Include="MemoryManagement.h" />
     <ClInclude Include="MemTest.h" />
     <ClInclude Include="path.h" />

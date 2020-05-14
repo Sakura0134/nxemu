@@ -1,5 +1,6 @@
 #include <nxemu-core\Machine\Interpreter\ArmInterpreterOps64.h>
 #include <nxemu-core\SystemGlobals.h>
+#include <Common\Maths.h>
 
 void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
 {
@@ -326,6 +327,21 @@ void Arm64Op::Ccmp(CPUExecutor & core, const Arm64Opcode &op)
             }
         }
         Reg.SetConditionFlags(n, z, c, v);
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
+void Arm64Op::Clz(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
+    {
+        Reg.Set64(op.Operand(0).Reg,clz64(Reg.Get64(op.Operand(1).Reg)));
     }
     else
     {
