@@ -328,6 +328,47 @@ void Arm64Op::Ccmp(CPUExecutor & core, const Arm64Opcode &op)
         }
         Reg.SetConditionFlags(n, z, c, v);
     }
+    else if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG &&
+        CRegisters::Is64bitReg(op.Operand(0).Reg))
+    {
+        int64_t ImmVal;
+        if (op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            ImmVal = op.Operand(2).ImmVal;
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        bool z = (ImmVal & 4) != 0;
+        bool n = (ImmVal & 8) != 0;
+        bool c = (ImmVal & 2) != 0;
+        bool v = (ImmVal & 1) != 0;
+        if (Reg.ConditionSet(op.cc()))
+        {
+            uint64_t a = Reg.Get64(op.Operand(0).Reg), b;
+            if (op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+            {
+                b = op.Operand(1).ImmVal;
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+            uint64_t result = a - b;
+            n = (result & 0x80000000) != 0;
+            z = result == 0;
+            c = a >= b; //if the result of a subtraction is positive or zero
+            v = ((((a ^ b) & (a ^ result)) >> 20) & 0x80000000) != 0;
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        Reg.SetConditionFlags(n, z, c, v);
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
