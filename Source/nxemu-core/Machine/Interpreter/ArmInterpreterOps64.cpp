@@ -251,6 +251,51 @@ void Arm64Op::Cbz(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Ccmp(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG &&
+        CRegisters::Is32bitReg(op.Operand(0).Reg))
+    {
+        int64_t ImmVal;
+        if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(2).Reg))
+        {
+            ImmVal = Reg.Get32(op.Operand(2).Reg);
+        }
+        if (op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            ImmVal = op.Operand(2).ImmVal;
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+
+        bool z = (ImmVal & 4) != 0;
+        bool n = (ImmVal & 8) != 0;
+        bool c = (ImmVal & 2) != 0;
+        bool v = (ImmVal & 1) != 0;
+        if (Reg.ConditionSet(op.cc()))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        else
+        {
+            if ((ImmVal & 0xB) != 0)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+        Reg.SetConditionFlags(n, z, c, v);
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Cmp(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();

@@ -47,6 +47,7 @@ void CPUExecutor::Execute(bool & Done)
         case Arm64Opcode::ARM64_INS_BR: Arm64Op::Br(*this, op); break;
         case Arm64Opcode::ARM64_INS_CBNZ: Arm64Op::Cbnz(*this, op); break;
         case Arm64Opcode::ARM64_INS_CBZ: Arm64Op::Cbz(*this, op); break;
+        case Arm64Opcode::ARM64_INS_CCMP: Arm64Op::Ccmp(*this, op); break;
         case Arm64Opcode::ARM64_INS_CMP: Arm64Op::Cmp(*this, op); break;
         case Arm64Opcode::ARM64_INS_CSEL: Arm64Op::Csel(*this, op); break;
         case Arm64Opcode::ARM64_INS_CSET: Arm64Op::Cset(*this, op); break;
@@ -112,6 +113,7 @@ bool CPUExecutor::ShouldExecuteOp(const Arm64Opcode & op)
     switch (op.Opc())
     {
     case Arm64Opcode::ARM64_INS_B: return m_Reg.ConditionSet(op.cc());
+    case Arm64Opcode::ARM64_INS_CCMP: return true;
     case Arm64Opcode::ARM64_INS_CSEL: return true;
     case Arm64Opcode::ARM64_INS_CSET: return true;
     default:

@@ -14,6 +14,7 @@ public:
     static void Br(CPUExecutor & core, const Arm64Opcode &op);
     static void Cbnz(CPUExecutor & core, const Arm64Opcode &op);
     static void Cbz(CPUExecutor & core, const Arm64Opcode &op);
+    static void Ccmp(CPUExecutor & core, const Arm64Opcode &op);
     static void Cmp(CPUExecutor & core, const Arm64Opcode &op);
     static void Csel(CPUExecutor & core, const Arm64Opcode &op);
     static void Cset(CPUExecutor & core, const Arm64Opcode &op);
