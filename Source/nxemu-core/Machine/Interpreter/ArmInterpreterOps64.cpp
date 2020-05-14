@@ -1378,7 +1378,14 @@ void Arm64Op::Stur(CPUExecutor & core, const Arm64Opcode &op)
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
 
-        if (CRegisters::Is32bitReg(op.Operand(0).Reg))
+        if (CRegisters::Is64bitReg(op.Operand(0).Reg))
+        {
+            if (!MMU.Write64(target_addr, Reg.Get64(op.Operand(0).Reg)))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+        else if (CRegisters::Is32bitReg(op.Operand(0).Reg))
         {
             if (!MMU.Write32(target_addr, Reg.Get32(op.Operand(0).Reg)))
             {
