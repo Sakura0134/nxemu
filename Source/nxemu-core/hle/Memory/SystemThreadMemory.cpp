@@ -119,13 +119,13 @@ bool CSystemThreadMemory::WriteBytes(uint64_t Addr, const uint8_t * buffer, uint
 
 bool CSystemThreadMemory::FindAddressMemory(uint64_t Addr, uint32_t len, void *& buffer)
 {
-    if (Addr >= m_StackAddress && (Addr + len) < (m_StackAddress + m_StackSize))
+    if (Addr >= m_StackAddress && (Addr + len) <= (m_StackAddress + m_StackSize))
     {
         buffer = (void *)&m_stackmem[Addr - m_StackAddress];
         return true;
     }
 
-    if (Addr >= m_tlsAddress && (Addr + len) < (m_tlsAddress + m_tlsSize))
+    if (Addr >= m_tlsAddress && (Addr + len) <= (m_tlsAddress + m_tlsSize))
     {
         buffer = (void *)&m_tls[Addr - m_tlsAddress];
         return true;
