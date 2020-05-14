@@ -365,7 +365,10 @@ void Arm64Op::Ccmp(CPUExecutor & core, const Arm64Opcode &op)
         }
         else
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            n = (ImmVal & 8) != 0;
+            z = (ImmVal & 4) != 0;
+            c = (ImmVal & 2) != 0;
+            v = (ImmVal & 1) != 0;
         }
         Reg.SetConditionFlags(n, z, c, v);
     }
