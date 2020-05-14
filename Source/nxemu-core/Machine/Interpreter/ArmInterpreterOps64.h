@@ -42,4 +42,5 @@ public:
     static void Svc(CPUExecutor & core, const Arm64Opcode &op);
     static void Sxtw(CPUExecutor & core, const Arm64Opcode &op);
     static void Tst(CPUExecutor & core, const Arm64Opcode &op);
+    static void Udiv(CPUExecutor & core, const Arm64Opcode &op);
 };

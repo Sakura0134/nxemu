@@ -75,6 +75,7 @@ void CPUExecutor::Execute(bool & Done)
         case Arm64Opcode::ARM64_INS_SVC: Arm64Op::Svc(*this, op); break;
         case Arm64Opcode::ARM64_INS_SXTW: Arm64Op::Sxtw(*this, op); break;
         case Arm64Opcode::ARM64_INS_TST: Arm64Op::Tst(*this, op); break;
+        case Arm64Opcode::ARM64_INS_UDIV: Arm64Op::Udiv(*this, op); break;
         default:
             g_Settings->SaveBool(Debugger_SteppingOps, true);
             if (Stepping)

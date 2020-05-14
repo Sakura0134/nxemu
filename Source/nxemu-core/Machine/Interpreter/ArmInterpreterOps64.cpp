@@ -1122,3 +1122,25 @@ void Arm64Op::Tst(CPUExecutor & core, const Arm64Opcode &op)
     Reg.SetConditionFlags(n, z, 0, 0);
 }
 
+void Arm64Op::Udiv(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+    if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
+        CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && CRegisters::Is64bitReg(op.Operand(2).Reg))
+    {
+        uint64_t divisor = Reg.Get64(op.Operand(2).Reg);
+        if (divisor == 0)
+        {
+            Reg.Set64(op.Operand(0).Reg, 0);
+        }
+        else
+        {
+            Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) / divisor);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
