@@ -29,6 +29,7 @@ public:
     static void Mov(CPUExecutor & core, const Arm64Opcode &op);
     static void Movk(CPUExecutor & core, const Arm64Opcode &op);
     static void Movz(CPUExecutor & core, const Arm64Opcode &op);
+    static void Msub(CPUExecutor & core, const Arm64Opcode &op);
     static void Mul(CPUExecutor & core, const Arm64Opcode &op);
     static void Neg(CPUExecutor & core, const Arm64Opcode &op);
     static void Orr(CPUExecutor & core, const Arm64Opcode &op);
