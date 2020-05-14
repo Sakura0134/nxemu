@@ -915,6 +915,10 @@ void Arm64Op::Sub(CPUExecutor & core, const Arm64Opcode &op)
             {
                 b = Reg.Get32(op.Operand(2).Reg);
             }
+            else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_UXTB)
+            {
+                b = (uint8_t)Reg.Get32(op.Operand(2).Reg);
+            }
             else
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
