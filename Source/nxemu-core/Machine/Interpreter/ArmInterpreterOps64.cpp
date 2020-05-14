@@ -279,7 +279,22 @@ void Arm64Op::Ccmp(CPUExecutor & core, const Arm64Opcode &op)
         bool v = (ImmVal & 1) != 0;
         if (Reg.ConditionSet(op.cc()))
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            uint32_t a = Reg.Get32(op.Operand(0).Reg);
+            uint32_t b;
+            if (op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(1).Reg))
+            {
+               b = Reg.Get32(op.Operand(1).Reg);
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+            uint32_t result = a - b;
+            n = (result & 0x80000000) != 0;
+            z = result == 0;
+            c = a >= b; //if the result of a subtraction is positive or zero
+            v = ((((a ^ b) & (a ^ result)) >> 20) & 0x80000000) != 0;
         }
         else
         {
