@@ -208,6 +208,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_LDRH:
     case ARM64_INS_MSUB:
     case ARM64_INS_UMADDL:
+    case ARM64_INS_UMULH:
         return false;
     //Conditional jump, return false as does not always jump
     case ARM64_INS_CBNZ:

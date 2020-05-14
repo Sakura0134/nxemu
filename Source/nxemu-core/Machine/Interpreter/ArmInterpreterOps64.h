@@ -50,4 +50,5 @@ public:
     static void Tst(CPUExecutor & core, const Arm64Opcode &op);
     static void Udiv(CPUExecutor & core, const Arm64Opcode &op);
     static void Umaddl(CPUExecutor & core, const Arm64Opcode &op);
+    static void Umulh(CPUExecutor & core, const Arm64Opcode &op);
 };

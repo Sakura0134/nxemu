@@ -1448,3 +1448,17 @@ void Arm64Op::Umaddl(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Umulh(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG)
+    {
+        Reg.Set64(op.Operand(0).Reg, mullhi_u64(Reg.Get64(op.Operand(1).Reg), Reg.Get64(op.Operand(2).Reg)));
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
