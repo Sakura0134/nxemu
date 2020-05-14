@@ -50,6 +50,7 @@ void CPUExecutor::Execute(bool & Done)
         case Arm64Opcode::ARM64_INS_CBZ: Arm64Op::Cbz(*this, op); break;
         case Arm64Opcode::ARM64_INS_CCMP: Arm64Op::Ccmp(*this, op); break;
         case Arm64Opcode::ARM64_INS_CLZ: Arm64Op::Clz(*this, op); break;
+        case Arm64Opcode::ARM64_INS_CMN: Arm64Op::Cmn(*this, op); break;
         case Arm64Opcode::ARM64_INS_CMP: Arm64Op::Cmp(*this, op); break;
         case Arm64Opcode::ARM64_INS_CSEL: Arm64Op::Csel(*this, op); break;
         case Arm64Opcode::ARM64_INS_CSET: Arm64Op::Cset(*this, op); break;

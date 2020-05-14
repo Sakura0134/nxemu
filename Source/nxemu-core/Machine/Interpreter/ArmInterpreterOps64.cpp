@@ -393,6 +393,40 @@ void Arm64Op::Clz(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Cmn(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+
+    uint64_t a, b;
+    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && CRegisters::Is64bitReg(op.Operand(0).Reg))
+    {
+        if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            a = Reg.Get64(op.Operand(0).Reg);
+            b = op.Operand(1).ImmVal;
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    uint64_t result = a + b;
+    uint32_t result_lo = (uint32_t)(result);
+    uint32_t result_hi = (uint32_t)((result >> 32) & 0xFFFFFFFF);
+
+    bool n = (result_lo & 0x80000000) != 0;
+    bool z = result_lo == 0;
+    bool c = (result_hi & 1) != 0;
+    bool v = ((result_lo ^ a) & (~(a ^ b)) & 0x80000000) != 0;
+    Reg.SetConditionFlags(n, z, c, v);
+}
+
 void Arm64Op::Cmp(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();
