@@ -201,6 +201,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_SXTW:
     case ARM64_INS_TST:
     case ARM64_INS_UDIV:
+    case ARM64_INS_LDRH:
     case ARM64_INS_MSUB:
     case ARM64_INS_UMADDL:
         return false;

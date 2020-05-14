@@ -12,6 +12,7 @@ public:
 
     bool Initialize(uint64_t StackTop, uint32_t StackSize, uint64_t TlsAddress, uint32_t TlsSize);
     bool Read8(uint64_t Addr, uint8_t & value);
+	bool Read16(uint64_t Addr, uint16_t & value);
 	bool Read32(uint64_t Addr, uint32_t & value);
 	bool Read64(uint64_t Addr, uint64_t & value);
     bool ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len);
