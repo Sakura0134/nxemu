@@ -294,6 +294,26 @@ void Arm64Op::Cmp(CPUExecutor & core, const Arm64Opcode &op)
     Reg.SetConditionFlags(n, z, c, v);
 }
 
+void Arm64Op::Csel(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+    if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG)
+    {
+        if (CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && CRegisters::Is32bitReg(op.Operand(2).Reg))
+        {
+            Reg.Set32(op.Operand(0).Reg, Reg.ConditionSet(op.cc()) ? Reg.Get32(op.Operand(1).Reg) : Reg.Get32(op.Operand(2).Reg));
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Cset(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();
