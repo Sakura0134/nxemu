@@ -36,6 +36,7 @@ public:
     static void Mul(CPUExecutor & core, const Arm64Opcode &op);
     static void Neg(CPUExecutor & core, const Arm64Opcode &op);
     static void Orr(CPUExecutor & core, const Arm64Opcode &op);
+    static void Rbit(CPUExecutor & core, const Arm64Opcode &op);
     static void Ret(CPUExecutor & core, const Arm64Opcode &op);
     static void Stp(CPUExecutor & core, const Arm64Opcode &op);
     static void Str(CPUExecutor & core, const Arm64Opcode &op);

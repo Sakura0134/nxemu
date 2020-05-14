@@ -1050,6 +1050,43 @@ void Arm64Op::Orr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Rbit(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
+    {
+        uint64_t x = Reg.Get64(op.Operand(1).Reg);
+
+        //swap the byte order
+        x = (((x & 0x00000000000000ffULL) << 56) |
+            ((x & 0x000000000000ff00ULL) << 40) |
+            ((x & 0x0000000000ff0000ULL) << 24) |
+            ((x & 0x00000000ff000000ULL) << 8) |
+            ((x & 0x000000ff00000000ULL) >> 8) |
+            ((x & 0x0000ff0000000000ULL) >> 24) |
+            ((x & 0x00ff000000000000ULL) >> 40) |
+            ((x & 0xff00000000000000ULL) >> 56));
+
+        // assign the correct nibble position
+        x = ((x & 0xf0f0f0f0f0f0f0f0ULL) >> 4)
+            | ((x & 0x0f0f0f0f0f0f0f0fULL) << 4);
+
+        // assign the correct bit position
+        x = ((x & 0x8888888888888888ULL) >> 3)
+            | ((x & 0x4444444444444444ULL) >> 1)
+            | ((x & 0x2222222222222222ULL) << 1)
+            | ((x & 0x1111111111111111ULL) << 3);
+
+        Reg.Set64(op.Operand(0).Reg, x);
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Ret(CPUExecutor & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 0)
