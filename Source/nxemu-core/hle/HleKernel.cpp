@@ -20,6 +20,14 @@ CHleKernel::~CHleKernel()
     m_SystemThreads.clear();
 }
 
+ResultCode CHleKernel::GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "Start (InfoType: %s handle: 0x%X SubId: 0x%I64X)", GetInfoTypeName(InfoType), handle, SubId);
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    WriteTrace(TraceHleKernel, TraceInfo, "Done (Info: 0x%I64X Return: 0x%I64X)", Info, 0);
+    return RESULT_SUCCESS;
+}
+
 ResultCode CHleKernel::QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t MemoryInfoAddr, uint64_t QueryAddr)
 {
     WriteTrace(TraceServiceCall, TraceVerbose, "Start (MemoryInfoAddr: 0x%I64X QueryAddr: 0x%I64X)", MemoryInfoAddr, QueryAddr);
@@ -74,6 +82,31 @@ uint64_t CHleKernel::CreateNewThreadID()
 {
 	uint64_t ThreadId = m_NextThreadId++;
 	return ThreadId;
+}
+
+const char * CHleKernel::GetInfoTypeName(GetInfoType Id)
+{
+    switch (Id)
+    {
+    case AllowedCpuIdBitmask: return "AllowedCpuIdBitmask";
+    case AllowedThreadPrioBitmask: return "AllowedThreadPrioBitmask";
+    case MapRegionBaseAddr: return "MapRegionBaseAddr";
+    case MapRegionBaseSize: return "MapRegionBaseSize";
+    case HeapRegionBaseAddr: return "HeapRegionBaseAddr";
+    case HeapRegionSize: return "HeapRegionSize";
+    case TotalMemoryAvailable: return "TotalMemoryAvailable";
+    case TotalHeapUsage: return "TotalHeapUsage";
+    case IsCurrentProcessBeingDebugged: return "IsCurrentProcessBeingDebugged";
+    case RandomEntropy: return "RandomEntropy";
+    case AddressSpaceBaseAddr: return "AddressSpaceBaseAddr";
+    case AddressSpaceSize: return "AddressSpaceSize";
+    case MapRegionAddress: return "MapRegionAddress";
+    case MapRegionSize: return "MapRegionSize";
+    }
+
+    static stdstr unknown;
+    unknown.Format("Unknown (0x%X)", Id);
+    return unknown.c_str();
 }
 
 const char * CHleKernel::SvcGetCallStr(SvcGetCall svcCall)

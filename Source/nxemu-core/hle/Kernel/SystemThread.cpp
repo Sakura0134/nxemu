@@ -48,6 +48,13 @@ void CSystemThread::ServiceCall(uint32_t index)
     case CHleKernel::svcQueryMemory:
         Result = m_Kernel->QueryMemory(m_ThreadMemory, m_Reg.Get64(Arm64Opcode::ARM64_REG_X0), m_Reg.Get64(Arm64Opcode::ARM64_REG_X2));
         break;
+    case CHleKernel::svcGetInfo:
+        {
+            uint64_t Info = m_Reg.Get64(Arm64Opcode::ARM64_REG_X1);
+            Result = m_Kernel->GetInfo(Info, (CHleKernel::GetInfoType)m_Reg.Get32(Arm64Opcode::ARM64_REG_W1), m_Reg.Get32(Arm64Opcode::ARM64_REG_W2), m_Reg.Get64(Arm64Opcode::ARM64_REG_X3));
+            m_Reg.Set64(Arm64Opcode::ARM64_REG_X1, Info);
+        }
+        break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }

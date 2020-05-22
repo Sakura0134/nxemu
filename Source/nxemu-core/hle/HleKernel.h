@@ -59,12 +59,32 @@ public:
         svcGetLastThreadInfo = 0x2F,
     };
 
+    enum GetInfoType : uint64_t
+    {
+        AllowedCpuIdBitmask = 0,
+        AllowedThreadPrioBitmask = 1,
+        MapRegionBaseAddr = 2,
+        MapRegionBaseSize = 3,
+        HeapRegionBaseAddr = 4,
+        HeapRegionSize = 5,
+        TotalMemoryAvailable = 6,
+        TotalHeapUsage = 7,
+        IsCurrentProcessBeingDebugged = 8,
+        RandomEntropy = 11,
+        AddressSpaceBaseAddr = 12,
+        AddressSpaceSize = 13,
+        MapRegionAddress = 14,
+        MapRegionSize = 15,
+		unknown16 = 16,
+    };
+
     CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory);
     ~CHleKernel();
 
 	bool AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
     const SystemThreadList & SystemThreads(void) const { return m_SystemThreads; }
 
+    ResultCode GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId);
     ResultCode QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t MemoryInfoAddr, uint64_t QueryAddr);
 
     static const char * SvcGetCallStr(SvcGetCall svcCall);
@@ -76,6 +96,7 @@ private:
 
 	uint32_t GetNewHandle();
 	uint64_t CreateNewThreadID();
+    static const char * GetInfoTypeName(GetInfoType Id);
 
     CSwitchSystem & m_System;
     CProcessMemory & m_ProcessMemory;
