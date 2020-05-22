@@ -62,6 +62,7 @@ public:
         m_cmbTraceAppInit.Attach(GetDlgItem(IDC_CMB_TRACE_APPINIT));
         m_cmbTraceAppCleanup.Attach(GetDlgItem(IDC_CMB_TRACE_APPCLEANUP));
         m_cmbTraceServiceCall.Attach(GetDlgItem(IDC_CMB_TRACE_SERVICECALL));
+        m_cmbTraceHleKernel.Attach(GetDlgItem(IDC_CMB_TRACE_HLEKERNEL));
         m_cmbTraceMemory.Attach(GetDlgItem(IDC_CMB_TRACE_MEMORY));
         m_cmbTraceGameFile.Attach(GetDlgItem(IDC_CMB_TRACE_GAMEFILE));
 
@@ -74,6 +75,7 @@ public:
             { m_cmbTraceAppInit, Debugger_TraceAppInit },
             { m_cmbTraceAppCleanup, Debugger_TraceAppCleanup },
             { m_cmbTraceServiceCall, Debugger_TraceServiceCall },
+            { m_cmbTraceHleKernel, Debugger_TraceHleKernel },
             { m_cmbTraceMemory, Debugger_TraceMemory },
             { m_cmbTraceGameFile, Debugger_TraceGameFile },
         };
@@ -101,6 +103,7 @@ public:
             { m_cmbTraceAppInit, Debugger_TraceAppInit },
             { m_cmbTraceAppCleanup, Debugger_TraceAppCleanup },
             { m_cmbTraceServiceCall, Debugger_TraceServiceCall },
+            { m_cmbTraceHleKernel, Debugger_TraceHleKernel },
             { m_cmbTraceMemory, Debugger_TraceMemory },
             { m_cmbTraceGameFile, Debugger_TraceGameFile },
         };
@@ -120,6 +123,7 @@ private:
     CComboBox m_cmbTraceAppInit;
     CComboBox m_cmbTraceAppCleanup;
     CComboBox m_cmbTraceServiceCall;
+    CComboBox m_cmbTraceHleKernel;
     CComboBox m_cmbTraceMemory;
     CComboBox m_cmbTraceGameFile;
 };

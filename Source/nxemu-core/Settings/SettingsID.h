@@ -44,6 +44,7 @@ enum SettingID
     Debugger_TraceAppInit,
     Debugger_TraceAppCleanup,
     Debugger_TraceServiceCall,
+    Debugger_TraceHleKernel,
     Debugger_TraceMemory,
     Debugger_TraceGameFile,
 
