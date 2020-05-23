@@ -675,6 +675,10 @@ void Arm64Op::Ldr(CPUExecutor & core, const Arm64Opcode &op)
             {
                 index = Reg.Get64(op.Operand(1).mem.index);
             }
+            else if (CRegisters::Is32bitReg(op.Operand(1).mem.index))
+            {
+                index = Reg.Get32(op.Operand(1).mem.index);
+            }
             else
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
