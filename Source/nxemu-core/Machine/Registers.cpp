@@ -300,6 +300,7 @@ bool CRegisters::ConditionSet(Arm64Opcode::arm64_cc cc)
     case Arm64Opcode::ARM64_CC_HS: return m_pstate.C != 0;
     case Arm64Opcode::ARM64_CC_LO: return m_pstate.C == 0;
     case Arm64Opcode::ARM64_CC_HI: return m_pstate.C != 0 && m_pstate.Z == 0;
+    case Arm64Opcode::ARM64_CC_LT: return m_pstate.N != m_pstate.V;
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;

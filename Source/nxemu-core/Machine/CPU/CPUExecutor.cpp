@@ -54,6 +54,7 @@ void CPUExecutor::Execute(bool & Done)
         case Arm64Opcode::ARM64_INS_CMP: Arm64Op::Cmp(*this, op); break;
         case Arm64Opcode::ARM64_INS_CSEL: Arm64Op::Csel(*this, op); break;
         case Arm64Opcode::ARM64_INS_CSET: Arm64Op::Cset(*this, op); break;
+        case Arm64Opcode::ARM64_INS_CSINC: Arm64Op::Csinc(*this, op); break;
         case Arm64Opcode::ARM64_INS_DUP: Arm64Op::Dup(*this, op); break;
         case Arm64Opcode::ARM64_INS_EOR: Arm64Op::Eor(*this, op); break;
         case Arm64Opcode::ARM64_INS_LDP: Arm64Op::Ldp(*this, op); break;
@@ -125,6 +126,7 @@ bool CPUExecutor::ShouldExecuteOp(const Arm64Opcode & op)
     case Arm64Opcode::ARM64_INS_CCMP: return true;
     case Arm64Opcode::ARM64_INS_CSEL: return true;
     case Arm64Opcode::ARM64_INS_CSET: return true;
+    case Arm64Opcode::ARM64_INS_CSINC: return true;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
