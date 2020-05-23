@@ -551,6 +551,10 @@ void Arm64Op::Eor(CPUExecutor & core, const Arm64Opcode &op)
             {
                 Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) ^ Reg.Get32(op.Operand(2).Reg));
             }
+            else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL)
+            {
+                Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) ^ (Reg.Get32(op.Operand(2).Reg) << op.Operand(2).shift.value));
+            }
             else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSR)
             {
                 Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) ^ (Reg.Get32(op.Operand(2).Reg) >> op.Operand(2).shift.value));
