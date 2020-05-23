@@ -1270,6 +1270,10 @@ void Arm64Op::Orr(CPUExecutor & core, const Arm64Opcode &op)
         {
             Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) | (uint32_t)op.Operand(2).ImmVal);
         }
+        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+        {
+            Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) | Reg.Get32(op.Operand(2).Reg));
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
