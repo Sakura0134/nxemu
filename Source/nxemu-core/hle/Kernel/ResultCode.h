@@ -32,5 +32,6 @@ union ResultCode
 const ResultCode RESULT_SUCCESS(0);
 const ResultCode ERR_INVALID_HANDLE( ErrorModule::Kernel, 114 );
 const ResultCode ERR_INVALID_COMBINATION(ErrorModule::Kernel, 116);
+const ResultCode ERR_INVALID_ENUM_VALUE(ErrorModule::Kernel, 120);
 
 const char * ResultCodeStr(ResultCode code);

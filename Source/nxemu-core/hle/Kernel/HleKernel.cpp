@@ -52,6 +52,32 @@ ResultCode CHleKernel::GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t h
             Info = m_RandomEntropy[SubId];
         }
     }
+    else if (InfoType == AddressSpaceBaseAddr)
+    {
+        if (SubId != 0)
+        {
+            WriteTrace(TraceHleKernel, TraceNotice, "InfoType: %s: SubId should be 0, was (%X)", GetInfoTypeName(InfoType), SubId);
+            Result = ERR_INVALID_ENUM_VALUE;
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        else if (handle != HANDLE_CURRENT_PROCESS)
+        {
+            WriteTrace(TraceHleKernel, TraceNotice, "handle (%X) not handled", handle);
+            Result = ERR_INVALID_HANDLE;
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        else
+        {
+            switch (InfoType)
+            {
+            case AddressSpaceBaseAddr:
+                Info = m_ProcessMemory.GetAddressSpaceBaseAddr();
+                break;
+            default:
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);

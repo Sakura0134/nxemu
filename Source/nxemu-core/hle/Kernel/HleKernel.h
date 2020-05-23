@@ -7,15 +7,20 @@ class CSwitchSystem;
 
 class CHleKernel
 {
-public:   
+public:
+    enum
+    {
+        HANDLE_CURRENT_PROCESS = 0xFFFF8001
+    };
+
     enum SvcGetCall
     {
-		svcSetHeapSize = 0x01,
+        svcSetHeapSize = 0x01,
         svcSetMemoryPermission = 0x02,
-		svcSetMemoryAttribute = 0x03,
-		svcMapMemory = 0x04,
-		svcUnmapMemory = 0x05,
-		svcQueryMemory = 0x06,
+        svcSetMemoryAttribute = 0x03,
+        svcMapMemory = 0x04,
+        svcUnmapMemory = 0x05,
+        svcQueryMemory = 0x06,
         svcExitProcess = 0x07,
         svcCreateThread = 0x08,
         svcStartThread = 0x09,
@@ -31,7 +36,7 @@ public:
         svcMapSharedMemory = 0x13,
         svcUnmapSharedMemory = 0x14,
         svcCreateTransferMemory = 0x15,
-		svcCloseHandle = 0x16,
+        svcCloseHandle = 0x16,
         svcResetSignal = 0x17,
         svcWaitSynchronization = 0x18,
         svcCancelSynchronization = 0x19,
@@ -46,14 +51,14 @@ public:
         svcSendSyncRequestWithUserBuffer = 0x22,
         svcSendAsyncRequestWithUserBuffer = 0x23,
         svcGetProcessId = 0x24,
-		svcGetThreadId = 0x25,
+        svcGetThreadId = 0x25,
         svcBreak = 0x26,
         svcOutputDebugString = 0x27,
         svcReturnFromException = 0x28,
         svcGetInfo = 0x29,
         svcFlushEntireDataCache = 0x2A,
         scvFlushDataCache = 0x2B,
-		svcMapPhysicalMemory = 0x2C,
+        svcMapPhysicalMemory = 0x2C,
         svcUnmapPhysicalMemory = 0x2D,
         svcGetDebugFutureThreadInfo = 0x2E,
         svcGetLastThreadInfo = 0x2F,
@@ -75,13 +80,13 @@ public:
         AddressSpaceSize = 13,
         MapRegionAddress = 14,
         MapRegionSize = 15,
-		unknown16 = 16,
+        unknown16 = 16,
     };
 
     CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory);
     ~CHleKernel();
 
-	bool AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
+    bool AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
     const SystemThreadList & SystemThreads(void) const { return m_SystemThreads; }
 
     ResultCode GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId);
@@ -94,14 +99,14 @@ private:
     CHleKernel(const CHleKernel&);             // Disable copy constructor
     CHleKernel& operator=(const CHleKernel&);  // Disable assignment
 
-	uint32_t GetNewHandle();
-	uint64_t CreateNewThreadID();
+    uint32_t GetNewHandle();
+    uint64_t CreateNewThreadID();
     static const char * GetInfoTypeName(GetInfoType Id);
 
     CSwitchSystem & m_System;
     CProcessMemory & m_ProcessMemory;
     SystemThreadList m_SystemThreads;
     uint32_t m_NextHandle;
-	uint64_t m_NextThreadId;
+    uint64_t m_NextThreadId;
     uint64_t m_RandomEntropy[4];
 };
