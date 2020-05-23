@@ -76,6 +76,10 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
     AddHandler(Directory_LogSelected, new CSettingTypeApplicationPath("Log Directory", "Directory", Directory_LogInitial));
     AddHandler(Directory_LogUseSelected, new CSettingTypeApplication("Log Directory", "Use Selected", false));
 
+    //HLE Kernel
+    AddHandler(HleKernel_RandomizeEntropy, new CSettingTypeApplication("Hle Kernel", "Randomize Entropy", false));
+    AddHandler(HleKernel_RandomizeSeed, new CSettingTypeApplication("Hle Kernel", "Randomize Seed", (uint32_t)0x5ec86b51));
+        
     //Debugger
     AddHandler(Debugger_Enabled, new CSettingTypeApplication("Debugger", "Debugger", true));
     AddHandler(Debugger_SteppingOps, new CSettingTypeTempBool(false));
@@ -90,7 +94,7 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
     AddHandler(Debugger_TraceAppInit, new CSettingTypeApplication("Logging", "App Init", (uint32_t)g_ModuleLogLevel[TraceAppInit]));
     AddHandler(Debugger_TraceAppCleanup, new CSettingTypeApplication("Logging", "App Cleanup", (uint32_t)g_ModuleLogLevel[TraceAppCleanup]));
     AddHandler(Debugger_TraceServiceCall, new CSettingTypeApplication("Logging", "Service Call", (uint32_t)g_ModuleLogLevel[TraceServiceCall]));
-    AddHandler(Debugger_TraceHleKernel, new CSettingTypeApplication("Logging", "Hle Kernel", (uint32_t)g_ModuleLogLevel[TraceServiceCall]));
+    AddHandler(Debugger_TraceHleKernel, new CSettingTypeApplication("Logging", "Hle Kernel", (uint32_t)g_ModuleLogLevel[TraceHleKernel]));
     AddHandler(Debugger_TraceMemory, new CSettingTypeApplication("Logging", "Memory", (uint32_t)g_ModuleLogLevel[TraceMemory]));
     AddHandler(Debugger_TraceGameFile, new CSettingTypeApplication("Logging", "Game File", (uint32_t)g_ModuleLogLevel[TraceGameFile]));
 }

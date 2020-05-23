@@ -30,5 +30,7 @@ union ResultCode
 #pragma warning(pop)
 
 const ResultCode RESULT_SUCCESS(0);
+const ResultCode ERR_INVALID_HANDLE( ErrorModule::Kernel, 114 );
+const ResultCode ERR_INVALID_COMBINATION(ErrorModule::Kernel, 116);
 
 const char * ResultCodeStr(ResultCode code);

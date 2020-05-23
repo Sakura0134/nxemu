@@ -103,4 +103,5 @@ private:
     SystemThreadList m_SystemThreads;
     uint32_t m_NextHandle;
 	uint64_t m_NextThreadId;
+    uint64_t m_RandomEntropy[4];
 };

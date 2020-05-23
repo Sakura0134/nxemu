@@ -30,6 +30,10 @@ enum SettingID
     Directory_LogSelected,
     Directory_LogUseSelected,
 
+    //HLE Kernel
+    HleKernel_RandomizeEntropy,
+    HleKernel_RandomizeSeed,
+
     //Debugger
     Debugger_Enabled,
     Debugger_SteppingOps,
