@@ -137,9 +137,6 @@
     <ClInclude Include="Machine\PageTable.h">
       <Filter>Header Files\Machine</Filter>
     </ClInclude>
-    <ClInclude Include="hle\HleKernel.h">
-      <Filter>Header Files\hle</Filter>
-    </ClInclude>
     <ClInclude Include="Machine\CPU\CPUExecutor.h">
       <Filter>Header Files\Machine\CPU</Filter>
     </ClInclude>
@@ -218,6 +215,9 @@
     <ClInclude Include="hle\Memory\SystemThreadMemory.h">
       <Filter>Header Files\hle\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Kernel\HleKernel.h">
+      <Filter>Header Files\hle\Kernel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -255,9 +255,6 @@
     </ClCompile>
     <ClCompile Include="Machine\PageTable.cpp">
       <Filter>Source Files\Machine</Filter>
-    </ClCompile>
-    <ClCompile Include="hle\HleKernel.cpp">
-      <Filter>Source Files\hle</Filter>
     </ClCompile>
     <ClCompile Include="Machine\CPU\CPUExecutor.cpp">
       <Filter>Source Files\Machine\CPU</Filter>
@@ -339,6 +336,9 @@
     </ClCompile>
     <ClCompile Include="hle\Memory\MemoryRegion.cpp">
       <Filter>Source Files\hle\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Kernel\HleKernel.cpp">
+      <Filter>Source Files\hle\Kernel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

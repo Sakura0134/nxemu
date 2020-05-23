@@ -1,6 +1,6 @@
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\hle\Kernel\ResultCode.h>
-#include <nxemu-core\hle\HleKernel.h>
+#include <nxemu-core\hle\Kernel\HleKernel.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
 
