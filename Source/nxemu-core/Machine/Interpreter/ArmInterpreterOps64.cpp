@@ -1381,6 +1381,34 @@ void Arm64Op::Stp(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Sbfiz(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM &&
+        CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
+    {
+        int64_t lsb = op.Operand(2).ImmVal;
+        int64_t width = op.Operand(3).ImmVal;
+
+        if (lsb < 0 || lsb > 63)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        if (width < 1 || width > 64)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        Reg.Set64(op.Operand(0).Reg, (int64_t)(Reg.Get64(op.Operand(1).Reg) << width) >> (width - lsb));
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();

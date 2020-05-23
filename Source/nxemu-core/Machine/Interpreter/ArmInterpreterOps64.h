@@ -44,6 +44,7 @@ public:
     static void Orr(CPUExecutor & core, const Arm64Opcode &op);
     static void Rbit(CPUExecutor & core, const Arm64Opcode &op);
     static void Ret(CPUExecutor & core, const Arm64Opcode &op);
+    static void Sbfiz(CPUExecutor & core, const Arm64Opcode &op);
     static void Stp(CPUExecutor & core, const Arm64Opcode &op);
     static void Str(CPUExecutor & core, const Arm64Opcode &op);
     static void Strb(CPUExecutor & core, const Arm64Opcode &op);
