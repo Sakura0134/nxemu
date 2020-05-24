@@ -23,6 +23,10 @@ void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
             {
                 Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) + (Reg.Get64(op.Operand(2).Reg) << op.Operand(2).shift.value));
             }
+            else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSR && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) + (Reg.Get64(op.Operand(2).Reg) >> op.Operand(2).shift.value));
+            }
             else
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
