@@ -15,6 +15,7 @@ public:
     ~CProcessMemory();
 
     uint64_t GetAddressSpaceBaseAddr(void) const { return m_AddressSpaceBase; }
+    uint64_t GetAddressSpaceSize(void) const { return m_AddressSpaceSize; }
     uint64_t GetTlsIoRegionBase(void) const { return m_TlsIoRegionBase; }
     uint64_t GetTlsIoRegionSize(void) const { return m_TlsIoRegionSize; }
 

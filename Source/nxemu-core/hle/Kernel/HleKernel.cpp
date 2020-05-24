@@ -52,7 +52,7 @@ ResultCode CHleKernel::GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t h
             Info = m_RandomEntropy[SubId];
         }
     }
-    else if (InfoType == AddressSpaceBaseAddr)
+    else if (InfoType == AddressSpaceBaseAddr || InfoType == AddressSpaceSize)
     {
         if (SubId != 0)
         {
@@ -72,6 +72,9 @@ ResultCode CHleKernel::GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t h
             {
             case AddressSpaceBaseAddr:
                 Info = m_ProcessMemory.GetAddressSpaceBaseAddr();
+                break;
+            case AddressSpaceSize:
+                Info = m_ProcessMemory.GetAddressSpaceSize();
                 break;
             default:
                 g_Notify->BreakPoint(__FILE__, __LINE__);
