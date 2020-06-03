@@ -92,8 +92,11 @@ void CDebuggerUI::SetDebugThread(void)
             {
                 FirstThread = Thread;
             }
-            m_DebugThread = Object;
-            break;
+            if (Thread->GetState() == CSystemThread::Running)
+            {
+                m_DebugThread = Object;
+                break;
+            }
         }
         if (m_DebugThread == NULL)
         {

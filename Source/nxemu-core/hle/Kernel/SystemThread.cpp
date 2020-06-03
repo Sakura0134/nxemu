@@ -8,6 +8,7 @@ CSystemThread::CSystemThread(CHleKernel * m_Kernel, CProcessMemory &ProcessMemor
     CPUExecutor(m_ThreadMemory),
     m_Kernel(m_Kernel),
     m_ThreadMemory(ProcessMemory, this),
+    m_State(Created),
     m_ThreadId(thread_id),
 	m_Priority(Priority),
     m_TlsAddress(ProcessMemory.GetTlsIoRegionBase()),
@@ -66,3 +67,7 @@ void CSystemThread::ServiceCall(uint32_t index)
     WriteTrace(TraceServiceCall, TraceDebug, VoidRes ? "Done" : "Done (Result: %s)", ResultCodeStr(Result));
 }
 
+void CSystemThread::SetState(ThreadState state)
+{
+    m_State = state;
+}

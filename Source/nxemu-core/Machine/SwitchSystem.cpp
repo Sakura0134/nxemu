@@ -42,8 +42,11 @@ void CSwitchSystem::EmulationThread(void)
             KernelObjectList & ThreadQueue = m_Kernel.ThreadQueue();
             for (size_t i = 0, n = ThreadQueue.size(); i < n; i++)
             {
-                ThreadObject = ThreadQueue[i];
-                break;
+                if (ThreadQueue[i]->GetSystemThreadPtr()->GetState() == CSystemThread::Ready)
+                {
+                    ThreadObject = ThreadQueue[i];
+                    break;
+                }
             }
         }
 
@@ -54,17 +57,26 @@ void CSwitchSystem::EmulationThread(void)
         }
         m_SystemThread.Set(ThreadObject.get());
         CSystemThread * Thread = ThreadObject->GetSystemThreadPtr();
-        Thread->Execute(Done);
-        KernelObjectList & ThreadQueue = m_Kernel.ThreadQueue();
-        for (size_t i = 0, n = ThreadQueue.size(); i < n; i++)
+        if (Thread->GetState() != CSystemThread::Ready)
         {
-            if (ThreadQueue[i] != Thread)
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        Thread->SetState(CSystemThread::Running);
+        Thread->Execute(Done);
+        if (Thread->GetState() == CSystemThread::Running)
+        {
+            KernelObjectList & ThreadQueue = m_Kernel.ThreadQueue();
+            for (size_t i = 0, n = ThreadQueue.size(); i < n; i++)
             {
-                continue;
+                if (ThreadQueue[i] != Thread)
+                {
+                    continue;
+                }
+                ThreadQueue.erase(ThreadQueue.begin() + i);
+                ThreadQueue.push_back(Thread);
+                break;
             }
-            ThreadQueue.erase(ThreadQueue.begin() + i);
-            ThreadQueue.push_back(Thread);
-            break;
+            Thread->SetState(CSystemThread::Ready);
         }
         m_SystemThread.Set(NULL);
     }
