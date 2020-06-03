@@ -24,6 +24,7 @@ public:
     CSystemThread(CHleKernel * m_Kernel, CProcessMemory &ProcessMemory, const char * name, uint64_t entry_point, uint32_t ThreadHandle, uint32_t thread_id, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
     ~CSystemThread();
 
+    inline uint32_t GetPriority() const { return m_Priority; }
     inline ThreadState GetState() const { return m_State; }
 
     void SetState(ThreadState state);

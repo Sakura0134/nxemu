@@ -49,6 +49,13 @@ void CSystemThread::ServiceCall(uint32_t index)
     case CHleKernel::svcQueryMemory:
         Result = m_Kernel->QueryMemory(m_ThreadMemory, m_Reg.Get64(Arm64Opcode::ARM64_REG_X0), m_Reg.Get64(Arm64Opcode::ARM64_REG_X2));
         break;
+    case CHleKernel::svcGetThreadPriority:
+        {
+            uint32_t Priority = m_Reg.Get32(Arm64Opcode::ARM64_REG_W1);
+            Result = m_Kernel->GetThreadPriority(Priority, Priority);
+            m_Reg.Set32(Arm64Opcode::ARM64_REG_W1, Priority);
+        }
+        break;
     case CHleKernel::svcGetInfo:
         {
             uint64_t Info = m_Reg.Get64(Arm64Opcode::ARM64_REG_X1);

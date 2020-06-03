@@ -90,6 +90,20 @@ ResultCode CHleKernel::GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t h
     return Result;
 }
 
+ResultCode CHleKernel::GetThreadPriority(uint32_t & Priority, uint32_t handle)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "Start (Handle: 0x%X)", handle);
+    KernelObjectMap::const_iterator itr = m_KernelObjects.find(handle);
+    if (itr != m_KernelObjects.end() && itr->second->GetHandleType() == CKernelObject::HandleType::Thread)
+    {
+        Priority = itr->second->GetSystemThreadPtr()->GetPriority();
+        WriteTrace(TraceHleKernel, TraceInfo, "Done (Priority: 0x%X)", Priority);
+        return RESULT_SUCCESS;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return RESULT_SUCCESS;
+}
+
 ResultCode CHleKernel::QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t MemoryInfoAddr, uint64_t QueryAddr)
 {
     WriteTrace(TraceServiceCall, TraceVerbose, "Start (MemoryInfoAddr: 0x%I64X QueryAddr: 0x%I64X)", MemoryInfoAddr, QueryAddr);
