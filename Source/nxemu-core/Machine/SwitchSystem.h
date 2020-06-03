@@ -1,12 +1,13 @@
 #pragma once
-#include <Common\Thread.h>
-#include <Common\path.h>
 #include <nxemu-core\hle\Memory\ProcessMemory.h>
 #include <nxemu-core\hle\Kernel\HleKernel.h>
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\Machine\SwitchKeys.h>
 #include <nxemu-core\FileSystem\EncryptedFile.h>
 #include <nxemu-core\FileSystem\PartitionFilesystem.h>
+#include <Common\Thread.h>
+#include <Common\path.h>
+#include <Common\ThreadLocalStorage.h>
 
 class CXci;
 
@@ -19,7 +20,8 @@ public:
     bool LoadGame(const char * GamePath);
     void StartEmulation(void);
 
-    const SystemThreadList & SystemThreads(void) const { return m_Kernel.SystemThreads(); }
+    inline KernelObjectMap & KernelObjects(void) { return m_Kernel.KernelObjects(); }
+    inline CKernelObject * SystemThread(void) { return m_SystemThread.Get(); }
 
 private:
     CSwitchSystem(const CSwitchSystem&);             // Disable copy constructor
@@ -36,6 +38,7 @@ private:
     CProcessMemory m_ProcessMemory;
     bool m_EndEmulation;
     CThread m_EmulationThread;
+    CTLS<CKernelObject> m_SystemThread;
 	CSwitchKeys m_Keys;
 	CXci * m_Xci;
 };

@@ -24,7 +24,7 @@ public:
     CGPRTab64(HWND hParent, const RECT & rcDispay);
     ~CGPRTab64();
 
-    void RefreshValues(CPUExecutor * Executor);
+    void RefreshValues(CSystemThread * DebugThread);
 
 private:
     CGPRTab64(void);                        // Disable default constructor
@@ -58,7 +58,7 @@ public:
     CGPRTab32(HWND hParent, const RECT & rcDispay);
     ~CGPRTab32();
 
-    void RefreshValues(CPUExecutor * Executor);
+    void RefreshValues(CSystemThread * DebugThread);
 
 private:
     CGPRTab32(void);                       // Disable default constructor
@@ -92,7 +92,7 @@ public:
     CRegQTab(HWND hParent, const RECT & rcDispay);
     ~CRegQTab();
 
-    void RefreshValues(CPUExecutor * Executor);
+    void RefreshValues(CSystemThread * DebugThread);
 
 private:
     CRegQTab(void);                       // Disable default constructor
@@ -122,7 +122,7 @@ public:
     CRegQTab2(HWND hParent, const RECT & rcDispay);
     ~CRegQTab2();
 
-    void RefreshValues(CPUExecutor * Executor);
+    void RefreshValues(CSystemThread * DebugThread);
 
 private:
     CRegQTab2(void);                       // Disable default constructor
@@ -152,7 +152,7 @@ public:
     CPStateTab(HWND hParent, const RECT & rcDispay);
     ~CPStateTab();
 
-    void RefreshValues(CPUExecutor * Executor);
+    void RefreshValues(CSystemThread * DebugThread);
 
 private:
     CPStateTab(void);                       // Disable default constructor
@@ -180,7 +180,7 @@ public:
 
     void ShowTab(int nPage);
     void RedrawCurrentTab();
-    void RefreshEdits();
+    void RefreshRegisterTabs();
 
 private:
     CRegisterTabs(void);             // Disable default constructor

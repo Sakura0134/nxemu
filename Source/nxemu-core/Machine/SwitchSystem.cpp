@@ -37,8 +37,36 @@ void CSwitchSystem::EmulationThread(void)
     bool & Done = m_EndEmulation;
     while (!Done)
     {
-        CSystemThread* thread = m_Kernel.SystemThreads().begin()->second;
-        thread->Execute(Done);
+        CKernelObjectPtr ThreadObject(NULL);
+        {
+            KernelObjectList & ThreadQueue = m_Kernel.ThreadQueue();
+            for (size_t i = 0, n = ThreadQueue.size(); i < n; i++)
+            {
+                ThreadObject = ThreadQueue[i];
+                break;
+            }
+        }
+
+        if (ThreadObject.get() == NULL || ThreadObject->GetHandleType() != CKernelObject::HandleType::Thread)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            break;
+        }
+        m_SystemThread.Set(ThreadObject.get());
+        CSystemThread * Thread = ThreadObject->GetSystemThreadPtr();
+        Thread->Execute(Done);
+        KernelObjectList & ThreadQueue = m_Kernel.ThreadQueue();
+        for (size_t i = 0, n = ThreadQueue.size(); i < n; i++)
+        {
+            if (ThreadQueue[i] != Thread)
+            {
+                continue;
+            }
+            ThreadQueue.erase(ThreadQueue.begin() + i);
+            ThreadQueue.push_back(Thread);
+            break;
+        }
+        m_SystemThread.Set(NULL);
     }
 }
 

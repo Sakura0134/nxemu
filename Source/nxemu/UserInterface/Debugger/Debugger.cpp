@@ -7,7 +7,7 @@
 CDebuggerUI::CDebuggerUI() :
     m_CommandsView(NULL),
     m_StepEvent(false),
-    m_Executor(NULL)
+    m_DebugThread(NULL)
 {
 	g_Settings->RegisterChangeCB(Debugger_SteppingOps, this, (CSettings::SettingChangedFunc)SteppingOpsChanged);
 }
@@ -53,13 +53,55 @@ void CDebuggerUI::WaitForStep(void)
 
 void CDebuggerUI::SetDebugThread(void)
 {
-    const SystemThreadList & threads = g_BaseMachine != NULL ? g_BaseMachine->SystemThreads() : SystemThreadList();
-    if (m_Executor == NULL)
+    const KernelObjectMap & KernelObjects = g_BaseMachine != NULL ? g_BaseMachine->KernelObjects() : KernelObjectMap();
+    if (m_DebugThread != NULL)
     {
-        m_Executor = threads.size() > 0 ? threads.begin()->second : NULL;
+        bool Found = false;
+        for (KernelObjectMap::const_iterator itr = KernelObjects.begin(); itr != KernelObjects.end(); itr++)
+        {
+            CKernelObject * Object = itr->second.get();
+            if (Object->GetHandleType() != CKernelObject::Thread)
+            {
+                continue;
+            }
+            CSystemThread * Thread = Object->GetSystemThreadPtr();
+            if (m_DebugThread == Thread)
+            {
+                Found = true;
+                break;
+            }
+        }
+        if (!Found)
+        {
+            m_DebugThread = NULL;
+        }
     }
-    else if (threads.size() == 0)
+
+    if (m_DebugThread == NULL)
     {
-        m_Executor = NULL;
+        CKernelObjectPtr FirstThread(NULL);
+        for (KernelObjectMap::const_iterator itr = KernelObjects.begin(); itr != KernelObjects.end(); itr++)
+        {
+            CKernelObject * Object = itr->second.get();
+            if (Object->GetHandleType() != CKernelObject::Thread)
+            {
+                continue;
+            }
+            CSystemThread * Thread = Object->GetSystemThreadPtr();
+            if (FirstThread == NULL)
+            {
+                FirstThread = Thread;
+            }
+            m_DebugThread = Object;
+            break;
+        }
+        if (m_DebugThread == NULL)
+        {
+            m_DebugThread = FirstThread;
+            if (m_DebugThread == NULL)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
     }
 }

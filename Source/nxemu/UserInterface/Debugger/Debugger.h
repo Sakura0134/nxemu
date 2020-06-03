@@ -1,9 +1,9 @@
 #pragma once
 #include <Common\SyncEvent.h>
+#include <nxemu-core\hle\Kernel\KernelObject.h>
 #include <nxemu-core\Debugger.h>
 
 class CDebugCommandsView;
-class CPUExecutor;
 
 class CDebuggerUI :
     public CDebugger
@@ -16,7 +16,7 @@ public:
     void EditLoggingOptions(void * hWndParent);
     void WaitForStep(void);
 
-    inline CPUExecutor * Executor() { return m_Executor; }
+    inline CKernelObjectPtr DebugThread() { return m_DebugThread; }
 
 private:
     CDebuggerUI(const CDebuggerUI&);				// Disable copy constructor
@@ -29,5 +29,5 @@ private:
     CDebugCommandsView * m_CommandsView;
     SyncEvent m_StepEvent;
 
-    CPUExecutor * m_Executor;
+    CKernelObjectPtr m_DebugThread;
 };

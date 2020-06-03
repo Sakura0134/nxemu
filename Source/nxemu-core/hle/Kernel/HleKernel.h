@@ -2,6 +2,7 @@
 #include <nxemu-core\hle\Memory\ProcessMemory.h>
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\hle\Kernel\ResultCode.h>
+#include <nxemu-core\hle\Kernel\KernelObject.h>
 
 class CSwitchSystem;
 
@@ -87,7 +88,8 @@ public:
     ~CHleKernel();
 
     bool AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
-    const SystemThreadList & SystemThreads(void) const { return m_SystemThreads; }
+    KernelObjectList & ThreadQueue(void) { return m_ThreadQueue; }
+    KernelObjectMap & KernelObjects(void) { return m_KernelObjects; }
 
     ResultCode GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId);
     ResultCode QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t MemoryInfoAddr, uint64_t QueryAddr);
@@ -100,13 +102,14 @@ private:
     CHleKernel& operator=(const CHleKernel&);  // Disable assignment
 
     uint32_t GetNewHandle();
-    uint64_t CreateNewThreadID();
+    uint32_t CreateNewThreadID();
     static const char * GetInfoTypeName(GetInfoType Id);
 
     CSwitchSystem & m_System;
     CProcessMemory & m_ProcessMemory;
-    SystemThreadList m_SystemThreads;
+    KernelObjectMap m_KernelObjects;
+    KernelObjectList m_ThreadQueue;
     uint32_t m_NextHandle;
-    uint64_t m_NextThreadId;
+    uint32_t m_NextThreadId;
     uint64_t m_RandomEntropy[4];
 };

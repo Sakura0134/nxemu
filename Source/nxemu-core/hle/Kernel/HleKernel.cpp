@@ -21,11 +21,6 @@ CHleKernel::CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory) :
 
 CHleKernel::~CHleKernel()
 {
-    for (SystemThreadList::iterator itr = m_SystemThreads.begin(); itr != m_SystemThreads.end(); itr++)
-    {
-        delete itr->second;
-    }
-    m_SystemThreads.clear();
 }
 
 ResultCode CHleKernel::GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId)
@@ -128,14 +123,16 @@ ResultCode CHleKernel::QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t 
 bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId)
 {
     ThreadHandle = GetNewHandle();
-    CSystemThread * Thread = new CSystemThread(this, m_ProcessMemory, name, entry_point, ThreadHandle, CreateNewThreadID(), ThreadContext, StackTop, StackSize, Priority, ProcessorId);
-    if (Thread == NULL)
+    CKernelObjectPtr ThreadObject(new CSystemThread(this, m_ProcessMemory, name, entry_point, ThreadHandle, CreateNewThreadID(), ThreadContext, StackTop, StackSize, Priority, ProcessorId));
+    if (ThreadObject.get() == NULL)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return false;
     }
+    CSystemThread * Thread = ThreadObject->GetSystemThreadPtr();
     Thread->Reg().Set64(Arm64Opcode::ARM64_REG_X1, ThreadHandle);
-    m_SystemThreads.insert(SystemThreadList::value_type(ThreadHandle, Thread));
+    m_KernelObjects.insert(KernelObjectMap::value_type(ThreadHandle, ThreadObject));
+    m_ThreadQueue.push_back(Thread);
     return true;
 }
 
@@ -145,9 +142,9 @@ uint32_t CHleKernel::GetNewHandle()
     return handle;
 }
 
-uint64_t CHleKernel::CreateNewThreadID()
+uint32_t CHleKernel::CreateNewThreadID()
 {
-    uint64_t ThreadId = m_NextThreadId++;
+    uint32_t ThreadId = m_NextThreadId++;
     return ThreadId;
 }
 

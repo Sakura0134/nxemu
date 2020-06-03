@@ -49,7 +49,7 @@ CGPRTab64::~CGPRTab64()
     DestroyWindow();
 }
 
-void CGPRTab64::RefreshValues(CPUExecutor * Executor)
+void CGPRTab64::RefreshValues(CSystemThread * DebugThread)
 {
     static constexpr Arm64Opcode::arm64_reg Register[sizeof(m_Register) / sizeof(m_Register[0])] =
     {
@@ -63,7 +63,7 @@ void CGPRTab64::RefreshValues(CPUExecutor * Executor)
         Arm64Opcode::ARM64_REG_X28, Arm64Opcode::ARM64_REG_X29, Arm64Opcode::ARM64_REG_X30, Arm64Opcode::ARM64_REG_SP,
     };
 
-    CRegisters * Reg = Executor ? &Executor->Reg() : NULL;
+    CRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
     if (Reg)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
@@ -87,7 +87,7 @@ CGPRTab32::~CGPRTab32()
     DestroyWindow();
 }
 
-void CGPRTab32::RefreshValues(CPUExecutor * Executor)
+void CGPRTab32::RefreshValues(CSystemThread * DebugThread)
 {
     static constexpr Arm64Opcode::arm64_reg Register[sizeof(m_Register) / sizeof(m_Register[0])] =
     {
@@ -101,7 +101,7 @@ void CGPRTab32::RefreshValues(CPUExecutor * Executor)
         Arm64Opcode::ARM64_REG_W28, Arm64Opcode::ARM64_REG_W29, Arm64Opcode::ARM64_REG_W30,
     };
 
-    CRegisters * Reg = Executor ? &Executor->Reg() : NULL;
+    CRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
     if (Reg)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
@@ -125,7 +125,7 @@ CRegQTab::~CRegQTab()
     DestroyWindow();
 }
 
-void CRegQTab::RefreshValues(CPUExecutor * Executor)
+void CRegQTab::RefreshValues(CSystemThread * DebugThread)
 {
     static constexpr Arm64Opcode::arm64_reg Register[sizeof(m_Register) / sizeof(m_Register[0])] =
     {
@@ -135,7 +135,7 @@ void CRegQTab::RefreshValues(CPUExecutor * Executor)
         Arm64Opcode::ARM64_REG_Q12, Arm64Opcode::ARM64_REG_Q13, Arm64Opcode::ARM64_REG_Q14, Arm64Opcode::ARM64_REG_Q15,
     };
 
-    CRegisters * Reg = Executor ? &Executor->Reg() : NULL;
+    CRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
     if (Reg)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
@@ -161,7 +161,7 @@ CRegQTab2::~CRegQTab2()
     DestroyWindow();
 }
 
-void CRegQTab2::RefreshValues(CPUExecutor * Executor)
+void CRegQTab2::RefreshValues(CSystemThread * DebugThread)
 {
     static constexpr Arm64Opcode::arm64_reg Register[sizeof(m_Register) / sizeof(m_Register[0])] =
     {
@@ -171,7 +171,7 @@ void CRegQTab2::RefreshValues(CPUExecutor * Executor)
         Arm64Opcode::ARM64_REG_Q28, Arm64Opcode::ARM64_REG_Q29, Arm64Opcode::ARM64_REG_Q30, Arm64Opcode::ARM64_REG_Q31,
     };
 
-    CRegisters * Reg = Executor ? &Executor->Reg() : NULL;
+    CRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
     if (Reg)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
@@ -197,9 +197,9 @@ CPStateTab::~CPStateTab()
     DestroyWindow();
 }
 
-void CPStateTab::RefreshValues(CPUExecutor * Executor)
+void CPStateTab::RefreshValues(CSystemThread * DebugThread)
 {
-    CRegisters * Reg = Executor ? &Executor->Reg() : NULL;
+    CRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
     if (Reg)
     {
         const CRegisters::PSTATE & pstate = Reg->GetPstate();
@@ -241,7 +241,7 @@ void CRegisterTabs::Attach(HWND hWndNew)
     AddTab("VFP (Q0-Q15)", m_RegQTab);
     AddTab("VFP (Q16-Q31)", m_RegQTab2);
     AddTab("PState", m_PStateTab);
-    RefreshEdits();
+    RefreshRegisterTabs();
     RedrawCurrentTab();
 }
 
@@ -262,14 +262,14 @@ void CRegisterTabs::Detach(void)
     CTabCtrl::Detach();
 }
 
-void CRegisterTabs::RefreshEdits()
+void CRegisterTabs::RefreshRegisterTabs()
 {
-    CPUExecutor * Executor = m_Debugger->Executor();
-    m_GPRTab64->RefreshValues(Executor);
-    m_GPRTab32->RefreshValues(Executor);
-    m_RegQTab->RefreshValues(Executor);
-    m_RegQTab2->RefreshValues(Executor);
-    m_PStateTab->RefreshValues(Executor);
+    CSystemThread * DebugThread = m_Debugger->DebugThread()->GetSystemThreadPtr();
+    m_GPRTab64->RefreshValues(DebugThread);
+    m_GPRTab32->RefreshValues(DebugThread);
+    m_RegQTab->RefreshValues(DebugThread);
+    m_RegQTab2->RefreshValues(DebugThread);
+    m_PStateTab->RefreshValues(DebugThread);
 }
 
 CRect CRegisterTabs::GetPageRect()

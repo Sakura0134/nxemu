@@ -1,5 +1,6 @@
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Settings\Settings.h>
+#include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\Machine\CPU\MemoryManagement.h>
 #include <nxemu-core\Machine\CPU\CPUExecutor.h>
 #include <nxemu\UserInterface\Debugger\Debugger-Commands.h>
@@ -33,7 +34,7 @@ void CCommandList::ShowAddress(uint64_t address, bool top)
         m_ValidOp.clear();
         ClearBranchArrows();
         m_StartAddress = address;
-        MemoryManagement & ThreadMemory = m_Debugger->Executor()->MMU();
+        MemoryManagement & ThreadMemory = m_Debugger->DebugThread()->GetSystemThreadPtr()->MMU();
 
         for (uint32_t i = 0; i < m_CommandListRows; i++)
         {
@@ -90,7 +91,7 @@ BOOL CCommandList::GetItemColours(int nItem, int nSubItem, COLORREF& rgbBackgrou
     if (nSubItem > 0)
     {
         uint64_t address = m_StartAddress + (nItem * 4);
-        uint64_t PC = m_Debugger->Executor() != NULL ? m_Debugger->Executor()->Reg().Get64(Arm64Opcode::ARM64_REG_PC) : 0;
+        uint64_t PC = m_Debugger->DebugThread() != NULL ? m_Debugger->DebugThread()->GetSystemThreadPtr()->Reg().Get64(Arm64Opcode::ARM64_REG_PC) : 0;
         bool isPC = address == PC;
 
         if (isPC)
@@ -334,7 +335,7 @@ LRESULT	CDebugCommandsView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARA
     m_Scrollbar.SetScrollRange(0, 100, FALSE);
     m_Scrollbar.SetScrollPos(50, TRUE);
 
-    uint64_t PC = m_Debugger->Executor() != NULL ? m_Debugger->Executor()->Reg().Get64(Arm64Opcode::ARM64_REG_PC) : 0;
+    uint64_t PC = m_Debugger->DebugThread() != NULL ? m_Debugger->DebugThread()->GetSystemThreadPtr()->Reg().Get64(Arm64Opcode::ARM64_REG_PC) : 0;
     m_CommandList.ShowAddress(PC, TRUE);
 
     if (isStepping())
@@ -431,12 +432,12 @@ void CDebugCommandsView::WaitingForStepChanged(void)
 {
     if (WaitingForStep())
     {
-        if (m_Debugger->Executor() != NULL)
+        if (m_Debugger->DebugThread() != NULL)
         {
-            CRegisters & Reg = m_Debugger->Executor()->Reg();
+            CRegisters & Reg = m_Debugger->DebugThread()->GetSystemThreadPtr()->Reg();
             m_CommandList.ShowAddress(Reg.Get64(Arm64Opcode::ARM64_REG_PC), false);
         }
-        m_RegisterTabs.RefreshEdits();
+        m_RegisterTabs.RefreshRegisterTabs();
         m_StepButton.EnableWindow(true);
         m_GoButton.EnableWindow(true);
     }
