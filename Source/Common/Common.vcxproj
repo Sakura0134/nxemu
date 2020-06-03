@@ -41,6 +41,7 @@
     <ClCompile Include="StdString.cpp" />
     <ClCompile Include="SyncEvent.cpp" />
     <ClCompile Include="Thread.cpp" />
+    <ClCompile Include="ThreadLocalStorage.cpp" />
     <ClCompile Include="Trace.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +62,7 @@
     <ClInclude Include="stdtypes.h" />
     <ClInclude Include="SyncEvent.h" />
     <ClInclude Include="Thread.h" />
+    <ClInclude Include="ThreadLocalStorage.h" />
     <ClInclude Include="Trace.h" />
     <ClInclude Include="TraceModulesCommon.h" />
   </ItemGroup>
