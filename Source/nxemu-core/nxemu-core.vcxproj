@@ -44,6 +44,7 @@
     <ClInclude Include="FileSystem\EncryptedFile.h" />
     <ClInclude Include="FileSystem\PartitionFilesystem.h" />
     <ClInclude Include="hle\Kernel\HleKernel.h" />
+    <ClInclude Include="hle\Kernel\KernelObject.h" />
     <ClInclude Include="hle\Kernel\ResultCode.h" />
     <ClInclude Include="hle\Kernel\SystemThread.h" />
     <ClInclude Include="hle\Memory\MemoryTypes.h" />
@@ -91,6 +92,7 @@
     <ClCompile Include="FileSystem\EncryptedFile.cpp" />
     <ClCompile Include="FileSystem\PartitionFilesystem.cpp" />
     <ClCompile Include="hle\Kernel\HleKernel.cpp" />
+    <ClCompile Include="hle\Kernel\KernelObject.cpp" />
     <ClCompile Include="hle\Kernel\ResultCode.cpp" />
     <ClCompile Include="hle\Kernel\SystemThread.cpp" />
     <ClCompile Include="hle\Memory\MemoryRegion.cpp" />
