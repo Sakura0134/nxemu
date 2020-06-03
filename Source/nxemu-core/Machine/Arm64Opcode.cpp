@@ -195,6 +195,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_MOVK:
     case ARM64_INS_MOVN:
     case ARM64_INS_MOVZ:
+    case ARM64_INS_MRS:
     case ARM64_INS_MSR:
     case ARM64_INS_MUL:
     case ARM64_INS_NEG:
