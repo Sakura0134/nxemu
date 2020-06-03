@@ -68,6 +68,7 @@ private:
     uint32_t m_fpsr;
 
     //CP15
+    uint64_t m_tpidr_el0; /* User RW Thread register.  */
     uint64_t m_tpidrro_el0; /* User RO Thread register.  */
 
     PSTATE m_pstate;

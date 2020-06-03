@@ -7,6 +7,7 @@ CRegisters::CRegisters(CPUExecutor * Executor) :
     m_pstate({ 0 }),
     m_fpcr(0),
     m_fpsr(0),
+    m_tpidr_el0(0),
     m_tpidrro_el0(0)
 {
     memset(m_xregs, 0, sizeof(m_xregs));
@@ -96,6 +97,7 @@ uint64_t CRegisters::Get64(Arm64Opcode::arm64_reg reg)
     case Arm64Opcode::ARM64_REG_SP: return m_xregs[31];
     case Arm64Opcode::ARM64_REG_XZR: return 0;
     case Arm64Opcode::ARM64_REG_PC: return m_PROGRAM_COUNTER;
+    case Arm64Opcode::ARM64_REG_TPIDR_EL0: return m_tpidr_el0;
     case Arm64Opcode::ARM64_REG_TPIDRRO_EL0: return m_tpidrro_el0;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -222,6 +224,7 @@ void CRegisters::Set64(Arm64Opcode::arm64_reg reg, uint64_t value)
     case Arm64Opcode::ARM64_REG_SP: m_xregs[31] = value; break;
     case Arm64Opcode::ARM64_REG_PC: m_PROGRAM_COUNTER = value; break;
     case Arm64Opcode::ARM64_REG_TPIDRRO_EL0: m_tpidrro_el0 = value; break;
+    case Arm64Opcode::ARM64_REG_TPIDR_EL0: m_tpidr_el0 = value; break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
