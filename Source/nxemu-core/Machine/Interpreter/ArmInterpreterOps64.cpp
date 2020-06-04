@@ -1124,7 +1124,12 @@ void Arm64Op::Sub(CPUExecutor & core, const Arm64Opcode &op)
         Reg.Set64(op.Operand(0).Reg, result);
         if (op.UpdateFlags())
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            bool n = (result & 0x8000000000000000) != 0;
+            bool z = result == 0;
+            bool c = a >= b; //if the result of a subtraction is positive or zero
+            bool v = ((((a ^ b) & (a ^ result)) >> 20) & 0x80000000) != 0;
+
+            Reg.SetConditionFlags(n, z, c, v);
         }
     }
     else if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
