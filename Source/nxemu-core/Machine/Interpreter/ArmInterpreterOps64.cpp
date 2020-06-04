@@ -1226,6 +1226,17 @@ void Arm64Op::Movn(CPUExecutor & core, const Arm64Opcode &op)
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
     }
+    else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(0).Reg))
+    {
+        if (op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            Reg.Set32(op.Operand(0).Reg, (uint32_t)(~op.Operand(1).ImmVal));
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
