@@ -1493,7 +1493,8 @@ void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
     CRegisters & Reg = core.Reg();
     MemoryManagement & MMU = core.MMU();
 
-    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
+    if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
+        (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM))
     {
         uint64_t index = 0;
         if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
@@ -1539,8 +1540,7 @@ void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
-
-        if (op.WriteBack())
+        if (op.WriteBack() || (op.Operands() == 3 && op.Operand(2).ImmVal != 0))
         {
             if (CRegisters::Is64bitReg(op.Operand(1).mem.base))
             {
