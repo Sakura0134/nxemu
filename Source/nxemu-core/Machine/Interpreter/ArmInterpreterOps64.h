@@ -24,6 +24,7 @@ public:
     static void Csinc(CPUExecutor & core, const Arm64Opcode &op);
     static void Dup(CPUExecutor & core, const Arm64Opcode &op);
     static void Eor(CPUExecutor & core, const Arm64Opcode &op);
+    static void Ldarb(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldaxr(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldp(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldr(CPUExecutor & core, const Arm64Opcode &op);
