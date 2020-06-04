@@ -5,6 +5,7 @@
 #include <Common\StdString.h>
 #include <Common\Random.h>
 #include <ctime>
+#include <algorithm>
 
 CHleKernel::CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory) :
     m_System(System),
@@ -101,6 +102,89 @@ ResultCode CHleKernel::GetThreadPriority(uint32_t & Priority, uint32_t handle)
         return RESULT_SUCCESS;
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
+    return RESULT_SUCCESS;
+}
+
+ResultCode CHleKernel::SignalProcessWideKey(uint64_t ptr, uint32_t value)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "Start (ptr: 0x%I64X value: 0x%X)", ptr, value);
+    typedef std::vector<CSystemThread*> ThreadList;
+
+    ThreadList WaitingThreads;
+    for (size_t i = 0, n = m_ThreadQueue.size(); i < n; i++)
+    {
+        CSystemThread * thread = m_ThreadQueue[i]->GetSystemThreadPtr();
+        if (thread->GetCondVarWaitAddress() == ptr)
+        {
+            WaitingThreads.push_back(thread);
+        }
+    }
+    WriteTrace(TraceHleKernel, TraceDebug, "Found %d waiting on address (0x%I64X)", ptr, value);
+
+    struct PrioritySort
+    {
+        inline bool operator() (CSystemThread * lhs, const CSystemThread* rhs)
+        {
+            return lhs->GetPriority() < rhs->GetPriority();
+        }
+    };
+    std::sort(WaitingThreads.begin(), WaitingThreads.end(), PrioritySort());
+
+    std::size_t last = value != -1 ? std::min(WaitingThreads.size(), (std::size_t)value) : WaitingThreads.size();
+    if (last == 0)
+    {
+        return RESULT_SUCCESS;
+    }
+
+    enum
+    {
+        MutexHasWaitersFlag = 0x40000000
+    };
+
+    for (size_t i = 0; i < last; i++)
+    {
+        CSystemThread * Thread = WaitingThreads[i];
+        Thread->SetCondVarWaitAddress(0);
+
+        CSystemThreadMemory & ThreadMemory = Thread->ThreadMemory();
+        uint32_t MutexVal;
+        if (!ThreadMemory.Read32(Thread->GetMutexWaitAddress(), MutexVal))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return RESULT_SUCCESS;
+        }
+
+        if (MutexVal == 0)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return RESULT_SUCCESS;
+        }
+
+        if (!ThreadMemory.Write32(Thread->GetMutexWaitAddress(), MutexVal | MutexHasWaitersFlag))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return RESULT_SUCCESS;
+        }
+
+        uint32_t OwnerHandle = MutexVal & 0xBFFFFFFF;
+        KernelObjectMap::iterator OwnerThread = m_KernelObjects.find(OwnerHandle);
+        if (OwnerThread == m_KernelObjects.end() || OwnerThread->second->GetHandleType() != CKernelObject::HandleType::Thread)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return RESULT_SUCCESS;
+        }
+        CSystemThread* Owner = OwnerThread->second->GetSystemThreadPtr();
+
+        if (Thread->GetState() != CSystemThread::WaitCondVar)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return RESULT_SUCCESS;
+        }
+        //thread->InvalidateWakeupCallback();
+        Thread->SetState(CSystemThread::WaitMutex);
+        Owner->AddMutexWaiter(Thread);
+    }
+    WriteTrace(TraceHleKernel, TraceInfo, "Done (RESULT_SUCCESS)");
     return RESULT_SUCCESS;
 }
 

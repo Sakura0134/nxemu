@@ -3,6 +3,7 @@
 #include <nxemu-core\hle\Kernel\HleKernel.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
+#include <algorithm>
 
 CSystemThread::CSystemThread(CHleKernel * m_Kernel, CProcessMemory &ProcessMemory, const char * name, uint64_t entry_point, uint32_t /*ThreadHandle*/, uint32_t thread_id, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t /*ProcessorId*/) :
     CPUExecutor(m_ThreadMemory),
@@ -11,7 +12,10 @@ CSystemThread::CSystemThread(CHleKernel * m_Kernel, CProcessMemory &ProcessMemor
     m_State(Created),
     m_ThreadId(thread_id),
 	m_Priority(Priority),
+    m_CondVarWaitAddress(0),
+    m_MutexWaitAddress(0),
     m_TlsAddress(ProcessMemory.GetTlsIoRegionBase()),
+    m_LockOwner(NULL),
 	m_Name(name != NULL ? name : "")
 {
     if (!m_ThreadMemory.Initialize(StackTop, StackSize, m_TlsAddress, 0x1000))
@@ -56,6 +60,9 @@ void CSystemThread::ServiceCall(uint32_t index)
             m_Reg.Set32(Arm64Opcode::ARM64_REG_W1, Priority);
         }
         break;
+    case CHleKernel::svcSignalProcessWideKey:
+        Result = m_Kernel->SignalProcessWideKey(m_Reg.Get64(Arm64Opcode::ARM64_REG_X0), m_Reg.Get32(Arm64Opcode::ARM64_REG_W1));
+        break;
     case CHleKernel::svcGetInfo:
         {
             uint64_t Info = m_Reg.Get64(Arm64Opcode::ARM64_REG_X1);
@@ -72,6 +79,51 @@ void CSystemThread::ServiceCall(uint32_t index)
         m_Reg.Set64(Arm64Opcode::ARM64_REG_X0, Result.Raw);
     }
     WriteTrace(TraceServiceCall, TraceDebug, VoidRes ? "Done" : "Done (Result: %s)", ResultCodeStr(Result));
+}
+
+void CSystemThread::AddMutexWaiter(CSystemThread * thread)
+{
+    if (thread->m_LockOwner == this) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+
+    if (thread->m_LockOwner != NULL)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+
+    MutexWaitingThreads::const_iterator itr = std::find(m_WaitMutexThreads.begin(), m_WaitMutexThreads.end(), thread);
+    if (itr != m_WaitMutexThreads.end())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+
+    struct priority_compare
+    {
+        explicit priority_compare(const CSystemThread * _a) : a(_a) { }
+        bool operator()(const CSystemThread * b) const { return a->GetPriority() > b->GetPriority(); }
+ 
+    private:
+        const CSystemThread * a;
+    };
+
+    MutexWaitingThreads::const_iterator InsertionPoint = std::find_if(m_WaitMutexThreads.begin(), m_WaitMutexThreads.end(), priority_compare(thread));
+    m_WaitMutexThreads.insert(InsertionPoint, thread);
+    thread->m_LockOwner = this;
+}
+
+void CSystemThread::SetCondVarWaitAddress(uint64_t CondVarWaitAddress)
+{
+    m_CondVarWaitAddress = CondVarWaitAddress;
+}
+
+void CSystemThread::SetMutexWaitAddress(uint64_t MutexWaitAddress)
+{
+    m_MutexWaitAddress = MutexWaitAddress;
 }
 
 void CSystemThread::SetState(ThreadState state)

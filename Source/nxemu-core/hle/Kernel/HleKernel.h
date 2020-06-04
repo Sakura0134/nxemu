@@ -94,6 +94,7 @@ public:
     ResultCode GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId);
     ResultCode GetThreadPriority(uint32_t & Priority, uint32_t handle);
     ResultCode QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t MemoryInfoAddr, uint64_t QueryAddr);
+    ResultCode SignalProcessWideKey(uint64_t ptr, uint32_t value);
 
     static const char * SvcGetCallStr(SvcGetCall svcCall);
 
