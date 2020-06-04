@@ -1765,6 +1765,28 @@ void Arm64Op::Sxtw(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Tbnz(CPUExecutor & core, const Arm64Opcode &op)
+{
+    if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && CRegisters::Is32bitReg(op.Operand(0).Reg))
+    {
+        if (op.Operand(1).ImmVal > 0x1F)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        CRegisters & Reg = core.Reg();
+        if ((Reg.Get32(op.Operand(0).Reg) & (1 << op.Operand(1).ImmVal)) != 0)
+        {
+            Reg.Set64(Arm64Opcode::ARM64_REG_PC, op.Operand(2).ImmVal);
+            core.Jumped();
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Tbz(CPUExecutor & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && CRegisters::Is32bitReg(op.Operand(0).Reg))
