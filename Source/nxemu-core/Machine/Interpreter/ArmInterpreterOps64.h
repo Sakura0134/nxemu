@@ -17,6 +17,7 @@ public:
     static void Cbnz(CPUExecutor & core, const Arm64Opcode &op);
     static void Cbz(CPUExecutor & core, const Arm64Opcode &op);
     static void Ccmp(CPUExecutor & core, const Arm64Opcode &op);
+    static void Cinc(CPUExecutor & core, const Arm64Opcode &op);
     static void Clz(CPUExecutor & core, const Arm64Opcode &op);
     static void Cmn(CPUExecutor & core, const Arm64Opcode &op);
     static void Cmp(CPUExecutor & core, const Arm64Opcode &op);
