@@ -15,6 +15,7 @@ public:
     enum IpcMagic : uint64_t
     {
         SFCI = 'S' << 0 | 'F' << 8 | 'C' << 16 | 'I' << 24,
+        SFCO = 'S' << 0 | 'F' << 8 | 'C' << 16 | 'O' << 24,
     };
 
     enum IPC_COMMAND_TYPE
@@ -65,13 +66,21 @@ public:
         uint64_t Magic;
         uint64_t Command;
     } IpcRequestHeader;
+
+    typedef struct
+    {
+        uint64_t Magic;
+        uint64_t Result;
+    } IpcResponseHeader;
     typedef std::vector<uint8_t> REQUEST_DATA;
+    typedef std::vector<uint32_t> HandleList;
 
     CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CService * Service);
 
     inline IPC_COMMAND_TYPE CommandType(void) const { return (IPC_COMMAND_TYPE)m_cmd.CommandType;  }
     inline const IpcRequestHeader & RequestHeader(void) const { return m_RequestHeader; }
     inline const REQUEST_DATA & RequestData() const { return m_RequestData; }
+    inline const IpcDomainMessage & DomainMessage() const { return m_DomainMessage; }
     inline bool IsDomainRequest(void) const { return m_IsDomainRequest; }
 
     static const char * CommandTypeName(IPC_COMMAND_TYPE Id);
@@ -93,7 +102,9 @@ private:
     IpcHandleDesc m_HandleDesc;
     IpcRequestHeader m_RequestHeader;
     IpcDomainMessage m_DomainMessage;
-    REQUEST_DATA m_RequestData;
+    HandleList m_ResponseHandlesToMove, m_ResponseHandlesToCopy;
+	HandleList m_ObjectIds;
+    REQUEST_DATA m_RequestData, m_ResponseData;
     CKernelObjectPtr m_Service;
     bool m_IsDomainRequest;
     bool m_valid;

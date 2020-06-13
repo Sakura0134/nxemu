@@ -111,9 +111,76 @@ CIPCRequest::CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CServi
     m_valid = true;
 }
 
-bool CIPCRequest::WriteResponse(ResultCode /*call_result*/)
+bool CIPCRequest::WriteResponse(ResultCode call_result)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    uint64_t ipc_write_addr = m_RequestAddress;
+
+	if (IsDomainRequest() && CommandType() == Command_Request && DomainMessage().Command == 2)
+	{
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+	}
+    if (IsDomainRequest() && CommandType() == Command_Request && m_ObjectIds.size() > 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+
+    uint32_t header_size = (uint32_t)sizeof(CIPCRequest::IpcMessageCmd);
+    CIPCRequest::IpcMessageCmd CmdResponse = { 0 };
+    if (m_ResponseHandlesToMove.size() > 0 || m_ResponseHandlesToCopy.size() > 0)
+    {
+		uint32_t handleCount = (uint32_t)(m_ResponseHandlesToMove.size() + m_ResponseHandlesToCopy.size());
+        CmdResponse.enable_handle_descriptor = 1;
+        header_size += (uint32_t)((handleCount * sizeof(uint32_t)) + sizeof(CIPCRequest::IpcHandleDesc));
+    }
+    uint32_t PrePadding = GetPadSize16((uint32_t)(ipc_write_addr + header_size));
+    uint32_t PostPadding = 0x10 - PrePadding;
+    uint32_t ResponseHeaderSize = IsDomainRequest() ? sizeof(IpcResponseHeader) + 0x10 : sizeof(IpcResponseHeader);
+
+    CmdResponse.data_size = (ResponseHeaderSize + m_ResponseData.size() + PrePadding + PostPadding) / sizeof(uint32_t);
+    if (!m_ThreadMemory.WriteBytes(ipc_write_addr, (uint8_t*)&CmdResponse, sizeof(CmdResponse)))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+    ipc_write_addr += sizeof(CIPCRequest::IpcMessageCmd);
+    if (m_ResponseHandlesToMove.size() > 0 || m_ResponseHandlesToCopy.size())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+	}
+    static uint8_t PaddingData[16] = { 0 };
+    if (PrePadding != 0)
+    {
+        if (!m_ThreadMemory.WriteBytes(ipc_write_addr, PaddingData, PrePadding))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return false;
+        }
+        ipc_write_addr += PrePadding;
+    }
+
+    if (IsDomainRequest())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+
+    IpcResponseHeader response;
+    response.Magic = SFCO;
+    response.Result = call_result.Raw;
+    if (!m_ThreadMemory.WriteBytes(ipc_write_addr, (uint8_t*)&response, sizeof(response)))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+    ipc_write_addr += sizeof(response);
+    if (m_ResponseData.size() > 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
     return true;
 }
 
