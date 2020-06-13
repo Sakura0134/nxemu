@@ -63,6 +63,7 @@ public:
     static void Tbnz(CPUExecutor & core, const Arm64Opcode &op);
     static void Tbz(CPUExecutor & core, const Arm64Opcode &op);
     static void Tst(CPUExecutor & core, const Arm64Opcode &op);
+    static void Ubfiz(CPUExecutor & core, const Arm64Opcode &op);
     static void Ubfx(CPUExecutor & core, const Arm64Opcode &op);
     static void Udiv(CPUExecutor & core, const Arm64Opcode &op);
     static void Umaddl(CPUExecutor & core, const Arm64Opcode &op);
