@@ -63,6 +63,13 @@ void CSystemThread::ServiceCall(uint32_t index)
     case CHleKernel::svcSignalProcessWideKey:
         Result = m_Kernel->SignalProcessWideKey(m_Reg.Get64(Arm64Opcode::ARM64_REG_X0), m_Reg.Get32(Arm64Opcode::ARM64_REG_W1));
         break;
+    case CHleKernel::svcConnectToNamedPort:
+        {
+            uint32_t SessionHandle = m_Reg.Get32(Arm64Opcode::ARM64_REG_W1);
+            Result = m_Kernel->ConnectToNamedPort(m_ThreadMemory, SessionHandle, m_Reg.Get64(Arm64Opcode::ARM64_REG_X1));
+            m_Reg.Set32(Arm64Opcode::ARM64_REG_W1, SessionHandle);
+        }
+        break;
     case CHleKernel::svcGetInfo:
         {
             uint64_t Info = m_Reg.Get64(Arm64Opcode::ARM64_REG_X1);

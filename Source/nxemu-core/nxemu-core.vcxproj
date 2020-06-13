@@ -46,10 +46,13 @@
     <ClInclude Include="hle\Kernel\HleKernel.h" />
     <ClInclude Include="hle\Kernel\KernelObject.h" />
     <ClInclude Include="hle\Kernel\ResultCode.h" />
+    <ClInclude Include="hle\Kernel\Service.h" />
     <ClInclude Include="hle\Kernel\SystemThread.h" />
     <ClInclude Include="hle\Memory\MemoryTypes.h" />
     <ClInclude Include="hle\Memory\ProcessMemory.h" />
     <ClInclude Include="hle\Memory\SystemThreadMemory.h" />
+    <ClInclude Include="hle\Services\IpcRequest.h" />
+    <ClInclude Include="hle\Services\NamedPort.h" />
     <ClInclude Include="Language\Language.h" />
     <ClInclude Include="Language\LanguageStringID.h" />
     <ClInclude Include="Machine\Arm64Opcode.h" />

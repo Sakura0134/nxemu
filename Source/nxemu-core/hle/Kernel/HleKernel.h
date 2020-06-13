@@ -1,8 +1,10 @@
 #pragma once
 #include <nxemu-core\hle\Memory\ProcessMemory.h>
+#include <nxemu-core\hle\Services\NamedPort.h>
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\hle\Kernel\ResultCode.h>
 #include <nxemu-core\hle\Kernel\KernelObject.h>
+#include <nxemu-core\hle\kernel\Service.h>
 
 class CSwitchSystem;
 
@@ -91,6 +93,9 @@ public:
     KernelObjectList & ThreadQueue(void) { return m_ThreadQueue; }
     KernelObjectMap & KernelObjects(void) { return m_KernelObjects; }
 
+    uint32_t AddKernelObject(CKernelObject * object);
+
+    ResultCode ConnectToNamedPort(CSystemThreadMemory & ThreadMemory, uint32_t & SessionHandle, uint64_t NameAddr);
     ResultCode GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId);
     ResultCode GetThreadPriority(uint32_t & Priority, uint32_t handle);
     ResultCode QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t MemoryInfoAddr, uint64_t QueryAddr);
@@ -111,6 +116,7 @@ private:
     CProcessMemory & m_ProcessMemory;
     KernelObjectMap m_KernelObjects;
     KernelObjectList m_ThreadQueue;
+    NamedPortList m_NamedPorts;
     uint32_t m_NextHandle;
     uint32_t m_NextThreadId;
     uint64_t m_RandomEntropy[4];

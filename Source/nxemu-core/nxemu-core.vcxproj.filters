@@ -81,6 +81,9 @@
     <Filter Include="Source Files\hle\Memory">
       <UniqueIdentifier>{b3982a6d-a4bd-45f8-8ae6-4d2e195db91d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hle\Services">
+      <UniqueIdentifier>{4948607b-ae4c-4be1-8754-7a533a1a72b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -219,6 +222,15 @@
       <Filter>Header Files\hle\Kernel</Filter>
     </ClInclude>
     <ClInclude Include="hle\Kernel\KernelObject.h">
+      <Filter>Header Files\hle\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="hle\Services\NamedPort.h">
+      <Filter>Header Files\hle\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="hle\Services\IpcRequest.h">
+      <Filter>Header Files\hle\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="hle\Kernel\Service.h">
       <Filter>Header Files\hle\Kernel</Filter>
     </ClInclude>
   </ItemGroup>

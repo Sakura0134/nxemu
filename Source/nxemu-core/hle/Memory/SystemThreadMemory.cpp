@@ -86,6 +86,29 @@ bool CSystemThreadMemory::ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t le
     return true;
 }
 
+bool CSystemThreadMemory::ReadCString(uint64_t Addr, std::string & value)
+{
+    MemoryRegionMap & ProcessMemory = m_ProcessMemory.m_MemoryMap;
+    MemoryRegionMap::const_iterator itr = ProcessMemory.lower_bound(Addr);
+    if (itr != ProcessMemory.end() && Addr >= itr->second.Address() && Addr <= itr->first)
+    {
+        uint64_t StartIndex = Addr - itr->second.Address();
+        for (uint64_t index = StartIndex, endIndex = itr->first - itr->second.Address(); index < endIndex; index++)
+        {
+            uint8_t * Memory = itr->second.Memory();
+            if (Memory[index] != 0)
+            {
+                continue;
+            }
+            value = std::string((const char *)&Memory[StartIndex], index - StartIndex);
+            return true;
+        }
+    }
+
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
 bool CSystemThreadMemory::Write8(uint64_t Addr, uint8_t value)
 {
     return WriteBytes(Addr, (uint8_t *)&value, sizeof(value));

@@ -24,6 +24,53 @@ CHleKernel::~CHleKernel()
 {
 }
 
+uint32_t CHleKernel::AddKernelObject(CKernelObject * Object)
+{
+    if (Object == NULL)
+    {
+        return (uint32_t)-1;
+    }
+    uint32_t Handle = GetNewHandle();
+    m_KernelObjects.insert(KernelObjectMap::value_type(Handle, Object));
+    return Handle;
+}
+
+ResultCode CHleKernel::ConnectToNamedPort(CSystemThreadMemory & ThreadMemory, uint32_t & result, uint64_t NameAddr)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "Start (NameAddr: 0x%I64X)", NameAddr);
+
+    std::string Name;
+    if (!ThreadMemory.ReadCString(NameAddr, Name))
+    {
+        WriteTrace(TraceHleKernel, TraceInfo, "Done - Failed to read name (Return: 0x%I64X)", 0xE601);
+        return ERR_NOT_FOUND;
+    }
+
+    if (Name.length() > 11)
+    {
+        WriteTrace(TraceHleKernel, TraceInfo, "Done - Name to long (Return: 0x%I64X)", 0xEE01);
+        return ERR_OUT_OF_RANGE;
+    }
+
+    WriteTrace(TraceHleKernel, TraceInfo, "Name: \"%s\"", Name.c_str());
+    NamedPortList::iterator itr = m_NamedPorts.find(Name);
+    if (itr == m_NamedPorts.end())
+    {
+        WriteTrace(TraceHleKernel, TraceInfo, "Done - Failed to find handler (Return: 0x%I64X)", 0xF201);
+        return ERR_NOT_FOUND;
+    }
+    CService * NamedPort = itr->second->GetServicePtr();
+    if (!NamedPort->Connect())
+    {
+        WriteTrace(TraceHleKernel, TraceInfo, "Done - Connect failed (Return: 0x%I64X)", 0x10801);
+        return ERR_NOT_FOUND;
+    }
+
+    result = AddKernelObject(NamedPort);
+    WriteTrace(TraceHleKernel, TraceInfo, "Done (handle: 0x%I64X Return: 0x%I64X)", result, 0);
+    return 0;
+}
+
 ResultCode CHleKernel::GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (InfoType: %s handle: 0x%X SubId: 0x%I64X)", GetInfoTypeName(InfoType), handle, SubId);

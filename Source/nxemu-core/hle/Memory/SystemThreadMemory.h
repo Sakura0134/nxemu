@@ -16,6 +16,7 @@ public:
 	bool Read32(uint64_t Addr, uint32_t & value);
 	bool Read64(uint64_t Addr, uint64_t & value);
     bool ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len);
+    bool ReadCString(uint64_t Addr, std::string & value);
     bool Write8(uint64_t Addr, uint8_t value);
     bool Write16(uint64_t Addr, uint16_t value);
     bool Write32(uint64_t Addr, uint32_t value);

@@ -4,6 +4,7 @@
 
 class CKernelObjectPtr;
 class CSystemThread;
+class CService;
 
 class CKernelObject
 {
@@ -14,6 +15,7 @@ public:
     {
         Unknown,
         Thread,
+        Service,
     };
 
     CKernelObject(void);
@@ -21,6 +23,7 @@ public:
 
     virtual HandleType GetHandleType() const = 0;
     virtual CSystemThread * GetSystemThreadPtr(void);
+    virtual CService * GetServicePtr(void);
 
 private:
     CKernelObject(const CKernelObject&);				// Disable copy constructor
