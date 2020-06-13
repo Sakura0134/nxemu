@@ -14,6 +14,7 @@ public:
 
     virtual bool Connect(void) = 0;
     virtual const char * Name(void) const = 0;
+    inline bool IsDomain(void) const { return m_Domain;  }
 
 protected:
     CSwitchSystem & m_System;
@@ -25,4 +26,6 @@ private:
 	
     HandleType GetHandleType() const { return Service; }
     CService * GetServicePtr(void) { return this; }
+
+	bool m_Domain;
 };

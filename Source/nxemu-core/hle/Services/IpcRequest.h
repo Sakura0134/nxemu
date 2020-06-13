@@ -37,6 +37,21 @@ public:
         unsigned enable_handle_descriptor : 1;
     } IpcMessageCmd;
 
+    typedef struct
+    {
+        uint8_t Command;
+        uint8_t InputObjectCount;
+        uint16_t DataLength;
+        uint32_t ObjectID;
+        uint32_t Padding;
+        uint32_t Token;
+    } IpcDomainMessage;
+
+    typedef struct
+    {
+        uint64_t Magic;
+        uint64_t Command;
+    } IpcRequestHeader;
     typedef std::vector<uint8_t> REQUEST_DATA;
 
     CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CService * Service);
@@ -53,9 +68,15 @@ private:
     CIPCRequest(const CIPCRequest&);
     CIPCRequest& operator=(const CIPCRequest&);
 
+    static uint32_t GetPadSize16(uint32_t address);
+
 	CSwitchSystem & m_System;
+    CSystemThreadMemory & m_ThreadMemory;
     uint64_t m_RequestAddress;
     IpcMessageCmd m_cmd;
+    IpcDomainMessage m_DomainMessage;
     REQUEST_DATA m_RequestData;
     CKernelObjectPtr m_Service;
+    bool m_IsDomainRequest;
+    bool m_valid;
 };

@@ -3,7 +3,8 @@
 #include <nxemu-core\SystemGlobals.h>
 
 CService::CService(CSwitchSystem & System) :
-    m_System(System)
+    m_System(System),
+	m_Domain(false)
 {
 }
 
