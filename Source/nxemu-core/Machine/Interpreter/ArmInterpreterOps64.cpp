@@ -176,6 +176,26 @@ void Arm64Op::Bfi(CPUExecutor & core, const Arm64Opcode &op)
             uint64_t OrigialValue = Reg.Get64(op.Operand(0).Reg) & (~(signbit << lsb));
             Reg.Set64(op.Operand(0).Reg, OrigialValue | (Reg.Get64(op.Operand(1).Reg) & signbit) << lsb);
         }
+        else if (CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
+        {
+            int64_t lsb = op.Operand(2).ImmVal;
+            int64_t width = op.Operand(3).ImmVal;
+
+            if (lsb < 0 || lsb > 31)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+            if (width < 1 || width > 32)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+
+            uint32_t signbit = (1u << width) - 1;
+            uint32_t OrigialValue = Reg.Get32(op.Operand(0).Reg) & (~(signbit << lsb));
+            Reg.Set32(op.Operand(0).Reg, OrigialValue | (Reg.Get32(op.Operand(1).Reg) & signbit) << lsb);
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
