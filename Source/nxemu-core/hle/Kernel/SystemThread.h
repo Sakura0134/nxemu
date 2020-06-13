@@ -34,6 +34,7 @@ public:
     inline uint64_t GetCondVarWaitAddress() const { return m_CondVarWaitAddress; }
     inline uint64_t GetMutexWaitAddress() const { return m_MutexWaitAddress; }
     inline CSystemThread * GetLockOwner() const { return m_LockOwner; }
+    inline uint64_t TlsAddress() const { return m_TlsAddress; }
 
     void AddMutexWaiter(CSystemThread * thread);
     void SetCondVarWaitAddress(uint64_t CondVarWaitAddress);

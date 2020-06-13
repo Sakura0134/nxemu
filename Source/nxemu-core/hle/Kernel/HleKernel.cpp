@@ -1,4 +1,5 @@
 #include <nxemu-core\hle\Kernel\HleKernel.h>
+#include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\Settings\Settings.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
@@ -152,6 +153,34 @@ ResultCode CHleKernel::GetThreadPriority(uint32_t & Priority, uint32_t handle)
         return RESULT_SUCCESS;
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
+    return RESULT_SUCCESS;
+}
+
+ResultCode CHleKernel::SendSyncRequest(uint32_t Handle)
+{
+    WriteTrace(TraceHleKernel, TraceDebug, "Start (Handle: 0x%X)", Handle);
+    KernelObjectMap::iterator itr = m_KernelObjects.find(Handle);
+    if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != CKernelObject::HandleType::Service)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        WriteTrace(TraceHleKernel, TraceNotice, "Failed to find serivce for handle (Handle: 0x%X)", Handle);
+        return RESULT_SUCCESS;
+    }
+    CService * Service = itr->second->GetServicePtr();
+    CSystemThread * CurrentThread = m_System.SystemThread()->GetSystemThreadPtr();
+    uint64_t tlsAddr = CurrentThread->TlsAddress();
+    CIPCRequest Request(m_System, tlsAddr, Service);
+    ResultCode call_result = RESULT_SUCCESS;
+
+    WriteTrace(TraceHleKernel, TraceInfo, "Service: %s Command: %s RequestData Size: 0x%X", Service->Name(), CIPCRequest::CommandTypeName(Request.CommandType()), (uint32_t)Request.RequestData().size());
+    switch (Request.CommandType())
+    {
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    }
+    Request.WriteResponse(call_result);
+    WriteTrace(TraceHleKernel, TraceDebug, "Done (call_result: 0x%I64X)", call_result);
     return RESULT_SUCCESS;
 }
 

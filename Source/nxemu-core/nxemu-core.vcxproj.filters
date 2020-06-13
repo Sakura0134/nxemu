@@ -370,6 +370,9 @@
     <ClCompile Include="hle\Services\ServiceManager.cpp">
       <Filter>Source Files\hle\Services</Filter>
     </ClCompile>
+    <ClCompile Include="hle\Services\IpcRequest.cpp">
+      <Filter>Source Files\hle\Services</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Version.h.in">

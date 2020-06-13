@@ -13,6 +13,7 @@ public:
     virtual ~CService();
 
     virtual bool Connect(void) = 0;
+    virtual const char * Name(void) const = 0;
 
 protected:
     CSwitchSystem & m_System;
