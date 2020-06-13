@@ -4,14 +4,19 @@
 #include <nxemu-core\SystemGlobals.h>
 
 CServiceManger::CServiceManger(CSwitchSystem & System) :
-    CService(System)
+    CService(System),
+    m_connected(false)
 {
 }
 
 bool CServiceManger::Connect(void)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
-    return false;
+    if (m_connected)
+    {
+        return false;
+    }
+    m_connected = true;
+    return true;
 }
 
 ResultCode CServiceManger::CallMethod(CIPCRequest & /*Request*/)

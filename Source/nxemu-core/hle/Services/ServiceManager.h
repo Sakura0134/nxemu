@@ -25,5 +25,4 @@ private:
 	
     ServiceCreateList m_ServiceCreateList;
     bool m_connected;
-    bool m_Initialized;
 };
