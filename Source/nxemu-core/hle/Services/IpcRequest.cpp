@@ -10,6 +10,11 @@ CIPCRequest::CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CServi
     m_RequestAddress(RequestAddress),
 	m_Service(Service),
 	m_ThreadMemory(System.SystemThread()->GetSystemThreadPtr()->ThreadMemory()),
+    m_PId(0),
+    m_cmd({ 0 }),
+    m_HandleDesc({ 0 }),
+    m_RequestHeader({ 0 }),
+    m_DomainMessage({ 0 }),
     m_IsDomainRequest(Service->IsDomain()),
     m_valid(false)
 {
@@ -24,7 +29,28 @@ CIPCRequest::CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CServi
 
     if (m_cmd.enable_handle_descriptor != 0)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        if (!m_ThreadMemory.ReadBytes(ipc_read_addr, (uint8_t*)&m_HandleDesc, sizeof(m_HandleDesc)))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        ipc_read_addr += sizeof(IpcHandleDesc);
+        if (m_HandleDesc.SendCurrentPID != 0)
+        {
+            if (!m_ThreadMemory.ReadBytes(ipc_read_addr, (uint8_t *)&m_PId, sizeof(m_PId)))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+            ipc_read_addr += sizeof(m_PId);
+        }
+        if (m_HandleDesc.NumberOfHandlesToCopy != 0)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        if (m_HandleDesc.NumberOfHandlesToMove != 0)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
     }
 
     if (m_cmd.num_buf_x_descriptors != 0) { g_Notify->BreakPoint(__FILE__, __LINE__); }
@@ -48,12 +74,34 @@ CIPCRequest::CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CServi
     if (m_IsDomainRequest && CommandType() == Command_Request)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
-        return;
     }
     if (!m_IsDomainRequest || m_DomainMessage.Command != 2)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        return;
+        if (data_size >= sizeof(IpcRequestHeader))
+        {
+            if (!m_ThreadMemory.ReadBytes(ipc_read_addr, (uint8_t*)&m_RequestHeader, sizeof(m_RequestHeader)))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+            if (m_RequestHeader.Magic != SFCI)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+            ipc_read_addr += sizeof(m_RequestHeader);
+            data_size -= sizeof(m_RequestHeader);
+        }
+        if (data_size > 0)
+        {
+            m_RequestData.resize(data_size);
+            if (!m_ThreadMemory.ReadBytes(ipc_read_addr, &m_RequestData[0], data_size))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+            ipc_read_addr += data_size;
+        }
     }
     if (m_cmd.buf_c_descriptor_flags != 0)
     {

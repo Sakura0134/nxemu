@@ -12,6 +12,11 @@ class CSwitchSystem;
 class CIPCRequest
 {
 public:
+    enum IpcMagic : uint64_t
+    {
+        SFCI = 'S' << 0 | 'F' << 8 | 'C' << 16 | 'I' << 24,
+    };
+
     enum IPC_COMMAND_TYPE
     {
         Command_Invalid = 0,
@@ -36,6 +41,14 @@ public:
         unsigned reserved : 17;
         unsigned enable_handle_descriptor : 1;
     } IpcMessageCmd;
+
+    typedef struct
+    {
+        unsigned SendCurrentPID : 1;
+        unsigned NumberOfHandlesToCopy : 4;
+        unsigned NumberOfHandlesToMove : 4;
+        unsigned : 23;
+    } IpcHandleDesc;
 
     typedef struct
     {
@@ -73,7 +86,10 @@ private:
 	CSwitchSystem & m_System;
     CSystemThreadMemory & m_ThreadMemory;
     uint64_t m_RequestAddress;
+    uint64_t m_PId;
     IpcMessageCmd m_cmd;
+    IpcHandleDesc m_HandleDesc;
+    IpcRequestHeader m_RequestHeader;
     IpcDomainMessage m_DomainMessage;
     REQUEST_DATA m_RequestData;
     CKernelObjectPtr m_Service;
