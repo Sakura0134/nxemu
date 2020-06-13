@@ -53,6 +53,7 @@
     <ClInclude Include="hle\Memory\SystemThreadMemory.h" />
     <ClInclude Include="hle\Services\IpcRequest.h" />
     <ClInclude Include="hle\Services\NamedPort.h" />
+    <ClInclude Include="hle\Services\ServiceManager.h" />
     <ClInclude Include="Language\Language.h" />
     <ClInclude Include="Language\LanguageStringID.h" />
     <ClInclude Include="Machine\Arm64Opcode.h" />
@@ -97,11 +98,13 @@
     <ClCompile Include="hle\Kernel\HleKernel.cpp" />
     <ClCompile Include="hle\Kernel\KernelObject.cpp" />
     <ClCompile Include="hle\Kernel\ResultCode.cpp" />
+    <ClCompile Include="hle\Kernel\Service.cpp" />
     <ClCompile Include="hle\Kernel\SystemThread.cpp" />
     <ClCompile Include="hle\Memory\MemoryRegion.cpp" />
     <ClCompile Include="hle\Memory\MemoryTypes.cpp" />
     <ClCompile Include="hle\Memory\ProcessMemory.cpp" />
     <ClCompile Include="hle\Memory\SystemThreadMemory.cpp" />
+    <ClCompile Include="hle\Services\ServiceManager.cpp" />
     <ClCompile Include="Language\Language.cpp" />
     <ClCompile Include="LaunchRunFile.cpp" />
     <ClCompile Include="Machine\Arm64Opcode.cpp" />

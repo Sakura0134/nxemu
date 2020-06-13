@@ -1,16 +1,20 @@
 #pragma once
 #include <nxemu-core\hle\Memory\ProcessMemory.h>
+#include <nxemu-core\hle\Services\ServiceManager.h>
 #include <nxemu-core\hle\Services\NamedPort.h>
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\hle\Kernel\ResultCode.h>
 #include <nxemu-core\hle\Kernel\KernelObject.h>
 #include <nxemu-core\hle\kernel\Service.h>
+#include <Common\stdtypes.h>
 
 class CSwitchSystem;
 
 class CHleKernel
 {
 public:
+    typedef std::map<std::string, CKernelObjectPtr> NamedPortList;
+
     enum
     {
         HANDLE_CURRENT_PROCESS = 0xFFFF8001
@@ -116,6 +120,7 @@ private:
     CProcessMemory & m_ProcessMemory;
     KernelObjectMap m_KernelObjects;
     KernelObjectList m_ThreadQueue;
+    CServiceManger m_SM;
     NamedPortList m_NamedPorts;
     uint32_t m_NextHandle;
     uint32_t m_NextThreadId;

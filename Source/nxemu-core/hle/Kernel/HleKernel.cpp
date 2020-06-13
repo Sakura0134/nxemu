@@ -10,6 +10,7 @@
 CHleKernel::CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory) :
     m_System(System),
     m_ProcessMemory(ProcessMemory),
+    m_SM(System),
     m_NextHandle(0x8002),
     m_NextThreadId(1)
 {
@@ -18,6 +19,8 @@ CHleKernel::CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory) :
     {
         m_RandomEntropy[i] = ((uint64_t)EntropyRandomize.next() << 32) | EntropyRandomize.next();
     }
+
+    m_NamedPorts.insert(NamedPortList::value_type("sm:", &m_SM));
 }
 
 CHleKernel::~CHleKernel()

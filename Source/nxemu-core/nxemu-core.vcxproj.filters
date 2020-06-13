@@ -84,6 +84,9 @@
     <Filter Include="Header Files\hle\Services">
       <UniqueIdentifier>{4948607b-ae4c-4be1-8754-7a533a1a72b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\hle\Services">
+      <UniqueIdentifier>{0f047a7a-8df7-4269-843b-89a44a7d3133}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -233,6 +236,9 @@
     <ClInclude Include="hle\Kernel\Service.h">
       <Filter>Header Files\hle\Kernel</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\ServiceManager.h">
+      <Filter>Header Files\hle\Services</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -357,6 +363,12 @@
     </ClCompile>
     <ClCompile Include="hle\Kernel\KernelObject.cpp">
       <Filter>Source Files\hle\Kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Kernel\Service.cpp">
+      <Filter>Source Files\hle\Kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\ServiceManager.cpp">
+      <Filter>Source Files\hle\Services</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
