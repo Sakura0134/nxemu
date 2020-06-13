@@ -5,7 +5,8 @@
 
 CServiceManger::CServiceManger(CSwitchSystem & System) :
     CService(System),
-    m_connected(false)
+    m_connected(false),
+    m_Initialized(false)
 {
 }
 
@@ -19,8 +20,15 @@ bool CServiceManger::Connect(void)
     return true;
 }
 
-ResultCode CServiceManger::CallMethod(CIPCRequest & /*Request*/)
+ResultCode CServiceManger::CallMethod(CIPCRequest & Request)
 {    
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    switch (Request.RequestHeader().Command)
+    {
+    case Method::Initialize:
+        m_Initialized = true;
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
     return RESULT_SUCCESS;
 }

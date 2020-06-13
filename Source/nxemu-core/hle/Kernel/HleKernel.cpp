@@ -156,6 +156,21 @@ ResultCode CHleKernel::GetThreadPriority(uint32_t & Priority, uint32_t handle)
     return RESULT_SUCCESS;
 }
 
+ResultCode CHleKernel::ProcessSyncRequest(CService * Service, CIPCRequest & Request)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "Start");
+    ResultCode call_result = RESULT_SUCCESS;
+
+    if (Request.IsDomainRequest())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    WriteTrace(TraceHleKernel, TraceVerbose, "calling %s command: 0x%I64X", Service->Name(), Request.RequestHeader().Command);
+    call_result = Service->CallMethod(Request);
+    WriteTrace(TraceHleKernel, TraceInfo, "Done");
+    return call_result;
+}
+
 ResultCode CHleKernel::SendSyncRequest(uint32_t Handle)
 {
     WriteTrace(TraceHleKernel, TraceDebug, "Start (Handle: 0x%X)", Handle);
@@ -175,6 +190,9 @@ ResultCode CHleKernel::SendSyncRequest(uint32_t Handle)
     WriteTrace(TraceHleKernel, TraceInfo, "Service: %s Command: %s RequestData Size: 0x%X", Service->Name(), CIPCRequest::CommandTypeName(Request.CommandType()), (uint32_t)Request.RequestData().size());
     switch (Request.CommandType())
     {
+    case CIPCRequest::Command_Request:
+        call_result = ProcessSyncRequest(Service, Request);
+        break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;

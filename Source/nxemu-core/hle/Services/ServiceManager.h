@@ -7,6 +7,14 @@ class CSwitchSystem;
 class CServiceManger :
     public CService
 {
+    enum Method
+    {
+        Initialize = 0,
+        GetService = 1,
+        RegisterService = 2,
+        UnregisterService = 3,
+    };
+
     typedef CKernelObjectPtr(*CreateService) (CSwitchSystem & System);
     typedef std::map<std::string, CreateService> ServiceCreateList;
 
@@ -25,4 +33,5 @@ private:
 	
     ServiceCreateList m_ServiceCreateList;
     bool m_connected;
+    bool m_Initialized;
 };

@@ -70,7 +70,9 @@ public:
     CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CService * Service);
 
     inline IPC_COMMAND_TYPE CommandType(void) const { return (IPC_COMMAND_TYPE)m_cmd.CommandType;  }
+    inline const IpcRequestHeader & RequestHeader(void) const { return m_RequestHeader; }
     inline const REQUEST_DATA & RequestData() const { return m_RequestData; }
+    inline bool IsDomainRequest(void) const { return m_IsDomainRequest; }
 
     static const char * CommandTypeName(IPC_COMMAND_TYPE Id);
 

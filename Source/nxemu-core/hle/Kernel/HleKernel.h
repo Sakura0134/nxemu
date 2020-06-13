@@ -113,6 +113,7 @@ private:
     CHleKernel(const CHleKernel&);             // Disable copy constructor
     CHleKernel& operator=(const CHleKernel&);  // Disable assignment
 
+    ResultCode ProcessSyncRequest(CService * Service, CIPCRequest & Request);
     uint32_t GetNewHandle();
     uint32_t CreateNewThreadID();
     static const char * GetInfoTypeName(GetInfoType Id);

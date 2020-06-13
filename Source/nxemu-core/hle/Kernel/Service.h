@@ -1,5 +1,6 @@
 #pragma once
 #include <nxemu-core\hle\Kernel\KernelObject.h>
+#include <nxemu-core\hle\Services\IpcRequest.h>
 #include <map>
 #include <string>
 
@@ -13,6 +14,7 @@ public:
     virtual ~CService();
 
     virtual bool Connect(void) = 0;
+    virtual ResultCode CallMethod(CIPCRequest & Request) = 0;
     virtual const char * Name(void) const = 0;
     inline bool IsDomain(void) const { return m_Domain;  }
 
