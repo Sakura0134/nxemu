@@ -31,7 +31,7 @@ public:
 
     uint64_t StartAddress(void) const { return m_StartAddress; }
     int GetItemCount();
-    const char * GetItemText(int nItem, int nSubItem);
+    const wchar_t * GetItemText(int nItem, int nSubItem);
     UINT GetItemMaxEditLen(int nItem, int nSubItem);
     void DrawCustomItem(CDCHandle dcPaint, int nItem, int nSubItem, CRect& rcSubItem);
     BOOL GetItemColours(int nItem, int nSubItem, COLORREF& rgbBackground, COLORREF& rgbText);
@@ -60,7 +60,9 @@ private:
     uint32_t m_CommandListRows;
     Arm64OpcodeList m_ops;
     Arm64OpcodeCache m_OpcodeCache;
-    std::vector<std::string> m_opAddr;
+    std::vector<std::wstring> m_opAddr;
+    std::vector<std::wstring> m_opName;
+    std::vector<std::wstring> m_opParam;
     std::vector<bool> m_ValidOp;
     std::vector<BRANCHARROW> m_BranchArrows;
 };

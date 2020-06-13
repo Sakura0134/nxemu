@@ -5,6 +5,7 @@
 #include <nxemu-core\Machine\CPU\CPUExecutor.h>
 #include <nxemu\UserInterface\Debugger\Debugger-Commands.h>
 #include <nxemu\UserInterface\Debugger\Debugger.h>
+#include <Common\StdString.h>
 
 CCommandList::CCommandList(CDebuggerUI * Debugger) :
     m_Debugger(Debugger),
@@ -17,10 +18,10 @@ void CCommandList::Attach(HWND hWndNew)
 {
     SubclassWindow(hWndNew);
     ShowHeaderSort(false);
-    AddColumn("", 30, ITEM_IMAGE_NONE, true, ITEM_FORMAT_CUSTOM);
-    AddColumn("Address", 115);
-    AddColumn("Command", 60);
-    AddColumn("Parameters", 148);
+    AddColumn(_T(""), 30, ITEM_IMAGE_NONE, true, ITEM_FORMAT_CUSTOM);
+    AddColumn(_T("Address"), 115);
+    AddColumn(_T("Command"), 60);
+    AddColumn(_T("Parameters"), 148);
     FixRowsVisible();
 }
 
@@ -31,6 +32,8 @@ void CCommandList::ShowAddress(uint64_t address, bool top)
     {
         m_ops.clear();
         m_opAddr.clear();
+        m_opName.clear();
+        m_opParam.clear();
         m_ValidOp.clear();
         ClearBranchArrows();
         m_StartAddress = address;
@@ -38,10 +41,8 @@ void CCommandList::ShowAddress(uint64_t address, bool top)
 
         for (uint32_t i = 0; i < m_CommandListRows; i++)
         {
-            uint64_t opAddr = m_StartAddress + i * 4;
-            char AddressStr[100]                ;
-            sprintf(AddressStr, "%016I64X", opAddr);
-            m_opAddr.push_back(AddressStr);
+            uint64_t opAddr = m_StartAddress + (i * 4);
+            m_opAddr.push_back(stdstr_f("%016I64X", opAddr).ToUTF16());
 
             uint32_t insn = 0;
             bool ValidOp = true;
@@ -50,16 +51,27 @@ void CCommandList::ShowAddress(uint64_t address, bool top)
                 ValidOp = false;
             }
             m_ValidOp.push_back(ValidOp);
-            Arm64Opcode OpInfo(m_OpcodeCache, opAddr, insn);
-            m_ops.push_back(OpInfo);
-            if (OpInfo.IsBranch())
+            if (ValidOp)
             {
-                int32_t startPos = i;
-                int64_t endPos = startPos + ((int64_t)(OpInfo.BranchDest() - opAddr) >> 2);
-                if (endPos < -100) { endPos = -100; }
-                if (endPos > 100) { endPos = 100; }
+                Arm64Opcode OpInfo(m_OpcodeCache, opAddr, insn);
+                m_ops.push_back(OpInfo);
+                m_opName.push_back(stdstr(OpInfo.Name()).ToUTF16());
+                m_opParam.push_back(stdstr(OpInfo.Param()).ToUTF16());
 
-                AddBranchArrow(startPos, (int32_t)endPos);
+                if (OpInfo.IsBranch())
+                {
+                    int32_t startPos = i;
+                    int64_t endPos = startPos + ((int64_t)(OpInfo.BranchDest() - opAddr) >> 2);
+                    if (endPos < -100) { endPos = -100; }
+                    if (endPos > 100) { endPos = 100; }
+
+                    AddBranchArrow(startPos, (int32_t)endPos);
+                }
+            }
+            else
+            {
+                m_opName.push_back(L"********");
+                m_opParam.push_back(L"");
             }
         }
     }
@@ -114,20 +126,21 @@ BOOL CCommandList::GetItemColours(int nItem, int nSubItem, COLORREF& rgbBackgrou
     return false;
 }
 
-const char * CCommandList::GetItemText(int nItem, int nSubItem)
+const wchar_t * CCommandList::GetItemText(int nItem, int nSubItem)
 {
     if (nSubItem == COL_ADDRESS && nItem >= 0 && nItem < m_opAddr.size())
     {
         return m_opAddr[nItem].c_str();
     }
-    if ((nSubItem == COL_COMMAND || nSubItem == COL_PARAMETERS) && nItem >= 0 && nItem < m_ops.size())
+    if (nSubItem == COL_COMMAND && nItem >= 0 && nItem < m_opName.size())
     {
-        bool Valid = (nItem >= 0 && nItem < m_ValidOp.size()) ? m_ValidOp[nItem] : false;
-        Arm64Opcode &op = m_ops[nItem];
-        if (nSubItem == COL_COMMAND) { return Valid ? op.Name() : "********"; }
-        if (nSubItem == COL_PARAMETERS) { return Valid ? op.Param() : ""; }
+        return m_opName[nItem].c_str();
     }
-    return "";
+    if (nSubItem == COL_PARAMETERS && nItem >= 0 && nItem < m_opParam.size())
+    {
+        return m_opParam[nItem].c_str();
+    }
+    return L"";
 }
 
 void CCommandList::DrawCustomItem(CDCHandle /*dcPaint*/, int /*nItem*/, int /*nSubItem*/, CRect& /*rcSubItem*/)

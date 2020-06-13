@@ -130,10 +130,10 @@ LRESULT CKeysConfig::OnLoadCmd(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
         { 
             continue;
         }
-        SetDlgItemTextW(m_hWnd, KeyItems[i].nId, stdstr(itr->second).Trim().ToUTF16().c_str());
+        SetDlgItemText(KeyItems[i].nId, stdstr(itr->second).Trim().ToUTF16().c_str());
         if (!AddKey(keys, KeyItems[i].type, KeyItems[i].nId)) 
         {
-            SetDlgItemTextW(m_hWnd, KeyItems[i].nId, L"");
+            SetDlgItemText(KeyItems[i].nId, L"");
         }
     }
 
@@ -161,10 +161,10 @@ LRESULT CKeysConfig::OnLoadCmd(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
         {
             continue;
         }
-        SetDlgItemTextW(m_hWnd, KeyIndexItems[i].nId, stdstr(itr->second).Trim().ToUTF16().c_str());
+        SetDlgItemText(KeyIndexItems[i].nId, stdstr(itr->second).Trim().ToUTF16().c_str());
         if (!AddKeyIndex(keysIndex, KeyIndexItems[i].type, KeyIndexItems[i].index, KeyIndexItems[i].nId))
         {
-            SetDlgItemTextW(m_hWnd, KeyItems[i].nId, L"");
+            SetDlgItemText(KeyItems[i].nId, L"");
         }
     }
 
@@ -407,5 +407,5 @@ void CKeysConfig::SetKeyData(int nID, const CSwitchKeys::KeyData &data)
 		_swprintf(value, L"%02X", data[i]);
 		KeyValue += value;
 	}
-	SetDlgItemTextW(m_hWnd, nID, KeyValue.c_str());
+	SetDlgItemText(nID, KeyValue.c_str());
 }

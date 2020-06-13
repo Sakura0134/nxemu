@@ -36,7 +36,7 @@ CMainGui::~CMainGui()
 
 bool CMainGui::RegisterWinClass(void)
 {
-    WNDCLASSW wcl;
+    WNDCLASS wcl;
 
     wcl.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
     wcl.cbClsExtra = 0;
@@ -49,7 +49,7 @@ bool CMainGui::RegisterWinClass(void)
     wcl.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
     wcl.lpszMenuName = NULL;
     wcl.lpszClassName = m_ClassName.c_str();
-    if (RegisterClassW(&wcl) == 0) return false;
+    if (RegisterClass(&wcl) == 0) return false;
     return true;
 }
 
@@ -117,7 +117,7 @@ WPARAM CMainGui::ProcessAllMessages(void)
 {
     MSG msg;
 
-    while (GetMessageW(&msg, NULL, 0, 0))
+    while (GetMessage(&msg, NULL, 0, 0))
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
@@ -137,7 +137,7 @@ LRESULT CMainGui::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, 
 {
     ResetMenu();
 
-    m_hStatusWnd = (HWND)CreateStatusWindow(WS_CHILD | WS_VISIBLE, "", m_hWnd, StatusBarID);
+    m_hStatusWnd = (HWND)CreateStatusWindow(WS_CHILD | WS_VISIBLE, L"", m_hWnd, StatusBarID);
     SendMessage((HWND)m_hStatusWnd, SB_SETTEXT, 0, (LPARAM)"");
 
     RECT clrect, swrect;

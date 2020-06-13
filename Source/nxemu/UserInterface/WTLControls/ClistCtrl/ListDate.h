@@ -77,8 +77,8 @@ public:
 			SetFormat( szTimeFormat );
         else
         {
-            char value[200];
-            sprintf(value, "%s %s", szDateFormat, szTimeFormat);
+            TCHAR value[200];
+			_stprintf(value, _T("%s %s"), szDateFormat, szTimeFormat);
             SetFormat(value);
         }
 		

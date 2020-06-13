@@ -80,7 +80,7 @@ public:
 		if ( !( m_nFlags & ( ITEM_FLAGS_EDIT_NUMBER | ITEM_FLAGS_EDIT_FLOAT ) ) || nChar == VK_BACK )
 			return TRUE;
 		
-		std::string strValue;
+		std::wstring strValue;
 		UINT nValueLength = GetWindowTextLength();
 		strValue.reserve(nValueLength + 1);
 		strValue.resize(nValueLength);
@@ -102,18 +102,18 @@ public:
 		if ( ( m_nFlags & ITEM_FLAGS_EDIT_NEGATIVE ) && nChar == _T( '-' ) )
 		{
 			BOOL bNegative = FALSE;
-            char value[200];
+            TCHAR value[200];
 			if ( m_nFlags & ITEM_FLAGS_EDIT_FLOAT )
 			{
 				double dblValue = _tstof( strValue.c_str() );
 				bNegative = ( dblValue < 0 );
-				sprintf(value, _T( "%lf" ), -dblValue );
+				_stprintf(value, _T( "%lf" ), -dblValue );
 			}
 			else
 			{
 				long lValue = _ttol( strValue.c_str() );
 				bNegative = ( lValue < 0 );
-                sprintf(value, _T( "%ld" ), -lValue );
+				_stprintf(value, _T( "%ld" ), -lValue );
 			}
 			
 			SetWindowText(value);
@@ -124,7 +124,7 @@ public:
 		}
 		
 		// construct new value string using entered character
-		std::string strNewValue = strValue.substr(0, nStartChar ) + nChar + strValue.substr( strValue.length() - nEndChar );
+		std::wstring strNewValue = strValue.substr(0, nStartChar ) + nChar + strValue.substr( strValue.length() - nEndChar );
 		
 		int nGreaterThan = 0;
 		int nLessThan = 0;
@@ -207,7 +207,7 @@ public:
 		CWindow wndParent( GetParent() );
 		if ( wndParent.IsWindow() )
 		{
-			std::string strValue;
+			std::wstring strValue;
 			int nValueLength = GetWindowTextLength();
 			strValue.reserve(nValueLength + 1);
 			strValue.resize(nValueLength);

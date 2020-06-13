@@ -28,14 +28,14 @@
 
 struct CListColumn
 {
-	std::string m_strText;
+	std::wstring m_strText;
 	int m_nWidth;
 	BOOL m_bFixed;
 	UINT m_nFormat;
 	UINT m_nFlags;
 	int m_nImage;
 	int m_nIndex;	
-	CListArray < std::string > m_aComboList;
+	CListArray < std::wstring > m_aComboList;
 };
 
 template < class T >
@@ -155,7 +155,7 @@ protected:
 	int m_nStartPos;
 	DWORD m_dwSearchTick;
 	DWORD m_dwScrollTick;
-	std::string m_strSearchString;
+	std::wstring m_strSearchString;
 	CBitmap m_bmpScrollList;
 	CBitmap m_bmpBackground;
 	
@@ -528,7 +528,7 @@ public:
 		return GetColumn( nColumn, listColumn ) ? listColumn.m_nFlags : ITEM_FLAGS_NONE;
 	}
 	
-	BOOL GetColumnComboList( int nColumn, CListArray < std::string >& aComboList )
+	BOOL GetColumnComboList( int nColumn, CListArray < std::wstring >& aComboList )
 	{
 		CListColumn listColumn;
 		if ( !GetColumn( nColumn, listColumn ) )
@@ -590,7 +590,7 @@ public:
 		return 0;
 	}
 	
-    const char * GetItemText( int /*nItem*/, int /*nSubItem*/ )
+    const TCHAR * GetItemText( int /*nItem*/, int /*nSubItem*/ )
 	{
 		ATLASSERT( FALSE ); // must be implemented in a derived class
 		return _T( "" );
@@ -602,7 +602,7 @@ public:
 		
 		ZeroMemory( &stItemDate, sizeof( SYSTEMTIME ) );
 		
-		std::string strItemText = pT->GetItemText( nItem, nSubItem );
+		std::wstring strItemText = pT->GetItemText( nItem, nSubItem );
 		if ( strItemText.empty() )
 			return FALSE;
 		
@@ -633,7 +633,7 @@ public:
 		return GetColumnFlags( IndexToOrder( nSubItem ) ); // may be implemented in a derived class
 	}
 	
-	BOOL GetItemComboList( int /*nItem*/, int nSubItem, CListArray < std::string >& aComboList )
+	BOOL GetItemComboList( int /*nItem*/, int nSubItem, CListArray < std::wstring >& aComboList )
 	{
 		return GetColumnComboList( IndexToOrder( nSubItem ), aComboList ); // may be implemented in a derived class
 	}
@@ -650,7 +650,7 @@ public:
 		return TRUE;
 	}
 	
-	std::string GetItemToolTip( int /*nItem*/, int /*nSubItem*/ )
+	std::wstring GetItemToolTip( int /*nItem*/, int /*nSubItem*/ )
 	{
 		return _T( "" ); // may be implemented in a derived class
 	}
@@ -672,8 +672,8 @@ public:
 		T* pT = static_cast<T*>(this);
 		
 		// set date-time in format (yyyymmddhhmmss)
-        char strFormatDate[200];
-		sprintf(strFormatDate, _T( "%04d%02d%02d%02d%02d%02d" ), stItemDate.wYear, stItemDate.wMonth, stItemDate.wDay, stItemDate.wHour, stItemDate.wMinute, stItemDate.wSecond );
+        wchar_t strFormatDate[200];
+		_stprintf(strFormatDate, _T( "%04d%02d%02d%02d%02d%02d" ), stItemDate.wYear, stItemDate.wMonth, stItemDate.wDay, stItemDate.wHour, stItemDate.wMinute, stItemDate.wSecond );
 		
 		return pT->SetItemText( nItem, nSubItem, strFormatDate );
 	}
@@ -1741,7 +1741,7 @@ public:
 													m_bEditItem = TRUE;
 													if ( !RedrawWindow() )
 														return FALSE;
-													CListArray < std::string > aComboList;
+													CListArray < std::wstring > aComboList;
 													if ( !pT->GetItemComboList( nItem, nIndex, aComboList ) )
 														return FALSE;
 													if ( !m_wndItemCombo.Create( m_hWnd, nItem, nSubItem, rcSubItem, pT->GetItemFlags( nItem, nIndex ), pT->GetItemText( nItem, nIndex ), aComboList ) )
@@ -1752,7 +1752,7 @@ public:
 		return TRUE;
 	}
 	
-    std::string FormatDate( SYSTEMTIME& stFormatDate )
+    std::wstring FormatDate( SYSTEMTIME& stFormatDate )
 	{
 		if ( stFormatDate.wYear == 0 )
 			return _T( "" );
@@ -1762,7 +1762,7 @@ public:
 		return GetDateFormat( LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stFormatDate, NULL, szDateFormat, DATE_STRING ) == 0 ? _T( "" ) : szDateFormat;
 	}
 	
-    std::string FormatTime( SYSTEMTIME& stFormatDate )
+    std::wstring FormatTime( SYSTEMTIME& stFormatDate )
 	{
 		SYSTEMTIME stFormatTime = stFormatDate;
 		stFormatTime.wYear = 0;
@@ -1830,7 +1830,7 @@ public:
 		if ( !rcItemText.PtInRect( point ) )
 			return FALSE;
 		
-        std::string strItemText;
+        std::wstring strItemText;
 		
 		switch ( pT->GetItemFormat( nItem, nIndex ) )
 		{
@@ -2471,7 +2471,7 @@ public:
 				}
 				
 				// get tooltip for this item
-                std::string strToolTip = pT->GetItemToolTip( m_nHotItem, nIndex );
+                std::wstring strToolTip = pT->GetItemToolTip( m_nHotItem, nIndex );
 				
 				CRect rcSubItem;
 				if ( !strToolTip.empty() && GetItemRect( m_nHotItem, rcSubItem ) )
@@ -2658,7 +2658,7 @@ public:
 								int nStartItem = nFocusItem + 1;
 								DWORD dwCurrentTick = GetTickCount();
 								
-                                std::string strStart;
+                                std::wstring strStart;
 								strStart += nChar;
 								
 								// has there been another keypress since last search period?
@@ -2667,7 +2667,7 @@ public:
 									if ( m_strSearchString.substr(0, 1 ) != strStart )
 										m_strSearchString += nChar;
 									
-                                    std::string strFocusText = pT->GetItemText( nFocusItem, nSortIndex );
+                                    std::wstring strFocusText = pT->GetItemText( nFocusItem, nSortIndex );
 									
 									// are we continuing to type characters under current focus item?
 									if ( m_strSearchString.length() > 1 && _tcsicmp(m_strSearchString.c_str(),strFocusText.substr(0, m_strSearchString.length() ).c_str() ) == 0 )
@@ -2688,7 +2688,7 @@ public:
 								// scan for next search string
 								for ( int nFirst = nStartItem; nFirst < pT->GetItemCount(); nFirst++ )
 								{
-                                    std::string strItemText = pT->GetItemText( nFirst, nSortIndex );
+                                    std::wstring strItemText = pT->GetItemText( nFirst, nSortIndex );
 									
 									if ( _tcsicmp(m_strSearchString.c_str(), strItemText.substr(0, m_strSearchString.length() ).c_str() ) == 0 )
 									{
@@ -2701,7 +2701,7 @@ public:
 								// re-scan from top if not found search string
 								for ( int nSecond = 0; nSecond < pT->GetItemCount(); nSecond++ )
 								{
-                                    std::string strItemText = pT->GetItemText( nSecond, nSortIndex );
+                                    std::wstring strItemText = pT->GetItemText( nSecond, nSortIndex );
 									
 									if ( _tcsicmp(m_strSearchString.c_str(), strItemText.substr(0, m_strSearchString.length() ).c_str() ) == 0 )
 									{
@@ -3281,7 +3281,7 @@ public:
 														if ( !GetItemDate( nItem, listColumn.m_nIndex, stItemDate ) )
 															break;
 														
-                                                        std::string strItemDate;
+                                                        std::wstring strItemDate;
 														if ( nItemFlags & ITEM_FLAGS_DATE_ONLY )
 															strItemDate = FormatDate( stItemDate );
 														else if ( nItemFlags & ITEM_FLAGS_TIME_ONLY )
@@ -3326,7 +3326,7 @@ public:
 														
 														// fill progress bar area
 														rcProgress.DeflateRect( 3, 3 );
-														rcProgress.right = rcProgress.left + (int)( (double)rcProgress.Width() * ( ( max( min( atof( strItemText ), 100 ), 0 ) ) / 100.0 ) );
+														rcProgress.right = rcProgress.left + (int)( (double)rcProgress.Width() * ( ( max( min(_tstof( strItemText ), 100 ), 0 ) ) / 100.0 ) );
 														DrawGradient( dcPaint, rcProgress, m_rgbProgressTop, m_rgbProgressBottom );
 													}					
 													break;
@@ -3337,7 +3337,7 @@ public:
 													}
 				default:							// draw item text
 					{
-						size_t len = strlen(strItemText);
+						size_t len = _tcslen(strItemText);
 						if ( len > 0 )
 							dcPaint.DrawText( strItemText, (int)len, rcItemText, nFormat );
 
@@ -3537,7 +3537,7 @@ public:
 		return TRUE;
 	}
 
-    const char * GetItemText( int nItem, int nSubItem )
+    const TCHAR * GetItemText( int nItem, int nSubItem )
 	{
 		CSubItem * listSubItem;
 		return GetSubItem( nItem, nSubItem, listSubItem ) ? listSubItem->m_strText.c_str() : _T( "" );
@@ -3571,7 +3571,7 @@ public:
 		return listSubItem->m_nFlags == ITEM_FLAGS_NONE ? GetColumnFlags( IndexToOrder( nSubItem ) ) : listSubItem->m_nFlags;
 	}
 	
-	BOOL GetItemComboList( int nItem, int nSubItem, CListArray < std::string >& aComboList )
+	BOOL GetItemComboList( int nItem, int nSubItem, CListArray < std::wstring >& aComboList )
 	{
 		CSubItem * listSubItem;
 		if ( !GetSubItem( nItem, nSubItem, listSubItem ) )
@@ -3607,7 +3607,7 @@ public:
 		return TRUE;
 	}
 
-    std::string GetItemToolTip( int nItem, int /*nSubItem*/ )
+    std::wstring GetItemToolTip( int nItem, int /*nSubItem*/ )
 	{
 		CListItem< TData > * listItem;
 		return GetItem( nItem, listItem ) ? listItem->m_strToolTip : _T( "" );

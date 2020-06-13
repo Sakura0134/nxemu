@@ -187,7 +187,7 @@ private:
     CRegisterTabs(const CRegisterTabs&);             // Disable copy constructor
     CRegisterTabs& operator=(const CRegisterTabs&);  // Disable assignment
 
-    void AddTab(char* caption, CWindow * tabWin);
+    void AddTab(wchar_t* caption, CWindow * tabWin);
     CRect GetPageRect();
 
     CDebuggerUI * m_Debugger;

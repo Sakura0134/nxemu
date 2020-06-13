@@ -1,5 +1,6 @@
 #pragma once
 #include <wtl/atlgdi.h>
+#include <string>
 
 class CTitleTip : public CWindowImpl< CTitleTip >
 {
@@ -17,7 +18,7 @@ public:
 
 protected:
 	HWND m_hWndParent;
-	std::string m_strToolTip;
+	std::wstring m_strToolTip;
 	
 	COLORREF m_rgbBackground;
 	COLORREF m_rgbTextColour;
@@ -60,7 +61,7 @@ public:
 	
 	BOOL Show( CRect& rcRect, LPCTSTR lpszItemText, LPCTSTR lpszToolTip )
 	{
-		std::string strItemText = lpszItemText;
+		std::wstring strItemText = lpszItemText;
 		
 		if ( !IsWindow() || strItemText.empty() )
 			return FALSE;
@@ -204,7 +205,7 @@ public:
 		dcPaint.FrameRect( rcTitleTip, bshTitleFrame );
 		
 		int nTextLength = GetWindowTextLength();
-		std::string strItemText;
+		std::wstring strItemText;
 		strItemText.reserve(nTextLength + 1);
 		strItemText.resize(nTextLength);
 		GetWindowText( (LPTSTR)strItemText.c_str(), nTextLength + 1 );

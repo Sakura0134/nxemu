@@ -27,7 +27,7 @@ class COptionsSheet : public CPropertySheetImpl < COptionsSheet >
 {
 public:
     // Construction
-    COptionsSheet(const char * title, UINT /*uStartPage*/ = 0, HWND /*hWndParent*/ = NULL);
+    COptionsSheet(const wchar_t * title, UINT /*uStartPage*/ = 0, HWND /*hWndParent*/ = NULL);
     ~COptionsSheet();
 
     // Maps
@@ -38,7 +38,7 @@ public:
 private:
     // Property pages
     CLogSettings * m_pgLogSettings;
-    std::string m_Title;
+    std::wstring m_Title;
 };
 
 class CLogSettings :
@@ -82,12 +82,12 @@ public:
 
         for (size_t i = 0, n = sizeof(TraceCMB) / sizeof(TraceCMB[0]); i < n; i++)
         {
-            TraceCMB[i].cmb.SetItemData(TraceCMB[i].cmb.AddString("Error"), TraceError);
-            TraceCMB[i].cmb.SetItemData(TraceCMB[i].cmb.AddString("Warning"), TraceWarning);
-            TraceCMB[i].cmb.SetItemData(TraceCMB[i].cmb.AddString("Notice"), TraceNotice);
-            TraceCMB[i].cmb.SetItemData(TraceCMB[i].cmb.AddString("Info"), TraceInfo);
-            TraceCMB[i].cmb.SetItemData(TraceCMB[i].cmb.AddString("Debug"), TraceDebug);
-            TraceCMB[i].cmb.SetItemData(TraceCMB[i].cmb.AddString("Verbose"), TraceVerbose);
+            TraceCMB[i].cmb.SetItemData(TraceCMB[i].cmb.AddString(L"Error"), TraceError);
+            TraceCMB[i].cmb.SetItemData(TraceCMB[i].cmb.AddString(L"Warning"), TraceWarning);
+            TraceCMB[i].cmb.SetItemData(TraceCMB[i].cmb.AddString(L"Notice"), TraceNotice);
+            TraceCMB[i].cmb.SetItemData(TraceCMB[i].cmb.AddString(L"Info"), TraceInfo);
+            TraceCMB[i].cmb.SetItemData(TraceCMB[i].cmb.AddString(L"Debug"), TraceDebug);
+            TraceCMB[i].cmb.SetItemData(TraceCMB[i].cmb.AddString(L"Verbose"), TraceVerbose);
             SetComboBoxIndex(TraceCMB[i].cmb, (uint32_t)g_Settings->LoadDword(TraceCMB[i].SettingId));
         }
         return TRUE;
@@ -128,7 +128,7 @@ private:
     CComboBox m_cmbTraceGameFile;
 };
 
-COptionsSheet::COptionsSheet(const char * title, UINT /*uStartPage*/, HWND /*hWndParent*/) :
+COptionsSheet::COptionsSheet(const wchar_t* title, UINT /*uStartPage*/, HWND /*hWndParent*/) :
     m_pgLogSettings(new CLogSettings),
     m_Title(title)
 {
@@ -143,5 +143,5 @@ COptionsSheet::~COptionsSheet()
 
 void CDebuggerUI::EditLoggingOptions(void * hWndParent)
 {
-    COptionsSheet("Log Settings").DoModal((HWND)hWndParent);
+    COptionsSheet(L"Log Settings").DoModal((HWND)hWndParent);
 }

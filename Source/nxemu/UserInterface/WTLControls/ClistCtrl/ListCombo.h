@@ -37,7 +37,7 @@ protected:
 	CContainedWindowT< CEdit > m_wndEditCtrl;
 	
 public:
-	BOOL Create( HWND hWndParent, int nItem, int nSubItem, CRect& rcRect, UINT nFlags, LPCTSTR lpszItemText, CListArray < std::string >& aComboList )
+	BOOL Create( HWND hWndParent, int nItem, int nSubItem, CRect& rcRect, UINT nFlags, LPCTSTR lpszItemText, CListArray < std::wstring >& aComboList )
 	{
 		m_nItem = nItem;
 		m_nSubItem = nSubItem;
@@ -127,10 +127,10 @@ public:
 		if ( !( m_nFlags & ( ITEM_FLAGS_EDIT_NUMBER | ITEM_FLAGS_EDIT_FLOAT ) ) || nChar == VK_BACK )
 			return TRUE;
 		
-		std::string strValue;
+		std::wstring strValue;
 		int nValueLength = GetWindowTextLength() + 1;
 		strValue.reserve(nValueLength);
-		GetWindowText( (char *)strValue.c_str(), nValueLength );
+		GetWindowText( (TCHAR *)strValue.c_str(), nValueLength );
 		
 		// get selected positions
 		DWORD dwSelection = GetEditSel();		
@@ -141,18 +141,18 @@ public:
 		if ( ( m_nFlags & ITEM_FLAGS_EDIT_NEGATIVE ) && nChar == _T( '-' ) )
 		{
 			BOOL bNegative = FALSE;
-            char value[200];
+            TCHAR value[200];
 			if ( m_nFlags & ITEM_FLAGS_EDIT_FLOAT )
 			{
-				double dblValue = atof( strValue.c_str() );
+				double dblValue = _tstof( strValue.c_str() );
 				bNegative = ( dblValue < 0 );
-				sprintf(value, _T( "%lf" ), -dblValue );
+				_stprintf(value, _T( "%lf" ), -dblValue );
 			}
 			else
 			{
 				long lValue = _ttol( strValue.c_str() );
 				bNegative = ( lValue < 0 );
-                sprintf(value, _T( "%ld" ), -lValue );
+				_stprintf(value, _T( "%ld" ), -lValue );
 			}
 			
 			SetWindowText(value);
@@ -163,7 +163,7 @@ public:
 		}
 		
 		// construct new value string using entered character
-		std::string strNewValue = strValue.substr(0, nStartChar ) + nChar + strValue.substr(nEndChar, strValue.length() - nEndChar );
+		std::wstring strNewValue = strValue.substr(0, nStartChar ) + nChar + strValue.substr(nEndChar, strValue.length() - nEndChar );
 		
 		int nGreaterThan = 0;
 		int nLessThan = 0;
@@ -334,7 +334,7 @@ public:
 			int nIndex = GetCurSel();
 			if ( nIndex != CB_ERR )
 			{
-				std::string strText;
+				std::wstring strText;
 				int cchLen = GetLBTextLen(nIndex);
 				if(cchLen != CB_ERR)
 				{
@@ -367,7 +367,7 @@ public:
 		CWindow wndParent( GetParent() );
 		if ( wndParent.IsWindow() )
 		{
-			std::string strValue;
+			std::wstring strValue;
 			
 			if ( ( GetStyle() & CBS_DROPDOWNLIST ) == CBS_DROPDOWNLIST )
 			{
@@ -382,7 +382,7 @@ public:
 					}
 					else 
 					{
-						strValue = "";
+						strValue = _T("");
 					}
 				}
 			}

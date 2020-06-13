@@ -68,7 +68,7 @@ void CGPRTab64::RefreshValues(CSystemThread * DebugThread)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
         {
-            m_Register[i].SetWindowText(stdstr_f("0x%016I64X", Reg->Get64(Register[i])).c_str());
+            m_Register[i].SetWindowText(stdstr_f("0x%016I64X", Reg->Get64(Register[i])).ToUTF16().c_str());
         }
     }
 }
@@ -106,7 +106,7 @@ void CGPRTab32::RefreshValues(CSystemThread * DebugThread)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
         {
-            m_Register[i].SetWindowText(stdstr_f("0x%08X", Reg->Get32(Register[i])).c_str());
+            m_Register[i].SetWindowText(stdstr_f("0x%08X", Reg->Get32(Register[i])).ToUTF16().c_str());
         }
     }
 }
@@ -142,7 +142,7 @@ void CRegQTab::RefreshValues(CSystemThread * DebugThread)
         {
             uint64_t hiValue, loValue;
             Reg->Get128(Register[i], hiValue, loValue);
-            m_Register[i].SetWindowText(stdstr_f("0x%08X-%08X-%08X-%08X", (uint32_t)(hiValue >> 0x32), (uint32_t)(hiValue & 0xFFFFFFFF), (uint32_t)(loValue >> 0x32), (uint32_t)(loValue & 0xFFFFFFFF)).c_str());
+            m_Register[i].SetWindowText(stdstr_f("0x%08X-%08X-%08X-%08X", (uint32_t)(hiValue >> 0x32), (uint32_t)(hiValue & 0xFFFFFFFF), (uint32_t)(loValue >> 0x32), (uint32_t)(loValue & 0xFFFFFFFF)).ToUTF16().c_str());
         }
     }
 }
@@ -178,7 +178,7 @@ void CRegQTab2::RefreshValues(CSystemThread * DebugThread)
         {
             uint64_t hiValue, loValue;
             Reg->Get128(Register[i], hiValue, loValue);
-            m_Register[i].SetWindowText(stdstr_f("0x%08X-%08X-%08X-%08X", (uint32_t)(hiValue >> 0x32), (uint32_t)(hiValue & 0xFFFFFFFF), (uint32_t)(loValue >> 0x32), (uint32_t)(loValue & 0xFFFFFFFF)).c_str());
+            m_Register[i].SetWindowText(stdstr_f("0x%08X-%08X-%08X-%08X", (uint32_t)(hiValue >> 0x32), (uint32_t)(hiValue & 0xFFFFFFFF), (uint32_t)(loValue >> 0x32), (uint32_t)(loValue & 0xFFFFFFFF)).ToUTF16().c_str());
         }
     }
 }
@@ -203,12 +203,12 @@ void CPStateTab::RefreshValues(CSystemThread * DebugThread)
     if (Reg)
     {
         const CRegisters::PSTATE & pstate = Reg->GetPstate();
-        m_Register[0].SetWindowText(stdstr_f("0x%08X", pstate.value).c_str());
-        m_Register[1].SetWindowText(stdstr_f("%d", pstate.N).c_str());
-        m_Register[2].SetWindowText(stdstr_f("%d", pstate.Z).c_str());
-        m_Register[3].SetWindowText(stdstr_f("%d", pstate.C).c_str());
-        m_Register[4].SetWindowText(stdstr_f("%d", pstate.V).c_str());
-        m_Register[5].SetWindowText(stdstr_f("%d", pstate.EL).c_str());
+        m_Register[0].SetWindowText(stdstr_f("0x%08X", pstate.value).ToUTF16().c_str());
+        m_Register[1].SetWindowText(stdstr_f("%d", pstate.N).ToUTF16().c_str());
+        m_Register[2].SetWindowText(stdstr_f("%d", pstate.Z).ToUTF16().c_str());
+        m_Register[3].SetWindowText(stdstr_f("%d", pstate.C).ToUTF16().c_str());
+        m_Register[4].SetWindowText(stdstr_f("%d", pstate.V).ToUTF16().c_str());
+        m_Register[5].SetWindowText(stdstr_f("%d", pstate.EL).ToUTF16().c_str());
     }
 }
 
@@ -236,11 +236,11 @@ void CRegisterTabs::Attach(HWND hWndNew)
     m_RegQTab2 = new CRegQTab2(parentWin, pageRect);
     m_PStateTab = new CPStateTab(parentWin, pageRect);
 
-    AddTab("GPR-64 (X)", m_GPRTab64);
-    AddTab("GPR-32 (W)", m_GPRTab32);
-    AddTab("VFP (Q0-Q15)", m_RegQTab);
-    AddTab("VFP (Q16-Q31)", m_RegQTab2);
-    AddTab("PState", m_PStateTab);
+    AddTab(L"GPR-64 (X)", m_GPRTab64);
+    AddTab(L"GPR-32 (W)", m_GPRTab32);
+    AddTab(L"VFP (Q0-Q15)", m_RegQTab);
+    AddTab(L"VFP (Q16-Q31)", m_RegQTab2);
+    AddTab(L"PState", m_PStateTab);
     RefreshRegisterTabs();
     RedrawCurrentTab();
 }
@@ -281,7 +281,7 @@ CRect CRegisterTabs::GetPageRect()
     return pageRect;
 }
 
-void CRegisterTabs::AddTab(char* caption, CWindow * tabWin)
+void CRegisterTabs::AddTab(wchar_t* caption, CWindow * tabWin)
 {
     if (tabWin == NULL)
     {
