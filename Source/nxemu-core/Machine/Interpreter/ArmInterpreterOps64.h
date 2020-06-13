@@ -56,6 +56,7 @@ public:
     static void Strh(CPUExecutor & core, const Arm64Opcode &op);
     static void Stur(CPUExecutor & core, const Arm64Opcode &op);
     static void Sturb(CPUExecutor & core, const Arm64Opcode &op);
+    static void Sturh(CPUExecutor & core, const Arm64Opcode &op);
     static void Sub(CPUExecutor & core, const Arm64Opcode &op);
     static void Svc(CPUExecutor & core, const Arm64Opcode &op);
     static void Sxtw(CPUExecutor & core, const Arm64Opcode &op);
