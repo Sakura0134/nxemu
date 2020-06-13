@@ -166,6 +166,7 @@ bool Arm64Opcode::IsJump(void) const
     {
     case ARM64_INS_B:
     case ARM64_INS_BL:
+    case ARM64_INS_BLR:
     case ARM64_INS_BR:
     case ARM64_INS_RET:
         return true;
