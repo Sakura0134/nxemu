@@ -14,23 +14,24 @@ void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
     {
+        uint64_t a = Reg.Get64(op.Operand(1).Reg), b = 0;
         if (op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
         {
-            Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) + op.Operand(2).ImmVal);
+            b = op.Operand(2).ImmVal;
         }
         else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(2).Reg))
         {
             if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
             {
-                Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) + Reg.Get64(op.Operand(2).Reg));
+                b = Reg.Get64(op.Operand(2).Reg);
             }
             else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
             {
-                Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) + (Reg.Get64(op.Operand(2).Reg) << op.Operand(2).shift.value));
+                b = Reg.Get64(op.Operand(2).Reg) << op.Operand(2).shift.value;
             }
             else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSR && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
             {
-                Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) + (Reg.Get64(op.Operand(2).Reg) >> op.Operand(2).shift.value));
+                b = Reg.Get64(op.Operand(2).Reg) >> op.Operand(2).shift.value;
             }
             else
             {
@@ -41,7 +42,7 @@ void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
         {
             if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_UXTW)
             {
-                Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) + (uint32_t)(Reg.Get32(op.Operand(2).Reg)));
+                b = (uint32_t)(Reg.Get32(op.Operand(2).Reg));
             }
             else
             {
@@ -52,19 +53,26 @@ void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
+        uint64_t result = a + b;
+        Reg.Set64(op.Operand(0).Reg, result);
     }
     else if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
     {
+        uint32_t a = Reg.Get32(op.Operand(1).Reg), b = 0;
         if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(2).Reg))
         {
             if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
             {
-                Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) + Reg.Get32(op.Operand(2).Reg));
+                b = Reg.Get32(op.Operand(2).Reg);
             }
             else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_UXTB)
             {
-                Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) + (uint8_t)(Reg.Get32(op.Operand(2).Reg)));
+                b = (uint8_t)(Reg.Get32(op.Operand(2).Reg));
+            }
+            else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                b = (Reg.Get32(op.Operand(2).Reg) << op.Operand(2).shift.value);
             }
             else
             {
@@ -73,12 +81,14 @@ void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
         }
         else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
         {
-            Reg.Set32(op.Operand(0).Reg, (uint32_t)(Reg.Get32(op.Operand(1).Reg) + op.Operand(2).ImmVal));
+            b = (uint32_t)op.Operand(2).ImmVal;
         }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
+        uint32_t result = a + b;
+        Reg.Set32(op.Operand(0).Reg, result);
     }
     else
     {
