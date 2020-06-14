@@ -82,6 +82,7 @@ public:
     inline const REQUEST_DATA & RequestData() const { return m_RequestData; }
     inline const IpcDomainMessage & DomainMessage() const { return m_DomainMessage; }
     inline bool IsDomainRequest(void) const { return m_IsDomainRequest; }
+	inline REQUEST_DATA & ResponseData() { return m_ResponseData; }
 	inline CSwitchSystem & SwitchSystem() { return m_System; }
 
     static const char * CommandTypeName(IPC_COMMAND_TYPE Id);

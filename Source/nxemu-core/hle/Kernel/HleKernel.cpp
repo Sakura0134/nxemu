@@ -191,8 +191,13 @@ ResultCode CHleKernel::ProcessSyncRequest(CService * Service, CIPCRequest & Requ
 
 ResultCode CHleKernel::ProcessSyncControl(CService * Service, CIPCRequest & Request)
 {
+    CIPCRequest::REQUEST_DATA & response_data = Request.ResponseData();
+
     switch (Request.RequestHeader().Command)
     {
+    case QueryPointerBufferSize:
+        response_data.insert(response_data.end(), { 0x00, 0x05, 0x00, 0x00 });
+        break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
