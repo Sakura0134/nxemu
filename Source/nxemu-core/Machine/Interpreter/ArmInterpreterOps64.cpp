@@ -1048,6 +1048,31 @@ void Arm64Op::Ldrsw(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Ldurb(CPUExecutor & core, const Arm64Opcode &op)
+{
+    MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
+    {
+        uint64_t load_addr = Reg.Get64(op.Operand(1).mem.base) + op.Operand(1).mem.disp;
+        if (CRegisters::Is32bitReg(op.Operand(0).Reg))
+        {
+            uint8_t value;
+            if (!MMU.Read8(load_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set32(op.Operand(0).Reg, value);
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Ldur(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
