@@ -87,6 +87,12 @@
     <Filter Include="Source Files\hle\Services">
       <UniqueIdentifier>{0f047a7a-8df7-4269-843b-89a44a7d3133}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hle\Services\lm">
+      <UniqueIdentifier>{094ad1be-f864-4471-aaab-c3d8b9c346c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hle\Services\lm">
+      <UniqueIdentifier>{0178f754-79f7-4c2c-b3f2-76ba6809a044}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -239,6 +245,9 @@
     <ClInclude Include="hle\Services\ServiceManager.h">
       <Filter>Header Files\hle\Services</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\lm\lm.h">
+      <Filter>Header Files\hle\Services\lm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -372,6 +381,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\IpcRequest.cpp">
       <Filter>Source Files\hle\Services</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\lm\lm.cpp">
+      <Filter>Source Files\hle\Services\lm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

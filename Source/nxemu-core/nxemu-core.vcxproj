@@ -52,6 +52,7 @@
     <ClInclude Include="hle\Memory\ProcessMemory.h" />
     <ClInclude Include="hle\Memory\SystemThreadMemory.h" />
     <ClInclude Include="hle\Services\IpcRequest.h" />
+    <ClInclude Include="hle\Services\lm\lm.h" />
     <ClInclude Include="hle\Services\NamedPort.h" />
     <ClInclude Include="hle\Services\ServiceManager.h" />
     <ClInclude Include="Language\Language.h" />
@@ -105,6 +106,7 @@
     <ClCompile Include="hle\Memory\ProcessMemory.cpp" />
     <ClCompile Include="hle\Memory\SystemThreadMemory.cpp" />
     <ClCompile Include="hle\Services\IpcRequest.cpp" />
+    <ClCompile Include="hle\Services\lm\lm.cpp" />
     <ClCompile Include="hle\Services\ServiceManager.cpp" />
     <ClCompile Include="Language\Language.cpp" />
     <ClCompile Include="LaunchRunFile.cpp" />
