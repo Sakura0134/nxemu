@@ -189,6 +189,16 @@ ResultCode CHleKernel::ProcessSyncRequest(CService * Service, CIPCRequest & Requ
     return call_result;
 }
 
+ResultCode CHleKernel::ProcessSyncControl(CService * Service, CIPCRequest & Request)
+{
+    switch (Request.RequestHeader().Command)
+    {
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    return RESULT_SUCCESS;
+}
+
 ResultCode CHleKernel::SendSyncRequest(uint32_t Handle)
 {
     WriteTrace(TraceHleKernel, TraceDebug, "Start (Handle: 0x%X)", Handle);
@@ -212,6 +222,9 @@ ResultCode CHleKernel::SendSyncRequest(uint32_t Handle)
         return IPC_ERR_REMOTE_PROCESS_DEAD;
     case CIPCRequest::Command_Request:
         call_result = ProcessSyncRequest(Service, Request);
+        break;
+    case CIPCRequest::Command_Control:
+        call_result = ProcessSyncControl(Service, Request);
         break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);

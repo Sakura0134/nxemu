@@ -90,6 +90,15 @@ public:
         unknown16 = 16,
     };
 
+    enum
+    {
+        ConvertCurrentObjectToDomain = 0,
+        CopyFromCurrentDomain = 1,
+        CloneCurrentObject = 2,
+        QueryPointerBufferSize = 3,
+        CloneCurrentObjectEx = 4,
+    };
+
     CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory);
     ~CHleKernel();
 
@@ -115,6 +124,7 @@ private:
     CHleKernel& operator=(const CHleKernel&);  // Disable assignment
 
     ResultCode ProcessSyncRequest(CService * Service, CIPCRequest & Request);
+    ResultCode ProcessSyncControl(CService * Service, CIPCRequest & Request);
     uint32_t GetNewHandle();
     uint32_t CreateNewThreadID();
     static const char * GetInfoTypeName(GetInfoType Id);
