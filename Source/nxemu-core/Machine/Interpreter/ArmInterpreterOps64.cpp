@@ -722,9 +722,11 @@ void Arm64Op::Dup(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Ldarb(CPUExecutor & core, const Arm64Opcode &op)
 {
+    MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
+
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM))
     {
-        CRegisters & Reg = core.Reg();
         uint64_t index = 0;
         if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
         {
@@ -737,7 +739,6 @@ void Arm64Op::Ldarb(CPUExecutor & core, const Arm64Opcode &op)
         }
 
         uint64_t load_addr = Reg.Get64(op.Operand(1).mem.base) + op.Operand(1).mem.disp + index;
-        MemoryManagement & MMU = core.MMU();
         if (CRegisters::Is32bitReg(op.Operand(0).Reg))
         {
             uint8_t value;
@@ -761,11 +762,11 @@ void Arm64Op::Ldarb(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Ldaxr(CPUExecutor & core, const Arm64Opcode &op)
 {
+    MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
+
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
-        MemoryManagement & MMU = core.MMU();
-        CRegisters & Reg = core.Reg();
-
         if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -851,10 +852,12 @@ void Arm64Op::Ldp(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Ldr(CPUExecutor & core, const Arm64Opcode &op)
 {
+    MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
+
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
         (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM))
     {
-        CRegisters & Reg = core.Reg();
         uint64_t index = 0;
         if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
         {
@@ -881,7 +884,6 @@ void Arm64Op::Ldr(CPUExecutor & core, const Arm64Opcode &op)
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
 
-        MemoryManagement & MMU = core.MMU();
         uint64_t load_addr;
         if (CRegisters::Is64bitReg(op.Operand(1).mem.base))
         {
@@ -929,11 +931,11 @@ void Arm64Op::Ldr(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldrb(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
 
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
         (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM))
     {
-        CRegisters & Reg = core.Reg();
         uint64_t index = 0;
         if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
         {
@@ -969,8 +971,8 @@ void Arm64Op::Ldrb(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Ldrh(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
     MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
 
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM))
     {
@@ -1009,8 +1011,8 @@ void Arm64Op::Ldrh(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Ldrsw(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
     MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -1729,8 +1731,8 @@ void Arm64Op::Sbfx(CPUExecutor & core, const Arm64Opcode &op)
     
 void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
     MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
 
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
         (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM))
@@ -1799,10 +1801,11 @@ void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Strb(CPUExecutor & core, const Arm64Opcode &op)
 {
+    MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
+
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM))
     {
-        MemoryManagement & MMU = core.MMU();
-        CRegisters & Reg = core.Reg();
         uint64_t target_addr = Reg.Get64(op.Operand(1).mem.base) + op.Operand(1).mem.disp;
 
         if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
@@ -1831,12 +1834,48 @@ void Arm64Op::Strb(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Strh(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Stlrb(CPUExecutor & core, const Arm64Opcode &op)
 {
+    MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
+
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
-        MemoryManagement & MMU = core.MMU();
-        CRegisters & Reg = core.Reg();
+        uint64_t target_addr = Reg.Get64(op.Operand(1).mem.base) + op.Operand(1).mem.disp;
+        if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+
+        if (CRegisters::Is32bitReg(op.Operand(0).Reg))
+        {
+            if (!MMU.Write8(target_addr, (uint8_t)Reg.Get32(op.Operand(0).Reg)))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        if (op.WriteBack())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
+void Arm64Op::Strh(CPUExecutor & core, const Arm64Opcode &op)
+{
+    MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
+    {
         Arm64Opcode::arm64_reg reg_base = op.Operand(1).mem.base;
         uint64_t target_addr = Reg.Get64(reg_base) + op.Operand(1).mem.disp;
         if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
@@ -1867,11 +1906,11 @@ void Arm64Op::Strh(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Stlxr(CPUExecutor & core, const Arm64Opcode &op)
 {
+    MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
+
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM)
     {
-        MemoryManagement & MMU = core.MMU();
-        CRegisters & Reg = core.Reg();
-
         if (op.Operand(2).mem.index != Arm64Opcode::ARM64_REG_INVALID)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -1950,10 +1989,11 @@ void Arm64Op::Stur(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Sturb(CPUExecutor & core, const Arm64Opcode &op)
 {
+    MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
+
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
-        MemoryManagement & MMU = core.MMU();
-        CRegisters & Reg = core.Reg();
         Arm64Opcode::arm64_reg reg_base = op.Operand(1).mem.base;
         uint64_t target_addr = Reg.Get64(reg_base) + op.Operand(1).mem.disp;
         if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
@@ -1981,10 +2021,11 @@ void Arm64Op::Sturb(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Sturh(CPUExecutor & core, const Arm64Opcode &op)
 {
+    MemoryManagement & MMU = core.MMU();
+    CRegisters & Reg = core.Reg();
+
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
-        MemoryManagement & MMU = core.MMU();
-        CRegisters & Reg = core.Reg();
         Arm64Opcode::arm64_reg reg_base = op.Operand(1).mem.base;
         uint64_t target_addr = Reg.Get64(reg_base) + op.Operand(1).mem.disp;
         if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
