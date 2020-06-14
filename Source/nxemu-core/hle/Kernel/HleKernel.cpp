@@ -181,7 +181,22 @@ ResultCode CHleKernel::ProcessSyncRequest(CService * Service, CIPCRequest & Requ
 
     if (Request.IsDomainRequest())
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        const CIPCRequest::IpcDomainMessage & DomainMessage = Request.DomainMessage();
+
+        switch (DomainMessage.Command)
+        {
+        case 1:
+            if (!Service->FindDomainService(DomainMessage.ObjectID, Service))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+            break;
+        case 2:
+            //CloseHandle(DomainMessage.ObjectID);
+            return RESULT_SUCCESS;
+        default:
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
     }
     WriteTrace(TraceHleKernel, TraceVerbose, "calling %s command: 0x%I64X", Service->Name(), Request.RequestHeader().Command);
     call_result = Service->CallMethod(Request);

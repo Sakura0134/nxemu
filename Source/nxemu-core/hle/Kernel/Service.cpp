@@ -25,6 +25,18 @@ int32_t CService::ConvertToDomain(void)
 	return m_ObjectId;
 }
 
+bool CService::FindDomainService(int32_t ObjectID, CService *& Service)
+{
+	IServiceList::const_iterator itr = m_DomainObjects.find(ObjectID);
+	if (itr == m_DomainObjects.end())
+	{
+		g_Notify->BreakPoint(__FILE__, __LINE__);
+		return false;
+	}
+	Service = itr->second->GetServicePtr();
+	return true;
+}
+
 int32_t CService::AddDomainObject(CService * Service)
 {
     if (Service == NULL)

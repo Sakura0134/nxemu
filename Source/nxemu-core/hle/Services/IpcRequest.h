@@ -107,6 +107,7 @@ private:
     IpcHandleDesc m_HandleDesc;
     IpcRequestHeader m_RequestHeader;
     IpcDomainMessage m_DomainMessage;
+    HandleList m_RequestHandlesToCopy;
     HandleList m_ResponseHandlesToMove, m_ResponseHandlesToCopy;
 	HandleList m_ObjectIds;
     REQUEST_DATA m_RequestData, m_ResponseData;

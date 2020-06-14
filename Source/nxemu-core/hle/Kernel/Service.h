@@ -18,6 +18,7 @@ public:
     virtual bool Connect(void) = 0;
     virtual ResultCode CallMethod(CIPCRequest & Request) = 0;
     virtual const char * Name(void) const = 0;
+    bool FindDomainService(int32_t ObjectID, CService *& Service);
     int32_t AddDomainObject(CService * Service);
 
 	int32_t ConvertToDomain(void);

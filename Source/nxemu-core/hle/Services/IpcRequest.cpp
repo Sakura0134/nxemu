@@ -45,7 +45,17 @@ CIPCRequest::CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CServi
         }
         if (m_HandleDesc.NumberOfHandlesToCopy != 0)
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            for (uint32_t i = 0; i < m_HandleDesc.NumberOfHandlesToCopy; i++)
+            {
+                uint32_t handle = 0;
+                if (!m_ThreadMemory.ReadBytes(ipc_read_addr, (uint8_t *)&handle, sizeof(handle)))
+                {
+                    g_Notify->BreakPoint(__FILE__, __LINE__);
+                    return;
+                }
+                ipc_read_addr += sizeof(handle);
+                m_RequestHandlesToCopy.push_back(handle);
+            }
         }
         if (m_HandleDesc.NumberOfHandlesToMove != 0)
         {
@@ -73,7 +83,22 @@ CIPCRequest::CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CServi
     }
     if (m_IsDomainRequest && CommandType() == Command_Request)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        if (data_size < sizeof(IpcDomainMessage))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        if (!m_ThreadMemory.ReadBytes(ipc_read_addr, (uint8_t *)&m_DomainMessage, sizeof(m_DomainMessage)))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        ipc_read_addr += sizeof(m_DomainMessage);
+        data_size -= sizeof(m_DomainMessage);
+        if (m_DomainMessage.InputObjectCount != 0)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
     }
     if (!m_IsDomainRequest || m_DomainMessage.Command != 2)
     {
