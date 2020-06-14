@@ -22,10 +22,32 @@ bool CServiceManger::Connect(void)
 
 ResultCode CServiceManger::CallMethod(CIPCRequest & Request)
 {    
+    const CIPCRequest::REQUEST_DATA & data = Request.RequestData();
+
     switch (Request.RequestHeader().Command)
     {
     case Method::Initialize:
         m_Initialized = true;
+        break;
+    case Method::GetService:
+        if (data.size() >= 0x8)
+        {
+            std::string name((const char *)data.data(), 8);
+            ServiceCreateList::const_iterator itr = m_ServiceCreateList.find(name.c_str());
+            if (itr != m_ServiceCreateList.end())
+            {
+                CHleKernel & HleKernel = Request.SwitchSystem().HleKernel();
+                Request.AddResponseHandlesToMove(HleKernel.AddKernelObject(itr->second(Request.SwitchSystem())));
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
         break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);

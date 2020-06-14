@@ -111,6 +111,11 @@ CIPCRequest::CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CServi
     m_valid = true;
 }
 
+void CIPCRequest::AddResponseHandlesToMove(uint32_t handle)
+{
+    m_ResponseHandlesToMove.push_back(handle);
+}
+
 bool CIPCRequest::WriteResponse(ResultCode call_result)
 {
     uint64_t ipc_write_addr = m_RequestAddress;

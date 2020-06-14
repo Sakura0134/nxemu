@@ -22,6 +22,7 @@ public:
 
     inline KernelObjectMap & KernelObjects(void) { return m_Kernel.KernelObjects(); }
     inline CKernelObject * SystemThread(void) { return m_SystemThread.Get(); }
+    inline CHleKernel & HleKernel(void) { return m_Kernel; }
 
 private:
     CSwitchSystem(const CSwitchSystem&);             // Disable copy constructor
