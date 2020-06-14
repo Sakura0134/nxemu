@@ -127,13 +127,24 @@ bool CIPCRequest::WriteResponse(ResultCode call_result)
 
 	if (IsDomainRequest() && CommandType() == Command_Request && DomainMessage().Command == 2)
 	{
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        return false;
+		//Close object, nothing to write back
+		return true;
 	}
     if (IsDomainRequest() && CommandType() == Command_Request && m_ObjectIds.size() > 0)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        return false;
+        if (m_ResponseData.size() != 0)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return false;
+        }
+        m_ResponseData.resize((m_ObjectIds.size() * sizeof(uint32_t)));
+        uint8_t * data_ptr = (uint8_t *)m_ResponseData.data();
+        for (size_t i = 0; i < m_ObjectIds.size(); i++)
+        {
+            uint32_t objectId = m_ObjectIds[i];
+            memcpy(data_ptr, &objectId, sizeof(objectId));
+            data_ptr += sizeof(objectId);
+        }
     }
 
     uint32_t header_size = (uint32_t)sizeof(CIPCRequest::IpcMessageCmd);
@@ -214,8 +225,11 @@ bool CIPCRequest::WriteResponse(ResultCode call_result)
     ipc_write_addr += sizeof(response);
     if (m_ResponseData.size() > 0)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        return false;
+        if (!m_ThreadMemory.WriteBytes(ipc_write_addr, m_ResponseData.data(), (uint32_t)m_ResponseData.size()))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        ipc_write_addr += m_ResponseData.size();
     }
     return true;
 }
