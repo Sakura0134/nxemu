@@ -1559,9 +1559,13 @@ void Arm64Op::Orr(CPUExecutor & core, const Arm64Opcode &op)
     else if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
     {
-        if (op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
+        if (op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
         {
             Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) | (uint32_t)op.Operand(2).ImmVal);
+        }
+        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL)
+        {
+            Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) | (Reg.Get32(op.Operand(2).Reg) << op.Operand(2).shift.value));
         }
         else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
         {
