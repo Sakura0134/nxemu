@@ -190,6 +190,8 @@ ResultCode CHleKernel::SendSyncRequest(uint32_t Handle)
     WriteTrace(TraceHleKernel, TraceInfo, "Service: %s Command: %s RequestData Size: 0x%X", Service->Name(), CIPCRequest::CommandTypeName(Request.CommandType()), (uint32_t)Request.RequestData().size());
     switch (Request.CommandType())
     {
+    case CIPCRequest::Command_Close:
+        return IPC_ERR_REMOTE_PROCESS_DEAD;
     case CIPCRequest::Command_Request:
         call_result = ProcessSyncRequest(Service, Request);
         break;
