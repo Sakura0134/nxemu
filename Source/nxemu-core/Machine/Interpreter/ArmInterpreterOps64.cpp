@@ -373,6 +373,10 @@ void Arm64Op::Ccmp(CPUExecutor & core, const Arm64Opcode &op)
             {
                b = Reg.Get32(op.Operand(1).Reg);
             }
+            else if (op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+            {
+                b = (uint32_t)op.Operand(1).ImmVal;
+            }
             else
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
