@@ -19,6 +19,9 @@ public:
     virtual ResultCode CallMethod(CIPCRequest & Request) = 0;
     virtual const char * Name(void) const = 0;
     int32_t AddDomainObject(CService * Service);
+
+	int32_t ConvertToDomain(void);
+
     inline bool IsDomain(void) const { return m_Domain;  }
 
 protected:
@@ -33,6 +36,7 @@ private:
     CService * GetServicePtr(void) { return this; }
 
 	bool m_Domain;
+	int32_t m_ObjectId;
 	uint32_t m_NextDomanObjectId;
 	IServiceList m_DomainObjects;
 };

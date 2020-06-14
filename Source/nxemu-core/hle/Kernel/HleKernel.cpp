@@ -195,6 +195,18 @@ ResultCode CHleKernel::ProcessSyncControl(CService * Service, CIPCRequest & Requ
 
     switch (Request.RequestHeader().Command)
     {
+    case ConvertCurrentObjectToDomain:
+        if (!Service->IsDomain())
+        {
+            int32_t ObjectId = Service->ConvertToDomain();
+            response_data.resize(sizeof(ObjectId));
+            memcpy(response_data.data(), &ObjectId, sizeof(ObjectId));
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        break;
     case QueryPointerBufferSize:
         response_data.insert(response_data.end(), { 0x00, 0x05, 0x00, 0x00 });
         break;
