@@ -1,4 +1,5 @@
 #include <nxemu-core\hle\Kernel\KernelObject.h>
+#include <nxemu-core\hle\Kernel\Service.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CKernelObject::CKernelObject() :
@@ -78,7 +79,14 @@ void CKernelObjectPtr::ReleaseRef()
     m_Object->m_ref -= 1;
     if (m_Object->m_ref == 0)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        switch (m_Object->GetHandleType())
+        {
+        case CKernelObject::Service:
+            delete m_Object->GetServicePtr();
+            break;
+        default:
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
     }
     m_Object = NULL;
 }

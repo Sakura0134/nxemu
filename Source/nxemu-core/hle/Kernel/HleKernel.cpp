@@ -39,6 +39,24 @@ uint32_t CHleKernel::AddKernelObject(CKernelObject * Object)
     return Handle;
 }
 
+ResultCode CHleKernel::CloseHandle(uint32_t Handle)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "Start (Handle: 0x%X)", Handle);
+
+    KernelObjectMap::iterator itr = m_KernelObjects.find(Handle);
+    if (itr != m_KernelObjects.end())
+    {
+        m_KernelObjects.erase(itr);
+    }
+    else
+    {
+        WriteTrace(TraceHleKernel, TraceError, "Failed to find handle 0x%X", Handle);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    WriteTrace(TraceHleKernel, TraceInfo, "Done (result: 0x%X)", 0);
+    return RESULT_SUCCESS;
+}
+
 ResultCode CHleKernel::ConnectToNamedPort(CSystemThreadMemory & ThreadMemory, uint32_t & result, uint64_t NameAddr)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (NameAddr: 0x%I64X)", NameAddr);

@@ -60,6 +60,9 @@ void CSystemThread::ServiceCall(uint32_t index)
             m_Reg.Set32(Arm64Opcode::ARM64_REG_W1, Priority);
         }
         break;
+    case CHleKernel::svcCloseHandle:
+        Result = m_Kernel->CloseHandle(m_Reg.Get32(Arm64Opcode::ARM64_REG_W0));
+        break;
     case CHleKernel::svcSignalProcessWideKey:
         Result = m_Kernel->SignalProcessWideKey(m_Reg.Get64(Arm64Opcode::ARM64_REG_X0), m_Reg.Get32(Arm64Opcode::ARM64_REG_W1));
         break;
