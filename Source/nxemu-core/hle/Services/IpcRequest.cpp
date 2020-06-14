@@ -152,8 +152,34 @@ bool CIPCRequest::WriteResponse(ResultCode call_result)
     ipc_write_addr += sizeof(CIPCRequest::IpcMessageCmd);
     if (m_ResponseHandlesToMove.size() > 0 || m_ResponseHandlesToCopy.size())
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        return false;
+        IpcHandleDesc HandleDesc = { 0 };
+        HandleDesc.NumberOfHandlesToCopy = m_ResponseHandlesToCopy.size();
+        HandleDesc.NumberOfHandlesToMove = m_ResponseHandlesToMove.size();
+        HandleDesc.SendCurrentPID = 0;
+        if (!m_ThreadMemory.WriteBytes(ipc_write_addr, (uint8_t*)&HandleDesc, sizeof(HandleDesc)))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return false;
+        }
+        ipc_write_addr += sizeof(HandleDesc);
+		for (size_t i = 0, n = m_ResponseHandlesToCopy.size(); i < n; i++)
+		{
+			if (!m_ThreadMemory.Write32(ipc_write_addr, m_ResponseHandlesToCopy[i]))
+			{
+				g_Notify->BreakPoint(__FILE__, __LINE__);
+				return false;
+			}
+			ipc_write_addr += sizeof(uint32_t);
+		}
+		for (size_t i = 0, n = m_ResponseHandlesToMove.size(); i < n; i++)
+		{
+			if (!m_ThreadMemory.Write32(ipc_write_addr, m_ResponseHandlesToMove[i]))
+			{
+				g_Notify->BreakPoint(__FILE__, __LINE__);
+				return false;
+			}
+			ipc_write_addr += sizeof(uint32_t);
+		}
 	}
     static uint8_t PaddingData[16] = { 0 };
     if (PrePadding != 0)
