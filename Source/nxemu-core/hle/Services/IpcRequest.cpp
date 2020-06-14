@@ -116,6 +116,11 @@ void CIPCRequest::AddResponseHandlesToMove(uint32_t handle)
     m_ResponseHandlesToMove.push_back(handle);
 }
 
+void CIPCRequest::AddObjectID(uint32_t handle)
+{
+	m_ObjectIds.push_back(handle);
+}
+
 bool CIPCRequest::WriteResponse(ResultCode call_result)
 {
     uint64_t ipc_write_addr = m_RequestAddress;
@@ -213,6 +218,18 @@ bool CIPCRequest::WriteResponse(ResultCode call_result)
         return false;
     }
     return true;
+}
+
+void CIPCRequest::MakeObject(CService * Service)
+{
+    if (IsDomainRequest())
+	{
+		AddObjectID(m_Service->GetServicePtr()->AddDomainObject(Service));
+	}
+	else
+	{
+		AddResponseHandlesToMove(m_System.HleKernel().AddKernelObject(Service));
+	}
 }
 
 uint32_t CIPCRequest::GetPadSize16(uint32_t address)

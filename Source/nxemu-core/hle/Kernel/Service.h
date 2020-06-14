@@ -10,12 +10,15 @@ class CService :
     public CKernelObject
 {
 public:
+    typedef std::map<uint32_t, CKernelObjectPtr> IServiceList;
+
     CService(CSwitchSystem & System);
     virtual ~CService();
 
     virtual bool Connect(void) = 0;
     virtual ResultCode CallMethod(CIPCRequest & Request) = 0;
     virtual const char * Name(void) const = 0;
+    int32_t AddDomainObject(CService * Service);
     inline bool IsDomain(void) const { return m_Domain;  }
 
 protected:
@@ -30,4 +33,6 @@ private:
     CService * GetServicePtr(void) { return this; }
 
 	bool m_Domain;
+	uint32_t m_NextDomanObjectId;
+	IServiceList m_DomainObjects;
 };

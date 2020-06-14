@@ -87,7 +87,9 @@ public:
     static const char * CommandTypeName(IPC_COMMAND_TYPE Id);
 
 	void AddResponseHandlesToMove(uint32_t handle);
+	void AddObjectID(uint32_t ObjectId);
 	bool WriteResponse(ResultCode call_result);
+	void MakeObject(CService * Service);
 
 private:
     CIPCRequest(void);

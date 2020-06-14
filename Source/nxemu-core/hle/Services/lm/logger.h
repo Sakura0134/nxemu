@@ -1,26 +1,21 @@
 #pragma once
 #include <nxemu-core\hle\Kernel\Service.h>
 
-class LM :
+class LMLogger :
     public CService
 {
 public:
-    enum Method
-    {
-        OpenLogger = 0,
-    };
-    
     static CKernelObjectPtr CreateInstance(CSwitchSystem & System);
 
     //__interface IService
     bool Connect(void);
     ResultCode CallMethod(CIPCRequest & Request);
-    const char * Name(void) const { return "lm"; }
+    const char * Name(void) const { return "LMLogger"; }
 
 private:
-    LM(void);
-    LM(const LM&);
-    LM& operator=(const LM&);
+	LMLogger(void);
+    LMLogger(const LMLogger&);
+    LMLogger& operator=(const LMLogger&);
 
-    LM(CSwitchSystem & System);
+    LMLogger(CSwitchSystem & System);
 };

@@ -1,5 +1,6 @@
 #include <nxemu-core\hle\Services\ServiceManager.h>
 #include <nxemu-core\hle\Services\lm\lm.h>
+#include <nxemu-core\hle\Services\lm\logger.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CKernelObjectPtr LM::CreateInstance(CSwitchSystem & System)
@@ -22,6 +23,9 @@ ResultCode LM::CallMethod(CIPCRequest & Request)
 {
     switch (Request.RequestHeader().Command)
     {
+    case Method::OpenLogger:
+        Request.MakeObject(LMLogger::CreateInstance(m_System)->GetServicePtr());
+        break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }

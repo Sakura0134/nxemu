@@ -248,6 +248,9 @@
     <ClInclude Include="hle\Services\lm\lm.h">
       <Filter>Header Files\hle\Services\lm</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\lm\logger.h">
+      <Filter>Header Files\hle\Services\lm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -383,6 +386,9 @@
       <Filter>Source Files\hle\Services</Filter>
     </ClCompile>
     <ClCompile Include="hle\Services\lm\lm.cpp">
+      <Filter>Source Files\hle\Services\lm</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\lm\Logger.cpp">
       <Filter>Source Files\hle\Services\lm</Filter>
     </ClCompile>
   </ItemGroup>
