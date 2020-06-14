@@ -1065,6 +1065,12 @@ void Arm64Op::Ldur(CPUExecutor & core, const Arm64Opcode &op)
             if (!MMU.Read64(load_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set64(op.Operand(0).Reg, value);
         }
+        else if (CRegisters::Is32bitReg(op.Operand(0).Reg))
+        {
+            uint32_t value;
+            if (!MMU.Read32(load_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set32(op.Operand(0).Reg, value);
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
