@@ -99,6 +99,12 @@
     <Filter Include="Source Files\hle\Services\apm">
       <UniqueIdentifier>{4bfff7f6-2bd9-407a-bdc9-f53dfaab7678}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hle\Services\am">
+      <UniqueIdentifier>{59f5a9b4-f50d-436c-94bd-60662472ef4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hle\Services\am">
+      <UniqueIdentifier>{221b9740-adea-43cf-a34e-49a03ca53144}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -260,6 +266,9 @@
     <ClInclude Include="hle\Services\apm\apm.h">
       <Filter>Header Files\hle\Services\apm</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\am\appletOE.h">
+      <Filter>Header Files\hle\Services\am</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -402,6 +411,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\apm\apm.cpp">
       <Filter>Source Files\hle\Services\apm</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\am\appletOE.cpp">
+      <Filter>Source Files\hle\Services\am</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
