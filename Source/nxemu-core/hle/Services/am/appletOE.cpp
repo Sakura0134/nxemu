@@ -1,4 +1,5 @@
 #include <nxemu-core\hle\Services\am\appletOE.h>
+#include <nxemu-core\hle\Services\am\IApplicationProxy.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CKernelObjectPtr appletOE::CreateInstance(CSwitchSystem & System)
@@ -19,6 +20,14 @@ bool appletOE::Connect(void)
 
 ResultCode appletOE::CallMethod(CIPCRequest & Request)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    switch (Request.RequestHeader().Command)
+    {
+    case OpenApplicationProxy:
+        Request.MakeObject(IApplicationProxy::CreateInstance(m_System)->GetServicePtr());
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    }
     return RESULT_SUCCESS;
 }

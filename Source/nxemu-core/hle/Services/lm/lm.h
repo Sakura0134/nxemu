@@ -9,7 +9,7 @@ public:
     {
         OpenLogger = 0,
     };
-    
+
     static CKernelObjectPtr CreateInstance(CSwitchSystem & System);
 
     //__interface IService

@@ -5,8 +5,13 @@ class appletOE :
     public CService
 {
 public:
+    enum Method
+    {
+        OpenApplicationProxy = 0,
+    };
+
     static CKernelObjectPtr CreateInstance(CSwitchSystem & System);
-    
+
     //__interface IService
     bool Connect(void);
     ResultCode CallMethod(CIPCRequest & Request);
