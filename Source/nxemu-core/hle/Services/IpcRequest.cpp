@@ -149,6 +149,7 @@ void CIPCRequest::AddObjectID(uint32_t handle)
 bool CIPCRequest::WriteResponse(ResultCode call_result)
 {
     uint64_t ipc_write_addr = m_RequestAddress;
+    uint32_t objectIds = 0;
 
 	if (IsDomainRequest() && CommandType() == Command_Request && DomainMessage().Command == 2)
 	{
@@ -163,6 +164,7 @@ bool CIPCRequest::WriteResponse(ResultCode call_result)
             return false;
         }
         m_ResponseData.resize((m_ObjectIds.size() * sizeof(uint32_t)));
+        objectIds = (uint32_t)m_ObjectIds.size();
         uint8_t * data_ptr = (uint8_t *)m_ResponseData.data();
         for (size_t i = 0; i < m_ObjectIds.size(); i++)
         {
@@ -235,8 +237,19 @@ bool CIPCRequest::WriteResponse(ResultCode call_result)
 
     if (IsDomainRequest())
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        return false;
+		if (!m_ThreadMemory.WriteBytes(ipc_write_addr, (uint8_t*)&objectIds, sizeof(objectIds)))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return false;
+        }
+        ipc_write_addr += sizeof(objectIds);
+        uint32_t PaddingSize = 0x10 - sizeof(objectIds);
+        if (!m_ThreadMemory.WriteBytes(ipc_write_addr, PaddingData, PaddingSize))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return false;
+        }
+        ipc_write_addr += PaddingSize;
     }
 
     IpcResponseHeader response;
