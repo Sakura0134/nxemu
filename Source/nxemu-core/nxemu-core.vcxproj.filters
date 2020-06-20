@@ -284,6 +284,9 @@
     <ClInclude Include="hle\Services\am\ISelfController.h">
       <Filter>Header Files\hle\Services\am</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\am\IWindowController.h">
+      <Filter>Header Files\hle\Services\am</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -443,6 +446,9 @@
       <Filter>Source Files\hle\Services\am</Filter>
     </ClCompile>
     <ClCompile Include="hle\Services\am\ISelfController.cpp">
+      <Filter>Source Files\hle\Services\am</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\am\IWindowController.cpp">
       <Filter>Source Files\hle\Services\am</Filter>
     </ClCompile>
   </ItemGroup>
