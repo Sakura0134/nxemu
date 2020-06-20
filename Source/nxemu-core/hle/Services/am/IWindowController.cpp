@@ -19,6 +19,20 @@ bool IWindowController::Connect(void)
 
 ResultCode IWindowController::CallMethod(CIPCRequest & Request)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    switch (Request.RequestHeader().Command)
+    {
+    case GetAppletResourceUserId:
+        ProcessGetAppletResourceUserId(Request);
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
     return RESULT_SUCCESS;
+}
+
+void IWindowController::ProcessGetAppletResourceUserId(CIPCRequest & Request)
+{
+	CIPCRequest::REQUEST_DATA & ResponseData = Request.ResponseData();
+	ResponseData.resize(sizeof(uint64_t));
+	*((uint64_t *)ResponseData.data()) = 0x51;
 }

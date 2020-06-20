@@ -30,4 +30,6 @@ private:
     IWindowController& operator=(const IWindowController&);
 
     IWindowController(CSwitchSystem & System);
+
+    void ProcessGetAppletResourceUserId(CIPCRequest & Request);
 };
