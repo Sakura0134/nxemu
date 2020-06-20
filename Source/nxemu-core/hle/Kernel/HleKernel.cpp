@@ -397,6 +397,52 @@ bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uin
     return true;
 }
 
+ResultCode CHleKernel::WaitSynchronization(CSystemThreadMemory & ThreadMemory, uint32_t & HandleIndex, uint64_t HandlesPtr, uint32_t HandlesNum, uint64_t Timeout)
+{
+    if (!ThreadMemory.IsValidAddress(HandlesPtr))
+    {
+        return ERR_INVALID_POINTER;
+    }
+
+    enum { MaxHandles = 0x40 };
+    if (HandlesNum > MaxHandles)
+    {
+        return ERR_OUT_OF_RANGE;
+    }
+
+    std::vector<CKernelObjectPtr> Events;
+    for (uint32_t i = 0; i < HandlesNum; ++i)
+    {
+        uint32_t Handle;
+        if (!ThreadMemory.Read32(HandlesPtr + (i * sizeof(uint32_t)), Handle))
+        {
+            return ERR_INVALID_HANDLE;
+        }
+        KernelObjectMap::const_iterator itr = m_KernelObjects.find(Handle);
+        if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != CKernelObject::HandleType::Event)
+        {
+            return ERR_INVALID_HANDLE;
+        }
+        Events.push_back(itr->second);
+    }
+
+    for (size_t i = 0, n = Events.size(); i < n; ++i)
+    {
+        if (Events[i]->GetKEventPtr()->ShouldWait())
+        {
+            continue;
+        }
+        HandleIndex = (uint32_t)i;
+        return RESULT_SUCCESS;
+    }
+    if (Timeout == 0)
+    {
+        return RESULT_TIMEOUT;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return RESULT_TIMEOUT;
+}
+
 uint32_t CHleKernel::GetNewHandle()
 {
     uint32_t handle = m_NextHandle++;
