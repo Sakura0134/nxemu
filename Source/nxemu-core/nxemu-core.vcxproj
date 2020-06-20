@@ -56,6 +56,7 @@
     <ClInclude Include="hle\Services\am\IApplicationProxy.h" />
     <ClInclude Include="hle\Services\am\ICommonStateGetter.h" />
     <ClInclude Include="hle\Services\am\ILibraryAppletCreator.h" />
+    <ClInclude Include="hle\Services\am\ISelfController.h" />
     <ClInclude Include="hle\Services\apm\apm.h" />
     <ClInclude Include="hle\Services\IpcRequest.h" />
     <ClInclude Include="hle\Services\lm\lm.h" />
@@ -117,6 +118,7 @@
     <ClCompile Include="hle\Services\am\IApplicationProxy.cpp" />
     <ClCompile Include="hle\Services\am\ICommonStateGetter.cpp" />
     <ClCompile Include="hle\Services\am\ILibraryAppletCreator.cpp" />
+    <ClCompile Include="hle\Services\am\ISelfController.cpp" />
     <ClCompile Include="hle\Services\apm\apm.cpp" />
     <ClCompile Include="hle\Services\IpcRequest.cpp" />
     <ClCompile Include="hle\Services\lm\lm.cpp" />

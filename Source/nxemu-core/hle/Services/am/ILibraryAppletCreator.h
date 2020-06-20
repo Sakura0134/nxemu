@@ -4,6 +4,7 @@
 class ILibraryAppletCreator :
     public CService
 {
+public:
     enum Method
     {
         CreateLibraryApplet = 0,
@@ -14,7 +15,6 @@ class ILibraryAppletCreator :
         CreateHandleStorage = 12,
     };
 
-public:
     static CKernelObjectPtr CreateInstance(CSwitchSystem & System);
 
     //__interface IService
