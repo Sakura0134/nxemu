@@ -1,6 +1,7 @@
 #include <nxemu-core\hle\Services\am\IApplicationProxy.h>
 #include <nxemu-core\hle\Services\am\ILibraryAppletCreator.h>
 #include <nxemu-core\hle\Services\am\IApplicationFunctions.h>
+#include <nxemu-core\hle\Services\am\ICommonStateGetter.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CKernelObjectPtr IApplicationProxy::CreateInstance(CSwitchSystem & System)
@@ -23,6 +24,9 @@ ResultCode IApplicationProxy::CallMethod(CIPCRequest & Request)
 {
     switch (Request.RequestHeader().Command)
     {
+    case Method::GetCommonStateGetter:
+        Request.MakeObject(ICommonStateGetter::CreateInstance(m_System)->GetServicePtr());
+        break;
     case Method::GetLibraryAppletCreator:
         Request.MakeObject(ILibraryAppletCreator::CreateInstance(m_System)->GetServicePtr());
         break;
