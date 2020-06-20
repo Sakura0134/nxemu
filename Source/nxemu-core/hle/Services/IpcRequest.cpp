@@ -136,6 +136,11 @@ CIPCRequest::CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CServi
     m_valid = true;
 }
 
+void CIPCRequest::AddResponseHandlesToCopy(uint32_t handle)
+{
+	m_ResponseHandlesToCopy.push_back(handle);
+}
+
 void CIPCRequest::AddResponseHandlesToMove(uint32_t handle)
 {
     m_ResponseHandlesToMove.push_back(handle);

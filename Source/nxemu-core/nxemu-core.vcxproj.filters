@@ -296,6 +296,9 @@
     <ClInclude Include="hle\Services\am\IDebugFunctions.h">
       <Filter>Header Files\hle\Services\am</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Kernel\KEvent.h">
+      <Filter>Header Files\hle\Kernel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -468,6 +471,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\am\IDebugFunctions.cpp">
       <Filter>Source Files\hle\Services\am</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Kernel\KEvent.cpp">
+      <Filter>Source Files\hle\Kernel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

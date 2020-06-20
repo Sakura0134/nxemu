@@ -17,12 +17,8 @@ bool IApplicationFunctions::Connect(void)
     return false;
 }
 
-ResultCode IApplicationFunctions::CallMethod(CIPCRequest & Request)
+ResultCode IApplicationFunctions::CallMethod(CIPCRequest & /*Request*/)
 {
-    switch (Request.RequestHeader().Command)
-    {
-    default:
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
     return RESULT_SUCCESS;
 }

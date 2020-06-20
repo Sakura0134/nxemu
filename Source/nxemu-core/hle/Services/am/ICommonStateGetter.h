@@ -63,4 +63,8 @@ private:
     ICommonStateGetter& operator=(const ICommonStateGetter&);
 
     ICommonStateGetter(CSwitchSystem & System);
+
+    void ProcessGetEventHandle(CIPCRequest & Request);
+
+    CKernelObjectPtr m_ReadEvent;
 };

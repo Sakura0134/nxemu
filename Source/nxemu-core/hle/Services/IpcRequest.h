@@ -87,6 +87,7 @@ public:
 
     static const char * CommandTypeName(IPC_COMMAND_TYPE Id);
 
+	void AddResponseHandlesToCopy(uint32_t handle);
 	void AddResponseHandlesToMove(uint32_t handle);
 	void AddObjectID(uint32_t ObjectId);
 	bool WriteResponse(ResultCode call_result);

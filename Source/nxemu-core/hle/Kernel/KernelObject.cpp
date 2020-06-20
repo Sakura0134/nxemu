@@ -23,6 +23,12 @@ CService * CKernelObject::GetServicePtr(void)
     return NULL;
 }
 
+KEvent * CKernelObject::GetKEventPtr(void)
+{
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return NULL;
+}
+
 CKernelObjectPtr::CKernelObjectPtr(CKernelObject * Object) :
     m_Object(Object)
 {
