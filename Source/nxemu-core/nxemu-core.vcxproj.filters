@@ -275,6 +275,9 @@
     <ClInclude Include="hle\Services\am\IApplicationFunctions.h">
       <Filter>Header Files\hle\Services\am</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\am\ILibraryAppletCreator.h">
+      <Filter>Header Files\hle\Services\am</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -425,6 +428,9 @@
       <Filter>Source Files\hle\Services\am</Filter>
     </ClCompile>
     <ClCompile Include="hle\Services\am\IApplicationFunctions.cpp">
+      <Filter>Source Files\hle\Services\am</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\am\ILibraryAppletCreator.cpp">
       <Filter>Source Files\hle\Services\am</Filter>
     </ClCompile>
   </ItemGroup>
