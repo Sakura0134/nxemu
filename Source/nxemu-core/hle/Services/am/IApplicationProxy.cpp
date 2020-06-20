@@ -1,4 +1,5 @@
 #include <nxemu-core\hle\Services\am\IApplicationProxy.h>
+#include <nxemu-core\hle\Services\am\IApplicationFunctions.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CKernelObjectPtr IApplicationProxy::CreateInstance(CSwitchSystem & System)
@@ -21,6 +22,9 @@ ResultCode IApplicationProxy::CallMethod(CIPCRequest & Request)
 {
     switch (Request.RequestHeader().Command)
     {
+    case Method::GetApplicationFunctions:
+        Request.MakeObject(IApplicationFunctions::CreateInstance(m_System)->GetServicePtr());
+        break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
