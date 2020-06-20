@@ -2,6 +2,7 @@
 #include <nxemu-core\hle\Services\am\ISelfController.h>
 #include <nxemu-core\hle\Services\am\IApplicationProxy.h>
 #include <nxemu-core\hle\Services\am\IAudioController.h>
+#include <nxemu-core\hle\Services\am\IDebugFunctions.h>
 #include <nxemu-core\hle\Services\am\IDisplayController.h>
 #include <nxemu-core\hle\Services\am\IWindowController.h>
 #include <nxemu-core\hle\Services\am\ILibraryAppletCreator.h>
@@ -49,6 +50,9 @@ ResultCode IApplicationProxy::CallMethod(CIPCRequest & Request)
     case Method::GetApplicationFunctions:
         Request.MakeObject(IApplicationFunctions::CreateInstance(m_System)->GetServicePtr());
         break;
+    case Method::GetDebugFunctions:
+        Request.MakeObject(IDebugFunctions::CreateInstance(m_System)->GetServicePtr());
+        break;        
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
