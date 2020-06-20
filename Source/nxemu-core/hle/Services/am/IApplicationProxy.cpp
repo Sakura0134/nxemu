@@ -2,6 +2,7 @@
 #include <nxemu-core\hle\Services\am\ISelfController.h>
 #include <nxemu-core\hle\Services\am\IApplicationProxy.h>
 #include <nxemu-core\hle\Services\am\IAudioController.h>
+#include <nxemu-core\hle\Services\am\IDisplayController.h>
 #include <nxemu-core\hle\Services\am\IWindowController.h>
 #include <nxemu-core\hle\Services\am\ILibraryAppletCreator.h>
 #include <nxemu-core\hle\Services\am\IApplicationFunctions.h>
@@ -38,6 +39,9 @@ ResultCode IApplicationProxy::CallMethod(CIPCRequest & Request)
         break;
     case Method::GetAudioController:
         Request.MakeObject(IAudioController::CreateInstance(m_System)->GetServicePtr());
+        break;
+    case Method::GetDisplayController:
+        Request.MakeObject(IDisplayController::CreateInstance(m_System)->GetServicePtr());
         break;
     case Method::GetLibraryAppletCreator:
         Request.MakeObject(ILibraryAppletCreator::CreateInstance(m_System)->GetServicePtr());

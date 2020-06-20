@@ -56,6 +56,7 @@
     <ClInclude Include="hle\Services\am\IApplicationProxy.h" />
     <ClInclude Include="hle\Services\am\IAudioController.h" />
     <ClInclude Include="hle\Services\am\ICommonStateGetter.h" />
+    <ClInclude Include="hle\Services\am\IDisplayController.h" />
     <ClInclude Include="hle\Services\am\ILibraryAppletCreator.h" />
     <ClInclude Include="hle\Services\am\ISelfController.h" />
     <ClInclude Include="hle\Services\am\IWindowController.h" />
@@ -120,6 +121,7 @@
     <ClCompile Include="hle\Services\am\IApplicationProxy.cpp" />
     <ClCompile Include="hle\Services\am\IAudioController.cpp" />
     <ClCompile Include="hle\Services\am\ICommonStateGetter.cpp" />
+    <ClCompile Include="hle\Services\am\IDisplayController.cpp" />
     <ClCompile Include="hle\Services\am\ILibraryAppletCreator.cpp" />
     <ClCompile Include="hle\Services\am\ISelfController.cpp" />
     <ClCompile Include="hle\Services\am\IWindowController.cpp" />
