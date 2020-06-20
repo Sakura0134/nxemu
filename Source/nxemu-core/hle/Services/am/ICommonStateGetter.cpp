@@ -17,7 +17,7 @@ bool ICommonStateGetter::Connect(void)
     return false;
 }
 
-ResultCode ICommonStateGetter::CallMethod(CIPCRequest & Request)
+ResultCode ICommonStateGetter::CallMethod(CIPCRequest & /*Request*/)
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return RESULT_SUCCESS;
