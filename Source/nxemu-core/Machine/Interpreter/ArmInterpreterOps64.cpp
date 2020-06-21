@@ -2258,6 +2258,53 @@ void Arm64Op::Sturh(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Stxr(CPUExecutor & core, const Arm64Opcode &op)
+{
+    MemoryManagement& MMU = core.MMU();
+    CRegisters& Reg = core.Reg();
+
+    if (op.UpdateFlags()) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+
+    if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM)
+    {
+        uint64_t target_addr = Reg.Get64(op.Operand(2).mem.base) + op.Operand(2).mem.disp;
+        if (op.Operand(2).mem.index != Arm64Opcode::ARM64_REG_INVALID)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+
+        if (CRegisters::Is64bitReg(op.Operand(1).Reg))
+        {
+            if (!MMU.Write64(target_addr, Reg.Get64(op.Operand(1).Reg)))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+
+        if (CRegisters::Is32bitReg(op.Operand(0).Reg))
+        {
+            Reg.Set32(op.Operand(0).Reg, 0);
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+
+        if (op.WriteBack())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Svc(CPUExecutor & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
