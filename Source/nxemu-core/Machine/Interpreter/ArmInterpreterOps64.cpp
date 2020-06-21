@@ -1916,8 +1916,16 @@ void Arm64Op::Strb(CPUExecutor & core, const Arm64Opcode &op)
 
         if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            if (CRegisters::Is64bitReg(op.Operand(1).mem.index))
+            {
+                target_addr += Reg.Get64(op.Operand(1).mem.index);
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
         }
+
         if (CRegisters::Is32bitReg(op.Operand(0).Reg))
         {
             if (!MMU.Write16(target_addr, (uint16_t)Reg.Get32(op.Operand(0).Reg)))
