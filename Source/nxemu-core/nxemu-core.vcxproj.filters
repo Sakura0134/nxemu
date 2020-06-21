@@ -317,6 +317,9 @@
     <ClInclude Include="hle\Services\pctl\IParentalControlServiceFactory.h">
       <Filter>Header Files\hle\Services\pctl</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\pctl\IParentalControlService.h">
+      <Filter>Header Files\hle\Services\pctl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -497,6 +500,9 @@
       <Filter>Source Files\hle\Services\ns</Filter>
     </ClCompile>
     <ClCompile Include="hle\Services\pctl\IParentalControlServiceFactory.cpp">
+      <Filter>Source Files\hle\Services\pctl</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\pctl\IParentalControlService.cpp">
       <Filter>Source Files\hle\Services\pctl</Filter>
     </ClCompile>
   </ItemGroup>

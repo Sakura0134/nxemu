@@ -1,3 +1,4 @@
+#include <nxemu-core\hle\Services\pctl\IParentalControlService.h>
 #include <nxemu-core\hle\Services\pctl\IParentalControlServiceFactory.h>
 #include <nxemu-core\SystemGlobals.h>
 
@@ -17,8 +18,16 @@ bool IParentalControlServiceFactory::Connect(void)
     return false;
 }
 
-ResultCode IParentalControlServiceFactory::CallMethod(CIPCRequest & /*Request*/)
+ResultCode IParentalControlServiceFactory::CallMethod(CIPCRequest & Request)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    switch (Request.RequestHeader().Command)
+    {
+    case CreateService:
+        Request.MakeObject(IParentalControlService::CreateInstance(m_System)->GetServicePtr());
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    }
     return RESULT_SUCCESS;
 }
