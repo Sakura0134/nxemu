@@ -4,6 +4,7 @@
 #include <nxemu-core\hle\Services\am\appletOE.h>
 #include <nxemu-core\hle\Services\lm\lm.h>
 #include <nxemu-core\hle\Services\ns\IAddOnContentManager.h>
+#include <nxemu-core\hle\Services\pctl\IParentalControlServiceFactory.h>
 #include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\SystemGlobals.h>
 
@@ -16,6 +17,7 @@ CServiceManger::CServiceManger(CSwitchSystem & System) :
 	m_ServiceCreateList.insert(ServiceCreateList::value_type("apm", APM::CreateInstance));
     m_ServiceCreateList.insert(ServiceCreateList::value_type("appletOE", appletOE::CreateInstance));
     m_ServiceCreateList.insert(ServiceCreateList::value_type("lm", LM::CreateInstance));
+    m_ServiceCreateList.insert(ServiceCreateList::value_type("pctl:a", IParentalControlServiceFactory::CreateInstance));
 }
 
 bool CServiceManger::Connect(void)

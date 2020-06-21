@@ -111,6 +111,12 @@
     <Filter Include="Header Files\hle\Services\ns">
       <UniqueIdentifier>{ba1de1b4-307e-4804-8ad5-7247feaf1a90}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\hle\Services\pctl">
+      <UniqueIdentifier>{20246316-2c1b-4fe2-939e-9f88dafb3d5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\hle\Services\pctl">
+      <UniqueIdentifier>{7dadde15-72df-4198-ab85-584143810a94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -308,6 +314,9 @@
     <ClInclude Include="hle\Services\ns\IAddOnContentManager.h">
       <Filter>Header Files\hle\Services\ns</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\pctl\IParentalControlServiceFactory.h">
+      <Filter>Header Files\hle\Services\pctl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -486,6 +495,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\ns\IAddOnContentManager.cpp">
       <Filter>Source Files\hle\Services\ns</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\pctl\IParentalControlServiceFactory.cpp">
+      <Filter>Source Files\hle\Services\pctl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
