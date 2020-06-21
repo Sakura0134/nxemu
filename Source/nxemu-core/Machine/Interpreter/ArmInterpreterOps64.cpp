@@ -981,7 +981,14 @@ void Arm64Op::Ldrb(CPUExecutor & core, const Arm64Opcode &op)
         uint64_t index = 0;
         if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            if (CRegisters::Is64bitReg(op.Operand(1).mem.index))
+            {
+                index = Reg.Get64(op.Operand(1).mem.index);
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
         }
 
         if (op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID)
