@@ -8,6 +8,7 @@ public:
     static void Add(CPUExecutor & core, const Arm64Opcode &op);
     static void Adrp(CPUExecutor & core, const Arm64Opcode &op);
     static void And(CPUExecutor & core, const Arm64Opcode &op);
+    static void Asr(CPUExecutor & core, const Arm64Opcode &op);
     static void B(CPUExecutor & core, const Arm64Opcode &op);
     static void Bfi(CPUExecutor & core, const Arm64Opcode &op);
     static void Bic(CPUExecutor & core, const Arm64Opcode &op);
