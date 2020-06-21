@@ -17,8 +17,15 @@ bool ISelfController::Connect(void)
     return false;
 }
 
-ResultCode ISelfController::CallMethod(CIPCRequest & /*Request*/)
+ResultCode ISelfController::CallMethod(CIPCRequest & Request)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    switch (Request.RequestHeader().Command)
+    {
+    case SetFocusHandlingMode:
+    case SetOutOfFocusSuspendingEnabled:
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
     return RESULT_SUCCESS;
 }
