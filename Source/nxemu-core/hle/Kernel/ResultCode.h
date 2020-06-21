@@ -32,7 +32,9 @@ union ResultCode
 
 const ResultCode RESULT_SUCCESS(0);
 const ResultCode ERR_INVALID_HANDLE( ErrorModule::Kernel, 114 );
+const ResultCode ERR_INVALID_POINTER( ErrorModule::Kernel, 115 );
 const ResultCode ERR_INVALID_COMBINATION(ErrorModule::Kernel, 116);
+const ResultCode RESULT_TIMEOUT(ErrorModule::Kernel, 117);
 const ResultCode ERR_OUT_OF_RANGE(ErrorModule::Kernel, 119);
 const ResultCode ERR_INVALID_ENUM_VALUE(ErrorModule::Kernel, 120);
 const ResultCode ERR_NOT_FOUND(ErrorModule::Kernel, 121);

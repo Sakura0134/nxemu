@@ -4,6 +4,7 @@
 #include <nxemu-core\hle\Services\NamedPort.h>
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\hle\Kernel\ResultCode.h>
+#include <nxemu-core\hle\Kernel\KEvent.h>
 #include <nxemu-core\hle\Kernel\KernelObject.h>
 #include <nxemu-core\hle\kernel\Service.h>
 #include <Common\stdtypes.h>
