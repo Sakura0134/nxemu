@@ -228,3 +228,16 @@ bool CSystemThreadMemory::GetMemoryInfo(uint64_t Addr, QueryMemoryInfo & MemoryI
     return true;
 }
 
+bool CSystemThreadMemory::IsValidAddress(uint64_t Addr)
+{
+    if (Addr >= m_StackAddress && Addr < (m_StackAddress + m_StackSize))
+    {
+        return true;
+    }
+    else if (Addr >= m_tlsAddress && Addr < (m_tlsAddress + m_tlsSize))
+    {
+        return true;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
