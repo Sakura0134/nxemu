@@ -50,6 +50,13 @@ void CSystemThread::ServiceCall(uint32_t index)
 
     switch (svcCall)
     {
+    case CHleKernel::svcSetHeapSize:
+        {
+            uint64_t HeapAddress = 0;
+            Result = m_Kernel->SetHeapSize(HeapAddress, m_Reg.Get64(Arm64Opcode::ARM64_REG_X1));
+            m_Reg.Set64(Arm64Opcode::ARM64_REG_X1, HeapAddress);
+        }
+        break;
     case CHleKernel::svcQueryMemory:
         Result = m_Kernel->QueryMemory(m_ThreadMemory, m_Reg.Get64(Arm64Opcode::ARM64_REG_X0), m_Reg.Get64(Arm64Opcode::ARM64_REG_X2));
         break;

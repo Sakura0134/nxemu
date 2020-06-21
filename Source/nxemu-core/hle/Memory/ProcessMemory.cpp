@@ -8,6 +8,7 @@ const uint64_t CProcessMemory::PageSize = 1 << PageBits;
 const uint64_t CProcessMemory::PageMask = PageSize - 1;
 
 CProcessMemory::CProcessMemory(void) :
+    m_heap(NULL),
     m_AddressSpaceWidth(0),
     m_AddressSpaceBase(0),
     m_AddressSpaceSize(0),
@@ -81,6 +82,17 @@ bool CProcessMemory::Initialize(ProgramAddressSpaceType Type, bool Is64bit)
     m_MemoryMap.insert(MemoryRegionMap::value_type(AddressSpaceEnd - 1, InitialMemRegion));
     WriteTrace(TraceMemory, TraceInfo, "Done (res: true)");
     return true;
+}
+
+bool CProcessMemory::SetHeapSize(uint64_t Size)
+{
+    if (Size > 0xc8000000 || m_heap != NULL)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+    m_heap = MapMemory(GetHeapRegionBaseAddr(), (uint32_t)Size, MemoryPermission_ReadWrite, MemoryType_Heap);
+    return m_heap != NULL;
 }
 
 bool CProcessMemory::GetMemoryInfo(uint64_t Address, QueryMemoryInfo & Info)

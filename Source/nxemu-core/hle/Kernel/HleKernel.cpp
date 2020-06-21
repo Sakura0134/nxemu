@@ -272,6 +272,25 @@ ResultCode CHleKernel::SendSyncRequest(uint32_t Handle)
     return RESULT_SUCCESS;
 }
 
+ResultCode CHleKernel::SetHeapSize(uint64_t & HeapAddress, uint64_t size)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "Start (size: 0x%I64X)", size);
+    if ((size % 0x200000) != 0 || size >= 0x200000000)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return RESULT_SUCCESS;
+    }
+
+    if (!m_ProcessMemory.SetHeapSize(size))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return RESULT_SUCCESS;
+    }
+    HeapAddress = m_ProcessMemory.GetHeapRegionBaseAddr();
+    WriteTrace(TraceHleKernel, TraceInfo, "Done (HeapAddress: 0x%I64X)", HeapAddress);
+    return RESULT_SUCCESS;
+}
+
 ResultCode CHleKernel::SignalProcessWideKey(uint64_t ptr, uint32_t value)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (ptr: 0x%I64X value: 0x%X)", ptr, value);

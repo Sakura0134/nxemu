@@ -16,13 +16,15 @@ public:
 
     uint64_t GetAddressSpaceBaseAddr(void) const { return m_AddressSpaceBase; }
     uint64_t GetAddressSpaceSize(void) const { return m_AddressSpaceSize; }
+    uint64_t GetHeapRegionBaseAddr(void) const { return m_HeapRegionBase; }
     uint64_t GetMapRegionAddress(void) const { return m_NewMapRegionBase; }
     uint64_t GetMapRegionSize(void) const { return m_NewMapRegionSize; }
     uint64_t GetTlsIoRegionBase(void) const { return m_TlsIoRegionBase; }
     uint64_t GetTlsIoRegionSize(void) const { return m_TlsIoRegionSize; }
 
     bool Initialize(ProgramAddressSpaceType Type, bool Is64bit);
-        
+    bool SetHeapSize(uint64_t Size);
+
     bool GetMemoryInfo(uint64_t Address, QueryMemoryInfo & Info);
     uint8_t * MapMemory(uint64_t Address, uint32_t Size, MemoryPermission Perm, MemoryType Type);
     bool Read32(uint64_t Addr, uint32_t & value);
@@ -49,4 +51,5 @@ private:
     uint64_t m_NewMapRegionBase, m_NewMapRegionSize;
     uint64_t m_TlsIoRegionBase, m_TlsIoRegionSize;
     MemoryRegionMap m_MemoryMap;
+    uint8_t * m_heap;
 };
