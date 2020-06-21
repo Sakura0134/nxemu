@@ -1252,6 +1252,27 @@ void Arm64Op::Mov(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Movi(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && CRegisters::IsVectorReg(op.Operand(0).Reg))
+    {
+        if (op.Operand(1).ImmVal == 0)
+        {
+            Reg.Set64Vector(op.Operand(0).Reg, 0, Arm64Opcode::ARM64_VESS_D, Arm64Opcode::ARM64_VAS_2D, op.Operand(1).ImmVal);
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Sub(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();

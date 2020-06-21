@@ -271,6 +271,31 @@ void CRegisters::Set128(Arm64Opcode::arm64_reg reg, uint64_t hiValue, uint64_t l
     }
 }
 
+void CRegisters::Set64Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Arm64Opcode::arm64_vess Vess, Arm64Opcode::arm64_vas Vas, uint64_t value)
+{
+    switch (Vess)
+    {
+    case Arm64Opcode::ARM64_VESS_D:
+        if (Vas == Arm64Opcode::ARM64_VAS_2D && reg >= Arm64Opcode::ARM64_REG_V0 && reg <= Arm64Opcode::ARM64_REG_V31)
+        {
+            if (VectorIndex > 0)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+            m_vfp_regs[(reg - Arm64Opcode::ARM64_REG_V0) * 2] = value;
+            m_vfp_regs[((reg - Arm64Opcode::ARM64_REG_V0) * 2) + 1] = value;
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void CRegisters::SetFPCR(uint32_t value)
 {
     m_fpcr = value;
@@ -521,6 +546,48 @@ bool CRegisters::Is64bitReg(Arm64Opcode::arm64_reg reg)
     case Arm64Opcode::ARM64_REG_W30:
     case Arm64Opcode::ARM64_REG_WZR:
         return false;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
+bool CRegisters::IsVectorReg(Arm64Opcode::arm64_reg reg)
+{
+    switch (reg)
+    {
+    case Arm64Opcode::ARM64_REG_V0:
+    case Arm64Opcode::ARM64_REG_V1:
+    case Arm64Opcode::ARM64_REG_V2:
+    case Arm64Opcode::ARM64_REG_V3:
+    case Arm64Opcode::ARM64_REG_V4:
+    case Arm64Opcode::ARM64_REG_V5:
+    case Arm64Opcode::ARM64_REG_V6:
+    case Arm64Opcode::ARM64_REG_V7:
+    case Arm64Opcode::ARM64_REG_V8:
+    case Arm64Opcode::ARM64_REG_V9:
+    case Arm64Opcode::ARM64_REG_V10:
+    case Arm64Opcode::ARM64_REG_V11:
+    case Arm64Opcode::ARM64_REG_V12:
+    case Arm64Opcode::ARM64_REG_V13:
+    case Arm64Opcode::ARM64_REG_V14:
+    case Arm64Opcode::ARM64_REG_V15:
+    case Arm64Opcode::ARM64_REG_V16:
+    case Arm64Opcode::ARM64_REG_V17:
+    case Arm64Opcode::ARM64_REG_V18:
+    case Arm64Opcode::ARM64_REG_V19:
+    case Arm64Opcode::ARM64_REG_V20:
+    case Arm64Opcode::ARM64_REG_V21:
+    case Arm64Opcode::ARM64_REG_V22:
+    case Arm64Opcode::ARM64_REG_V23:
+    case Arm64Opcode::ARM64_REG_V24:
+    case Arm64Opcode::ARM64_REG_V25:
+    case Arm64Opcode::ARM64_REG_V26:
+    case Arm64Opcode::ARM64_REG_V27:
+    case Arm64Opcode::ARM64_REG_V28:
+    case Arm64Opcode::ARM64_REG_V29:
+    case Arm64Opcode::ARM64_REG_V30:
+    case Arm64Opcode::ARM64_REG_V31:
+        return true;
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
