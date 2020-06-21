@@ -91,6 +91,7 @@ public:
 	void AddResponseHandlesToMove(uint32_t handle);
 	void AddObjectID(uint32_t ObjectId);
 	bool WriteResponse(ResultCode call_result);
+	void SetDomainRequest(bool DomainRequest);
 	void MakeObject(CService * Service);
 
 private:

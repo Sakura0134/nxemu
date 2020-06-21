@@ -277,6 +277,11 @@ bool CIPCRequest::WriteResponse(ResultCode call_result)
     return true;
 }
 
+void CIPCRequest::SetDomainRequest(bool DomainRequest)
+{
+	m_IsDomainRequest = DomainRequest;
+}
+
 void CIPCRequest::MakeObject(CService * Service)
 {
     if (IsDomainRequest())

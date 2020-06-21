@@ -222,6 +222,11 @@ ResultCode CHleKernel::ProcessSyncControl(CService * Service, CIPCRequest & Requ
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
         break;
+    case CloneCurrentObject:
+        Request.AddResponseHandlesToMove(AddKernelObject(Service));
+        Request.SetDomainRequest(false);
+        response_data.insert(response_data.end(), { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 });
+        break;
     case QueryPointerBufferSize:
         response_data.insert(response_data.end(), { 0x00, 0x05, 0x00, 0x00 });
         break;
