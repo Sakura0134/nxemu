@@ -25,6 +25,10 @@ void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
             {
                 b = Reg.Get64(op.Operand(2).Reg);
             }
+            else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_ASR && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                b = (int64_t)Reg.Get64(op.Operand(2).Reg) >> op.Operand(2).shift.value;
+            }
             else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
             {
                 b = Reg.Get64(op.Operand(2).Reg) << op.Operand(2).shift.value;
