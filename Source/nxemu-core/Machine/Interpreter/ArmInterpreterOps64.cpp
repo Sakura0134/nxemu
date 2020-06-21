@@ -1914,7 +1914,11 @@ void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
             }
         }
 
-        if (op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID)
+        if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_LSL)
+        {
+            index <<= op.Operand(1).shift.value;
+        }
+        else if (op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
