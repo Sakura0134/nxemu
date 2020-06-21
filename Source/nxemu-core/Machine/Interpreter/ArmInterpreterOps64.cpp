@@ -52,6 +52,10 @@ void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
             {
                b = ((int64_t)(int32_t)Reg.Get32(op.Operand(2).Reg)) << op.Operand(2).shift.value;
             }
+            else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_UXTW)
+            {
+                b = (uint32_t)(Reg.Get32(op.Operand(2).Reg) << op.Operand(2).shift.value);
+            }
             else
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -1028,7 +1032,14 @@ void Arm64Op::Ldrh(CPUExecutor & core, const Arm64Opcode &op)
         uint64_t index = 0;
         if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            if (CRegisters::Is64bitReg(op.Operand(1).mem.index))
+            {
+                index = Reg.Get64(op.Operand(1).mem.index);
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
         }
 
         if (op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID)
