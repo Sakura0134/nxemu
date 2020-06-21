@@ -27,6 +27,7 @@ ResultCode ICommonStateGetter::CallMethod(CIPCRequest & Request)
     {
     case GetEventHandle: ProcessGetEventHandle(Request); break;
     case ReceiveMessage: return ProcessReceiveMessage(Request);
+    case GetCurrentFocusState: return ProcessGetCurrentFocusState(Request);
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
@@ -55,4 +56,14 @@ ResultCode ICommonStateGetter::ProcessReceiveMessage(CIPCRequest & Request)
     ResponseData.resize(sizeof(uint32_t));
     memcpy(ResponseData.data(), &message, sizeof(message));
     return RESULT_SUCCESS;
+}
+
+ResultCode ICommonStateGetter::ProcessGetCurrentFocusState(CIPCRequest & Request)
+{
+    CIPCRequest::REQUEST_DATA & ResponseData = Request.ResponseData();
+
+    ResponseData.resize(sizeof(uint8_t) + sizeof(uint32_t));
+	ResponseData.data()[0] = 1;
+	*((uint32_t *)&ResponseData.data()[1]) = 0;
+	return RESULT_SUCCESS;
 }

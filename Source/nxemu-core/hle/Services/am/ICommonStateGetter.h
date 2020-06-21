@@ -76,6 +76,7 @@ private:
 
     void ProcessGetEventHandle(CIPCRequest & Request);
     ResultCode ProcessReceiveMessage(CIPCRequest & Request);
+    ResultCode ProcessGetCurrentFocusState(CIPCRequest & Request);
 
     NotificationMessageQueue m_NotificationMessageQueue;
     CKernelObjectPtr m_ReadEvent;
