@@ -24,6 +24,8 @@ ResultCode IWindowController::CallMethod(CIPCRequest & Request)
     case GetAppletResourceUserId:
         ProcessGetAppletResourceUserId(Request);
         break;
+    case AcquireForegroundRights:
+        break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
