@@ -47,6 +47,7 @@ public:
     static void Msr(CPUExecutor & core, const Arm64Opcode &op);
     static void Msub(CPUExecutor & core, const Arm64Opcode &op);
     static void Mul(CPUExecutor & core, const Arm64Opcode &op);
+    static void Mvn(CPUExecutor & core, const Arm64Opcode &op);
     static void Neg(CPUExecutor & core, const Arm64Opcode &op);
     static void Orr(CPUExecutor & core, const Arm64Opcode &op);
     static void Rbit(CPUExecutor & core, const Arm64Opcode &op);

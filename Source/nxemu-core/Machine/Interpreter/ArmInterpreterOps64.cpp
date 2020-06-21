@@ -1542,6 +1542,20 @@ void Arm64Op::Mul(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Mvn(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
+    {
+        Reg.Set64(op.Operand(0).Reg, ~(Reg.Get64(op.Operand(1).Reg)));
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Neg(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();
