@@ -1670,6 +1670,11 @@ void Arm64Op::Neg(CPUExecutor & core, const Arm64Opcode &op)
         Reg.Set64(op.Operand(0).Reg, -((int64_t)Reg.Get64(op.Operand(1).Reg)));
     }
     else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_LSL)
+    {
+        Reg.Set64(op.Operand(0).Reg, -((int64_t)(Reg.Get64(op.Operand(1).Reg) << op.Operand(1).shift.value)));
+    }
+    else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
     {
         Reg.Set32(op.Operand(0).Reg, -((int32_t)Reg.Get32(op.Operand(1).Reg)));
