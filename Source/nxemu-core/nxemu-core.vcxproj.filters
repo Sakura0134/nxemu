@@ -105,6 +105,12 @@
     <Filter Include="Source Files\hle\Services\am">
       <UniqueIdentifier>{221b9740-adea-43cf-a34e-49a03ca53144}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\hle\Services\ns">
+      <UniqueIdentifier>{9092e855-665e-4cc3-9d02-3c77c17c8fa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\hle\Services\ns">
+      <UniqueIdentifier>{ba1de1b4-307e-4804-8ad5-7247feaf1a90}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -299,6 +305,9 @@
     <ClInclude Include="hle\Kernel\KEvent.h">
       <Filter>Header Files\hle\Kernel</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\ns\IAddOnContentManager.h">
+      <Filter>Header Files\hle\Services\ns</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -474,6 +483,9 @@
     </ClCompile>
     <ClCompile Include="hle\Kernel\KEvent.cpp">
       <Filter>Source Files\hle\Kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\ns\IAddOnContentManager.cpp">
+      <Filter>Source Files\hle\Services\ns</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
