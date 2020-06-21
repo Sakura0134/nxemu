@@ -2095,6 +2095,19 @@ void Arm64Op::Stur(CPUExecutor & core, const Arm64Opcode &op)
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
         }
+        else if (CRegisters::Is128bitReg(op.Operand(0).Reg))
+        {
+            uint64_t valueHi, valueLo;
+            Reg.Get128(op.Operand(0).Reg, valueHi, valueLo);
+            if (!MMU.Write64(target_addr + 0x00, valueHi))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+            if (!MMU.Write64(target_addr + 0x08, valueLo))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
