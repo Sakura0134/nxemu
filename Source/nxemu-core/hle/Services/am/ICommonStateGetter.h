@@ -1,9 +1,19 @@
 #pragma once
 #include <nxemu-core\hle\Kernel\Service.h>
+#include <queue>
 
 class ICommonStateGetter :
     public CService
 {
+    enum NotificationMessage
+    {
+        FocusStateChanged = 0xf,
+        OperationModeChanged = 0x1e,
+        PerformanceModeChanged = 0x1f
+    };
+
+    typedef std::queue<NotificationMessage> NotificationMessageQueue;
+
 public:
     enum Method
     {
@@ -65,6 +75,8 @@ private:
     ICommonStateGetter(CSwitchSystem & System);
 
     void ProcessGetEventHandle(CIPCRequest & Request);
+    ResultCode ProcessReceiveMessage(CIPCRequest & Request);
 
+    NotificationMessageQueue m_NotificationMessageQueue;
     CKernelObjectPtr m_ReadEvent;
 };
