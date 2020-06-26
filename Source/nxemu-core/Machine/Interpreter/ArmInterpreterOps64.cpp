@@ -828,7 +828,16 @@ void Arm64Op::Ldaxr(CPUExecutor & core, const Arm64Opcode &op)
         }
 
         uint64_t load_addr = Reg.Get64(op.Operand(1).mem.base) + op.Operand(1).mem.disp;
-        if (CRegisters::Is32bitReg(op.Operand(0).Reg))
+        if (CRegisters::Is64bitReg(op.Operand(0).Reg))
+        {
+            uint64_t value;
+            if (!MMU.Read64(load_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (op.Operand(0).Reg != Arm64Opcode::ARM64_REG_XZR)
+            {
+                Reg.Set64(op.Operand(0).Reg, value);
+            }
+        }
+        else if (CRegisters::Is32bitReg(op.Operand(0).Reg))
         {
             uint32_t value;
             if (!MMU.Read32(load_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
@@ -2136,7 +2145,17 @@ void Arm64Op::Stlxr(CPUExecutor & core, const Arm64Opcode &op)
         }
 
         uint64_t store_addr = Reg.Get64(op.Operand(2).mem.base) + op.Operand(2).mem.disp;
-        if (CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
+        if (CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
+        {
+            if (!MMU.Write64(store_addr, Reg.Get64(op.Operand(1).Reg)))
+            {
+                Reg.Set32(op.Operand(0).Reg, 1);
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+            Reg.Set32(op.Operand(0).Reg, 0);
+        }
+        else if (CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
         {
             if (!MMU.Write32(store_addr, Reg.Get32(op.Operand(1).Reg)))
             {
