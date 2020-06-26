@@ -25,6 +25,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\3rdParty\SoftFloat-3e\source\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -64,14 +65,6 @@
     <ClInclude Include="UserInterface\WTLControls\ClistCtrl\TitleTip.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.vcxproj">
-      <Project>{c9b7522e-5aae-41d1-8a34-ea61e17d32bb}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\nxemu-core\nxemu-core.vcxproj">
-      <Project>{18098a2d-f1c3-4325-befc-a464fcb97ba1}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +74,14 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="UserInterface\Bitmaps\ListItems.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{c9b7522e-5aae-41d1-8a34-ea61e17d32bb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\nxemu-core\nxemu-core.vcxproj">
+      <Project>{18098a2d-f1c3-4325-befc-a464fcb97ba1}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

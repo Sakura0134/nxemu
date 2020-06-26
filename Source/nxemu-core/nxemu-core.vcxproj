@@ -25,7 +25,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Source\3rdParty\mbedtls\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\3rdParty\SoftFloat-3e\source\include;$(SolutionDir)\Source\3rdParty\mbedtls\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <PreBuildEvent Condition="'$(Platform)'=='x64'">
       <Command>"$(SolutionDir)Source\Script\UpdateVersion.cmd" "$(Configuration)64" "$(SolutionDir)Source\nxemu-core\Version.h.in" "$(SolutionDir)Source\nxemu-core\Version.h"</Command>
@@ -175,6 +175,9 @@
     </ProjectReference>
     <ProjectReference Include="..\3rdParty\mbedtls\mbedtls.vcxproj">
       <Project>{fe18a6e5-6f6b-455b-8139-2da41e223d87}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\3rdParty\SoftFloat-3e\SoftFloat.vcxproj">
+      <Project>{9d00d803-80d4-4904-a45d-a33605d27cc6}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Common\Common.vcxproj">
       <Project>{c9b7522e-5aae-41d1-8a34-ea61e17d32bb}</Project>
