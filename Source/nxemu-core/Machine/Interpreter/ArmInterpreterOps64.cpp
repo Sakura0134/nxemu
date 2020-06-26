@@ -659,6 +659,10 @@ void Arm64Op::Csinc(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Dmb(CPUExecutor & /*core*/, const Arm64Opcode & /*op*/)
+{
+}
+
 void Arm64Op::Eor(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();

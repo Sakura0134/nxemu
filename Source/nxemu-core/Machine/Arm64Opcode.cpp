@@ -184,6 +184,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_CSEL:
     case ARM64_INS_CSET:
     case ARM64_INS_CSINC:
+    case ARM64_INS_DMB:
     case ARM64_INS_DUP:
     case ARM64_INS_EOR:
     case ARM64_INS_LDARB:
@@ -191,6 +192,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_LDP:
     case ARM64_INS_LDR:
     case ARM64_INS_LDRB:
+    case ARM64_INS_LDRH:
     case ARM64_INS_LDRSW:
     case ARM64_INS_LDUR:
     case ARM64_INS_LDURB:
@@ -205,6 +207,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_MOVZ:
     case ARM64_INS_MRS:
     case ARM64_INS_MSR:
+    case ARM64_INS_MSUB:
     case ARM64_INS_MUL:
     case ARM64_INS_MVN:
     case ARM64_INS_NEG:
@@ -230,8 +233,6 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_UBFIZ:
     case ARM64_INS_UBFX:
     case ARM64_INS_UDIV:
-    case ARM64_INS_LDRH:
-    case ARM64_INS_MSUB:
     case ARM64_INS_UMADDL:
     case ARM64_INS_UMULH:
         return false;
@@ -279,7 +280,7 @@ Arm64Opcode::Arm64OpcodeDetail * Arm64OpcodeCache::GetOpcodeDetail(uint64_t pc, 
         Details = new Arm64Opcode::Arm64OpcodeDetail(pc, insn);
         {
             CGuard guard(m_CacheCS);
-            OPCODE_CACHE::_Pairib res = m_OpcodeCache.insert(OPCODE_CACHE::value_type(key, Details));
+            std::pair<OPCODE_CACHE::const_iterator, bool> res = m_OpcodeCache.insert(OPCODE_CACHE::value_type(key, Details));
             if (!res.second)
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
