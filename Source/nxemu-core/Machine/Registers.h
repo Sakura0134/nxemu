@@ -2,6 +2,10 @@
 #include <Common\stdtypes.h>
 #include <nxemu-core\Machine\Arm64Opcode.h>
 
+extern "C" {
+#include <softfloat.h>
+}
+
 class CPUExecutor;
 
 class CRegisters
@@ -54,6 +58,7 @@ public:
 
     static bool Is128bitReg(Arm64Opcode::arm64_reg reg);
     static bool Is64bitReg(Arm64Opcode::arm64_reg reg);
+    static bool Is64bitFloatReg(Arm64Opcode::arm64_reg reg);
     static bool Is32bitReg(Arm64Opcode::arm64_reg reg);
     static bool IsVectorReg(Arm64Opcode::arm64_reg reg);
 

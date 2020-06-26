@@ -551,6 +551,16 @@ bool CRegisters::Is64bitReg(Arm64Opcode::arm64_reg reg)
     return false;
 }
 
+bool CRegisters::Is64bitFloatReg(Arm64Opcode::arm64_reg reg)
+{
+    if (reg >= Arm64Opcode::ARM64_REG_D0 && reg <= Arm64Opcode::ARM64_REG_D31)
+    {
+        return true;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
 bool CRegisters::IsVectorReg(Arm64Opcode::arm64_reg reg)
 {
     switch (reg)
