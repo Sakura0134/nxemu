@@ -1400,6 +1400,10 @@ void Arm64Op::Lsr(CPUExecutor & core, const Arm64Opcode &op)
         {
             Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) >> Reg.Get64(op.Operand(2).Reg));
         }
+        else if (CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && CRegisters::Is32bitReg(op.Operand(2).Reg))
+        {
+            Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) >> Reg.Get32(op.Operand(2).Reg));
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
