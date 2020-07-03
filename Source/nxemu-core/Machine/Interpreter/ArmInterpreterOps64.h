@@ -25,6 +25,7 @@ public:
     static void Csel(CPUExecutor & core, const Arm64Opcode &op);
     static void Cset(CPUExecutor & core, const Arm64Opcode &op);
     static void Csinc(CPUExecutor & core, const Arm64Opcode &op);
+    static void Csinv(CPUExecutor& core, const Arm64Opcode& op);
     static void Dmb(CPUExecutor & core, const Arm64Opcode &op);
     static void Dup(CPUExecutor & core, const Arm64Opcode &op);
     static void Eor(CPUExecutor & core, const Arm64Opcode &op);

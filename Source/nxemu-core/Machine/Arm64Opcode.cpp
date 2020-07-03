@@ -184,6 +184,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_CSEL:
     case ARM64_INS_CSET:
     case ARM64_INS_CSINC:
+    case ARM64_INS_CSINV:
     case ARM64_INS_DMB:
     case ARM64_INS_DUP:
     case ARM64_INS_EOR:
