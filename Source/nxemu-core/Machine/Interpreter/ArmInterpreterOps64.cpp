@@ -495,7 +495,11 @@ void Arm64Op::Cinc(CPUExecutor & core, const Arm64Opcode &op)
     CRegisters & Reg = core.Reg();
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG)
     {
-        if (CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
+        if (CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
+        {
+            Reg.Set64(op.Operand(0).Reg, Reg.ConditionSet(op.cc()) ? Reg.Get64(op.Operand(1).Reg) + 1 : Reg.Get64(op.Operand(1).Reg));
+        }
+        else if (CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
         {
             Reg.Set32(op.Operand(0).Reg, Reg.ConditionSet(op.cc()) ? Reg.Get32(op.Operand(1).Reg) + 1 : Reg.Get32(op.Operand(1).Reg));
         }
