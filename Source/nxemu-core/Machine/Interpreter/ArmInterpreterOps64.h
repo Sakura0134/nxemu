@@ -37,6 +37,7 @@ public:
     static void Ldr(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldrb(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldrh(CPUExecutor & core, const Arm64Opcode &op);
+    static void Ldrsb(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldrsw(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldur(CPUExecutor & core, const Arm64Opcode &op);
     static void Ldurb(CPUExecutor & core, const Arm64Opcode &op);
