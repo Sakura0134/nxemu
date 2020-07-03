@@ -2486,20 +2486,48 @@ void Arm64Op::Tbz(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Tst(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();
-    uint64_t result = 0;
-    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(0).Reg) && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg))
     {
-        result = Reg.Get32(op.Operand(0).Reg) & op.Operand(1).ImmVal;
+        uint64_t result = 0;
+        if (op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            result = Reg.Get64(op.Operand(0).Reg) & op.Operand(1).ImmVal;
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        bool n = (result & 0x8000000000000000) != 0;
+        bool z = result == 0;
+
+        Reg.SetConditionFlags(n, z, 0, 0);
+    }
+    else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(0).Reg))
+    {
+        uint32_t result = 0;
+        if (op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(1).Reg))
+        {
+            result = Reg.Get32(op.Operand(0).Reg) & Reg.Get32(op.Operand(1).Reg);
+        }
+        else if (op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            result = Reg.Get32(op.Operand(0).Reg) & op.Operand(1).ImmVal;
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        bool n = (result & 0x80000000) != 0;
+        bool z = result == 0;
+
+        Reg.SetConditionFlags(n, z, 0, 0);
     }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
-        return;
     }
-    bool n = (result & 0x80000000) != 0;
-    bool z = result == 0;
-
-    Reg.SetConditionFlags(n, z, 0, 0);
 }
 
 void Arm64Op::Ubfiz(CPUExecutor & core, const Arm64Opcode &op)
