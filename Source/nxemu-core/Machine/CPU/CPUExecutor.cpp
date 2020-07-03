@@ -57,6 +57,7 @@ void CPUExecutor::Execute(bool & Done)
         case Arm64Opcode::ARM64_INS_CMP: Arm64Op::Cmp(*this, op); break;
         case Arm64Opcode::ARM64_INS_CSEL: Arm64Op::Csel(*this, op); break;
         case Arm64Opcode::ARM64_INS_CSET: Arm64Op::Cset(*this, op); break;
+        case Arm64Opcode::ARM64_INS_CSETM: Arm64Op::Csetm(*this, op); break;
         case Arm64Opcode::ARM64_INS_CSINC: Arm64Op::Csinc(*this, op); break;
         case Arm64Opcode::ARM64_INS_CSINV: Arm64Op::Csinv(*this, op); break;
         case Arm64Opcode::ARM64_INS_DUP: Arm64Op::Dup(*this, op); break;
@@ -153,6 +154,7 @@ bool CPUExecutor::ShouldExecuteOp(const Arm64Opcode & op)
     case Arm64Opcode::ARM64_INS_CINC: return true;
     case Arm64Opcode::ARM64_INS_CSEL: return true;
     case Arm64Opcode::ARM64_INS_CSET: return true;
+    case Arm64Opcode::ARM64_INS_CSETM: return true;
     case Arm64Opcode::ARM64_INS_CSINC: return true;
     case Arm64Opcode::ARM64_INS_CSINV: return true;
     default:
