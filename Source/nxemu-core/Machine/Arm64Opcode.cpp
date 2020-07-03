@@ -188,6 +188,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_DUP:
     case ARM64_INS_EOR:
     case ARM64_INS_FMOV:
+    case ARM64_INS_INS:
     case ARM64_INS_LDARB:
     case ARM64_INS_LDAXR:
     case ARM64_INS_LDP:
