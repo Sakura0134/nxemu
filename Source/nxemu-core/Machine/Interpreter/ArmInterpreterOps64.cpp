@@ -2262,7 +2262,7 @@ void Arm64Op::Strb(CPUExecutor & core, const Arm64Opcode &op)
 
         if (CRegisters::Is32bitReg(op.Operand(0).Reg))
         {
-            if (!MMU.Write16(target_addr, (uint16_t)Reg.Get32(op.Operand(0).Reg)))
+            if (!MMU.Write8(target_addr, (uint8_t)Reg.Get32(op.Operand(0).Reg)))
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
