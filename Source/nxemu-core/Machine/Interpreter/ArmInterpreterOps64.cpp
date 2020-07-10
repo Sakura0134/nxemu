@@ -1244,7 +1244,7 @@ void Arm64Op::Ldrsw(CPUExecutor & core, const Arm64Opcode &op)
         {
             index <<= op.Operand(1).shift.value;
         }
-        else if (op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID)
+        else if (op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID || op.Operand(1).Extend != Arm64Opcode::ARM64_EXT_INVALID)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -1275,8 +1275,10 @@ void Arm64Op::Ldurb(CPUExecutor & core, const Arm64Opcode &op)
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
-        if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID) { g_Notify->BreakPoint(__FILE__, __LINE__); }
-        if (op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+        if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID || op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID || op.Operand(1).Extend != Arm64Opcode::ARM64_EXT_INVALID)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
 
         uint64_t load_addr = Reg.Get64(op.Operand(1).mem.base) + op.Operand(1).mem.disp;
         if (CRegisters::Is32bitReg(op.Operand(0).Reg))
@@ -1303,8 +1305,10 @@ void Arm64Op::Ldur(CPUExecutor & core, const Arm64Opcode &op)
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
-        if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID) { g_Notify->BreakPoint(__FILE__, __LINE__); }
-        if (op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+        if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID || op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID || op.Operand(1).Extend != Arm64Opcode::ARM64_EXT_INVALID)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
 
         uint64_t load_addr = Reg.Get64(op.Operand(1).mem.base) + op.Operand(1).mem.disp;
         if (CRegisters::Is64bitReg(op.Operand(0).Reg))
@@ -1338,12 +1342,7 @@ void Arm64Op::Ldxr(CPUExecutor & core, const Arm64Opcode &op)
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
         uint64_t index = 0;
-        if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID)
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-        }
-
-        if (op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID)
+        if (op.Operand(1).mem.index != Arm64Opcode::ARM64_REG_INVALID || op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID || op.Operand(1).Extend != Arm64Opcode::ARM64_EXT_INVALID)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -1489,7 +1488,7 @@ void Arm64Op::Mov(CPUExecutor & core, const Arm64Opcode &op)
     {
         if (op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
         {
-            if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+            if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
             {
                 Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg));
             }
@@ -1498,9 +1497,9 @@ void Arm64Op::Mov(CPUExecutor & core, const Arm64Opcode &op)
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
         }
-        else if (op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) )
+        else if (op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
         {
-            if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+            if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
             {
                 Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg));
             }
@@ -1641,11 +1640,11 @@ void Arm64Op::Movk(CPUExecutor & core, const Arm64Opcode &op)
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && CRegisters::Is64bitReg(op.Operand(0).Reg))
     {
-        if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_LSL)
+        if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
         {
             Reg.Set64(op.Operand(0).Reg, (Reg.Get64(op.Operand(0).Reg) & ~((uint64_t)0xFFFF << op.Operand(1).shift.value)) | ((uint64_t)(op.Operand(1).ImmVal & 0xFFFF) << op.Operand(1).shift.value));
         }
-        else if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+        else if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
         {
             Reg.Set64(op.Operand(0).Reg, (Reg.Get64(op.Operand(0).Reg) & ~0xFFFF) | (uint16_t)(op.Operand(1).ImmVal & 0xFFFF));
         }
@@ -1656,7 +1655,7 @@ void Arm64Op::Movk(CPUExecutor & core, const Arm64Opcode &op)
     }
     else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && CRegisters::Is32bitReg(op.Operand(0).Reg))
     {
-        if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+        if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
         {
             Reg.Set32(op.Operand(0).Reg, (Reg.Get32(op.Operand(0).Reg) & ~0xFFFF) | (uint16_t)(op.Operand(1).ImmVal & 0xFFFF));
         }
@@ -1834,17 +1833,17 @@ void Arm64Op::Neg(CPUExecutor & core, const Arm64Opcode &op)
     CRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
-        CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+        CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
     {
         Reg.Set64(op.Operand(0).Reg, -((int64_t)Reg.Get64(op.Operand(1).Reg)));
     }
     else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
-        CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_LSL)
+        CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
     {
         Reg.Set64(op.Operand(0).Reg, -((int64_t)(Reg.Get64(op.Operand(1).Reg) << op.Operand(1).shift.value)));
     }
     else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
-        CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+        CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
     {
         Reg.Set32(op.Operand(0).Reg, -((int32_t)Reg.Get32(op.Operand(1).Reg)));
     }
@@ -1865,11 +1864,11 @@ void Arm64Op::Orr(CPUExecutor & core, const Arm64Opcode &op)
         {
             Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) | op.Operand(2).ImmVal);
         }
-        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL)
+        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
         {
             Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) | (Reg.Get64(op.Operand(2).Reg) << op.Operand(2).shift.value));
         }
-        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
         {
             Reg.Set64(op.Operand(0).Reg, Reg.Get64(op.Operand(1).Reg) | Reg.Get64(op.Operand(2).Reg));
         }
@@ -1881,15 +1880,15 @@ void Arm64Op::Orr(CPUExecutor & core, const Arm64Opcode &op)
     else if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
     {
-        if (op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+        if (op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
         {
             Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) | (uint32_t)op.Operand(2).ImmVal);
         }
-        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL)
+        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
         {
             Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) | (Reg.Get32(op.Operand(2).Reg) << op.Operand(2).shift.value));
         }
-        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+        else if (op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(2).Reg) && op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
         {
             Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) | Reg.Get32(op.Operand(2).Reg));
         }
@@ -2325,12 +2324,7 @@ void Arm64Op::Stlxr(CPUExecutor & core, const Arm64Opcode &op)
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM)
     {
-        if (op.Operand(2).mem.index != Arm64Opcode::ARM64_REG_INVALID)
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-        }
-
-        if (op.Operand(2).shift.type != Arm64Opcode::ARM64_SFT_INVALID)
+        if (op.Operand(2).mem.index != Arm64Opcode::ARM64_REG_INVALID || op.Operand(2).shift.type != Arm64Opcode::ARM64_SFT_INVALID || op.Operand(2).Extend != Arm64Opcode::ARM64_EXT_INVALID)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
