@@ -586,50 +586,67 @@ void Arm64Op::Cmp(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();
 
-    uint64_t a, b;
-    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg) && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+    if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg))
     {
-        a = Reg.Get64(op.Operand(0).Reg);
-        b = op.Operand(1).ImmVal;
+        uint64_t a = Reg.Get64(op.Operand(0).Reg), b;
+        if (op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+        {
+            b = Reg.Get64(op.Operand(1).Reg);
+        }
+        else if (op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_LSR && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+        {
+            b = Reg.Get64(op.Operand(1).Reg) >> op.Operand(1).shift.value;
+        }
+        else if (op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            b = op.Operand(1).ImmVal;
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+
+        uint64_t result = a - b;
+        bool n = (result & 0x8000000000000000) != 0;
+        bool z = result == 0;
+        bool c = a >= b;
+        bool v = (((result ^ a) & (a ^ b)) & 0x8000000000000000) != 0;
+        Reg.SetConditionFlags(n, z, c, v);
     }
-    else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(0).Reg) && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+    else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(0).Reg))
     {
-        a = (int64_t)((int32_t)Reg.Get32(op.Operand(0).Reg));
-        b = op.Operand(1).ImmVal;
-    }
-    else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg) && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(1).Reg))
-    {
-        a = Reg.Get64(op.Operand(0).Reg);
-        b = Reg.Get64(op.Operand(1).Reg);
-    }
-    else if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(0).Reg) && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(1).Reg))
-    {
-        a = (int64_t)((int32_t)Reg.Get32(op.Operand(0).Reg));
-        b = (int64_t)((int32_t)Reg.Get32(op.Operand(1).Reg));
+        uint32_t a = Reg.Get32(op.Operand(0).Reg), b;
+        if (op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+        {
+            b = Reg.Get32(op.Operand(1).Reg);
+        }
+        else if (op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is32bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_UXTB)
+        {
+            b = (uint8_t)Reg.Get32(op.Operand(1).Reg);
+        }
+        else if (op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            b = (uint32_t)op.Operand(1).ImmVal;
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+
+        uint32_t result = a - b;
+        bool n = (result & 0x80000000) != 0;
+        bool z = result == 0;
+        bool c = a >= b;
+        bool v = (((result ^ a) & (a ^ b)) & 0x80000000) != 0;
+        Reg.SetConditionFlags(n, z, c, v);
     }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return;
     }
-    if (op.Operand(1).shift.type != Arm64Opcode::ARM64_SFT_INVALID)
-    {
-        if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_LSR)
-        {
-            b >>= op.Operand(1).shift.value;
-        }
-        else
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-        }
-    }
-
-    uint64_t result = a - b;
-    bool n = (result & 0x8000000000000000) != 0;
-    bool z = result == 0;
-    bool c = a >= b; //if the result of a subtraction is positive or zero
-    bool v = ((((a ^ b) & (a ^ result)) >> 20) & 0x80000000) != 0;
-    Reg.SetConditionFlags(n, z, c, v);
 }
 
 void Arm64Op::Csel(CPUExecutor & core, const Arm64Opcode &op)
