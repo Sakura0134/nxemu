@@ -2168,6 +2168,10 @@ void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
             {
                 index = Reg.Get64(op.Operand(1).mem.index);
             }
+            else if (CRegisters::Is32bitReg(op.Operand(1).mem.index))
+            {
+                index = Reg.Get32(op.Operand(1).mem.index);
+            }
             else
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -2175,6 +2179,10 @@ void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
         }
 
         if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+        {
+            index <<= op.Operand(1).shift.value;
+        }
+        else if (op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_UXTW)
         {
             index <<= op.Operand(1).shift.value;
         }
