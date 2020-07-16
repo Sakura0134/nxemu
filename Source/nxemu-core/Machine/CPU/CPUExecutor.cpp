@@ -3,11 +3,13 @@
 #include <nxemu-core\Settings\Settings.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Debugger.h>
+#include <Common\Maths.h>
 
 CPUExecutor::CPUExecutor(MemoryManagement & mmu) :
     m_Reg(this),
     m_MMU(mmu),
-    m_Jumped(false)
+    m_Jumped(false),
+    m_CpuTicks(0)
 {
 }
 
@@ -29,6 +31,7 @@ void CPUExecutor::Execute(bool & Done)
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
         Arm64Opcode op(OpcodeCache, PROGRAM_COUNTER, insn);
+        m_CpuTicks += 1;
 
         if (!ShouldExecuteOp(op))
         {
@@ -139,6 +142,15 @@ void CPUExecutor::Execute(bool & Done)
 void CPUExecutor::Jumped(void)
 {
     m_Jumped = true;
+}
+
+uint64_t CPUExecutor::GetCycleCount(void) const
+{
+    const uint64_t CNTFREQ = 19200000;
+    const uint64_t BASE_CLOCK_RATE = 1019215872;
+    uint64_t hi, rem;
+    uint64_t lo = mull128_u64(m_CpuTicks, CNTFREQ, &hi);
+    return div128_to_64(hi, lo, BASE_CLOCK_RATE, &rem);
 }
 
 bool CPUExecutor::ShouldExecuteOp(const Arm64Opcode & op)

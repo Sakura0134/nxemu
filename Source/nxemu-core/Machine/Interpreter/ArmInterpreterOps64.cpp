@@ -1737,6 +1737,9 @@ void Arm64Op::Mrs(CPUExecutor & core, const Arm64Opcode &op)
         case Arm64Opcode::A64SysReg_TPIDRRO_EL0:
             Reg.Set64(op.Operand(0).Reg, Reg.Get64(Arm64Opcode::ARM64_REG_TPIDRRO_EL0));
             break;
+        case Arm64Opcode::A64SysReg_CNTPCT_EL0:
+            Reg.Set64(op.Operand(0).Reg, core.GetCycleCount());
+            break;
         default:
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }

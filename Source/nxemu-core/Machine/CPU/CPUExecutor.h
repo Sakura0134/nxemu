@@ -16,6 +16,7 @@ public:
 
     CRegisters & Reg(void) { return m_Reg; }
     MemoryManagement & MMU(void) { return m_MMU; }
+    uint64_t GetCycleCount(void) const;
 
 protected:
     bool ShouldExecuteOp(const Arm64Opcode & op);
@@ -24,6 +25,7 @@ protected:
     MemoryManagement & m_MMU;
     bool m_Jumped;
     Arm64OpcodeCache m_OpcodeCache;
+    uint64_t m_CpuTicks;
 
 private:
     CPUExecutor(void);                          // Disable default constructor
