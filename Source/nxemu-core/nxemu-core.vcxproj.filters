@@ -117,6 +117,12 @@
     <Filter Include="Header Files\hle\Services\pctl">
       <UniqueIdentifier>{7dadde15-72df-4198-ab85-584143810a94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hle\Services\FspSrv">
+      <UniqueIdentifier>{1bee5a3e-ed9b-4305-a7e3-2687e4421e0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hle\Services\FspSrv">
+      <UniqueIdentifier>{337f31af-ca7a-4c4a-9c30-e4fd1cbcf4fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -320,6 +326,9 @@
     <ClInclude Include="hle\Services\pctl\IParentalControlService.h">
       <Filter>Header Files\hle\Services\pctl</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\FspSrv\IFileSystemProxy.h">
+      <Filter>Header Files\hle\Services\FspSrv</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -504,6 +513,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\pctl\IParentalControlService.cpp">
       <Filter>Source Files\hle\Services\pctl</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\FspSrv\IFileSystemProxy.cpp">
+      <Filter>Source Files\hle\Services\FspSrv</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
