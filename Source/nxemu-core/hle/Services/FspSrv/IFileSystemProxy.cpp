@@ -1,4 +1,8 @@
 #include <nxemu-core\hle\Services\FspSrv\IFileSystemProxy.h>
+#include <nxemu-core\hle\Services\FspSrv\IStorage.h>
+#include <nxemu-core\Machine\SwitchSystem.h>
+#include <nxemu-core\FileFormat\xci.h>
+#include <nxemu-core\FileFormat\nca.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CKernelObjectPtr IFileSystemProxy::CreateInstance(CSwitchSystem & System)
@@ -24,6 +28,24 @@ ResultCode IFileSystemProxy::CallMethod(CIPCRequest & Request)
     case Method::SetCurrentProcess:
         //stubbed; 
         break;
+    case Method::OpenDataStorageByCurrentProcess:
+		if (Request.SwitchSystem().Xci() != NULL)
+		{
+			const NCA * Program = Request.SwitchSystem().Xci()->Program();
+			if (Program)
+			{
+				Request.MakeObject(IStorage::CreateInstance(Request.SwitchSystem(), Program->Romfs(), Program->RomfsOffset())->GetServicePtr());
+			}
+			else
+			{
+				g_Notify->BreakPoint(__FILE__, __LINE__);
+			}
+		}
+		else
+		{
+			g_Notify->BreakPoint(__FILE__, __LINE__);
+		}
+		break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
