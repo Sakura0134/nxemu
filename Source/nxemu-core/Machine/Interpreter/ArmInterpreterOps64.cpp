@@ -1862,7 +1862,8 @@ void Arm64Op::Stp(CPUExecutor & core, const Arm64Opcode &op)
     MemoryManagement & MMU = core.MMU();
     CRegisters & Reg = core.Reg();
 
-    if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM)
+    if ((op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM) ||
+        (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(3).type == Arm64Opcode::ARM64_OP_IMM))
     {
         uint64_t index = MemIndex(op.Operand(2), Reg);
         uint64_t target_addr = Reg.Get64(op.Operand(2).mem.base) + op.Operand(2).mem.disp + index;
@@ -1892,7 +1893,7 @@ void Arm64Op::Stp(CPUExecutor & core, const Arm64Opcode &op)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
-        if (op.WriteBack())
+        if (op.WriteBack() || (op.Operands() == 4 && op.Operand(3).ImmVal != 0))
         {
             Reg.Set64(op.Operand(2).mem.base, op.Operands() == 4 ? target_addr + op.Operand(3).ImmVal : target_addr);
         }
