@@ -72,8 +72,31 @@ public:
         uint64_t Magic;
         uint64_t Result;
     } IpcResponseHeader;
+
+    typedef struct
+    {
+        uint32_t Size31_0;
+        uint32_t Address31_0;
+        struct
+        {
+            unsigned Flags : 2;
+            unsigned Address38_36 : 3;
+            unsigned : 19;
+            unsigned Size35_32 : 4;
+            unsigned Address35_32 : 4;
+        } p;
+    } IpcBuffDescPack;
+    
+    typedef struct
+    {
+        uint64_t Address;
+        uint64_t Size;
+        uint32_t Flags;
+    } IpcBuffDesc;
+
     typedef std::vector<uint8_t> REQUEST_DATA;
     typedef std::vector<uint32_t> HandleList;
+    typedef std::vector<IpcBuffDesc> IpcBuffDescList;
 
     CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CService * Service);
 
@@ -81,6 +104,7 @@ public:
     inline const IpcRequestHeader & RequestHeader(void) const { return m_RequestHeader; }
     inline const REQUEST_DATA & RequestData() const { return m_RequestData; }
     inline const IpcDomainMessage & DomainMessage() const { return m_DomainMessage; }
+    inline const IpcBuffDescList & ReceiveBuff() const { return m_ReceiveBuff; }
     inline bool IsDomainRequest(void) const { return m_IsDomainRequest; }
 	inline REQUEST_DATA & ResponseData() { return m_ResponseData; }
 	inline CSwitchSystem & SwitchSystem() { return m_System; }
@@ -99,6 +123,7 @@ private:
     CIPCRequest(const CIPCRequest&);
     CIPCRequest& operator=(const CIPCRequest&);
 
+    void ReadBuffList(uint64_t & read_addr, IpcBuffDescList & list, uint32_t size);
     static uint32_t GetPadSize16(uint32_t address);
 
 	CSwitchSystem & m_System;
@@ -112,6 +137,7 @@ private:
     HandleList m_RequestHandlesToCopy;
     HandleList m_ResponseHandlesToMove, m_ResponseHandlesToCopy;
 	HandleList m_ObjectIds;
+    IpcBuffDescList m_ReceiveBuff;
     REQUEST_DATA m_RequestData, m_ResponseData;
     CKernelObjectPtr m_Service;
     bool m_IsDomainRequest;
