@@ -99,6 +99,7 @@ void CPUExecutor::Execute(bool & Done)
         case Arm64Opcode::ARM64_INS_RET: Arm64Op::Ret(*this, op); break;
         case Arm64Opcode::ARM64_INS_SBFIZ: Arm64Op::Sbfiz(*this, op); break;
         case Arm64Opcode::ARM64_INS_SBFX: Arm64Op::Sbfx(*this, op); break;
+        case Arm64Opcode::ARM64_INS_SMULH: Arm64Op::Smulh(*this, op); break;
         case Arm64Opcode::ARM64_INS_SMULL: Arm64Op::Smull(*this, op); break;
         case Arm64Opcode::ARM64_INS_STLR: Arm64Op::Stlr(*this, op); break;
         case Arm64Opcode::ARM64_INS_STLRB: Arm64Op::Stlrb(*this, op); break;

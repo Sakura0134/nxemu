@@ -1996,6 +1996,21 @@ void Arm64Op::Sbfx(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Smulh(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
+        CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && CRegisters::Is64bitReg(op.Operand(2).Reg))
+    {
+        Reg.Set64(op.Operand(0).Reg, mullhi_s64(Reg.Get64(op.Operand(1).Reg), Reg.Get64(op.Operand(2).Reg)));
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Smull(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();
