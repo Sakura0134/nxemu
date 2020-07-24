@@ -5,7 +5,7 @@ class ACC_U0 :
     public CService
 {
 public:
-	enum
+	enum Method
 	{
         GetUserCount = 0,
         GetUserExistence = 1,
@@ -43,4 +43,6 @@ private:
 	ACC_U0& operator=(const ACC_U0&);
 
     ACC_U0(CSwitchSystem & System);
+
+	void ProcessInitializeApplicationInfo(void);
 };

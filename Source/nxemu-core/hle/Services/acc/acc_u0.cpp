@@ -19,6 +19,15 @@ bool ACC_U0::Connect(void)
 
 ResultCode ACC_U0::CallMethod(CIPCRequest & Request)
 {
-	g_Notify->BreakPoint(__FILE__, __LINE__);
+	switch (Request.RequestHeader().Command)
+	{
+    case Method::InitializeApplicationInfoV0: ProcessInitializeApplicationInfo(); break;
+	default:
+		g_Notify->BreakPoint(__FILE__, __LINE__);
+	}
 	return RESULT_SUCCESS;
+}
+
+void ACC_U0::ProcessInitializeApplicationInfo(void)
+{
 }
