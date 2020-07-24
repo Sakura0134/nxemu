@@ -6,11 +6,6 @@ void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();
 
-    if (op.UpdateFlags())
-    {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-    }
-
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
     {
@@ -51,6 +46,10 @@ void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
             else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_SXTW)
             {
                b = ((int64_t)(int32_t)Reg.Get32(op.Operand(2).Reg)) << op.Operand(2).shift.value;
+            }
+            else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_UXTB)
+            {
+                b = (uint8_t)(Reg.Get32(op.Operand(2).Reg) << op.Operand(2).shift.value);
             }
             else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_UXTW)
             {
