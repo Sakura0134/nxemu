@@ -46,9 +46,18 @@ ResultCode IFileSystemProxy::CallMethod(CIPCRequest & Request)
 			g_Notify->BreakPoint(__FILE__, __LINE__);
 		}
 		break;
+    case Method::GetGlobalAccessLogMode: 
+        ProcessGetGlobalAccessLogMode(Request);
+        break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 	return RESULT_SUCCESS;
 }
 
+void IFileSystemProxy::ProcessGetGlobalAccessLogMode(CIPCRequest & Request)
+{
+    CIPCRequest::REQUEST_DATA & ResponseData = Request.ResponseData();
+    ResponseData.resize(sizeof(uint32_t));
+	((uint32_t *)ResponseData.data())[0] = 1;
+}

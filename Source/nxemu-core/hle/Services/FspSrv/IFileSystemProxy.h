@@ -136,4 +136,6 @@ private:
     IFileSystemProxy& operator=(const IFileSystemProxy&);
 
     IFileSystemProxy(CSwitchSystem & System);
+
+    void ProcessGetGlobalAccessLogMode(CIPCRequest & Request);
 };
