@@ -260,6 +260,36 @@ void Arm64Op::Bfi(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
+void Arm64Op::Bfxil(CPUExecutor & core, const Arm64Opcode &op)
+{
+    CRegisters & Reg = core.Reg();
+
+    if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(3).type == Arm64Opcode::ARM64_OP_IMM &&
+        CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
+    {
+        int64_t lsb = op.Operand(2).ImmVal;
+        int64_t width = op.Operand(3).ImmVal;
+
+        if (lsb < 0 || lsb > 31)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        if (width < 1 || width > 32)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        uint32_t signbit = (1u << width) - 1;
+        uint32_t OrigialValue = Reg.Get32(op.Operand(0).Reg) & ~signbit;
+        Reg.Set32(op.Operand(0).Reg, OrigialValue | ((Reg.Get32(op.Operand(1).Reg) >> lsb) & signbit));
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Bic(CPUExecutor & core, const Arm64Opcode &op)
 {
     CRegisters & Reg = core.Reg();

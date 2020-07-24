@@ -11,6 +11,7 @@ public:
     static void Asr(CPUExecutor & core, const Arm64Opcode &op);
     static void B(CPUExecutor & core, const Arm64Opcode &op);
     static void Bfi(CPUExecutor & core, const Arm64Opcode &op);
+    static void Bfxil(CPUExecutor & core, const Arm64Opcode &op);
     static void Bic(CPUExecutor & core, const Arm64Opcode &op);
     static void Bl(CPUExecutor & core, const Arm64Opcode &op);
     static void Blr(CPUExecutor & core, const Arm64Opcode &op);

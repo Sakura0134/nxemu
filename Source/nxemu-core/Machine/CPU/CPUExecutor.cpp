@@ -47,6 +47,7 @@ void CPUExecutor::Execute(bool & Done)
         case Arm64Opcode::ARM64_INS_ASR: Arm64Op::Asr(*this, op); break;
         case Arm64Opcode::ARM64_INS_B: Arm64Op::B(*this, op); break;
         case Arm64Opcode::ARM64_INS_BFI: Arm64Op::Bfi(*this, op); break;
+        case Arm64Opcode::ARM64_INS_BFXIL: Arm64Op::Bfxil(*this, op); break;
         case Arm64Opcode::ARM64_INS_BIC: Arm64Op::Bic(*this, op); break;
         case Arm64Opcode::ARM64_INS_BL: Arm64Op::Bl(*this, op); break;
         case Arm64Opcode::ARM64_INS_BLR: Arm64Op::Blr(*this, op); break;
