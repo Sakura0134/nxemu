@@ -87,6 +87,7 @@ public:
     static void Udiv(CPUExecutor & core, const Arm64Opcode &op);
     static void Umaddl(CPUExecutor & core, const Arm64Opcode &op);
     static void Umulh(CPUExecutor & core, const Arm64Opcode &op);
+    static void Umull(CPUExecutor & core, const Arm64Opcode &op);
 
 private:
     static uint64_t MemIndex(const Arm64Opcode::MCOperand & Operand, CRegisters& Reg);

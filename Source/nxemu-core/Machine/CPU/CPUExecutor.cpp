@@ -123,6 +123,7 @@ void CPUExecutor::Execute(bool & Done)
         case Arm64Opcode::ARM64_INS_UDIV: Arm64Op::Udiv(*this, op); break;
         case Arm64Opcode::ARM64_INS_UMADDL: Arm64Op::Umaddl(*this, op); break;
         case Arm64Opcode::ARM64_INS_UMULH: Arm64Op::Umulh(*this, op); break;
+        case Arm64Opcode::ARM64_INS_UMULL: Arm64Op::Umull(*this, op); break;
         default:
             g_Settings->SaveBool(Debugger_SteppingOps, true);
             if (Stepping)
@@ -137,7 +138,7 @@ void CPUExecutor::Execute(bool & Done)
             m_Jumped = false;
             continue;
         }
-        PROGRAM_COUNTER += 4;    
+        PROGRAM_COUNTER += 4;
     }
 }
 
