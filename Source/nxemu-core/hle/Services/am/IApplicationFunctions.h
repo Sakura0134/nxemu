@@ -75,5 +75,6 @@ private:
 
     IApplicationFunctions(CSwitchSystem & System);
 
+	void ProcessPopLaunchParameter(CIPCRequest & Request);
 	void ProcessNotifyRunning(CIPCRequest & Request);
 };
