@@ -63,6 +63,7 @@ public:
     static void Ret(CPUExecutor & core, const Arm64Opcode &op);
     static void Sbfiz(CPUExecutor & core, const Arm64Opcode &op);
     static void Sbfx(CPUExecutor & core, const Arm64Opcode &op);
+    static void Smaddl(CPUExecutor & core, const Arm64Opcode &op);
     static void Smulh(CPUExecutor & core, const Arm64Opcode &op);
     static void Smull(CPUExecutor & core, const Arm64Opcode &op);
     static void Stlr(CPUExecutor & core, const Arm64Opcode &op);
