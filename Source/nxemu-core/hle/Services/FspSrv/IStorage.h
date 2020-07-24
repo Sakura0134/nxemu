@@ -6,6 +6,16 @@ class IStorage :
     public CService
 {
 public:
+    enum Method
+    {
+        Read = 0,
+        Write = 1,
+        Flush = 2,
+        SetSize = 3,
+        GetSize = 4,
+        OperateRange = 5,
+    };
+
     static CKernelObjectPtr CreateInstance(CSwitchSystem & System, CEncryptedFile * File, uint64_t Offset);
 
     //__interface IService
@@ -19,6 +29,8 @@ private:
     IStorage& operator=(const IStorage&);
 
 	IStorage(CSwitchSystem & System, CEncryptedFile * File, uint64_t Offset);
+
+    void ProcessRead(CIPCRequest & Request);
 
 	CEncryptedFile * m_File;
 	uint64_t m_Offset;
