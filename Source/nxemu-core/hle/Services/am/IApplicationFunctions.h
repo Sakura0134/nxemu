@@ -74,4 +74,6 @@ private:
     IApplicationFunctions& operator=(const IApplicationFunctions&);
 
     IApplicationFunctions(CSwitchSystem & System);
+
+	void ProcessNotifyRunning(CIPCRequest & Request);
 };

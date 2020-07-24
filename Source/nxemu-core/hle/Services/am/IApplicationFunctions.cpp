@@ -17,8 +17,20 @@ bool IApplicationFunctions::Connect(void)
     return false;
 }
 
-ResultCode IApplicationFunctions::CallMethod(CIPCRequest & /*Request*/)
+ResultCode IApplicationFunctions::CallMethod(CIPCRequest & Request)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    switch (Request.RequestHeader().Command)
+    {
+    case Method::NotifyRunning: ProcessNotifyRunning(Request); break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
     return RESULT_SUCCESS;
 }
+void IApplicationFunctions::ProcessNotifyRunning(CIPCRequest & Request)
+{
+    CIPCRequest::REQUEST_DATA & ResponseData = Request.ResponseData();
+    ResponseData.resize(sizeof(uint32_t));
+    ((uint32_t *)ResponseData.data())[0] = 0;
+}
+
