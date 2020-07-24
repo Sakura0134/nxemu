@@ -31,5 +31,7 @@ private:
 
 	IAMStorage(CSwitchSystem & System, uint8_t * Data, uint64_t Size);
 
+	void ProcessOpen(CIPCRequest & Request);
+
     std::vector<uint8_t> m_Data;
 };
