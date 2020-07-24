@@ -765,6 +765,11 @@ void Arm64Op::Eor(CPUExecutor & core, const Arm64Opcode &op)
             {
                 Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) ^ (Reg.Get32(op.Operand(2).Reg) >> op.Operand(2).shift.value));
             }
+            else if (op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_ROR && op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                uint32_t value = (Reg.Get32(op.Operand(2).Reg) >> op.Operand(2).shift.value) | (Reg.Get32(op.Operand(2).Reg) << (32 - op.Operand(2).shift.value));
+                Reg.Set32(op.Operand(0).Reg, Reg.Get32(op.Operand(1).Reg) ^ value);
+            }
             else
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
