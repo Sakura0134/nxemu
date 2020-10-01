@@ -14,4 +14,66 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="atlapp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlcrack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlctrls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlctrlw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlctrlx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlddx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atldlgs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlfind.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlframe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlgdi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlmisc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlprint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlres.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlresce.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlscrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlsplit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atltheme.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atluser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlwince.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlwinx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
