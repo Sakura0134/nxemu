@@ -21,10 +21,7 @@
 
 Thumbs.db
 /.vs
-/Bin/Debug
 /Bin/Debug64
-/Bin/Package
-/Bin/Release
 /Bin/Release64
 /build
 /ipch
