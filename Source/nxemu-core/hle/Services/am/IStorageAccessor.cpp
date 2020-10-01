@@ -20,8 +20,25 @@ void IStorageAccessor::Close(void)
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
-ResultCode IStorageAccessor::CallMethod(CIPCRequest & /*Request*/)
+ResultCode IStorageAccessor::CallMethod(CIPCRequest & Request)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    switch (Request.RequestHeader().Command)
+    {
+    case Method_GetSize: ProcessGetSize(Request); break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
     return RESULT_SUCCESS;
+}
+
+void IStorageAccessor::ProcessGetSize(CIPCRequest & Request)
+{
+    if (m_Storage == NULL)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    CIPCRequest::REQUEST_DATA & ResponseData = Request.ResponseData();
+    ResponseData.resize(sizeof(uint64_t));
+    *((uint64_t *)ResponseData.data()) = m_Storage->m_Data.size();
 }

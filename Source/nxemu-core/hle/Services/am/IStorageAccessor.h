@@ -11,9 +11,9 @@ class IStorageAccessor :
 public:
 	enum
 	{
-		GetSize = 0,
-		Write = 10,
-		Read = 11,
+		Method_GetSize = 0,
+        Method_Write = 10,
+        Method_Read = 11,
 	};
 
 	//__interface IService
@@ -28,6 +28,8 @@ private:
 	IStorageAccessor& operator=(const IStorageAccessor&);
 
 	IStorageAccessor(CSwitchSystem & System, IAMStorage * storage);
+
+	void ProcessGetSize(CIPCRequest & Request);
 
     CKernelObjectPtr m_StorageService;
 	IAMStorage * m_Storage;
