@@ -187,7 +187,7 @@ void CRegisters::SetFPSR(uint32_t value)
     m_fpsr = value;
 }
 
-CRegisters::PSTATE CRegisters::GetPstate() const
+PSTATE CRegisters::GetPstate() const
 {
     return m_pstate;
 }

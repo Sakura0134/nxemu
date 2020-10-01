@@ -63,7 +63,7 @@ void CGPRTab64::RefreshValues(CSystemThread * DebugThread)
         Arm64Opcode::ARM64_REG_X28, Arm64Opcode::ARM64_REG_X29, Arm64Opcode::ARM64_REG_X30, Arm64Opcode::ARM64_REG_SP,
     };
 
-    CRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
+    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
     if (Reg)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
@@ -101,7 +101,7 @@ void CGPRTab32::RefreshValues(CSystemThread * DebugThread)
         Arm64Opcode::ARM64_REG_W28, Arm64Opcode::ARM64_REG_W29, Arm64Opcode::ARM64_REG_W30,
     };
 
-    CRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
+    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
     if (Reg)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
@@ -135,7 +135,7 @@ void CRegQTab::RefreshValues(CSystemThread * DebugThread)
         Arm64Opcode::ARM64_REG_Q12, Arm64Opcode::ARM64_REG_Q13, Arm64Opcode::ARM64_REG_Q14, Arm64Opcode::ARM64_REG_Q15,
     };
 
-    CRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
+    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
     if (Reg)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
@@ -171,7 +171,7 @@ void CRegQTab2::RefreshValues(CSystemThread * DebugThread)
         Arm64Opcode::ARM64_REG_Q28, Arm64Opcode::ARM64_REG_Q29, Arm64Opcode::ARM64_REG_Q30, Arm64Opcode::ARM64_REG_Q31,
     };
 
-    CRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
+    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
     if (Reg)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
@@ -199,10 +199,10 @@ CPStateTab::~CPStateTab()
 
 void CPStateTab::RefreshValues(CSystemThread * DebugThread)
 {
-    CRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
+    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
     if (Reg)
     {
-        const CRegisters::PSTATE & pstate = Reg->GetPstate();
+        const PSTATE & pstate = Reg->GetPstate();
         m_Register[0].SetWindowText(stdstr_f("0x%08X", pstate.value).ToUTF16().c_str());
         m_Register[1].SetWindowText(stdstr_f("%d", pstate.N).ToUTF16().c_str());
         m_Register[2].SetWindowText(stdstr_f("%d", pstate.Z).ToUTF16().c_str());

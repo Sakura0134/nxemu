@@ -93,5 +93,5 @@ public:
     static void Umull(CPUExecutor & core, const Arm64Opcode &op);
 
 private:
-    static uint64_t MemIndex(const Arm64Opcode::MCOperand & Operand, CRegisters& Reg);
+    static uint64_t MemIndex(const Arm64Opcode::MCOperand & Operand, IRegisters & Reg);
 };

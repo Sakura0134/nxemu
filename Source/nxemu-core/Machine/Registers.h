@@ -1,44 +1,63 @@
 #pragma once
 #include <Common\stdtypes.h>
 #include <nxemu-core\Machine\Arm64Opcode.h>
-
 extern "C" {
 #include <softfloat.h>
 }
 
+#pragma warning(push)
+#pragma warning(disable : 4201) // warning C4201: nonstandard extension used : nameless struct/union
+typedef union
+{
+    uint32_t value;
+
+    struct
+    {
+        unsigned SP : 1;
+        unsigned nRW : 1;
+        unsigned EL : 2;
+        unsigned IL : 1;
+        unsigned SS : 1;
+        unsigned F : 1;
+        unsigned I : 1;
+        unsigned A : 1;
+        unsigned D : 1;
+        unsigned V : 1;
+        unsigned C : 1;
+        unsigned Z : 1;
+        unsigned N : 1;
+    };
+} PSTATE;
+#pragma warning(pop)
+
+__interface IRegisters
+{
+    uint32_t Get32(Arm64Opcode::arm64_reg reg) = 0;
+    uint64_t Get64(Arm64Opcode::arm64_reg reg) = 0;
+    void Get128(Arm64Opcode::arm64_reg reg, uint64_t& hiValue, uint64_t& loValue) = 0;
+    PSTATE GetPstate() const = 0;
+
+    void Set32(Arm64Opcode::arm64_reg reg, uint32_t value) = 0;
+    void Set64(Arm64Opcode::arm64_reg reg, uint64_t value) = 0;
+    void Set64Float(Arm64Opcode::arm64_reg reg, float64_t value) = 0;
+    void Set128(Arm64Opcode::arm64_reg reg, uint64_t hiValue, uint64_t loValue) = 0;
+    void Set64Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Arm64Opcode::arm64_vess Vess, Arm64Opcode::arm64_vas Vas, uint64_t value) = 0;
+    void SetFPCR(uint32_t value) = 0;
+    void SetFPSR(uint32_t value) = 0;
+
+    void SetConditionFlags(bool n, bool z, bool c, bool v) = 0;
+    bool ConditionSet(Arm64Opcode::arm64_cc cc) = 0;
+};
+
 class CPUExecutor;
 
-class CRegisters
+class CRegisters :
+    public IRegisters
 {
     friend CPUExecutor;
 
 public:
     
-#pragma warning(push)
-#pragma warning(disable : 4201) // warning C4201: nonstandard extension used : nameless struct/union
-    typedef union
-    {
-        uint32_t value;
-
-        struct
-        {
-            unsigned SP : 1;
-            unsigned nRW : 1;
-            unsigned EL : 2;
-            unsigned IL : 1;
-            unsigned SS : 1;
-            unsigned F : 1;
-            unsigned I : 1;
-            unsigned A : 1;
-            unsigned D : 1;
-            unsigned V : 1;
-            unsigned C : 1;
-            unsigned Z : 1;
-            unsigned N : 1;
-        };
-    } PSTATE;
-#pragma warning(pop)
-
     CRegisters(CPUExecutor * Executor);
 
     uint32_t Get32(Arm64Opcode::arm64_reg reg);

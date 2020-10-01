@@ -14,7 +14,7 @@ public:
     void Execute(bool & Done);
     void Jumped(void);
 
-    CRegisters & Reg(void) { return m_Reg; }
+    IRegisters & Reg(void) { return m_Reg; }
     MemoryManagement & MMU(void) { return m_MMU; }
     uint64_t GetCycleCount(void) const;
 

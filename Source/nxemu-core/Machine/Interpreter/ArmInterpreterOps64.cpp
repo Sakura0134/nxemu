@@ -4,7 +4,7 @@
 
 void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -123,7 +123,7 @@ void Arm64Op::Adrp(CPUExecutor & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
     {
-        CRegisters & Reg = core.Reg();
+        IRegisters & Reg = core.Reg();
         Reg.Set64(op.Operand(0).Reg, op.Operand(1).ImmVal);
     }
     else
@@ -134,7 +134,7 @@ void Arm64Op::Adrp(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::And(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -176,7 +176,7 @@ void Arm64Op::And(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Asr(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -193,7 +193,7 @@ void Arm64Op::B(CPUExecutor & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
     {
-        CRegisters & Reg = core.Reg();
+        IRegisters & Reg = core.Reg();
         Reg.Set64(Arm64Opcode::ARM64_REG_PC, op.Operand(0).ImmVal);
     }
     else
@@ -204,7 +204,7 @@ void Arm64Op::B(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Bfi(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(3).type == Arm64Opcode::ARM64_OP_IMM)
     {
@@ -261,7 +261,7 @@ void Arm64Op::Bfi(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Bfxil(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(3).type == Arm64Opcode::ARM64_OP_IMM &&
         CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
@@ -291,7 +291,7 @@ void Arm64Op::Bfxil(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Bic(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -315,7 +315,7 @@ void Arm64Op::Bl(CPUExecutor & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
     {
-        CRegisters & Reg = core.Reg();
+        IRegisters & Reg = core.Reg();
         Reg.Set64(Arm64Opcode::ARM64_REG_LR, Reg.Get64(Arm64Opcode::ARM64_REG_PC) + 4);
         Reg.Set64(Arm64Opcode::ARM64_REG_PC, op.Operand(0).ImmVal);
     }
@@ -329,7 +329,7 @@ void Arm64Op::Blr(CPUExecutor & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
     {
-        CRegisters & Reg = core.Reg();
+        IRegisters & Reg = core.Reg();
         Reg.Set64(Arm64Opcode::ARM64_REG_LR, Reg.Get64(Arm64Opcode::ARM64_REG_PC) + 4);
         Reg.Set64(Arm64Opcode::ARM64_REG_PC, Reg.Get64(op.Operand(0).Reg));
     }
@@ -343,7 +343,7 @@ void Arm64Op::Br(CPUExecutor & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
     {
-        CRegisters & Reg = core.Reg();
+        IRegisters & Reg = core.Reg();
         Reg.Set64(Arm64Opcode::ARM64_REG_PC, Reg.Get64(op.Operand(0).Reg));
     }
     else
@@ -354,7 +354,7 @@ void Arm64Op::Br(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Cbnz(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
     {
@@ -387,7 +387,7 @@ void Arm64Op::Cbnz(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Cbz(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg) && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
     {
@@ -413,7 +413,7 @@ void Arm64Op::Cbz(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Ccmp(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is32bitReg(op.Operand(0).Reg))
@@ -529,7 +529,7 @@ void Arm64Op::Ccmp(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Cinc(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG)
     {
         if (CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -553,7 +553,7 @@ void Arm64Op::Cinc(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Clz(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -568,7 +568,7 @@ void Arm64Op::Clz(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Cmn(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg))
     {
@@ -621,7 +621,7 @@ void Arm64Op::Cmn(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Cmp(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg))
     {
@@ -692,7 +692,7 @@ void Arm64Op::Cmp(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Csel(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg) &&
         op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(1).Reg) &&
         op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(2).Reg))
@@ -713,7 +713,7 @@ void Arm64Op::Csel(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Csetm(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters& Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg))
     {
         Reg.Set64(op.Operand(0).Reg, Reg.ConditionSet(op.cc()) ? 0xFFFFFFFFFFFFFFFF : 0);
@@ -726,7 +726,7 @@ void Arm64Op::Csetm(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Csinc(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
     {
@@ -740,7 +740,7 @@ void Arm64Op::Csinc(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Csinv(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
     {
@@ -763,7 +763,7 @@ void Arm64Op::Dmb(CPUExecutor & /*core*/, const Arm64Opcode & /*op*/)
 
 void Arm64Op::Eor(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -828,7 +828,7 @@ void Arm64Op::Eor(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Cset(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
     {
@@ -849,7 +849,7 @@ void Arm64Op::Cset(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Fmov(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
     {
@@ -872,7 +872,7 @@ void Arm64Op::Fmov(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Dup(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG)
     {
@@ -891,7 +891,7 @@ void Arm64Op::Dup(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Ins(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
     {
@@ -913,7 +913,7 @@ void Arm64Op::Ins(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldarb(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM))
     {
@@ -943,7 +943,7 @@ void Arm64Op::Ldarb(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldaxr(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -982,7 +982,7 @@ void Arm64Op::Ldaxr(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldp(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM ||
         op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(3).type == Arm64Opcode::ARM64_OP_IMM)
@@ -1038,7 +1038,7 @@ void Arm64Op::Ldp(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldr(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
         (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM))
@@ -1091,7 +1091,7 @@ void Arm64Op::Ldr(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldrb(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
         (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM))
@@ -1122,7 +1122,7 @@ void Arm64Op::Ldrb(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldrh(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
         (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM))
@@ -1153,7 +1153,7 @@ void Arm64Op::Ldrh(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldrsb(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -1184,7 +1184,7 @@ void Arm64Op::Ldrsb(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldrsw(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -1215,7 +1215,7 @@ void Arm64Op::Ldrsw(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldur(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -1251,7 +1251,7 @@ void Arm64Op::Ldur(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldurb(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -1281,7 +1281,7 @@ void Arm64Op::Ldurb(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldurh(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement& MMU = core.MMU();
-    CRegisters& Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -1311,7 +1311,7 @@ void Arm64Op::Ldurh(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Ldxr(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement& MMU = core.MMU();
-    CRegisters& Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -1349,7 +1349,7 @@ void Arm64Op::Ldxr(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Lsl(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -1391,7 +1391,7 @@ void Arm64Op::Lsl(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Lsr(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG)
     {
@@ -1431,7 +1431,7 @@ void Arm64Op::Lsr(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Madd(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && op.Operand(3).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && CRegisters::Is64bitReg(op.Operand(2).Reg) && CRegisters::Is64bitReg(op.Operand(3).Reg))
@@ -1451,7 +1451,7 @@ void Arm64Op::Madd(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Mov(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
     {
@@ -1490,7 +1490,7 @@ void Arm64Op::Mov(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Movi(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && CRegisters::IsVectorReg(op.Operand(0).Reg))
     {
@@ -1511,7 +1511,7 @@ void Arm64Op::Movi(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Sub(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -1605,7 +1605,7 @@ void Arm64Op::Sub(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Movk(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && CRegisters::Is64bitReg(op.Operand(0).Reg))
     {
@@ -1641,7 +1641,7 @@ void Arm64Op::Movk(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Movn(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg))
     {
@@ -1673,7 +1673,7 @@ void Arm64Op::Movn(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Movz(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
     {
         if (CRegisters::Is64bitReg(op.Operand(0).Reg) && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
@@ -1697,7 +1697,7 @@ void Arm64Op::Movz(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Mrs(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg) && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG_MRS)
     {
@@ -1721,7 +1721,7 @@ void Arm64Op::Mrs(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Msr(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG_MSR && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(1).Reg))
     {
@@ -1748,7 +1748,7 @@ void Arm64Op::Msr(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Msub(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && op.Operand(3).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && CRegisters::Is64bitReg(op.Operand(2).Reg) && CRegisters::Is64bitReg(op.Operand(3).Reg))
@@ -1768,7 +1768,7 @@ void Arm64Op::Msub(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Mul(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && CRegisters::Is32bitReg(op.Operand(2).Reg))
@@ -1788,7 +1788,7 @@ void Arm64Op::Mul(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Mvn(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
     {
@@ -1802,7 +1802,7 @@ void Arm64Op::Mvn(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Neg(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID && op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
@@ -1827,7 +1827,7 @@ void Arm64Op::Neg(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Orr(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -1877,7 +1877,7 @@ void Arm64Op::Orr(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Rbit(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -1916,7 +1916,7 @@ void Arm64Op::Ret(CPUExecutor & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 0)
     {
-        CRegisters & Reg = core.Reg();
+        IRegisters & Reg = core.Reg();
         Reg.Set64(Arm64Opcode::ARM64_REG_PC, Reg.Get64(Arm64Opcode::ARM64_REG_LR));
     }
     else
@@ -1928,7 +1928,7 @@ void Arm64Op::Ret(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Stp(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if ((op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM) ||
         (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(3).type == Arm64Opcode::ARM64_OP_IMM))
@@ -1974,7 +1974,7 @@ void Arm64Op::Stp(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Sbfiz(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -2002,7 +2002,7 @@ void Arm64Op::Sbfiz(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Sbfx(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -2032,7 +2032,7 @@ void Arm64Op::Sbfx(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Sdiv(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && CRegisters::Is64bitReg(op.Operand(2).Reg))
@@ -2050,7 +2050,7 @@ void Arm64Op::Smaddl(CPUExecutor & core, const Arm64Opcode &op)
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && op.Operand(3).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && CRegisters::Is32bitReg(op.Operand(2).Reg) && CRegisters::Is64bitReg(op.Operand(3).Reg))
     {
-        CRegisters & Reg = core.Reg();
+        IRegisters & Reg = core.Reg();
         Reg.Set64(op.Operand(0).Reg, (uint64_t)((int32_t)Reg.Get32(op.Operand(1).Reg) * (int32_t)Reg.Get32(op.Operand(2).Reg)) + Reg.Get64(op.Operand(3).Reg));
     }
     else
@@ -2061,7 +2061,7 @@ void Arm64Op::Smaddl(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Smulh(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && CRegisters::Is64bitReg(op.Operand(2).Reg))
@@ -2076,7 +2076,7 @@ void Arm64Op::Smulh(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Smull(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && CRegisters::Is32bitReg(op.Operand(2).Reg))
@@ -2092,7 +2092,7 @@ void Arm64Op::Smull(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Stlr(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement& MMU = core.MMU();
-    CRegisters& Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -2123,7 +2123,7 @@ void Arm64Op::Stlr(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Stlrb(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -2155,7 +2155,7 @@ void Arm64Op::Stlrb(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
         (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM))
@@ -2218,7 +2218,7 @@ void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Strb(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
         (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM))
@@ -2251,7 +2251,7 @@ void Arm64Op::Strb(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Strh(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if ((op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
         (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM))
@@ -2284,7 +2284,7 @@ void Arm64Op::Strh(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Stlxr(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -2328,7 +2328,7 @@ void Arm64Op::Stlxr(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Stur(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -2381,7 +2381,7 @@ void Arm64Op::Stur(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Sturb(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -2413,7 +2413,7 @@ void Arm64Op::Sturb(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Sturh(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
     {
@@ -2445,7 +2445,7 @@ void Arm64Op::Sturh(CPUExecutor & core, const Arm64Opcode &op)
 void Arm64Op::Stxr(CPUExecutor & core, const Arm64Opcode &op)
 {
     MemoryManagement& MMU = core.MMU();
-    CRegisters& Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.UpdateFlags()) { g_Notify->BreakPoint(__FILE__, __LINE__); }
 
@@ -2500,7 +2500,7 @@ void Arm64Op::Svc(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Sxtw(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
     {
         Reg.Set64(op.Operand(0).Reg, (int64_t)((int32_t)Reg.Get32(op.Operand(1).Reg)));
@@ -2521,7 +2521,7 @@ void Arm64Op::Tbnz(CPUExecutor & core, const Arm64Opcode &op)
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
         }
-        CRegisters & Reg = core.Reg();
+        IRegisters & Reg = core.Reg();
         if ((Reg.Get64(op.Operand(0).Reg) & ((uint64_t)1 << op.Operand(1).ImmVal)) != 0)
         {
             Reg.Set64(Arm64Opcode::ARM64_REG_PC, op.Operand(2).ImmVal);
@@ -2535,7 +2535,7 @@ void Arm64Op::Tbnz(CPUExecutor & core, const Arm64Opcode &op)
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
         }
-        CRegisters & Reg = core.Reg();
+        IRegisters & Reg = core.Reg();
         if ((Reg.Get32(op.Operand(0).Reg) & (1 << op.Operand(1).ImmVal)) != 0)
         {
             Reg.Set64(Arm64Opcode::ARM64_REG_PC, op.Operand(2).ImmVal);
@@ -2557,7 +2557,7 @@ void Arm64Op::Tbz(CPUExecutor & core, const Arm64Opcode &op)
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
         }
-        CRegisters & Reg = core.Reg();
+        IRegisters & Reg = core.Reg();
         if ((Reg.Get64(op.Operand(0).Reg) & ((uint64_t)1 << op.Operand(1).ImmVal)) == 0)
         {
             Reg.Set64(Arm64Opcode::ARM64_REG_PC, op.Operand(2).ImmVal);
@@ -2571,7 +2571,7 @@ void Arm64Op::Tbz(CPUExecutor & core, const Arm64Opcode &op)
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
         }
-        CRegisters & Reg = core.Reg();
+        IRegisters & Reg = core.Reg();
         if ((Reg.Get32(op.Operand(0).Reg) & (1 << op.Operand(1).ImmVal)) == 0)
         {
             Reg.Set64(Arm64Opcode::ARM64_REG_PC, op.Operand(2).ImmVal);
@@ -2586,7 +2586,7 @@ void Arm64Op::Tbz(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Tst(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg))
     {
         uint64_t result = 0;
@@ -2633,7 +2633,7 @@ void Arm64Op::Tst(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Ubfiz(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg))
@@ -2681,7 +2681,7 @@ void Arm64Op::Ubfiz(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Ubfx(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(3).type == Arm64Opcode::ARM64_OP_IMM)
     {
         if (CRegisters::Is32bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
@@ -2715,7 +2715,7 @@ void Arm64Op::Ubfx(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Udiv(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is64bitReg(op.Operand(1).Reg) && CRegisters::Is64bitReg(op.Operand(2).Reg))
     {
@@ -2740,7 +2740,7 @@ void Arm64Op::Umaddl(CPUExecutor & core, const Arm64Opcode &op)
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && op.Operand(3).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && CRegisters::Is32bitReg(op.Operand(2).Reg) && CRegisters::Is64bitReg(op.Operand(3).Reg))
     {
-        CRegisters & Reg = core.Reg();
+        IRegisters & Reg = core.Reg();
         Reg.Set64(op.Operand(0).Reg, (uint64_t)(Reg.Get32(op.Operand(1).Reg) * Reg.Get32(op.Operand(2).Reg))+ Reg.Get64(op.Operand(3).Reg));
     }
     else
@@ -2751,7 +2751,7 @@ void Arm64Op::Umaddl(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Umulh(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG)
     {
@@ -2765,7 +2765,7 @@ void Arm64Op::Umulh(CPUExecutor & core, const Arm64Opcode &op)
 
 void Arm64Op::Umull(CPUExecutor & core, const Arm64Opcode &op)
 {
-    CRegisters & Reg = core.Reg();
+    IRegisters & Reg = core.Reg();
 
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && CRegisters::Is32bitReg(op.Operand(2).Reg))
@@ -2778,7 +2778,7 @@ void Arm64Op::Umull(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-uint64_t Arm64Op::MemIndex(const Arm64Opcode::MCOperand& Operand, CRegisters& Reg)
+uint64_t Arm64Op::MemIndex(const Arm64Opcode::MCOperand & Operand, IRegisters & Reg)
 {
     uint64_t index = 0;
     if (Operand.mem.index != Arm64Opcode::ARM64_REG_INVALID)

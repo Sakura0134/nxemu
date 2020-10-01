@@ -447,7 +447,7 @@ void CDebugCommandsView::WaitingForStepChanged(void)
     {
         if (m_Debugger->DebugThread() != NULL)
         {
-            CRegisters & Reg = m_Debugger->DebugThread()->GetSystemThreadPtr()->Reg();
+            IRegisters & Reg = m_Debugger->DebugThread()->GetSystemThreadPtr()->Reg();
             m_CommandList.ShowAddress(Reg.Get64(Arm64Opcode::ARM64_REG_PC), false);
         }
         m_RegisterTabs.RefreshRegisterTabs();
