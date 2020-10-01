@@ -79,7 +79,7 @@ void CIniFileBase::fInsertSpaces(int Pos, int NoOfSpaces)
     }
 }
 
-int CIniFileBase::GetStringFromFile(char * & String, AUTO_PTR<char> &Data, int & MaxDataSize, int & DataSize, int & ReadPos)
+int CIniFileBase::GetStringFromFile(char * & String, std::unique_ptr<char> &Data, int & MaxDataSize, int & DataSize, int & ReadPos)
 {
     enum { BufferIncrease = 0x2000 };
     if (MaxDataSize == 0)
@@ -120,7 +120,7 @@ int CIniFileBase::GetStringFromFile(char * & String, AUTO_PTR<char> &Data, int &
             //Increase buffer size
             int NewMaxDataSize = MaxDataSize + BufferIncrease;
             char * NewBuffer = new char[NewMaxDataSize];
-            if (NewBuffer == NULL)
+            if (NewBuffer == nullptr)
             {
                 return -1;
             }
@@ -167,7 +167,7 @@ void CIniFileBase::SaveCurrentSection(void)
         m_File.Seek(0, CFileBase::end);
 
         int len = (int)m_CurrentSection.length() + (lineFeedLen * 2) + 5;
-        AUTO_PTR<char> SectionName(new char[len]);
+        std::unique_ptr<char> SectionName(new char[len]);
         if (m_File.GetLength() < (int)strlen(m_LineFeed))
         {
             sprintf(SectionName.get(), "[%s]%s", m_CurrentSection.c_str(), m_LineFeed);
@@ -185,7 +185,7 @@ void CIniFileBase::SaveCurrentSection(void)
         //increase/decrease space needed
         int NeededBufferLen = 0;
         {
-            AUTO_PTR<char> LineData(NULL);
+            std::unique_ptr<char> LineData;
             int len = 0;
 
             for (KeyValueList::iterator iter = m_CurrentSectionData.begin(); iter != m_CurrentSectionData.end(); iter++)
@@ -205,8 +205,8 @@ void CIniFileBase::SaveCurrentSection(void)
         m_File.Seek(m_CurrentSectionFilePos, CFileBase::begin);
 
         int MaxDataSize = 0, DataSize = 0, ReadPos = 0, result;
-        AUTO_PTR<char> Data;
-        char *Input = NULL;
+        std::unique_ptr<char> Data;
+        char *Input = nullptr;
 
         //Skip first line as it is the section name
         int StartPos = m_CurrentSectionFilePos;
@@ -240,7 +240,7 @@ void CIniFileBase::SaveCurrentSection(void)
     }
 
     {
-        AUTO_PTR<char> LineData(NULL);
+        std::unique_ptr<char> LineData(nullptr);
         int len = 0;
 
         for (KeyValueList::iterator iter = m_CurrentSectionData.begin(); iter != m_CurrentSectionData.end(); iter++)
@@ -270,8 +270,8 @@ bool CIniFileBase::MoveToSectionNameData(const char * lpSectionName, bool Change
         m_CurrentSection = "";
     }
 
-    AUTO_PTR<char> Data;
-    char *Input = NULL;
+    std::unique_ptr<char> Data;
+    char *Input = nullptr;
     int MaxDataSize = 0, DataSize = 0, ReadPos = 0, result;
 
     FILELOC_ITR iter = m_SectionsPos.find(std::string(lpSectionName));
@@ -360,7 +360,7 @@ bool CIniFileBase::MoveToSectionNameData(const char * lpSectionName, bool Change
             if (strlen(CleanLine(Input)) <= 1) { continue; }
             if (Input[0] == '[') { break; }
             char * Pos = strchr(Input, '=');
-            if (Pos == NULL) { continue; }
+            if (Pos == nullptr) { continue; }
             char * Value = &Pos[1];
 
             char * Pos1 = Pos - 1;
@@ -382,10 +382,10 @@ const char * CIniFileBase::CleanLine(char * Line)
     char * Pos = Line;
 
     //Remove any comment from the line
-    while (Pos != NULL)
+    while (Pos != nullptr)
     {
         Pos = strchr(Pos, '/');
-        if (Pos != NULL)
+        if (Pos != nullptr)
         {
             if (Pos[1] == '/')
             {
@@ -468,92 +468,80 @@ bool CIniFileBase::IsFileOpen(void)
 
 bool CIniFileBase::IsReadOnly(void)
 {
-	return m_ReadOnly;
+    return m_ReadOnly;
 }
 
 bool CIniFileBase::DeleteSection(const char * lpSectionName)
 {
+    CGuard Guard(m_CS);
+
+    if (!m_File.IsOpen()) { return false; }
+
     SaveCurrentSection();
+    if (!MoveToSectionNameData(lpSectionName, true))
+    {
+        return false;
+    }
+    m_File.Seek(m_CurrentSectionFilePos, CFileBase::begin);
+    long DeleteSectionStart = (long)(m_CurrentSectionFilePos - (strlen(lpSectionName) + strlen(m_LineFeed) + 2));
+    long NextSectionStart = -1;
+
+    {
+        int MaxDataSize = 0, DataSize = 0, ReadPos = 0, NextLine = 0, result;
+        std::unique_ptr <char> Data;
+        char *Input = NULL;
+        do
+        {
+            result = GetStringFromFile(Input, Data, MaxDataSize, DataSize, ReadPos);
+            if (result <= 1) { continue; }
+            if (strlen(CleanLine(Input)) <= 1) { continue; }
+
+            if (Input[0] != '[')
+            {
+                NextLine = (int)((m_File.GetPosition() - DataSize) + ReadPos);
+                continue;
+            }
+            NextSectionStart = NextLine != 0 ? NextLine : (long)((m_File.GetPosition() - DataSize) + ReadPos);
+            break;
+        } while (result >= 0);
+    }
+
+    if (NextSectionStart != -1)
+    {
+        m_File.Seek(0, CFileBase::end);
+        long end = (long)m_File.GetPosition();
+        long ReadPos = NextSectionStart;
+        long WritePos = DeleteSectionStart;
+
+        enum { fIS_MvSize = 0x2000 };
+        unsigned char Data[fIS_MvSize + 1];
+        int SizeToRead;
+        do
+        {
+            SizeToRead = end - ReadPos;
+            if (SizeToRead > fIS_MvSize) { SizeToRead = fIS_MvSize; }
+            m_File.Seek(ReadPos, CFileBase::begin);
+            m_File.Read(Data, SizeToRead);
+            m_File.Seek(WritePos, CFileBase::begin);
+            m_File.Write(Data, SizeToRead);
+            ReadPos += SizeToRead;
+            WritePos += SizeToRead;
+        } while (SizeToRead > 0);
+        m_File.Seek(DeleteSectionStart + (end - NextSectionStart), CFileBase::begin);
+        m_File.Flush();
+        m_File.SetEndOfFile();
+    }
+    else
+    {
+        m_File.Seek(DeleteSectionStart, CFileBase::begin);
+        m_File.Flush();
+        m_File.SetEndOfFile();
+    }
+    m_File.Flush();
     ClearSectionPosList(0);
     m_CurrentSection = "";
     m_CurrentSectionData.clear();
     m_CurrentSectionFilePos = -1;
-
-    stdstr_f strSection("[%s]", lpSectionName);
-
-    if (!m_File.IsOpen())
-    {
-        return false;
-    }
-    m_CurrentSectionFilePos = 0;
-    m_File.Seek(m_CurrentSectionFilePos, CFileBase::begin);
-
-    size_t dwSize = m_File.GetLength();
-    if (dwSize == 0)
-    {
-        return false;
-    }
-
-    AUTO_PTR<char> pData(new char[dwSize + 1]);
-    if (pData.get() == NULL)
-    {
-        return false;
-    }
-    uint32_t dwRet = m_File.Read(pData.get(), (uint32_t)dwSize);
-    if (dwRet == 0 || dwRet < dwSize)
-    {
-        return false;
-    }
-    pData.get()[dwRet] = 0;
-
-    char *pSection = strstr(pData.get(), strSection.c_str());
-    if (pSection == NULL)
-    {
-        return false;
-    }
-    char tmp = pSection[0];
-    pSection[0] = 0;
-
-    std::string strNewData = pData.get();
-    pSection[0] = tmp;
-
-    char *pEndSection = pSection + strlen(strSection.c_str()), *Data = pData.get();
-    char *pNextSection = NULL;
-    int result, ReadPos = (int)(pEndSection - pData.get());
-    do
-    {
-        char * Input = NULL;
-        int MaxDataSize = (int)(dwSize + 1);
-        result = -1;
-        for (int count = ReadPos; count < MaxDataSize; count++)
-        {
-            if (Data[count] != '\n')
-            {
-                continue;
-            }
-            int len = (count - ReadPos) + 1;
-            Input = &Data[ReadPos];
-            ReadPos = count + 1;
-            result = len;
-            break;
-        }
-        if (result <= 1) { continue; }
-        std::string line(Input, result);
-        if (strlen(CleanLine((char *)line.c_str())) <= 1) { continue; }
-        if (line[0] != '[') { continue; }
-        pNextSection = Input;
-        break;
-    } while (result >= 0);
-
-    if (pNextSection)
-    {
-        strNewData += pNextSection;
-    }
-
-    m_File.Seek(m_CurrentSectionFilePos, CFileBase::begin);
-    m_File.Write(strNewData.c_str(), (uint32_t)strlen(strNewData.c_str()));
-    m_File.Flush();
-    m_File.SetEndOfFile();
     return true;
 }
 
@@ -561,7 +549,7 @@ bool CIniFileBase::GetString(const char * lpSectionName, const char * lpKeyName,
 {
     CGuard Guard(m_CS);
 
-    if (lpSectionName == NULL || strlen(lpSectionName) == 0)
+    if (lpSectionName == nullptr || strlen(lpSectionName) == 0)
     {
         lpSectionName = "default";
     }
@@ -592,7 +580,7 @@ uint32_t CIniFileBase::GetString(const char * lpSectionName, const char * lpKeyN
 
     std::string strSection;
 
-    if (lpSectionName == NULL || strlen(lpSectionName) == 0)
+    if (lpSectionName == nullptr || strlen(lpSectionName) == 0)
     {
         strSection = "default";
     }
@@ -627,7 +615,7 @@ bool CIniFileBase::GetNumber(const char * lpSectionName, const char * lpKeyName,
 {
     CGuard Guard(m_CS);
 
-    if (lpSectionName == NULL || strlen(lpSectionName) == 0)
+    if (lpSectionName == nullptr || strlen(lpSectionName) == 0)
     {
         lpSectionName = "default";
     }
@@ -648,10 +636,10 @@ bool CIniFileBase::GetNumber(const char * lpSectionName, const char * lpKeyName,
 
 void CIniFileBase::SaveString(const char * lpSectionName, const char * lpKeyName, const char * lpString)
 {
-	if (m_ReadOnly)
-	{
-		return;
-	}
+    if (m_ReadOnly)
+    {
+        return;
+    }
     CGuard Guard(m_CS);
     if (!m_File.IsOpen())
     {
@@ -666,7 +654,7 @@ void CIniFileBase::SaveString(const char * lpSectionName, const char * lpKeyName
     }
     std::string strSection;
 
-    if (lpSectionName == NULL || strlen(lpSectionName) == 0)
+    if (lpSectionName == nullptr || strlen(lpSectionName) == 0)
     {
         strSection = "default";
     }
@@ -716,11 +704,11 @@ void CIniFileBase::SaveString(const char * lpSectionName, const char * lpKeyName
 
 void CIniFileBase::SaveNumber(const char * lpSectionName, const char * lpKeyName, uint32_t Value)
 {
-	if (m_ReadOnly)
-	{
-		return;
-	}
-	//translate the string to an ascii version and save as text
+    if (m_ReadOnly)
+    {
+        return;
+    }
+    //translate the string to an ascii version and save as text
     SaveString(lpSectionName, lpKeyName, stdstr_f("%d", Value).c_str());
 }
 
@@ -728,7 +716,7 @@ bool CIniFileBase::EntryExists(const char * lpSectionName, const char * lpKeyNam
 {
     CGuard Guard(m_CS);
 
-    if (lpSectionName == NULL || strlen(lpSectionName) == 0)
+    if (lpSectionName == nullptr || strlen(lpSectionName) == 0)
     {
         lpSectionName = "default";
     }
@@ -769,7 +757,7 @@ void CIniFileBase::GetKeyList(const char * lpSectionName, strlist &List)
         return;
     }
 
-    if (lpSectionName == NULL || strlen(lpSectionName) == 0)
+    if (lpSectionName == nullptr || strlen(lpSectionName) == 0)
     {
         lpSectionName = "default";
     }
@@ -793,7 +781,7 @@ void CIniFileBase::GetKeyValueData(const char * lpSectionName, KeyValueData & Li
 
     std::string strSection;
 
-    if (lpSectionName == NULL || strlen(lpSectionName) == 0)
+    if (lpSectionName == nullptr || strlen(lpSectionName) == 0)
     {
         strSection = "default";
     }
@@ -805,8 +793,8 @@ void CIniFileBase::GetKeyValueData(const char * lpSectionName, KeyValueData & Li
     if (!MoveToSectionNameData(strSection.c_str(), false)) { return; }
 
     int MaxDataSize = 0, DataSize = 0, ReadPos = 0, result;
-    AUTO_PTR<char> Data;
-    char *Input = NULL;
+    std::unique_ptr<char> Data;
+    char *Input = nullptr;
     do
     {
         result = GetStringFromFile(Input, Data, MaxDataSize, DataSize, ReadPos);
@@ -814,7 +802,7 @@ void CIniFileBase::GetKeyValueData(const char * lpSectionName, KeyValueData & Li
         if (strlen(CleanLine(Input)) <= 1) { continue; }
         if (Input[0] == '[') { break; }
         char * Pos = strchr(Input, '=');
-        if (Pos == NULL) { continue; }
+        if (Pos == nullptr) { continue; }
         Pos[0] = 0;
 
         List.insert(KeyValueData::value_type(stdstr(Input).Trim(), &Pos[1]));

@@ -1,17 +1,16 @@
 #pragma once
 
 #ifndef _WIN32
-/* for POSIX method away from Win32 _stricmp--see "Platform.h" */
 #include <strings.h>
 #endif
 
 #include "FileClass.h"
 #include "CriticalSection.h"
-#include "SmartPointer.h"
 #include <string>
 #include <map>
 #include <vector>
 #include <list>
+#include <memory>
 
 class CIniFileBase
 {
@@ -80,7 +79,7 @@ private:
     FILELOC m_SectionsPos;
 
     void fInsertSpaces(int Pos, int NoOfSpaces);
-    int GetStringFromFile(char * & String, AUTO_PTR<char> &Data, int & MaxDataSize, int & DataSize, int & ReadPos);
+    int GetStringFromFile(char * & String, std::unique_ptr<char> &Data, int & MaxDataSize, int & DataSize, int & ReadPos);
     bool MoveToSectionNameData(const char * lpSectionName, bool ChangeCurrentSection);
     const char * CleanLine(char * Line);
     void ClearSectionPosList(long FilePos);
