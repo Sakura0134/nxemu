@@ -9,7 +9,7 @@
 class CHleKernel;
 
 class CSystemThread :
-    public CPUExecutor,
+    public CInterpreterCPU,
     public CKernelObject
 {
 public:

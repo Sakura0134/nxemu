@@ -5,7 +5,7 @@
 #include <nxemu-core\Debugger.h>
 #include <Common\Maths.h>
 
-CPUExecutor::CPUExecutor(MemoryManagement & mmu) :
+CInterpreterCPU::CInterpreterCPU(MemoryManagement & mmu) :
     m_Reg(this),
     m_MMU(mmu),
     m_Jumped(false),
@@ -13,7 +13,7 @@ CPUExecutor::CPUExecutor(MemoryManagement & mmu) :
 {
 }
 
-void CPUExecutor::Execute(bool & Done)
+void CInterpreterCPU::Execute(bool & Done)
 {
     uint64_t & PROGRAM_COUNTER = m_Reg.m_PROGRAM_COUNTER;
     const bool & Stepping = isStepping();
@@ -145,12 +145,12 @@ void CPUExecutor::Execute(bool & Done)
     }
 }
 
-void CPUExecutor::Jumped(void)
+void CInterpreterCPU::Jumped(void)
 {
     m_Jumped = true;
 }
 
-uint64_t CPUExecutor::GetCycleCount(void) const
+uint64_t CInterpreterCPU::GetCycleCount(void) const
 {
     const uint64_t CNTFREQ = 19200000;
     const uint64_t BASE_CLOCK_RATE = 1019215872;
@@ -159,7 +159,7 @@ uint64_t CPUExecutor::GetCycleCount(void) const
     return div128_to_64(hi, lo, BASE_CLOCK_RATE, &rem);
 }
 
-bool CPUExecutor::ShouldExecuteOp(const Arm64Opcode & op)
+bool CInterpreterCPU::ShouldExecuteOp(const Arm64Opcode & op)
 {
     if (op.cc() == Arm64Opcode::ARM64_CC_INVALID)
     {

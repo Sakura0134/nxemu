@@ -1,7 +1,7 @@
 #include <nxemu-core\Machine\Registers.h>
 #include <nxemu-core\SystemGlobals.h>
 
-CRegisters::CRegisters(CPUExecutor * Executor) :
+CRegisters::CRegisters(CInterpreterCPU * Executor) :
     m_Executor(Executor),
     m_PROGRAM_COUNTER(0),
     m_pstate({ 0 }),

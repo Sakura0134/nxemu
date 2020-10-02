@@ -1,7 +1,7 @@
 #include <nxemu-core\hle\Memory\SystemThreadMemory.h>
 #include <nxemu-core\SystemGlobals.h>
 
-CSystemThreadMemory::CSystemThreadMemory(CProcessMemory &ProcessMemory, CPUExecutor * Executor) :
+CSystemThreadMemory::CSystemThreadMemory(CProcessMemory &ProcessMemory, CInterpreterCPU * Executor) :
     m_ProcessMemory(ProcessMemory),
     m_stackmem(NULL),
     m_StackAddress(0),

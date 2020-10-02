@@ -3,11 +3,11 @@
 #include <nxemu-core\Machine\Registers.h>
 #include <nxemu-core\Machine\CPU\MemoryManagement.h>
 
-class CPUExecutor :
+class CInterpreterCPU :
     protected CDebugSettings
-{    
+{
 public:
-    CPUExecutor(MemoryManagement & mmu);
+    CInterpreterCPU(MemoryManagement & mmu);
 
     virtual void ServiceCall(uint32_t index) = 0;
 
@@ -28,7 +28,7 @@ protected:
     uint64_t m_CpuTicks;
 
 private:
-    CPUExecutor(void);                          // Disable default constructor
-    CPUExecutor(const CPUExecutor&);            // Disable copy constructor
-    CPUExecutor& operator=(const CPUExecutor&); // Disable assignment
+    CInterpreterCPU();
+    CInterpreterCPU(const CInterpreterCPU&);
+    CInterpreterCPU& operator=(const CInterpreterCPU&);
 };

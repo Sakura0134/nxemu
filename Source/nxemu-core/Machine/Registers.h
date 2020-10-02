@@ -49,16 +49,16 @@ __interface IRegisters
     bool ConditionSet(Arm64Opcode::arm64_cc cc) = 0;
 };
 
-class CPUExecutor;
+class CInterpreterCPU;
 
 class CRegisters :
     public IRegisters
 {
-    friend CPUExecutor;
+    friend CInterpreterCPU;
 
 public:
     
-    CRegisters(CPUExecutor * Executor);
+    CRegisters(CInterpreterCPU * Executor);
 
     uint32_t Get32(Arm64Opcode::arm64_reg reg);
     uint64_t Get64(Arm64Opcode::arm64_reg reg);
@@ -83,9 +83,9 @@ public:
     static bool IsVectorReg(Arm64Opcode::arm64_reg reg);
 
 private:
-    CRegisters(void);                         // Disable default constructor
-    CRegisters(const CRegisters&);            // Disable copy constructor
-    CRegisters& operator=(const CRegisters&); // Disable assignment
+    CRegisters(void);
+    CRegisters(const CRegisters&);
+    CRegisters& operator=(const CRegisters&);
 
     uint64_t m_PROGRAM_COUNTER;
     uint64_t m_xregs[32];
@@ -100,6 +100,6 @@ private:
 
     PSTATE m_pstate;
 
-    CPUExecutor * m_Executor;
+    CInterpreterCPU * m_Executor;
 };
 

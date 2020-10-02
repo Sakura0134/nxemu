@@ -2,7 +2,7 @@
 #include <nxemu-core\SystemGlobals.h>
 #include <Common\Maths.h>
 
-void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Add(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -119,7 +119,7 @@ void Arm64Op::Add(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Adrp(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Adrp(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
     {
@@ -132,7 +132,7 @@ void Arm64Op::Adrp(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::And(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::And(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -174,7 +174,7 @@ void Arm64Op::And(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Asr(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Asr(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -189,7 +189,7 @@ void Arm64Op::Asr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::B(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::B(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
     {
@@ -202,7 +202,7 @@ void Arm64Op::B(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Bfi(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Bfi(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -259,7 +259,7 @@ void Arm64Op::Bfi(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Bfxil(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Bfxil(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -289,7 +289,7 @@ void Arm64Op::Bfxil(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Bic(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Bic(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -311,7 +311,7 @@ void Arm64Op::Bic(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Bl(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Bl(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
     {
@@ -325,7 +325,7 @@ void Arm64Op::Bl(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Blr(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Blr(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
     {
@@ -339,7 +339,7 @@ void Arm64Op::Blr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Br(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Br(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
     {
@@ -352,7 +352,7 @@ void Arm64Op::Br(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Cbnz(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Cbnz(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -385,7 +385,7 @@ void Arm64Op::Cbnz(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Cbz(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Cbz(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -411,7 +411,7 @@ void Arm64Op::Cbz(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ccmp(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ccmp(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -527,7 +527,7 @@ void Arm64Op::Ccmp(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Cinc(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Cinc(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG)
@@ -551,7 +551,7 @@ void Arm64Op::Cinc(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Clz(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Clz(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -566,7 +566,7 @@ void Arm64Op::Clz(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Cmn(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Cmn(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -619,7 +619,7 @@ void Arm64Op::Cmn(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Cmp(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Cmp(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -690,7 +690,7 @@ void Arm64Op::Cmp(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Csel(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Csel(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg) &&
@@ -711,7 +711,7 @@ void Arm64Op::Csel(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Csetm(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Csetm(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg))
@@ -724,7 +724,7 @@ void Arm64Op::Csetm(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Csinc(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Csinc(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
@@ -738,7 +738,7 @@ void Arm64Op::Csinc(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Csinv(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Csinv(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
@@ -757,11 +757,11 @@ void Arm64Op::Csinv(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Dmb(CPUExecutor & /*core*/, const Arm64Opcode & /*op*/)
+void Arm64Op::Dmb(CInterpreterCPU & /*core*/, const Arm64Opcode & /*op*/)
 {
 }
 
-void Arm64Op::Eor(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Eor(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -826,7 +826,7 @@ void Arm64Op::Eor(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Cset(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Cset(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -847,7 +847,7 @@ void Arm64Op::Cset(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Fmov(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Fmov(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -870,7 +870,7 @@ void Arm64Op::Fmov(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Dup(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Dup(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -889,7 +889,7 @@ void Arm64Op::Dup(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ins(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ins(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -910,7 +910,7 @@ void Arm64Op::Ins(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ldarb(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ldarb(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -940,7 +940,7 @@ void Arm64Op::Ldarb(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ldaxr(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ldaxr(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -979,7 +979,7 @@ void Arm64Op::Ldaxr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ldp(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ldp(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -1035,7 +1035,7 @@ void Arm64Op::Ldp(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ldr(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ldr(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -1088,7 +1088,7 @@ void Arm64Op::Ldr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ldrb(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ldrb(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -1119,7 +1119,7 @@ void Arm64Op::Ldrb(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ldrh(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ldrh(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -1150,7 +1150,7 @@ void Arm64Op::Ldrh(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ldrsb(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ldrsb(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -1181,7 +1181,7 @@ void Arm64Op::Ldrsb(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ldrsw(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ldrsw(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -1212,7 +1212,7 @@ void Arm64Op::Ldrsw(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ldur(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ldur(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -1248,7 +1248,7 @@ void Arm64Op::Ldur(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ldurb(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ldurb(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -1278,7 +1278,7 @@ void Arm64Op::Ldurb(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ldurh(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ldurh(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement& MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -1308,7 +1308,7 @@ void Arm64Op::Ldurh(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ldxr(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ldxr(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement& MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -1347,7 +1347,7 @@ void Arm64Op::Ldxr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Lsl(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Lsl(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1389,7 +1389,7 @@ void Arm64Op::Lsl(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Lsr(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Lsr(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1429,7 +1429,7 @@ void Arm64Op::Lsr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Madd(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Madd(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1449,7 +1449,7 @@ void Arm64Op::Madd(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Mov(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Mov(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1488,7 +1488,7 @@ void Arm64Op::Mov(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Movi(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Movi(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1509,7 +1509,7 @@ void Arm64Op::Movi(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Sub(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Sub(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1603,7 +1603,7 @@ void Arm64Op::Sub(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Movk(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Movk(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1639,7 +1639,7 @@ void Arm64Op::Movk(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Movn(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Movn(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1671,7 +1671,7 @@ void Arm64Op::Movn(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Movz(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Movz(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
@@ -1695,7 +1695,7 @@ void Arm64Op::Movz(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Mrs(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Mrs(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1719,7 +1719,7 @@ void Arm64Op::Mrs(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Msr(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Msr(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1746,7 +1746,7 @@ void Arm64Op::Msr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Msub(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Msub(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1766,7 +1766,7 @@ void Arm64Op::Msub(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Mul(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Mul(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1786,7 +1786,7 @@ void Arm64Op::Mul(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Mvn(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Mvn(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
@@ -1800,7 +1800,7 @@ void Arm64Op::Mvn(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Neg(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Neg(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1825,7 +1825,7 @@ void Arm64Op::Neg(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Orr(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Orr(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1875,7 +1875,7 @@ void Arm64Op::Orr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Rbit(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Rbit(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -1912,7 +1912,7 @@ void Arm64Op::Rbit(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ret(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ret(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 0)
     {
@@ -1925,7 +1925,7 @@ void Arm64Op::Ret(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Stp(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Stp(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -1972,7 +1972,7 @@ void Arm64Op::Stp(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Sbfiz(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Sbfiz(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -2000,7 +2000,7 @@ void Arm64Op::Sbfiz(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Sbfx(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Sbfx(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -2030,7 +2030,7 @@ void Arm64Op::Sbfx(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Sdiv(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Sdiv(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -2045,7 +2045,7 @@ void Arm64Op::Sdiv(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Smaddl(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Smaddl(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && op.Operand(3).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && CRegisters::Is32bitReg(op.Operand(2).Reg) && CRegisters::Is64bitReg(op.Operand(3).Reg))
@@ -2059,7 +2059,7 @@ void Arm64Op::Smaddl(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Smulh(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Smulh(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -2074,7 +2074,7 @@ void Arm64Op::Smulh(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Smull(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Smull(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -2089,7 +2089,7 @@ void Arm64Op::Smull(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Stlr(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Stlr(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement& MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -2120,7 +2120,7 @@ void Arm64Op::Stlr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Stlrb(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Stlrb(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -2152,7 +2152,7 @@ void Arm64Op::Stlrb(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Str(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -2215,7 +2215,7 @@ void Arm64Op::Str(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Strb(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Strb(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -2248,7 +2248,7 @@ void Arm64Op::Strb(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Strh(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Strh(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -2281,7 +2281,7 @@ void Arm64Op::Strh(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Stlxr(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Stlxr(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -2325,7 +2325,7 @@ void Arm64Op::Stlxr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Stur(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Stur(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -2378,7 +2378,7 @@ void Arm64Op::Stur(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Sturb(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Sturb(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -2410,7 +2410,7 @@ void Arm64Op::Sturb(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Sturh(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Sturh(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement & MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -2442,7 +2442,7 @@ void Arm64Op::Sturh(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Stxr(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Stxr(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     MemoryManagement& MMU = core.MMU();
     IRegisters & Reg = core.Reg();
@@ -2486,7 +2486,7 @@ void Arm64Op::Stxr(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Svc(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Svc(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 1 && op.Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
     {
@@ -2498,7 +2498,7 @@ void Arm64Op::Svc(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Sxtw(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Sxtw(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg))
@@ -2511,7 +2511,7 @@ void Arm64Op::Sxtw(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Tbnz(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Tbnz(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM &&
         CRegisters::Is64bitReg(op.Operand(0).Reg))
@@ -2548,7 +2548,7 @@ void Arm64Op::Tbnz(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Tbz(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Tbz(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && CRegisters::Is64bitReg(op.Operand(0).Reg))
     {
@@ -2584,7 +2584,7 @@ void Arm64Op::Tbz(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Tst(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Tst(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
     if (op.Operands() == 2 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && CRegisters::Is64bitReg(op.Operand(0).Reg))
@@ -2631,7 +2631,7 @@ void Arm64Op::Tst(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ubfiz(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ubfiz(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -2679,7 +2679,7 @@ void Arm64Op::Ubfiz(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Ubfx(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Ubfx(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && op.Operand(3).type == Arm64Opcode::ARM64_OP_IMM)
@@ -2713,7 +2713,7 @@ void Arm64Op::Ubfx(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Udiv(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Udiv(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
     if (op.Operands() == 3 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
@@ -2735,7 +2735,7 @@ void Arm64Op::Udiv(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Umaddl(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Umaddl(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     if (op.Operands() == 4 && op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && op.Operand(3).type == Arm64Opcode::ARM64_OP_REG &&
         CRegisters::Is64bitReg(op.Operand(0).Reg) && CRegisters::Is32bitReg(op.Operand(1).Reg) && CRegisters::Is32bitReg(op.Operand(2).Reg) && CRegisters::Is64bitReg(op.Operand(3).Reg))
@@ -2749,7 +2749,7 @@ void Arm64Op::Umaddl(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Umulh(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Umulh(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 
@@ -2763,7 +2763,7 @@ void Arm64Op::Umulh(CPUExecutor & core, const Arm64Opcode &op)
     }
 }
 
-void Arm64Op::Umull(CPUExecutor & core, const Arm64Opcode &op)
+void Arm64Op::Umull(CInterpreterCPU & core, const Arm64Opcode &op)
 {
     IRegisters & Reg = core.Reg();
 

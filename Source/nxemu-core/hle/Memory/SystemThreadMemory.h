@@ -7,7 +7,7 @@ class CSystemThreadMemory :
     public MemoryManagement
 {
 public:
-    CSystemThreadMemory(CProcessMemory &ProcessMemory, CPUExecutor * Executor);
+    CSystemThreadMemory(CProcessMemory &ProcessMemory, CInterpreterCPU * Executor);
     ~CSystemThreadMemory();
 
     bool Initialize(uint64_t StackTop, uint32_t StackSize, uint64_t TlsAddress, uint32_t TlsSize);
@@ -39,5 +39,5 @@ private:
     uint64_t m_tlsAddress;
     uint32_t m_tlsSize;
     uint8_t * m_tls;
-    CPUExecutor * m_Executor;
+    CInterpreterCPU * m_Executor;
 };
