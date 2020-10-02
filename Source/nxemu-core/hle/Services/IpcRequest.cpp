@@ -67,6 +67,7 @@ CIPCRequest::CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CServi
     if (m_cmd.num_buf_a_descriptors != 0) { g_Notify->BreakPoint(__FILE__, __LINE__); }
     ReadBuffList(ipc_read_addr, m_ReceiveBuff, m_cmd.num_buf_b_descriptors);
     if (m_cmd.num_buf_w_descriptors != 0) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+    uint64_t RecvListPos = ipc_read_addr + m_cmd.data_size * sizeof(uint32_t);
 
     uint32_t data_size = m_cmd.data_size * sizeof(uint32_t);
     if (data_size > 0x100)
@@ -130,8 +131,14 @@ CIPCRequest::CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CServi
     }
     if (m_cmd.buf_c_descriptor_flags != 0)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        return;
+        if (m_cmd.buf_c_descriptor_flags < 3)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        else
+        {
+            ReadRecvBuffList(RecvListPos, m_RecvBuffList, m_cmd.buf_c_descriptor_flags - 2);
+        }
     }
     m_valid = true;
 }
@@ -292,6 +299,24 @@ void CIPCRequest::ReadBuffList(uint64_t & read_addr, IpcBuffDescList & list, uin
         BuffDesc.Size = (uint64_t)BuffDescPack.Size31_0 | ((uint64_t)(BuffDescPack.p.Size35_32) << 32);
         BuffDesc.Address = BuffDescPack.Address31_0 | ((uint64_t)(BuffDescPack.p.Address35_32) << 32) | ((uint64_t)(BuffDescPack.p.Address38_36) << 36);
         BuffDesc.Flags = BuffDescPack.p.Flags;
+        list.push_back(BuffDesc);
+    }
+}
+
+void CIPCRequest::ReadRecvBuffList(uint64_t & read_addr, IpcRecvBuffDescList & list, uint32_t size)
+{
+    for (uint32_t i = 0; i < size; i++)
+    {
+        IpcRecvBuffDescPack PointerDescPack = { 0 };
+        if (!m_ThreadMemory.ReadBytes(read_addr, (uint8_t*)&PointerDescPack, sizeof(PointerDescPack)))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        read_addr += sizeof(PointerDescPack);
+        IpcRecvBuffDesc BuffDesc = { 0 };
+        BuffDesc.Address = PointerDescPack.Address31_0 | ((uint64_t)(PointerDescPack.p.Address47_32) << 32);
+        BuffDesc.Size = PointerDescPack.p.Size;
         list.push_back(BuffDesc);
     }
 }
