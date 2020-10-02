@@ -305,6 +305,18 @@ void Arm64Op::Bic(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
     }
+    else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
+    {
+        if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg) && Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSR && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+        {
+            Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg) & ~(Reg.Get32(Op.Operand(2).Reg) >> Op.Operand(2).shift.value));
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
