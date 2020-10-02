@@ -2696,7 +2696,25 @@ void Arm64Op::Ubfx(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     IRegisters & Reg = Cpu.Reg();
     if (Op.Operands() == 4 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && Op.Operand(3).type == Arm64Opcode::ARM64_OP_IMM)
     {
-        if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
+        if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(1).Reg))
+        {
+            int64_t lsb = Op.Operand(2).ImmVal;
+            int64_t width = Op.Operand(3).ImmVal;
+            if (lsb < 0 || lsb > 63)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+            if (width < 1 || width > 64)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return;
+            }
+
+            uint64_t signbit = ((uint64_t)1 << width) - 1;
+            Reg.Set64(Op.Operand(0).Reg, (Reg.Get64(Op.Operand(1).Reg) >> lsb) & signbit);
+        }
+        else if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
         {
             int64_t lsb = Op.Operand(2).ImmVal;
             int64_t width = Op.Operand(3).ImmVal;
