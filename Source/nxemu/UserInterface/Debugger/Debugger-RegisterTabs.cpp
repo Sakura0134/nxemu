@@ -4,7 +4,7 @@
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <Common\StdString.h>
 #include "Debugger-RegisterTabs.h"
-#include <nxemu-core\Machine\CPU\CPUExecutor.h>
+#include <nxemu-core\Machine\Interpreter\InterpreterCPU.h>
 
 template <class T>
 bool CRegisterTabImpl<T>::CreateTab(HWND hParent, const RECT & rcDispay)

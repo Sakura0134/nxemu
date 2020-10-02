@@ -1,4 +1,4 @@
-#include <nxemu-core\Machine\CPU\CPUExecutor.h>
+#include <nxemu-core\Machine\Interpreter\InterpreterCPU.h>
 #include <nxemu-core\Machine\Interpreter\ArmInterpreterOps64.h>
 #include <nxemu-core\Settings\Settings.h>
 #include <nxemu-core\SystemGlobals.h>

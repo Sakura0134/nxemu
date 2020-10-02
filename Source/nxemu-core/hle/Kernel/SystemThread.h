@@ -1,5 +1,5 @@
 #pragma once
-#include <nxemu-core\Machine\CPU\CPUExecutor.h>
+#include <nxemu-core\Machine\Interpreter\InterpreterCPU.h>
 #include <nxemu-core\hle\Memory\SystemThreadMemory.h>
 #include <nxemu-core\hle\Memory\ProcessMemory.h>
 #include <nxemu-core\hle\Kernel\KernelObject.h>

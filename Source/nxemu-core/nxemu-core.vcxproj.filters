@@ -39,9 +39,6 @@
     <Filter Include="Source Files\hle">
       <UniqueIdentifier>{fdac1380-5349-4909-8343-36830714e6d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Machine\CPU">
-      <UniqueIdentifier>{96540092-51ae-4862-8390-1a04a5f354ed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Machine\CPU">
       <UniqueIdentifier>{cec7a91a-8bf2-40da-b646-02d2ccf9b4ec}</UniqueIdentifier>
     </Filter>
@@ -184,9 +181,6 @@
     </ClInclude>
     <ClInclude Include="Machine\PageTable.h">
       <Filter>Header Files\Machine</Filter>
-    </ClInclude>
-    <ClInclude Include="Machine\CPU\CPUExecutor.h">
-      <Filter>Header Files\Machine\CPU</Filter>
     </ClInclude>
     <ClInclude Include="Machine\Registers.h">
       <Filter>Header Files\Machine</Filter>
@@ -347,6 +341,9 @@
     <ClInclude Include="hle\Services\am\IStorageAccessor.h">
       <Filter>Header Files\hle\Services\am</Filter>
     </ClInclude>
+    <ClInclude Include="Machine\Interpreter\InterpreterCPU.h">
+      <Filter>Header Files\Machine\Interpreter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -384,9 +381,6 @@
     </ClCompile>
     <ClCompile Include="Machine\PageTable.cpp">
       <Filter>Source Files\Machine</Filter>
-    </ClCompile>
-    <ClCompile Include="Machine\CPU\CPUExecutor.cpp">
-      <Filter>Source Files\Machine\CPU</Filter>
     </ClCompile>
     <ClCompile Include="Machine\Registers.cpp">
       <Filter>Source Files\Machine</Filter>
@@ -546,6 +540,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\am\IStorageAccessor.cpp">
       <Filter>Source Files\hle\Services\am</Filter>
+    </ClCompile>
+    <ClCompile Include="Machine\Interpreter\InterpreterCPU.cpp">
+      <Filter>Source Files\Machine\Interpreter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

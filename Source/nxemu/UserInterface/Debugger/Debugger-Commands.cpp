@@ -2,7 +2,7 @@
 #include <nxemu-core\Settings\Settings.h>
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\Machine\CPU\MemoryManagement.h>
-#include <nxemu-core\Machine\CPU\CPUExecutor.h>
+#include <nxemu-core\Machine\Interpreter\InterpreterCPU.h>
 #include <nxemu\UserInterface\Debugger\Debugger-Commands.h>
 #include <nxemu\UserInterface\Debugger\Debugger.h>
 #include <Common\StdString.h>

@@ -79,9 +79,9 @@
     <ClInclude Include="Language\Language.h" />
     <ClInclude Include="Language\LanguageStringID.h" />
     <ClInclude Include="Machine\Arm64Opcode.h" />
-    <ClInclude Include="Machine\CPU\CPUExecutor.h" />
     <ClInclude Include="Machine\CPU\MemoryManagement.h" />
     <ClInclude Include="Machine\Interpreter\ArmInterpreterOps64.h" />
+    <ClInclude Include="Machine\Interpreter\InterpreterCPU.h" />
     <ClInclude Include="Machine\PageTable.h" />
     <ClInclude Include="Machine\Registers.h" />
     <ClInclude Include="Machine\SwitchKeys.h" />
@@ -153,8 +153,8 @@
     <ClCompile Include="Language\Language.cpp" />
     <ClCompile Include="LaunchRunFile.cpp" />
     <ClCompile Include="Machine\Arm64Opcode.cpp" />
-    <ClCompile Include="Machine\CPU\CPUExecutor.cpp" />
     <ClCompile Include="Machine\Interpreter\ArmInterpreterOps64.cpp" />
+    <ClCompile Include="Machine\Interpreter\InterpreterCPU.cpp" />
     <ClCompile Include="Machine\nso.cpp" />
     <ClCompile Include="Machine\PageTable.cpp" />
     <ClCompile Include="Machine\Registers.cpp" />

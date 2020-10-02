@@ -1,6 +1,6 @@
 #pragma once
 #include <nxemu-core\Machine\Arm64Opcode.h>
-#include <nxemu-core\Machine\CPU\CPUExecutor.h>
+#include <nxemu-core\Machine\Interpreter\InterpreterCPU.h>
 
 class Arm64Op
 {
