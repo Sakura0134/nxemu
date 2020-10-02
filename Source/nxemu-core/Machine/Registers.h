@@ -76,12 +76,6 @@ public:
     void SetConditionFlags(bool n, bool z, bool c, bool v);
     bool ConditionSet(Arm64Opcode::arm64_cc cc);
 
-    static bool Is128bitReg(Arm64Opcode::arm64_reg reg);
-    static bool Is64bitReg(Arm64Opcode::arm64_reg reg);
-    static bool Is64bitFloatReg(Arm64Opcode::arm64_reg reg);
-    static bool Is32bitReg(Arm64Opcode::arm64_reg reg);
-    static bool IsVectorReg(Arm64Opcode::arm64_reg reg);
-
 private:
     CRegisters(void);
     CRegisters(const CRegisters&);

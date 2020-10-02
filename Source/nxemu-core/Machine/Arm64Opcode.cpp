@@ -102,64 +102,6 @@ Arm64Opcode::Arm64Opcode(Arm64OpcodeCache &cache, uint64_t pc, uint32_t insn) :
 {
 }
 
-bool Arm64Opcode::IsBranch(void) const
-{
-    switch (Opc())
-    {
-    case ARM64_INS_B:
-    case ARM64_INS_BL:
-        if (Operands() == 1 && Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
-        {
-            return true;
-        }
-        break;
-    case ARM64_INS_CBZ:
-    case ARM64_INS_CBNZ:
-        if (Operands() == 2 && Operand(0).type == Arm64Opcode::ARM64_OP_REG && Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
-        {
-            return true;
-        }
-        break;
-    case ARM64_INS_TBNZ:
-    case ARM64_INS_TBZ:
-        if (Operands() == 3 && Operand(0).type == Arm64Opcode::ARM64_OP_REG && Operand(1).type == Arm64Opcode::ARM64_OP_IMM && Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
-        {
-            return true;
-        }
-        return true;
-    }
-    return false;
-}
-
-uint64_t Arm64Opcode::BranchDest(void) const
-{
-    switch (Opc())
-    {
-    case ARM64_INS_B:
-    case ARM64_INS_BL:
-        if (Operands() == 1 && Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
-        {
-            return Operand(0).ImmVal;
-        }
-    case ARM64_INS_CBZ:
-    case ARM64_INS_CBNZ:
-        if (Operands() == 2 && Operand(0).type == Arm64Opcode::ARM64_OP_REG && Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
-        {
-            return Operand(1).ImmVal;
-        }
-        break;
-    case ARM64_INS_TBNZ:
-    case ARM64_INS_TBZ:
-        if (Operands() == 3 && Operand(0).type == Arm64Opcode::ARM64_OP_REG && Operand(1).type == Arm64Opcode::ARM64_OP_IMM && Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
-        {
-            return Operand(2).ImmVal;
-        }
-        break;
-    }
-    g_Notify->BreakPoint(__FILE__, __LINE__);
-    return PC() + 4;
-}
-
 bool Arm64Opcode::IsJump(void) const
 {
     switch (Opc())
@@ -258,6 +200,134 @@ bool Arm64Opcode::IsJump(void) const
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return false;
     }
+}
+
+bool Arm64Opcode::IsBranch(void) const
+{
+    switch (Opc())
+    {
+    case ARM64_INS_B:
+    case ARM64_INS_BL:
+        if (Operands() == 1 && Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            return true;
+        }
+        break;
+    case ARM64_INS_CBZ:
+    case ARM64_INS_CBNZ:
+        if (Operands() == 2 && Operand(0).type == Arm64Opcode::ARM64_OP_REG && Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            return true;
+        }
+        break;
+    case ARM64_INS_TBNZ:
+    case ARM64_INS_TBZ:
+        if (Operands() == 3 && Operand(0).type == Arm64Opcode::ARM64_OP_REG && Operand(1).type == Arm64Opcode::ARM64_OP_IMM && Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            return true;
+        }
+        return true;
+    }
+    return false;
+}
+
+uint64_t Arm64Opcode::BranchDest(void) const
+{
+    switch (Opc())
+    {
+    case ARM64_INS_B:
+    case ARM64_INS_BL:
+        if (Operands() == 1 && Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            return Operand(0).ImmVal;
+        }
+    case ARM64_INS_CBZ:
+    case ARM64_INS_CBNZ:
+        if (Operands() == 2 && Operand(0).type == Arm64Opcode::ARM64_OP_REG && Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            return Operand(1).ImmVal;
+        }
+        break;
+    case ARM64_INS_TBNZ:
+    case ARM64_INS_TBZ:
+        if (Operands() == 3 && Operand(0).type == Arm64Opcode::ARM64_OP_REG && Operand(1).type == Arm64Opcode::ARM64_OP_IMM && Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            return Operand(2).ImmVal;
+        }
+        break;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return PC() + 4;
+}
+
+bool Arm64Opcode::Is32bitReg(arm64_reg reg)
+{
+    if ((reg >= ARM64_REG_W0 && reg <= ARM64_REG_W30) ||
+        reg == ARM64_REG_WZR)
+    {
+        return true;
+    }
+    if ((reg >= ARM64_REG_X0 && reg <= ARM64_REG_X30) ||
+        (reg >= ARM64_REG_Q0 && reg <= ARM64_REG_Q31) ||
+        reg == ARM64_REG_XZR)
+    {
+        return false;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
+bool Arm64Opcode::Is64bitReg(arm64_reg reg)
+{
+    if ((reg >= ARM64_REG_X0 && reg <= ARM64_REG_X30) ||
+        reg == ARM64_REG_XZR ||
+        reg == ARM64_REG_SP)
+    {
+        return true;
+    }
+    if ((reg >= ARM64_REG_Q0 && reg <= ARM64_REG_Q31) ||
+        (reg >= ARM64_REG_W0 && reg <= ARM64_REG_W30) ||
+        reg == ARM64_REG_WZR)
+    {
+        return false;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
+bool Arm64Opcode::Is64bitFloatReg(arm64_reg reg)
+{
+    if (reg >= ARM64_REG_D0 && reg <= ARM64_REG_D31)
+    {
+        return true;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
+bool Arm64Opcode::IsVectorReg(arm64_reg reg)
+{
+    if (reg >= ARM64_REG_V0 && reg <= ARM64_REG_V31)
+    {
+        return true;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
+bool Arm64Opcode::Is128bitReg(arm64_reg reg)
+{
+    if (reg >= ARM64_REG_Q0 && reg <= ARM64_REG_Q31)
+    {
+        return true;
+    }
+    if ((reg >= ARM64_REG_X0 && reg <= ARM64_REG_X30) ||
+        reg == ARM64_REG_XZR)
+    {
+        return false;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
 }
 
 Arm64OpcodeCache::Arm64OpcodeCache()

@@ -1710,6 +1710,12 @@ public:
     bool IsBranch(void) const;
     uint64_t BranchDest(void) const;
 
+    static bool Is128bitReg(arm64_reg reg);
+    static bool Is64bitReg(arm64_reg reg);
+    static bool Is64bitFloatReg(arm64_reg reg);
+    static bool Is32bitReg(arm64_reg reg);
+    static bool IsVectorReg(arm64_reg reg);
+
 private:
     Arm64OpcodeDetail * m_Details;
 };
