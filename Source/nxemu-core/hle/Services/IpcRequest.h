@@ -111,6 +111,7 @@ public:
     } IpcRecvBuffDesc;
 
     typedef std::vector<uint8_t> REQUEST_DATA;
+    typedef std::vector<uint8_t> RequestBuffer;
     typedef std::vector<uint32_t> HandleList;
     typedef std::vector<IpcBuffDesc> IpcBuffDescList;
     typedef std::vector<IpcRecvBuffDesc> IpcRecvBuffDescList;
@@ -135,6 +136,9 @@ public:
 	bool WriteResponse(ResultCode call_result);
 	void SetDomainRequest(bool DomainRequest);
 	void MakeObject(CService * Service);
+	uint64_t GetWriteBufferSize(uint32_t BufferIndex = 0);
+    bool WriteBuffer(const RequestBuffer & Buffer, uint32_t BufferIndex = 0) const;
+    bool WriteBuffer(const uint8_t * buffer, uint32_t size, uint32_t BufferIndex = 0) const;
 
 private:
     CIPCRequest(void);

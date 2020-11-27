@@ -30,6 +30,7 @@ private:
 	IStorageAccessor(CSwitchSystem & System, IAMStorage * storage);
 
 	void ProcessGetSize(CIPCRequest & Request);
+	void ProcessRead(CIPCRequest & Request);
 
     CKernelObjectPtr m_StorageService;
 	IAMStorage * m_Storage;

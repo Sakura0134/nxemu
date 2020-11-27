@@ -343,6 +343,66 @@ uint32_t CIPCRequest::GetPadSize16(uint32_t address)
     return (address & 0xf) != 0 ? 0x10 - (address & 0xf) : 0;
 }
 
+uint64_t CIPCRequest::GetWriteBufferSize(uint32_t BufferIndex)
+{
+	if (m_ReceiveBuff.size() > BufferIndex && m_ReceiveBuff[BufferIndex].Size > 0)
+	{
+		return m_ReceiveBuff[BufferIndex].Size;
+	}
+	if (m_RecvBuffList.size() > BufferIndex && m_RecvBuffList[BufferIndex].Size > 0)
+	{
+		return m_RecvBuffList[BufferIndex].Size;
+	}
+	return 0;
+}
+
+bool CIPCRequest::WriteBuffer(const RequestBuffer& Buffer, uint32_t BufferIndex) const
+{
+    return WriteBuffer(Buffer.data(), (uint32_t)Buffer.size(), BufferIndex);
+}
+
+bool CIPCRequest::WriteBuffer(const uint8_t* buffer, uint32_t size, uint32_t BufferIndex) const
+{
+    uint64_t OutPosition = 0;
+	uint32_t OutSize = 0;
+
+	if (m_ReceiveBuff.size() > BufferIndex && m_ReceiveBuff[BufferIndex].Size > 0)
+	{
+		OutPosition = m_ReceiveBuff[BufferIndex].Address;
+		OutSize = (uint32_t)m_ReceiveBuff[BufferIndex].Size;
+	}
+	else if (m_RecvBuffList.size() > BufferIndex && m_RecvBuffList[BufferIndex].Size > 0)
+	{
+		OutPosition = m_RecvBuffList[BufferIndex].Address;
+		OutSize = (uint32_t)m_RecvBuffList[BufferIndex].Size;
+	}
+
+	if (OutPosition == 0)
+	{
+		g_Notify->BreakPoint(__FILE__, __LINE__);
+		return false;
+	}
+	if (size > OutSize)
+	{
+		g_Notify->BreakPoint(__FILE__, __LINE__);
+		return false;
+	}
+
+    CSystemThread * thread = m_System.SystemThread()->GetSystemThreadPtr();
+	if (thread == nullptr)
+	{
+		g_Notify->BreakPoint(__FILE__, __LINE__);
+		return false;
+	}
+	CSystemThreadMemory & ThreadMemory = thread->ThreadMemory();
+	if (!ThreadMemory.WriteBytes(OutPosition, buffer, size))
+	{
+		g_Notify->BreakPoint(__FILE__, __LINE__);
+		return false;
+	}
+    return true;
+}
+
 const char * CIPCRequest::CommandTypeName(IPC_COMMAND_TYPE Id)
 {
     switch (Id)
