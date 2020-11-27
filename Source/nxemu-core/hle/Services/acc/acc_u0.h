@@ -7,29 +7,29 @@ class ACC_U0 :
 public:
 	enum Method
 	{
-        GetUserCount = 0,
-        GetUserExistence = 1,
-        ListAllUsers = 2,
-        ListOpenUsers = 3,
-        GetLastOpenedUser = 4,
-        GetProfile = 5,
-        GetProfileDigest = 6,
-        IsUserRegistrationRequestPermitted = 50,
-        TrySelectUserWithoutInteraction = 51,
-        ListOpenContextStoredUsers = 60,
-        DebugActivateOpenContextRetention = 99,
-        InitializeApplicationInfoV0 = 100,
-        GetBaasAccountManagerForApplication = 101,
-        AuthenticateApplicationAsync = 102,
-        CheckNetworkServiceAvailabilityAsync = 103,
-        StoreSaveDataThumbnail = 110,
-        ClearSaveDataThumbnail = 111,
-        CreateGuestLoginRequest = 120,
-        LoadOpenContext = 130,
-        ListOpenContextStoredUsers2 = 131,
-        InitializeApplicationInfo = 140,
-        ListQualifiedUsers = 141,
-        IsUserAccountSwitchLocked = 150,
+        Method_GetUserCount = 0,
+        Method_GetUserExistence = 1,
+        Method_ListAllUsers = 2,
+        Method_ListOpenUsers = 3,
+        Method_GetLastOpenedUser = 4,
+        Method_GetProfile = 5,
+        Method_GetProfileDigest = 6,
+        Method_IsUserRegistrationRequestPermitted = 50,
+        Method_TrySelectUserWithoutInteraction = 51,
+        Method_ListOpenContextStoredUsers = 60,
+        Method_DebugActivateOpenContextRetention = 99,
+        Method_InitializeApplicationInfoV0 = 100,
+        Method_GetBaasAccountManagerForApplication = 101,
+        Method_AuthenticateApplicationAsync = 102,
+        Method_CheckNetworkServiceAvailabilityAsync = 103,
+        Method_StoreSaveDataThumbnail = 110,
+        Method_ClearSaveDataThumbnail = 111,
+        Method_CreateGuestLoginRequest = 120,
+        Method_LoadOpenContext = 130,
+        Method_ListOpenContextStoredUsers2 = 131,
+        Method_InitializeApplicationInfo = 140,
+        Method_ListQualifiedUsers = 141,
+        Method_IsUserAccountSwitchLocked = 150,
 	};
     static CKernelObjectPtr CreateInstance(CSwitchSystem & System);
 
@@ -45,4 +45,5 @@ private:
     ACC_U0(CSwitchSystem & System);
 
 	void ProcessInitializeApplicationInfo(void);
+	void ProcessGetBaasAccountManagerForApplication(CIPCRequest & Request);
 };

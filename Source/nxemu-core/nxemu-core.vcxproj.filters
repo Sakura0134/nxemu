@@ -344,6 +344,9 @@
     <ClInclude Include="Machine\Interpreter\InterpreterCPU.h">
       <Filter>Header Files\Machine\Interpreter</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\acc\IManagerForApplication.h">
+      <Filter>Header Files\hle\Services\acc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -543,6 +546,9 @@
     </ClCompile>
     <ClCompile Include="Machine\Interpreter\InterpreterCPU.cpp">
       <Filter>Source Files\Machine\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\acc\IManagerForApplication.cpp">
+      <Filter>Source Files\hle\Services\acc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
