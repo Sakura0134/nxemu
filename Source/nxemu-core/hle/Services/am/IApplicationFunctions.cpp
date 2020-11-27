@@ -22,8 +22,9 @@ ResultCode IApplicationFunctions::CallMethod(CIPCRequest & Request)
 {
     switch (Request.RequestHeader().Command)
     {
-	case Method::PopLaunchParameter: ProcessPopLaunchParameter(Request); break;
-    case Method::NotifyRunning: ProcessNotifyRunning(Request); break;
+	case Method_PopLaunchParameter: ProcessPopLaunchParameter(Request); break;
+    case Method_EnsureSaveData: ProcessEnsureSaveData(Request); break;
+    case Method_NotifyRunning: ProcessNotifyRunning(Request); break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
@@ -51,6 +52,13 @@ void IApplicationFunctions::ProcessPopLaunchParameter(CIPCRequest & Request)
 	params.current_user[1] = 0x77a43cb14da4c0b4;
 
 	Request.MakeObject(IAMStorage::CreateInstance(m_System, (uint8_t*)&params, sizeof(params))->GetServicePtr());
+}
+
+void IApplicationFunctions::ProcessEnsureSaveData(CIPCRequest & Request)
+{
+    CIPCRequest::REQUEST_DATA & ResponseData = Request.ResponseData();
+    ResponseData.resize(sizeof(uint64_t));
+    ((uint64_t *)ResponseData.data())[0] = 0;
 }
 
 void IApplicationFunctions::ProcessNotifyRunning(CIPCRequest & Request)
