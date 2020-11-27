@@ -11,7 +11,7 @@ RomFS::~RomFS()
 
 bool RomFS::Load(CEncryptedFile * file, uint64_t offset)
 {
-    if (file == NULL)
+    if (file == nullptr)
     {
         return false;
     }
@@ -40,7 +40,7 @@ bool RomFS::Load(CEncryptedFile * file, uint64_t offset)
 
 const RomFS::FILE * RomFS::GetFile(const char * name)
 {
-    if (name != NULL)
+    if (name != nullptr)
     {
         for (size_t i = 0, n = m_Files.size(); i < n; i++)
         {
@@ -50,12 +50,12 @@ const RomFS::FILE * RomFS::GetFile(const char * name)
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 bool RomFS::ProcessDirectory(CEncryptedFile * file, uint64_t offset, uint64_t DirOffset, uint64_t FileOffset, uint64_t DataOffset)
 {
-    if (file == NULL)
+    if (file == nullptr)
     {
         return false;
     }

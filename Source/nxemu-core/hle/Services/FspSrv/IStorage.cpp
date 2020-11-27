@@ -72,7 +72,7 @@ void IStorage::ProcessRead(CIPCRequest & Request)
     }
 
     CSystemThread * thread = Request.SwitchSystem().SystemThread()->GetSystemThreadPtr();
-    if (thread == NULL)
+    if (thread == nullptr)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return;

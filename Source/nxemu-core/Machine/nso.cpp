@@ -106,7 +106,7 @@ bool LoadNsoSegement(CProcessMemory & ProcessMemory, uint64_t LoadAddress, CEncr
 
 	WriteTrace(TraceGameFile, TraceVerbose, "MapMemory: Address: 0x%I64X Size: 0x%08X (0x%08X) BssSize: 0x%08X (0x%08X) MemoryPermission: %s type: %X", LoadAddress, SegmentSize, (uint32_t)CPageTable::PageRoundUp(SegmentSize), BssSize, CPageTable::PageRoundUp(BssSize), CPageTable::MemoryPermissionName(MemoryPermission), memType);
 	uint8_t * Segment = ProcessMemory.MapMemory(LoadAddress, (uint32_t)(CPageTable::PageRoundUp(SegmentSize) + CPageTable::PageRoundUp(BssSize)), MemoryPermission, memType);
-	if (Segment == NULL)
+	if (Segment == nullptr)
 	{
 		g_Notify->BreakPoint(__FILE__, __LINE__);
 		return false;
@@ -140,7 +140,7 @@ bool LoadNsoSegement(CProcessMemory & ProcessMemory, uint64_t LoadAddress, CEncr
 
 bool CSwitchSystem::LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile, const CPartitionFilesystem::VirtualFile * file, uint64_t base_addr, uint64_t &end_addr)
 {
-	if (file == NULL)
+	if (file == nullptr)
 	{
 		return false;
 	}
@@ -192,7 +192,7 @@ bool CSwitchSystem::LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile
 	{
 		enum ElfDynamicTag : uint64_t
 		{
-			DT_NULL = 0,
+			DT_nullptr = 0,
 			DT_PLTRELSZ = 2,
 			DT_PLTGOT = 3,
 			DT_HASH = 4,
@@ -220,7 +220,7 @@ bool CSwitchSystem::LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile
 			if (!m_ProcessMemory.Read64(DynamicOffset, TagVal)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
 			if (!m_ProcessMemory.Read64(DynamicOffset + 8, Value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
 
-			if ((ElfDynamicTag)TagVal == DT_NULL)
+			if ((ElfDynamicTag)TagVal == DT_nullptr)
 			{
 				break;
 			}

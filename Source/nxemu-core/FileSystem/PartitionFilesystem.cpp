@@ -110,5 +110,5 @@ const CPartitionFilesystem::VirtualFile * CPartitionFilesystem::GetFile(const ch
 			return (VirtualFile *)(&m_Files[i]);
 		}
 	}
-	return NULL;
+	return nullptr;
 }

@@ -347,7 +347,7 @@ Arm64OpcodeCache::~Arm64OpcodeCache()
 
 Arm64Opcode::Arm64OpcodeDetail * Arm64OpcodeCache::GetOpcodeDetail(uint64_t pc, uint32_t insn)
 {
-    Arm64Opcode::Arm64OpcodeDetail * Details = NULL;
+    Arm64Opcode::Arm64OpcodeDetail * Details = nullptr;
     OpcodeKey key{ pc,insn };
     {
         CGuard guard(m_CacheCS);
@@ -357,7 +357,7 @@ Arm64Opcode::Arm64OpcodeDetail * Arm64OpcodeCache::GetOpcodeDetail(uint64_t pc, 
             Details = itr->second;
         }
     }
-    if (Details == NULL)
+    if (Details == nullptr)
     {
         Details = new Arm64Opcode::Arm64OpcodeDetail(pc, insn);
         {

@@ -7,7 +7,7 @@ NACP::NACP(void) :
 
 bool NACP::Load(CEncryptedFile * EncryptedFile, uint64_t Offset, uint64_t FileOffset, uint64_t FileSize)
 {
-    if (EncryptedFile == NULL)
+    if (EncryptedFile == nullptr)
     {
         return false;
     }

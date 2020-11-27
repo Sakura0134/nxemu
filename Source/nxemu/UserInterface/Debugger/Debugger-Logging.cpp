@@ -27,7 +27,7 @@ class COptionsSheet : public CPropertySheetImpl < COptionsSheet >
 {
 public:
     // Construction
-    COptionsSheet(const wchar_t * title, UINT /*uStartPage*/ = 0, HWND /*hWndParent*/ = NULL);
+    COptionsSheet(const wchar_t * title, UINT /*uStartPage*/ = 0, HWND /*hWndParent*/ = nullptr);
     ~COptionsSheet();
 
     // Maps

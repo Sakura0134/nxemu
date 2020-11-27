@@ -15,7 +15,7 @@ CHleKernel::CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory) :
     m_NextHandle(0x8002),
     m_NextThreadId(1)
 {
-    CRandom EntropyRandomize(g_Settings->LoadBool(HleKernel_RandomizeEntropy) ? (uint32_t)time(NULL) : g_Settings->LoadDword(HleKernel_RandomizeSeed));
+    CRandom EntropyRandomize(g_Settings->LoadBool(HleKernel_RandomizeEntropy) ? (uint32_t)time(nullptr) : g_Settings->LoadDword(HleKernel_RandomizeSeed));
     for (uint32_t i = 0, n = sizeof(m_RandomEntropy) / sizeof(m_RandomEntropy[0]); i < n; i++)
     {
         m_RandomEntropy[i] = ((uint64_t)EntropyRandomize.next() << 32) | EntropyRandomize.next();
@@ -30,7 +30,7 @@ CHleKernel::~CHleKernel()
 
 uint32_t CHleKernel::AddKernelObject(CKernelObject * Object)
 {
-    if (Object == NULL)
+    if (Object == nullptr)
     {
         return (uint32_t)-1;
     }
@@ -408,7 +408,7 @@ bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uin
 {
     ThreadHandle = GetNewHandle();
     CKernelObjectPtr ThreadObject(new CSystemThread(this, m_ProcessMemory, name, entry_point, ThreadHandle, CreateNewThreadID(), ThreadContext, StackTop, StackSize, Priority, ProcessorId));
-    if (ThreadObject.get() == NULL)
+    if (ThreadObject.get() == nullptr)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return false;

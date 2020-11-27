@@ -4,14 +4,14 @@
 
 bool LaunchSwitchRom(const char * GamePath)
 {
-    if (g_BaseMachine != NULL)
+    if (g_BaseMachine != nullptr)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
 		return false;
     }
 
     std::auto_ptr<CSwitchSystem> SwitchSystem(new CSwitchSystem());
-    if (SwitchSystem.get() == NULL)
+    if (SwitchSystem.get() == nullptr)
     {
 		g_Notify->BreakPoint(__FILE__, __LINE__);
 		return false;

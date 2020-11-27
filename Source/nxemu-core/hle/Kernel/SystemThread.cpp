@@ -15,8 +15,8 @@ CSystemThread::CSystemThread(CHleKernel * m_Kernel, CProcessMemory &ProcessMemor
     m_CondVarWaitAddress(0),
     m_MutexWaitAddress(0),
     m_TlsAddress(ProcessMemory.GetTlsIoRegionBase()),
-    m_LockOwner(NULL),
-	m_Name(name != NULL ? name : "")
+    m_LockOwner(nullptr),
+	m_Name(name != nullptr ? name : "")
 {
     if (!m_ThreadMemory.Initialize(StackTop, StackSize, m_TlsAddress, 0x1000))
     {
@@ -116,7 +116,7 @@ void CSystemThread::AddMutexWaiter(CSystemThread * thread)
         return;
     }
 
-    if (thread->m_LockOwner != NULL)
+    if (thread->m_LockOwner != nullptr)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return;

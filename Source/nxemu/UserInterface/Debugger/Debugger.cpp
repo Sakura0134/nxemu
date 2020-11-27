@@ -5,9 +5,9 @@
 #include <nxemu-core\Machine\SwitchSystem.h>
 
 CDebuggerUI::CDebuggerUI() :
-    m_CommandsView(NULL),
+    m_CommandsView(nullptr),
     m_StepEvent(false),
-    m_DebugThread(NULL)
+    m_DebugThread(nullptr)
 {
 	g_Settings->RegisterChangeCB(Debugger_SteppingOps, this, (CSettings::SettingChangedFunc)SteppingOpsChanged);
 }
@@ -18,10 +18,10 @@ CDebuggerUI::~CDebuggerUI()
     {
         g_Settings->UnregisterChangeCB(Debugger_SteppingOps, this, (CSettings::SettingChangedFunc)SteppingOpsChanged);
     }
-    if (m_CommandsView != NULL)
+    if (m_CommandsView != nullptr)
     {
         delete m_CommandsView;
-        m_CommandsView = NULL;
+        m_CommandsView = nullptr;
     }
 }
 
@@ -36,7 +36,7 @@ void CDebuggerUI::SteppingOpsChanged(CDebuggerUI * _this)
 
 void CDebuggerUI::OpenCommandWindow(void)
 {
-    if (m_CommandsView == NULL)
+    if (m_CommandsView == nullptr)
     {
         SetDebugThread();
         m_CommandsView = new CDebugCommandsView(this, m_StepEvent);
@@ -53,8 +53,8 @@ void CDebuggerUI::WaitForStep(void)
 
 void CDebuggerUI::SetDebugThread(void)
 {
-    const KernelObjectMap & KernelObjects = g_BaseMachine != NULL ? g_BaseMachine->KernelObjects() : KernelObjectMap();
-    if (m_DebugThread != NULL)
+    const KernelObjectMap & KernelObjects = g_BaseMachine != nullptr ? g_BaseMachine->KernelObjects() : KernelObjectMap();
+    if (m_DebugThread != nullptr)
     {
         bool Found = false;
         for (KernelObjectMap::const_iterator itr = KernelObjects.begin(); itr != KernelObjects.end(); itr++)
@@ -73,13 +73,13 @@ void CDebuggerUI::SetDebugThread(void)
         }
         if (!Found)
         {
-            m_DebugThread = NULL;
+            m_DebugThread = nullptr;
         }
     }
 
-    if (m_DebugThread == NULL)
+    if (m_DebugThread == nullptr)
     {
-        CKernelObjectPtr FirstThread(NULL);
+        CKernelObjectPtr FirstThread(nullptr);
         for (KernelObjectMap::const_iterator itr = KernelObjects.begin(); itr != KernelObjects.end(); itr++)
         {
             CKernelObject * Object = itr->second.get();
@@ -88,7 +88,7 @@ void CDebuggerUI::SetDebugThread(void)
                 continue;
             }
             CSystemThread * Thread = Object->GetSystemThreadPtr();
-            if (FirstThread == NULL)
+            if (FirstThread == nullptr)
             {
                 FirstThread = Thread;
             }
@@ -98,10 +98,10 @@ void CDebuggerUI::SetDebugThread(void)
                 break;
             }
         }
-        if (m_DebugThread == NULL)
+        if (m_DebugThread == nullptr)
         {
             m_DebugThread = FirstThread;
-            if (m_DebugThread == NULL)
+            if (m_DebugThread == nullptr)
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }

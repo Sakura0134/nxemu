@@ -12,12 +12,12 @@
 CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
 	m_Valid(false),
 	m_Header({0}),
-	m_SecurePartition(NULL),
-	m_Partitions(NULL),
-    m_Program(NULL),
-    m_Control(NULL),
-    m_Nacp(NULL),
-    m_MetaData(NULL)
+	m_SecurePartition(nullptr),
+	m_Partitions(nullptr),
+    m_Program(nullptr),
+    m_Control(nullptr),
+    m_Nacp(nullptr),
+    m_MetaData(nullptr)
 {
 	WriteTrace(TraceGameFile, TraceDebug, "Start (XciFile: \"%s\")", (const char *)XciFile);
 	if (!XciFile.Exists())
@@ -67,7 +67,7 @@ CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
 	}
 
 	const CPartitionFilesystem::VirtualFile * SecureFile = m_Partitions->GetFile("secure");
-	if (SecureFile == NULL)
+	if (SecureFile == nullptr)
 	{
 		WriteTrace(TraceGameFile, TraceError, "Failed to find secure partitions");
 		WriteTrace(TraceGameFile, TraceInfo, "Done");
@@ -85,14 +85,14 @@ CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
 	uint64_t ProgramTitleID = m_SecurePartition->GetProgramTitleID();
 	WriteTrace(TraceGameFile, TraceVerbose, "ProgramTitleID: 0x%I64u", ProgramTitleID);
 	m_Program = m_SecurePartition->GetNCA(ProgramTitleID, CNMT::ContentRecordType::Program);
-	if (m_Program == NULL)
+	if (m_Program == nullptr)
 	{
 		WriteTrace(TraceGameFile, TraceError, "Failed to find Get NCA (ProgramTitleID: 0x%I64u, type: ContentRecordType::Program)", ProgramTitleID);
 		WriteTrace(TraceGameFile, TraceInfo, "Done");
 		return;
 	}
     m_Control = m_SecurePartition->GetNCA(ProgramTitleID, CNMT::ContentRecordType::Control);
-    if (m_Control == NULL)
+    if (m_Control == nullptr)
     {
         WriteTrace(TraceGameFile, TraceError, "Failed to find Get NCA (ProgramTitleID: 0x%I64u, type: ContentRecordType::Control)", ProgramTitleID);
         WriteTrace(TraceGameFile, TraceInfo, "Done");
@@ -106,14 +106,14 @@ CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
     }
 
     CPartitionFilesystem * exefs = m_Program->exefs();
-    if (exefs == NULL)
+    if (exefs == nullptr)
     {
         WriteTrace(TraceGameFile, TraceError, "Failed to find exefs");
         WriteTrace(TraceGameFile, TraceInfo, "Done");
         return;
     }
     const CPartitionFilesystem::VirtualFile * npdm = exefs->GetFile("main.npdm");
-    if (npdm == NULL)
+    if (npdm == nullptr)
     {
         WriteTrace(TraceGameFile, TraceError, "Failed to find main.npdm in exefs");
         WriteTrace(TraceGameFile, TraceInfo, "Done");
@@ -129,15 +129,15 @@ CXci::CXci(CSwitchKeys & Keys, const CPath & XciFile) :
 
 CXci::~CXci()
 {
-	if (m_SecurePartition != NULL)
+	if (m_SecurePartition != nullptr)
 	{
 		delete m_SecurePartition;
-		m_SecurePartition = NULL;
+		m_SecurePartition = nullptr;
 	}
-	if (m_Partitions != NULL)
+	if (m_Partitions != nullptr)
 	{
 		delete m_Partitions;
-		m_Partitions = NULL;
+		m_Partitions = nullptr;
 	}
 }
 
@@ -169,7 +169,7 @@ bool CXci::IsXciFile(const CPath & File)
 
 bool CXci::ParseControlNCA(void)
 {
-    if (m_Control == NULL)
+    if (m_Control == nullptr)
     {
         return false;
     }
@@ -179,7 +179,7 @@ bool CXci::ParseControlNCA(void)
         return false;
     }
     const RomFS::FILE * nacp_file = fs.GetFile("control.nacp");
-    if (nacp_file == NULL)
+    if (nacp_file == nullptr)
     {
         return false;
     }

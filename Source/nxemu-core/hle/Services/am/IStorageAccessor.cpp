@@ -33,7 +33,7 @@ ResultCode IStorageAccessor::CallMethod(CIPCRequest & Request)
 
 void IStorageAccessor::ProcessGetSize(CIPCRequest & Request)
 {
-    if (m_Storage == NULL)
+    if (m_Storage == nullptr)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return;

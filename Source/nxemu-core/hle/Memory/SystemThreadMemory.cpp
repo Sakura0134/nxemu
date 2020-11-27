@@ -3,12 +3,12 @@
 
 CSystemThreadMemory::CSystemThreadMemory(CProcessMemory &ProcessMemory, CInterpreterCPU * Executor) :
     m_ProcessMemory(ProcessMemory),
-    m_stackmem(NULL),
+    m_stackmem(nullptr),
     m_StackAddress(0),
     m_StackSize(0),
     m_tlsAddress(0),
     m_tlsSize(0),
-    m_tls(NULL),
+    m_tls(nullptr),
     m_Executor(Executor)
 {
 }
@@ -18,12 +18,12 @@ CSystemThreadMemory::~CSystemThreadMemory()
     if (m_stackmem)
     {
         delete m_stackmem;
-        m_stackmem = NULL;
+        m_stackmem = nullptr;
     }
     if (m_tls)
     {
         delete m_tls;
-        m_tls = NULL;
+        m_tls = nullptr;
     }
 }
 
@@ -34,7 +34,7 @@ bool CSystemThreadMemory::Initialize(uint64_t StackTop, uint32_t StackSize, uint
     if (m_StackSize != 0)
     {
         m_stackmem = new uint8_t[m_StackSize];
-        if (m_stackmem == NULL)
+        if (m_stackmem == nullptr)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -46,7 +46,7 @@ bool CSystemThreadMemory::Initialize(uint64_t StackTop, uint32_t StackSize, uint
     if (m_tlsSize > 0)
     {
         m_tls = new uint8_t[m_tlsSize];
-        if (m_tls == NULL)
+        if (m_tls == nullptr)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -77,7 +77,7 @@ bool CSystemThreadMemory::Read64(uint64_t Addr, uint64_t & value)
 
 bool CSystemThreadMemory::ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len)
 {
-    void * ReadBuffer = NULL;
+    void * ReadBuffer = nullptr;
     if (!FindAddressMemory(Addr, len, ReadBuffer))
     {
         return false;
@@ -131,7 +131,7 @@ bool CSystemThreadMemory::Write64(uint64_t Addr, uint64_t value)
 
 bool CSystemThreadMemory::WriteBytes(uint64_t Addr, const uint8_t * buffer, uint32_t len)
 {
-    void * WriteBuffer = NULL;
+    void * WriteBuffer = nullptr;
     if (!FindAddressMemory(Addr, len, WriteBuffer))
     {
         return false;

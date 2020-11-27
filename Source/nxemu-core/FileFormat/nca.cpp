@@ -8,8 +8,8 @@ NCA::NCA() :
 	m_Header({ 0 }),
 	m_Encrypted(false),
 	m_HasRightsId(false),
-	m_exefs(NULL),
-	m_Romfs(NULL),
+	m_exefs(nullptr),
+	m_Romfs(nullptr),
 	m_RomfsOffset(0)
 {
 }
@@ -21,10 +21,10 @@ NCA::~NCA()
 		delete m_dirs[i];
 	}
 	m_dirs.clear();
-	if (m_Romfs != NULL)
+	if (m_Romfs != nullptr)
 	{
 		delete m_Romfs;
-		m_Romfs = NULL;
+		m_Romfs = nullptr;
 	}
 }
 
@@ -166,7 +166,7 @@ bool NCA::ReadRomFSSection(CSwitchKeys & Keys, CFile & file, int64_t Offset, con
 	}
 	else
 	{
-		if (m_Romfs != NULL)
+		if (m_Romfs != nullptr)
 		{
 			g_Notify->BreakPoint(__FILE__, __LINE__);
 		}
@@ -287,15 +287,15 @@ uint8_t NCA::GetCryptoRevision() const
 
 bool NCA::IsDirectoryExeFS(CPartitionFilesystem* dir)
 {
-	if (dir == NULL)
+	if (dir == nullptr)
 	{
 		return false;
 	}
-	if (dir->GetFile("main") == NULL)
+	if (dir->GetFile("main") == nullptr)
 	{
 		return false;
 	}
-	if (dir->GetFile("main.npdm") == NULL)
+	if (dir->GetFile("main.npdm") == nullptr)
 	{
 		return false;
 	}

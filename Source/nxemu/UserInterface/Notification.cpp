@@ -13,14 +13,14 @@ CNotificationImp & Notify(void)
 }
 
 CNotificationImp::CNotificationImp() :
-    m_Gui(NULL),
+    m_Gui(nullptr),
     m_NextMsg(0)
 {
 }
 
 void CNotificationImp::DisplayError(const char * Message) const
 {
-    MessageBoxW(NULL, stdstr(Message).ToUTF16().c_str(), L"Error", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
+    MessageBoxW(nullptr, stdstr(Message).ToUTF16().c_str(), L"Error", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 }
 
 void CNotificationImp::DisplayMessage(uint32_t DisplayTime, LanguageStringID StringID) const
@@ -30,11 +30,11 @@ void CNotificationImp::DisplayMessage(uint32_t DisplayTime, LanguageStringID Str
 
 void CNotificationImp::DisplayMessage(uint32_t DisplayTime, const char * Message) const
 {
-    if (m_Gui == NULL) { return; }
+    if (m_Gui == nullptr) { return; }
 
     if (m_NextMsg > 0 || DisplayTime > 0)
     {
-        time_t Now = time(NULL);
+        time_t Now = time(nullptr);
         if (DisplayTime == 0 && Now < m_NextMsg)
         {
             return;
@@ -73,5 +73,5 @@ void CNotificationImp::SetMainWindow(CMainGui * Gui)
 bool CNotificationImp::GetSwitchKeys(CSwitchKeys * keys) const
 {
 	CKeysConfig KeysConfig(keys);
-	return KeysConfig.Display(m_Gui ? m_Gui->hWnd() : NULL);
+	return KeysConfig.Display(m_Gui ? m_Gui->hWnd() : nullptr);
 }

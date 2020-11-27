@@ -4,8 +4,8 @@
 #include <nxemu-core\Settings\Settings.h>
 #include <nxemu-core\Language\Language.h>
 
-CNotification * g_Notify = NULL;
-CLanguage * g_Lang = NULL;
-CSwitchSystem * g_BaseMachine = NULL;
-CSettings * g_Settings = NULL;
-CDebugger * g_Debugger = NULL;
+CNotification * g_Notify = nullptr;
+CLanguage * g_Lang = nullptr;
+CSwitchSystem * g_BaseMachine = nullptr;
+CSettings * g_Settings = nullptr;
+CDebugger * g_Debugger = nullptr;

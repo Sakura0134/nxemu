@@ -29,7 +29,7 @@ ResultCode IFileSystemProxy::CallMethod(CIPCRequest & Request)
         //stubbed; 
         break;
     case Method::OpenDataStorageByCurrentProcess:
-		if (Request.SwitchSystem().Xci() != NULL)
+		if (Request.SwitchSystem().Xci() != nullptr)
 		{
 			const NCA * Program = Request.SwitchSystem().Xci()->Program();
 			if (Program)

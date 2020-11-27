@@ -7,7 +7,7 @@
 
 NSP::NSP(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset, const CPartitionFilesystem::VirtualFile * file) :
 	m_Valid(false),
-	m_Files(NULL)
+	m_Files(nullptr)
 {
 	WriteTrace(TraceGameFile, TraceVerbose, "Start (PartitionOffset: 0x%I64u file->Offset: 0x%I64u file->Size: 0x%I64u)", PartitionOffset, file->Offset, file->Size);
 	m_Files = new CPartitionFilesystem(CEncryptedFile(ReadFile), PartitionOffset, file->Offset, file->Size);
@@ -34,10 +34,10 @@ NSP::~NSP()
 	}
 	m_Ncas.clear();
 
-	if (m_Files != NULL)
+	if (m_Files != nullptr)
 	{
 		delete m_Files;
-		m_Files = NULL;
+		m_Files = nullptr;
 	}
     WriteTrace(TraceGameFile, TraceInfo, "Done");
 }
@@ -150,7 +150,7 @@ bool NSP::ReadNCAs(CSwitchKeys & Keys, CFile & ReadFile, int64_t PartitionOffset
 					}
 					stdstr_f NextFileName("%s.nca", id_string.c_str());
 					const CPartitionFilesystem::VirtualFile * NextFile = m_Files->GetFile(NextFileName.c_str());
-					if (NextFile == NULL)
+					if (NextFile == nullptr)
 					{
 						WriteTrace(TraceGameFile, TraceVerbose, "ignoring \"%s\", could not be found in the files", NextFileName.c_str());
 						continue;
@@ -176,12 +176,12 @@ NCA * NSP::GetNCA(uint64_t title_id, CNMT::ContentRecordType type) const
 	NCAS_TITLEID::const_iterator title_id_iter = m_NcasTitleId.find(title_id);
 	if (title_id_iter == m_NcasTitleId.end())
 	{
-		return NULL;
+		return nullptr;
 	}
 	NCAS_CONTENTTYPE::const_iterator type_iter = title_id_iter->second.find(type);
 	if (type_iter == title_id_iter->second.end())
 	{
-		return NULL;
+		return nullptr;
 	}
 	return type_iter->second;
 }

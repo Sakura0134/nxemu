@@ -39,7 +39,7 @@ bool CService::FindDomainService(int32_t ObjectID, CService *& Service)
 
 int32_t CService::AddDomainObject(CService * Service)
 {
-    if (Service == NULL)
+    if (Service == nullptr)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return 0;

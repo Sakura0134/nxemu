@@ -14,19 +14,19 @@ CKernelObject::~CKernelObject()
 CSystemThread * CKernelObject::GetSystemThreadPtr(void)
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
-    return NULL;
+    return nullptr;
 }
 
 CService * CKernelObject::GetServicePtr(void)
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
-    return NULL;
+    return nullptr;
 }
 
 KEvent * CKernelObject::GetKEventPtr(void)
 {
     g_Notify->BreakPoint(__FILE__, __LINE__);
-    return NULL;
+    return nullptr;
 }
 
 CKernelObjectPtr::CKernelObjectPtr(CKernelObject * Object) :
@@ -78,7 +78,7 @@ CKernelObject * CKernelObjectPtr::get() const
 
 void CKernelObjectPtr::ReleaseRef()
 {
-    if (m_Object == NULL)
+    if (m_Object == nullptr)
     {
         return;
     }
@@ -94,5 +94,5 @@ void CKernelObjectPtr::ReleaseRef()
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
     }
-    m_Object = NULL;
+    m_Object = nullptr;
 }

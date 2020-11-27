@@ -11,7 +11,7 @@
 
 CRandom::CRandom()
 {
-    m_state = (uint32_t)time(NULL);
+    m_state = (uint32_t)time(nullptr);
 }
 
 CRandom::CRandom(uint32_t state_value)

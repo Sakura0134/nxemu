@@ -49,7 +49,7 @@ public:
 		
 		// create date-time control
 		CRect Area( rcRect.left + 3, rcRect.top + 2, rcRect.right - 3, rcRect.bottom - 2 );
-		if ( CWindowImpl< CListDate, CDateTimePickerCtrl >::Create( hWndParent, Area, NULL, dwStyle ) == NULL )
+		if ( CWindowImpl< CListDate, CDateTimePickerCtrl >::Create( hWndParent, Area, nullptr, dwStyle ) == nullptr )
 			return FALSE;
 		
 		// remove border
@@ -60,7 +60,7 @@ public:
 		logFont.SetMessageBoxFont();
 		if ( !m_fntDateFont.IsNull() )
 			m_fntDateFont.DeleteObject();
-		if ( m_fntDateFont.CreateFontIndirect( &logFont ) == NULL )
+		if ( m_fntDateFont.CreateFontIndirect( &logFont ) == nullptr )
 			return FALSE;
 		SetMonthCalFont( m_fntDateFont );
 		SetFont( m_fntDateFont );
@@ -115,7 +115,7 @@ public:
 	void OnKillFocus( HWND hNewWnd )
 	{
 		// have we dropped down the calendar control?
-		if ( hNewWnd != NULL && GetMonthCal() == hNewWnd )
+		if ( hNewWnd != nullptr && GetMonthCal() == hNewWnd )
 			return;
 		
 		// have we selected a new date from the calendar control?

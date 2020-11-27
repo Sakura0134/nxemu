@@ -15,7 +15,7 @@ CSwitchSystem::CSwitchSystem() :
     m_Kernel(*this,m_ProcessMemory),
     m_EndEmulation(false),
     m_EmulationThread(stEmulationThread),
-    m_Xci(NULL)
+    m_Xci(nullptr)
 {
 }
 
@@ -37,7 +37,7 @@ void CSwitchSystem::EmulationThread(void)
     bool & Done = m_EndEmulation;
     while (!Done)
     {
-        CKernelObjectPtr ThreadObject(NULL);
+        CKernelObjectPtr ThreadObject(nullptr);
         {
             KernelObjectList & ThreadQueue = m_Kernel.ThreadQueue();
             for (size_t i = 0, n = ThreadQueue.size(); i < n; i++)
@@ -50,7 +50,7 @@ void CSwitchSystem::EmulationThread(void)
             }
         }
 
-        if (ThreadObject.get() == NULL || ThreadObject->GetHandleType() != CKernelObject::HandleType::Thread)
+        if (ThreadObject.get() == nullptr || ThreadObject->GetHandleType() != CKernelObject::HandleType::Thread)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
             break;
@@ -78,7 +78,7 @@ void CSwitchSystem::EmulationThread(void)
             }
             Thread->SetState(CSystemThread::Ready);
         }
-        m_SystemThread.Set(NULL);
+        m_SystemThread.Set(nullptr);
     }
 }
 
@@ -106,36 +106,36 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
 {
     WriteTrace(TraceGameFile, TraceInfo, "Start (XciFile: \"%s\")", (const char *)XciFile);
     std::auto_ptr<CXci> xci(new CXci(m_Keys, XciFile));
-    if (xci.get() == NULL || !xci->Valid())
+    if (xci.get() == nullptr || !xci->Valid())
     {
-        WriteTrace(TraceGameFile, TraceError, "xci is %s", xci.get() == NULL ? "NULL" : "Not Valid");
+        WriteTrace(TraceGameFile, TraceError, "xci is %s", xci.get() == nullptr ? "nullptr" : "Not Valid");
         WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
         return false;
     }
     m_Xci = xci.release();
     const NCA * Program = m_Xci->Program();
-    if (Program == NULL)
+    if (Program == nullptr)
     {
         WriteTrace(TraceGameFile, TraceError, "Failed to find Program");
         WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
         return false;
     }
     CPartitionFilesystem * exefs = Program->exefs();
-    if (exefs == NULL)
+    if (exefs == nullptr)
     {
         WriteTrace(TraceGameFile, TraceError, "Failed to find exefs");
         WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
         return false;
     }
     const NACP * Nacp = m_Xci->Nacp();
-    if (Nacp == NULL)
+    if (Nacp == nullptr)
     {
         WriteTrace(TraceGameFile, TraceError, "Failed to get Nacp");
         WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");
         return false;
     }
     const CProgramMetadata * Metadata = m_Xci->Metadata();
-    if (Metadata == NULL)
+    if (Metadata == nullptr)
     {
         WriteTrace(TraceGameFile, TraceError, "Failed to get Metadata");
         WriteTrace(TraceGameFile, TraceInfo, "Done (res: false)");

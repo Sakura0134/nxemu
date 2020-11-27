@@ -10,7 +10,7 @@
 
 void SetTraceModuleNames(void);
 
-static CTraceFileLog * g_LogFile = NULL;
+static CTraceFileLog * g_LogFile = nullptr;
 
 void InitializeLog(void)
 {
@@ -66,46 +66,46 @@ void UpdateTraceLevel(void)
 void SetupTrace(void)
 {
     AddLogModule();
-    g_Settings->RegisterChangeCB(Debugger_TraceMD5, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->RegisterChangeCB(Debugger_TraceThread, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->RegisterChangeCB(Debugger_TracePath, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->RegisterChangeCB(Debugger_TraceSettings, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->RegisterChangeCB(Debugger_TraceAppInit, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->RegisterChangeCB(Debugger_TraceAppCleanup, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->RegisterChangeCB(Debugger_TraceServiceCall, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->RegisterChangeCB(Debugger_TraceHleKernel, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->RegisterChangeCB(Debugger_TraceMemory, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->RegisterChangeCB(Debugger_TraceGameFile, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceMD5, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceThread, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TracePath, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceSettings, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceAppInit, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceAppCleanup, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceServiceCall, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceHleKernel, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceMemory, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->RegisterChangeCB(Debugger_TraceGameFile, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
     UpdateTraceLevel();
     WriteTrace(TraceAppInit, TraceInfo, "Application Starting %s", VER_FILE_VERSION_STR);
 }
 
 void CleanupTrace(void)
 {
-    g_Settings->UnregisterChangeCB(Debugger_TraceMD5, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->UnregisterChangeCB(Debugger_TraceThread, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->UnregisterChangeCB(Debugger_TracePath, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->UnregisterChangeCB(Debugger_TraceSettings, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->UnregisterChangeCB(Debugger_TraceAppInit, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->UnregisterChangeCB(Debugger_TraceAppCleanup, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->UnregisterChangeCB(Debugger_TraceServiceCall, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->UnregisterChangeCB(Debugger_TraceHleKernel, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->UnregisterChangeCB(Debugger_TraceMemory, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
-    g_Settings->UnregisterChangeCB(Debugger_TraceGameFile, NULL, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceMD5, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceThread, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TracePath, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceSettings, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceAppInit, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceAppCleanup, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceServiceCall, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceHleKernel, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceMemory, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
+    g_Settings->UnregisterChangeCB(Debugger_TraceGameFile, nullptr, (CSettings::SettingChangedFunc)UpdateTraceLevel);
 }
 
 void TraceDone(void)
 {
     CloseTrace();
-    if (g_LogFile) { delete g_LogFile; g_LogFile = NULL; }
+    if (g_LogFile) { delete g_LogFile; g_LogFile = nullptr; }
 }
 
 bool AppInit(CNotification * Notify, const char * BaseDirectory)
 {
     g_Notify = Notify;
     InitializeLog();
-    WriteTrace(TraceAppInit, TraceDebug, "Starting (BaseDirectory: %s)", BaseDirectory ? BaseDirectory : "null");
-    if (Notify == NULL)
+    WriteTrace(TraceAppInit, TraceDebug, "Starting (BaseDirectory: %s)", BaseDirectory ? BaseDirectory : "nullptr");
+    if (Notify == nullptr)
     {
         WriteTrace(TraceAppInit, TraceError, "No Notification class passed");
         return false;
@@ -132,18 +132,18 @@ void AppCleanup(void)
     if (g_BaseMachine)
     {
         delete g_BaseMachine;
-        g_BaseMachine = NULL;
+        g_BaseMachine = nullptr;
     }
     if (g_Lang)
     {
         delete g_Lang;
-        g_Lang = NULL;
+        g_Lang = nullptr;
     }
     CleanupTrace();
     if (g_Settings) 
     {
         delete g_Settings; 
-        g_Settings = NULL; 
+        g_Settings = nullptr; 
     }
     TraceDone();
 }

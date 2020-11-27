@@ -8,7 +8,7 @@ const uint64_t CProcessMemory::PageSize = 1 << PageBits;
 const uint64_t CProcessMemory::PageMask = PageSize - 1;
 
 CProcessMemory::CProcessMemory(void) :
-    m_heap(NULL),
+    m_heap(nullptr),
     m_AddressSpaceWidth(0),
     m_AddressSpaceBase(0),
     m_AddressSpaceSize(0),
@@ -77,7 +77,7 @@ bool CProcessMemory::Initialize(ProgramAddressSpaceType Type, bool Is64bit)
     WriteTrace(TraceMemory, TraceDebug, "TlsIoRegionBase: 0x%I64X MapRegionSize: 0x%I64X", m_TlsIoRegionBase, m_TlsIoRegionSize);
 
     uint64_t AddressSpaceEnd = 1ULL << m_AddressSpaceWidth;
-    MemoryRegion InitialMemRegion(0, AddressSpaceEnd, NULL, MemoryState_None, MemoryType_Unmapped, MemoryAttr_None, MemoryPermission_Unmapped);
+    MemoryRegion InitialMemRegion(0, AddressSpaceEnd, nullptr, MemoryState_None, MemoryType_Unmapped, MemoryAttr_None, MemoryPermission_Unmapped);
     WriteTrace(TraceMemory, TraceDebug, "Add base address space (Address: 0x%I64X Size: 0x%I64X)", InitialMemRegion.Address(), InitialMemRegion.Size());
     m_MemoryMap.insert(MemoryRegionMap::value_type(AddressSpaceEnd - 1, InitialMemRegion));
     WriteTrace(TraceMemory, TraceInfo, "Done (res: true)");
@@ -86,13 +86,13 @@ bool CProcessMemory::Initialize(ProgramAddressSpaceType Type, bool Is64bit)
 
 bool CProcessMemory::SetHeapSize(uint64_t Size)
 {
-    if (Size > 0xc8000000 || m_heap != NULL)
+    if (Size > 0xc8000000 || m_heap != nullptr)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return false;
     }
     m_heap = MapMemory(GetHeapRegionBaseAddr(), (uint32_t)Size, MemoryPermission_ReadWrite, MemoryType_Heap);
-    return m_heap != NULL;
+    return m_heap != nullptr;
 }
 
 bool CProcessMemory::GetMemoryInfo(uint64_t Address, QueryMemoryInfo & Info)
@@ -128,24 +128,24 @@ uint8_t * CProcessMemory::MapMemory(uint64_t Address, uint32_t Size, MemoryPermi
     {
         WriteTrace(TraceMemory, TraceError, "Can not map, size == 0");
         g_Notify->BreakPoint(__FILE__, __LINE__);
-        WriteTrace(TraceMemory, TraceInfo, "Done (res: NULL)");
-        return NULL;
+        WriteTrace(TraceMemory, TraceInfo, "Done (res: nullptr)");
+        return nullptr;
     }
 
     if ((Address & CPageTable::PageMask) != 0)
     {
         WriteTrace(TraceMemory, TraceError, "Can not map, Address not page aligned (Address: 0x%I64X PageMask: 0x%X)", Address, CPageTable::PageMask);
         g_Notify->BreakPoint(__FILE__, __LINE__);
-        WriteTrace(TraceMemory, TraceInfo, "Done (res: NULL)");
-        return NULL;
+        WriteTrace(TraceMemory, TraceInfo, "Done (res: nullptr)");
+        return nullptr;
     }
 
     if ((Size & CPageTable::PageMask) != 0)
     {
         WriteTrace(TraceMemory, TraceError, "Can not map, Size not page aligned (Size: 0x%X PageMask: 0x%X)", Size, CPageTable::PageMask);
         g_Notify->BreakPoint(__FILE__, __LINE__);
-        WriteTrace(TraceMemory, TraceInfo, "Done (res: NULL)");
-        return NULL;
+        WriteTrace(TraceMemory, TraceInfo, "Done (res: nullptr)");
+        return nullptr;
     }
 
     MemoryRegionMapIter RegionItr;
@@ -153,17 +153,17 @@ uint8_t * CProcessMemory::MapMemory(uint64_t Address, uint32_t Size, MemoryPermi
     {
         WriteTrace(TraceMemory, TraceError, "Failed to create memory region (Address: 0x%I64X Size: 0x%X)", Address, Size);
         g_Notify->BreakPoint(__FILE__, __LINE__);
-        WriteTrace(TraceMemory, TraceInfo, "Done (res: NULL)");
-        return NULL;
+        WriteTrace(TraceMemory, TraceInfo, "Done (res: nullptr)");
+        return nullptr;
     }
     MemoryRegion & Region = RegionItr->second;
     uint8_t * Memory = (uint8_t *)AllocateAddressSpace(Size);
-    if (Memory == NULL || CommitMemory(Memory, Size, MEM_READWRITE) == NULL)
+    if (Memory == nullptr || CommitMemory(Memory, Size, MEM_READWRITE) == nullptr)
     {
         WriteTrace(TraceMemory, TraceError, "Failed to create memory (Size: 0x%X)", Size);
         g_Notify->BreakPoint(__FILE__, __LINE__);
-        WriteTrace(TraceMemory, TraceInfo, "Done (res: NULL)");
-        return NULL;
+        WriteTrace(TraceMemory, TraceInfo, "Done (res: nullptr)");
+        return nullptr;
     }
     Region.m_Memory = Memory;
     Region.m_State = MemoryState_AllocatedMemory;
@@ -189,7 +189,7 @@ bool CProcessMemory::Read64(uint64_t Addr, uint64_t & value)
 
 bool CProcessMemory::ReadBytes(uint64_t Address, uint8_t * buffer, uint32_t len)
 {
-    void * ReadBuffer = NULL;
+    void * ReadBuffer = nullptr;
     if (!FindAddressMemory(Address, len, ReadBuffer))
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);

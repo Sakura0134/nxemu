@@ -17,8 +17,8 @@ public:
     static const std::wstring EMPTY_STDSTR;
 
     MenuItem(void);
-    MenuItem(int ID, LanguageStringID Title = EMPTY_STRING, MenuItemList * SubMenu = NULL, const std::wstring & ManualString = EMPTY_STDSTR);
-    void Reset(int ID, LanguageStringID Title = EMPTY_STRING, MenuItemList * SubMenu = NULL, const std::wstring & ManualString = EMPTY_STDSTR);
+    MenuItem(int ID, LanguageStringID Title = EMPTY_STRING, MenuItemList * SubMenu = nullptr, const std::wstring & ManualString = EMPTY_STDSTR);
+    void Reset(int ID, LanguageStringID Title = EMPTY_STRING, MenuItemList * SubMenu = nullptr, const std::wstring & ManualString = EMPTY_STDSTR);
 
     int ID() const { return m_ID; }
     LanguageStringID Title() const { return m_Title; }

@@ -17,7 +17,7 @@ protected:
     static DWORD CreateDebuggerWindow(CDebugDialog<T> * pThis)
     {
         _Module.AddCreateWndData(&pThis->m_thunk.cd, pThis);
-        INT_PTR res = ::DialogBoxParamW(NULL, MAKEINTRESOURCEW(static_cast<T*>(pThis)->IDD), NULL, StartDebugDialogProc, 0);
+        INT_PTR res = ::DialogBoxParamW(nullptr, MAKEINTRESOURCEW(static_cast<T*>(pThis)->IDD), nullptr, StartDebugDialogProc, 0);
         if (res != 0)
         {
             pThis->WindowCreated();
@@ -33,8 +33,8 @@ protected:
 public:
     CDebugDialog(CDebuggerUI * debugger) :
         m_Debugger(debugger),
-        m_CreatedEvent(CreateEvent(NULL, true, false, NULL)),
-        m_DialogThread(NULL)
+        m_CreatedEvent(CreateEvent(nullptr, true, false, nullptr)),
+        m_DialogThread(nullptr)
     {
     }
     virtual ~CDebugDialog(void)
@@ -44,7 +44,7 @@ public:
         if (m_DialogThread)
         {
             CloseHandle(m_DialogThread);
-            m_DialogThread = NULL;
+            m_DialogThread = nullptr;
         }
     }
 
@@ -61,7 +61,7 @@ public:
                 TerminateThread(m_DialogThread, 1);
             }
             CloseHandle(m_DialogThread);
-            m_DialogThread = NULL;
+            m_DialogThread = nullptr;
         }
     }
 
@@ -75,7 +75,7 @@ public:
         {
             DWORD ThreadID;
             ResetEvent(m_CreatedEvent);
-            m_DialogThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CreateDebuggerWindow, (LPVOID)this, 0, &ThreadID);
+            m_DialogThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)CreateDebuggerWindow, (LPVOID)this, 0, &ThreadID);
             WaitForSingleObject(m_CreatedEvent, 20000);
         }
     }
@@ -88,7 +88,7 @@ private:
         _In_ LPARAM lParam)
     {
         CDebugDialog<T> * pThis = (CDebugDialog<T> *)_Module.ExtractCreateWndData();
-        ATLASSERT(pThis != NULL);
+        ATLASSERT(pThis != nullptr);
         if (!pThis)
         {
             return 0;

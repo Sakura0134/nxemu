@@ -50,7 +50,7 @@ public:
 		
 		// create edit control
 		CRect Area( rcRect.left - 2, rcRect.top - 3, rcRect.right + 3, rcRect.bottom + 2 );
-		if ( CWindowImpl< CListEdit, CEdit >::Create( hWndParent, Area, NULL, dwStyle ) == NULL )
+		if ( CWindowImpl< CListEdit, CEdit >::Create( hWndParent, Area, nullptr, dwStyle ) == nullptr )
 			return FALSE;
 		
 		// get system message font
@@ -58,7 +58,7 @@ public:
 		logFont.SetMessageBoxFont();
 		if ( !m_fntEditFont.IsNull() )
 			m_fntEditFont.DeleteObject();
-		if ( m_fntEditFont.CreateFontIndirect( &logFont ) == NULL )
+		if ( m_fntEditFont.CreateFontIndirect( &logFont ) == nullptr )
 			return FALSE;
 
 		SetFont( m_fntEditFont );
@@ -221,7 +221,7 @@ public:
 			listNotify.m_nSubItem = m_nSubItem;
 			listNotify.m_nExitChar = m_nExitChar;
 			listNotify.m_lpszItemText = strValue.c_str();
-			listNotify.m_lpItemDate = NULL;
+			listNotify.m_lpItemDate = nullptr;
 
 			// forward notification to parent
 			FORWARD_WM_NOTIFY( wndParent, listNotify.m_hdrNotify.idFrom, &listNotify.m_hdrNotify, ::SendMessage );

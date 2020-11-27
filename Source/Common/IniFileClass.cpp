@@ -489,7 +489,7 @@ bool CIniFileBase::DeleteSection(const char * lpSectionName)
     {
         int MaxDataSize = 0, DataSize = 0, ReadPos = 0, NextLine = 0, result;
         std::unique_ptr <char> Data;
-        char *Input = NULL;
+        char *Input = nullptr;
         do
         {
             result = GetStringFromFile(Input, Data, MaxDataSize, DataSize, ReadPos);

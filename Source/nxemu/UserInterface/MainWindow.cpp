@@ -10,8 +10,8 @@
 #include <Windows.h>
 
 CMainGui::CMainGui(const wchar_t * WindowTitle) :
-    m_hWnd(NULL),
-    m_hStatusWnd(NULL),
+    m_hWnd(nullptr),
+    m_hStatusWnd(nullptr),
     m_ClassName(L"NXEmu"),
     m_Menu(this),
     m_ThreadId(GetCurrentThreadId()),
@@ -41,13 +41,13 @@ bool CMainGui::RegisterWinClass(void)
     wcl.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
     wcl.cbClsExtra = 0;
     wcl.cbWndExtra = 0;
-    wcl.hIcon = NULL;
-    wcl.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wcl.hInstance = GetModuleHandle(NULL);
+    wcl.hIcon = nullptr;
+    wcl.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    wcl.hInstance = GetModuleHandle(nullptr);
 
     wcl.lpfnWndProc = (WNDPROC)MainGui_Proc;
     wcl.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-    wcl.lpszMenuName = NULL;
+    wcl.lpszMenuName = nullptr;
     wcl.lpszClassName = m_ClassName.c_str();
     if (RegisterClass(&wcl) == 0) return false;
     return true;
@@ -66,7 +66,7 @@ std::string CMainGui::ChooseFileToOpen(HWND hParent)
 
 void CMainGui::AddRecentGame(const char * ImagePath)
 {
-    if (HIWORD(ImagePath) == NULL) { return; }
+    if (HIWORD(ImagePath) == 0) { return; }
 
     //Get Information about the stored rom list
     size_t MaxRememberedFiles = UISettingsLoadDword(File_RecentGameFileCount);
@@ -110,14 +110,14 @@ void CMainGui::Create(void)
 {
     CreateWindowExW(WS_EX_ACCEPTFILES, m_ClassName.c_str(), m_WindowTitle.c_str(), WS_OVERLAPPED | WS_CLIPCHILDREN |
         WS_CLIPSIBLINGS | WS_SYSMENU | WS_MINIMIZEBOX, 0, 0, Width, Height,
-        NULL, NULL, GetModuleHandle(NULL), this);
+        nullptr, nullptr, GetModuleHandle(nullptr), this);
 }
 
 WPARAM CMainGui::ProcessAllMessages(void)
 {
     MSG msg;
 
-    while (GetMessage(&msg, NULL, 0, 0))
+    while (GetMessage(&msg, nullptr, 0, 0))
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
@@ -154,7 +154,7 @@ LRESULT CMainGui::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, 
     int X = (GetSystemMetrics(SM_CXSCREEN) - Width) / 2;
     int	Y = (GetSystemMetrics(SM_CYSCREEN) - Height) / 2;
 
-    SetWindowPos(m_hWnd, NULL, X, Y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+    SetWindowPos(m_hWnd, nullptr, X, Y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
     return 0;
 }
 

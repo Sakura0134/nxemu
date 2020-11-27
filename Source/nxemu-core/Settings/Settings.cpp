@@ -25,7 +25,7 @@ CSettings::~CSettings()
     for (SETTING_CALLBACK::iterator cb_iter = m_Callback.begin(); cb_iter != m_Callback.end(); cb_iter++)
     {
         SETTING_CHANGED_CB * item = cb_iter->second;
-        while (item != NULL)
+        while (item != nullptr)
         {
             SETTING_CHANGED_CB * current_item = item;
             item = item->Next;
@@ -300,7 +300,7 @@ void CSettings::RegisterChangeCB(SettingID Type, void * Data, SettingChangedFunc
     SETTING_CHANGED_CB * new_item = new SETTING_CHANGED_CB;
     new_item->Data = Data;
     new_item->Func = Func;
-    new_item->Next = NULL;
+    new_item->Next = nullptr;
 
     SETTING_CALLBACK::iterator Callback = m_Callback.find(Type);
     if (Callback != m_Callback.end())
@@ -326,7 +326,7 @@ void CSettings::UnregisterChangeCB(SettingID Type, void * Data, SettingChangedFu
     SETTING_CALLBACK::iterator Callback = m_Callback.find(Type);
     if (Callback != m_Callback.end())
     {
-        SETTING_CHANGED_CB * PrevItem = NULL;
+        SETTING_CHANGED_CB * PrevItem = nullptr;
         SETTING_CHANGED_CB * item = Callback->second;
 
         while (item)
@@ -334,7 +334,7 @@ void CSettings::UnregisterChangeCB(SettingID Type, void * Data, SettingChangedFu
             if (Callback->first == Type && item->Data == Data && item->Func == Func)
             {
                 bRemoved = true;
-                if (PrevItem == NULL)
+                if (PrevItem == nullptr)
                 {
                     if (item->Next)
                     {
@@ -353,7 +353,7 @@ void CSettings::UnregisterChangeCB(SettingID Type, void * Data, SettingChangedFu
                     PrevItem->Next = item->Next;
                 }
                 delete item;
-                item = NULL;
+                item = nullptr;
                 break;
             }
             PrevItem = item;
@@ -380,7 +380,7 @@ void CSettings::NotifyCallBacks(SettingID Type)
         return;
     }
 
-    for (SETTING_CHANGED_CB * item = Callback->second; item != NULL; item = item->Next)
+    for (SETTING_CHANGED_CB * item = Callback->second; item != nullptr; item = item->Next)
     {
         item->Func(item->Data);
     }

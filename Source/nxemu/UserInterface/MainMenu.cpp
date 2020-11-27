@@ -5,7 +5,7 @@
 
 CMainMenu::CMainMenu(CMainGui * hMainWindow) :
     m_Gui(hMainWindow),
-    m_MenuHandle(NULL)
+    m_MenuHandle(nullptr)
 {
     ResetMenu();
 }
@@ -49,7 +49,7 @@ void CMainMenu::FillOutMenu(HMENU hMenu)
         }
         stdstr_f MenuString("&%d %s", (i + 1) % 10, LastRom.c_str());
 
-        RecentGameMenu.push_back(MenuItem(ID_RECENT_GAME_START + i, EMPTY_STRING, NULL, MenuString.ToUTF16(CP_ACP).c_str()));
+        RecentGameMenu.push_back(MenuItem(ID_RECENT_GAME_START + i, EMPTY_STRING, nullptr, MenuString.ToUTF16(CP_ACP).c_str()));
     }
 
     MenuItemList FileMenu;

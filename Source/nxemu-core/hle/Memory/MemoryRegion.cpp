@@ -3,7 +3,7 @@
 MemoryRegion::MemoryRegion() :
     m_Address(0),
     m_Size(0),
-    m_Memory(NULL),
+    m_Memory(nullptr),
     m_State(MemoryState_None),
     m_Type(MemoryType_Unmapped),
     m_Attribute(MemoryAttr_None),

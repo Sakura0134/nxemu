@@ -31,7 +31,7 @@ class WTLModule :
 public:
     WTLModule(void)
     {
-        Init(NULL, GetModuleHandle(NULL));
+        Init(nullptr, GetModuleHandle(nullptr));
     }
     virtual ~WTLModule(void)
     {

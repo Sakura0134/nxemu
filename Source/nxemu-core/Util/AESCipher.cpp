@@ -3,7 +3,7 @@
 #include <algorithm>
 
 CAESCipher::CAESCipher(const uint8_t * key, uint32_t key_bitlen, Mode mode) :
-	m_CipherDec(NULL),
+	m_CipherDec(nullptr),
 	m_valid(false)
 {
 	m_CipherDec = (void *)(new mbedtls_cipher_context_t);
@@ -26,7 +26,7 @@ CAESCipher::~CAESCipher()
 	{
 		mbedtls_cipher_free((mbedtls_cipher_context_t*)m_CipherDec);
 		delete (mbedtls_cipher_context_t*)m_CipherDec;
-		m_CipherDec = NULL;
+		m_CipherDec = nullptr;
 	}
 }
 
@@ -37,12 +37,12 @@ bool CAESCipher::Decrypt(const uint8_t * Source, uint8_t * Dest, uint32_t Size)
 		return false;
 	}
 	bool SrcEqualsDst = Source == Dest;
-	std::auto_ptr<uint8_t> temp_dest(NULL);
+	std::auto_ptr<uint8_t> temp_dest(nullptr);
 	if (SrcEqualsDst)
 	{
 		temp_dest.reset(new uint8_t[Size]);
 		Dest = temp_dest.get();
-		if (Dest == NULL)
+		if (Dest == nullptr)
 		{
 			return false;
 		}
@@ -64,7 +64,7 @@ bool CAESCipher::Decrypt(const uint8_t * Source, uint8_t * Dest, uint32_t Size)
 			mbedtls_cipher_update((mbedtls_cipher_context_t*)m_CipherDec, (const uint8_t *)Source + offset, len, (uint8_t *)Dest + offset, &OutLen);
 		}
 	}
-	mbedtls_cipher_finish((mbedtls_cipher_context_t*)m_CipherDec, NULL, NULL);
+	mbedtls_cipher_finish((mbedtls_cipher_context_t*)m_CipherDec, nullptr, nullptr);
 
 	if (SrcEqualsDst)
 	{
@@ -139,7 +139,7 @@ bool CAESCipher::XTSTranscode(const uint8_t * Source, uint8_t * Dest, uint32_t S
 
 void CAESCipher::SetIV(const uint8_t * iv, size_t iv_len)
 {
-	if (m_valid && m_CipherDec != NULL)
+	if (m_valid && m_CipherDec != nullptr)
 	{
 		mbedtls_cipher_set_iv((mbedtls_cipher_context_t*)m_CipherDec, iv, iv_len);
 	}

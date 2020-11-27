@@ -14,16 +14,16 @@ CKeysConfig::~CKeysConfig(void)
 
 bool CKeysConfig::Display(void * ParentWindow)
 {
-	if (m_keys == NULL)
+	if (m_keys == nullptr)
 	{
 		return false;
 	}
 	_Module.AddCreateWndData(&m_thunk.cd, this);
-	if (ParentWindow != NULL && ::IsWindowVisible((HWND)ParentWindow) == 0)
+	if (ParentWindow != nullptr && ::IsWindowVisible((HWND)ParentWindow) == 0)
 	{
-		ParentWindow = NULL;
+		ParentWindow = nullptr;
 	}
-	INT_PTR result = ::DialogBoxParamW(NULL, MAKEINTRESOURCEW(IDD), (HWND)ParentWindow, StartDialogProc, 0);
+	INT_PTR result = ::DialogBoxParamW(nullptr, MAKEINTRESOURCEW(IDD), (HWND)ParentWindow, StartDialogProc, 0);
 	return result == IDOK;
 }
 
@@ -105,7 +105,7 @@ LRESULT CKeysConfig::OnLoadCmd(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
     }
 
     CIniFile::KeyValueData data;
-    KeyIniFile.GetKeyValueData(NULL, data);
+    KeyIniFile.GetKeyValueData(nullptr, data);
 
     struct
     {
@@ -260,7 +260,7 @@ LRESULT CKeysConfig::OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/
 INT_PTR CALLBACK CKeysConfig::StartDialogProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
 {
 	CKeysConfig * pThis = (CKeysConfig *)_Module.ExtractCreateWndData();
-	ATLASSERT(pThis != NULL);
+	ATLASSERT(pThis != nullptr);
 	if (!pThis)
 	{
 		return 0;

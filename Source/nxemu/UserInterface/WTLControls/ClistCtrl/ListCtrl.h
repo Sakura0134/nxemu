@@ -224,9 +224,9 @@ public:
 		if ( !m_ilListItems.CreateFromImage( IDB_LISTITEMS, 16, 0, RGB( 255, 0, 255 ), IMAGE_BITMAP, LR_CREATEDIBSECTION ) )
 			return FALSE;
 		
-		if ( m_curDivider.LoadCursor( IDC_DIVIDER ) == NULL )
+		if ( m_curDivider.LoadCursor( IDC_DIVIDER ) == nullptr )
 			return FALSE;
-		if ( m_curHyperLink.LoadCursor( IDC_HYPERLINK ) == NULL )
+		if ( m_curHyperLink.LoadCursor( IDC_HYPERLINK ) == nullptr )
 			return FALSE;
 		
 		// load interface settings
@@ -288,14 +288,14 @@ public:
 		logFont.SetMessageBoxFont();
 		if ( !m_fntListFont.IsNull() )
 			m_fntListFont.DeleteObject();
-		if ( m_fntListFont.CreateFontIndirect( &logFont ) == NULL )
+		if ( m_fntListFont.CreateFontIndirect( &logFont ) == nullptr )
 			return FALSE;
 		
 		// get system underline font
 		logFont.lfUnderline = BYTE(TRUE);
 		if ( !m_fntUnderlineFont.IsNull() )
 			m_fntUnderlineFont.DeleteObject();
-		if ( m_fntUnderlineFont.CreateFontIndirect( &logFont ) == NULL )
+		if ( m_fntUnderlineFont.CreateFontIndirect( &logFont ) == nullptr )
 			return FALSE;
 		
 		CClientDC dcClient( m_hWnd );
@@ -1298,7 +1298,7 @@ public:
 		dcHeader.SelectBitmap( bmpHeader );
 		
 		dcHeader.SetBkColor( m_rgbHeaderBackground );
-		dcHeader.ExtTextOut( rcHeaderItem.left, rcHeaderItem.top, ETO_OPAQUE, rcHeaderItem, _T( "" ), 0, NULL );
+		dcHeader.ExtTextOut( rcHeaderItem.left, rcHeaderItem.top, ETO_OPAQUE, rcHeaderItem, _T( "" ), 0, nullptr );
 		dcHeader.Draw3dRect( rcHeaderItem, m_rgbHeaderBorder, m_rgbHeaderShadow );
 		
 		CRect rcHeaderText( rcHeaderItem );
@@ -1759,7 +1759,7 @@ public:
 		
 		// format date to local format
 		TCHAR szDateFormat[ DATE_STRING ];
-		return GetDateFormat( LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stFormatDate, NULL, szDateFormat, DATE_STRING ) == 0 ? _T( "" ) : szDateFormat;
+		return GetDateFormat( LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stFormatDate, nullptr, szDateFormat, DATE_STRING ) == 0 ? _T( "" ) : szDateFormat;
 	}
 	
     std::wstring FormatTime( SYSTEMTIME& stFormatDate )
@@ -1771,7 +1771,7 @@ public:
 		
 		// format time to local format
 		TCHAR szTimeFormat[ DATE_STRING ];
-		return GetTimeFormat( LOCALE_USER_DEFAULT, 0, &stFormatTime, NULL, szTimeFormat, DATE_STRING ) == 0 ? _T( "" ) : szTimeFormat;
+		return GetTimeFormat( LOCALE_USER_DEFAULT, 0, &stFormatTime, nullptr, szTimeFormat, DATE_STRING ) == 0 ? _T( "" ) : szTimeFormat;
 	}
 	
 	void NotifyParent( int nItem, int nSubItem, int nMessage )
@@ -1785,8 +1785,8 @@ public:
 		listNotify.m_nItem = nItem;
 		listNotify.m_nSubItem = GetColumnIndex( nSubItem );
 		listNotify.m_nExitChar = 0;
-		listNotify.m_lpszItemText = NULL;
-		listNotify.m_lpItemDate = NULL;
+		listNotify.m_lpszItemText = nullptr;
+		listNotify.m_lpItemDate = nullptr;
 
 		// forward notification to parent
 		FORWARD_WM_NOTIFY( pT->GetParent(), listNotify.m_hdrNotify.idFrom, &listNotify.m_hdrNotify, ::SendMessage );
@@ -1964,7 +1964,7 @@ public:
         }
         else
         {
-            m_ttToolTip = NULL;
+            m_ttToolTip = nullptr;
         }
     }
 	
@@ -2755,7 +2755,7 @@ public:
 			case VK_DELETE:	pT->SetItemText( pListNotify->m_nItem, nIndex, _T( "" ) );
 							NotifyParent( pListNotify->m_nItem, pListNotify->m_nSubItem, LCN_MODIFIED );
 							break;
-			default:		if ( pListNotify->m_lpItemDate == NULL )
+			default:		if ( pListNotify->m_lpItemDate == nullptr )
 								pT->SetItemText( pListNotify->m_nItem, nIndex, pListNotify->m_lpszItemText );
 							else
 							{
@@ -2782,7 +2782,7 @@ public:
 		if ( FormatEtc.cfFormat == m_nHeaderClipboardFormat )
 		{
 			LPBYTE lpDragHeader = (LPBYTE)GlobalLock( StgMedium.hGlobal );
-			if ( lpDragHeader == NULL )
+			if ( lpDragHeader == nullptr )
 				return DROPEFFECT_NONE;
 			
 			// dragged column must originate from this control
@@ -2802,7 +2802,7 @@ public:
 		if ( FormatEtc.cfFormat == m_nHeaderClipboardFormat )
 		{
 			LPBYTE lpDragHeader = (LPBYTE)GlobalLock( StgMedium.hGlobal );
-			if ( lpDragHeader == NULL )
+			if ( lpDragHeader == nullptr )
 				return DROPEFFECT_NONE;
 			
 			// dragged column must originate from this control
@@ -2848,11 +2848,11 @@ public:
 		{
 			pStgMedium->tymed = TYMED_HGLOBAL;
 			pStgMedium->hGlobal = GlobalAlloc( GMEM_MOVEABLE, sizeof( HWND ) );
-			if ( pStgMedium->hGlobal == NULL )
+			if ( pStgMedium->hGlobal == nullptr )
 				return FALSE;
 			
 			LPBYTE lpDragHeader = (LPBYTE)GlobalLock( pStgMedium->hGlobal );
-			if ( lpDragHeader == NULL )
+			if ( lpDragHeader == nullptr )
 				return FALSE;
 			
 			// store this window handle
@@ -2887,7 +2887,7 @@ public:
 			return;
 		
 		dcPaint.SetBkColor( m_rgbBackground );
-		dcPaint.ExtTextOut( rcClip.left, rcClip.top, ETO_OPAQUE, rcClip, _T( "" ), 0, NULL );
+		dcPaint.ExtTextOut( rcClip.left, rcClip.top, ETO_OPAQUE, rcClip, _T( "" ), 0, nullptr );
 		
 		CRect rcClient;
 		GetClientRect( rcClient );
@@ -2961,7 +2961,7 @@ public:
 			return;
 
 		dcPaint.SetBkColor( m_rgbHeaderBackground );
-		dcPaint.ExtTextOut( rcHeader.left, rcHeader.top, ETO_OPAQUE, rcHeader, _T( "" ), 0, NULL );
+		dcPaint.ExtTextOut( rcHeader.left, rcHeader.top, ETO_OPAQUE, rcHeader, _T( "" ), 0, nullptr );
 
 		CPen penHighlight;
 		penHighlight.CreatePen( PS_SOLID, 1, m_rgbHeaderBorder );
@@ -2991,7 +2991,7 @@ public:
 			if ( nColumn == m_nHighlightColumn )
 			{
 				dcPaint.SetBkColor( m_rgbHeaderHighlight );
-				dcPaint.ExtTextOut( rcHeaderItem.left, rcHeaderItem.top, ETO_OPAQUE, rcHeaderItem, _T( "" ), 0, NULL );
+				dcPaint.ExtTextOut( rcHeaderItem.left, rcHeaderItem.top, ETO_OPAQUE, rcHeaderItem, _T( "" ), 0, nullptr );
 			}
 
 
@@ -3169,7 +3169,7 @@ public:
 		if ( bSelectedItem )
 		{
 			dcPaint.SetBkColor( m_rgbSelectedItem );
-			dcPaint.ExtTextOut( rcItem.left, rcItem.top, ETO_OPAQUE, rcItem, _T( "" ), 0, NULL );
+			dcPaint.ExtTextOut( rcItem.left, rcItem.top, ETO_OPAQUE, rcItem, _T( "" ), 0, nullptr );
 		}
 		
 		CRect rcSubItem( rcItem );
@@ -3208,7 +3208,7 @@ public:
 			if ( bFocusSubItem )
 			{
 				dcPaint.SetBkColor( m_bEditItem ? m_rgbBackground : m_rgbItemFocus );
-				dcPaint.ExtTextOut( rcSubItem.left, rcSubItem.top, ETO_OPAQUE, rcSubItem, _T( "" ), 0, NULL );
+				dcPaint.ExtTextOut( rcSubItem.left, rcSubItem.top, ETO_OPAQUE, rcSubItem, _T( "" ), 0, nullptr );
 				
 				if ( m_bEditItem )
 				{
@@ -3400,7 +3400,7 @@ public:
 		
 		// draw group select box
 		dcGroupSelect.SetBkColor( m_rgbItemFocus );
-		dcGroupSelect.ExtTextOut( 0, 0, ETO_OPAQUE, CRect( CPoint( 0 ), rcSelectArea.Size() ), _T( "" ), 0, NULL );
+		dcGroupSelect.ExtTextOut( 0, 0, ETO_OPAQUE, CRect( CPoint( 0 ), rcSelectArea.Size() ), _T( "" ), 0, nullptr );
 		
 		BLENDFUNCTION blendFunction;
 		blendFunction.BlendOp = AC_SRC_OVER;
@@ -3474,7 +3474,7 @@ public:
 		listSubItem.m_nImage = ITEM_IMAGE_NONE;
 		listSubItem.m_nFormat = nFormat;
 		listSubItem.m_nFlags = ValidateFlags( nFlags );
-		listSubItem.m_hFont = NULL;
+		listSubItem.m_hFont = nullptr;
 		listSubItem.m_rgbBackground = m_rgbBackground;
 		listSubItem.m_rgbText = m_rgbItemText;
 		listSubItem.m_rgbSelectedText = m_rgbSelectedText;
@@ -3513,7 +3513,7 @@ public:
 	{
 		if ( nItem < 0 || nItem >= GetItemCount() )
 		{
-			listItem = NULL;
+			listItem = nullptr;
 			return FALSE;
 		}
 		listItem = &m_aItems[ nItem ];
@@ -3525,12 +3525,12 @@ public:
 		CListItem< TData > * listItem;
 		if ( !GetItem( nItem, listItem ) )
 		{
-			listSubItem = NULL;
+			listSubItem = nullptr;
 			return FALSE;
 		}
 		if ( nSubItem < 0 || nSubItem >= (int)listItem->m_aSubItems.GetSize() )
 		{
-			listSubItem = NULL;
+			listSubItem = nullptr;
 			return FALSE;
 		}
 		listSubItem = &listItem->m_aSubItems[ nSubItem ];
@@ -3585,7 +3585,7 @@ public:
 		CSubItem * listSubItem;
 		if ( !GetSubItem( nItem, nSubItem, listSubItem ) )
 			return FALSE;
-		return listSubItem->m_hFont == NULL ? CListImpl< CListCtrlData >::GetItemFont( nItem, nSubItem ) : listSubItem->m_hFont;
+		return listSubItem->m_hFont == nullptr ? CListImpl< CListCtrlData >::GetItemFont( nItem, nSubItem ) : listSubItem->m_hFont;
 	}
 	
 	BOOL GetItemColours( int nItem, int nSubItem, COLORREF& rgbBackground, COLORREF& rgbText )

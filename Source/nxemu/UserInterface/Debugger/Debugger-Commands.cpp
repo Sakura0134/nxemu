@@ -103,7 +103,7 @@ BOOL CCommandList::GetItemColours(int nItem, int nSubItem, COLORREF& rgbBackgrou
     if (nSubItem > 0)
     {
         uint64_t address = m_StartAddress + (nItem * 4);
-        uint64_t PC = m_Debugger->DebugThread() != NULL ? m_Debugger->DebugThread()->GetSystemThreadPtr()->Reg().Get64(Arm64Opcode::ARM64_REG_PC) : 0;
+        uint64_t PC = m_Debugger->DebugThread() != nullptr ? m_Debugger->DebugThread()->GetSystemThreadPtr()->Reg().Get64(Arm64Opcode::ARM64_REG_PC) : 0;
         bool isPC = address == PC;
 
         if (isPC)
@@ -271,7 +271,7 @@ void CCommandList::DrawBranchArrows(CDCHandle & dcPaint)
         // draw outline
         CPen hPenOutline(CreatePen(PS_SOLID, 3, bgColor));
         SelectObject(dcPaint, hPenOutline);
-        MoveToEx(dcPaint, begX - 1, begY, NULL);
+        MoveToEx(dcPaint, begX - 1, begY, nullptr);
         LineTo(dcPaint, marginX, begY);
         LineTo(dcPaint, marginX, endY);
         if (bEndVisible)
@@ -282,7 +282,7 @@ void CCommandList::DrawBranchArrows(CDCHandle & dcPaint)
         // draw fill line
         CPen hPen(CreatePen(PS_SOLID, 1, color));
         SelectObject(dcPaint, hPen);
-        MoveToEx(dcPaint, begX - 1, begY, NULL);
+        MoveToEx(dcPaint, begX - 1, begY, nullptr);
         LineTo(dcPaint, marginX, begY);
         LineTo(dcPaint, marginX, endY);
         if (bEndVisible)
@@ -348,7 +348,7 @@ LRESULT	CDebugCommandsView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARA
     m_Scrollbar.SetScrollRange(0, 100, FALSE);
     m_Scrollbar.SetScrollPos(50, TRUE);
 
-    uint64_t PC = m_Debugger->DebugThread() != NULL ? m_Debugger->DebugThread()->GetSystemThreadPtr()->Reg().Get64(Arm64Opcode::ARM64_REG_PC) : 0;
+    uint64_t PC = m_Debugger->DebugThread() != nullptr ? m_Debugger->DebugThread()->GetSystemThreadPtr()->Reg().Get64(Arm64Opcode::ARM64_REG_PC) : 0;
     m_CommandList.ShowAddress(PC, TRUE);
 
     if (isStepping())
@@ -445,7 +445,7 @@ void CDebugCommandsView::WaitingForStepChanged(void)
 {
     if (WaitingForStep())
     {
-        if (m_Debugger->DebugThread() != NULL)
+        if (m_Debugger->DebugThread() != nullptr)
         {
             IRegisters & Reg = m_Debugger->DebugThread()->GetSystemThreadPtr()->Reg();
             m_CommandList.ShowAddress(Reg.Get64(Arm64Opcode::ARM64_REG_PC), false);

@@ -9,7 +9,7 @@
 template <class T>
 bool CRegisterTabImpl<T>::CreateTab(HWND hParent, const RECT & rcDispay)
 {
-    BOOL result = m_thunk.Init(NULL, NULL);
+    BOOL result = m_thunk.Init(nullptr, nullptr);
     if (result == FALSE)
     {
         SetLastError(ERROR_OUTOFMEMORY);
@@ -20,8 +20,8 @@ bool CRegisterTabImpl<T>::CreateTab(HWND hParent, const RECT & rcDispay)
 #ifdef _DEBUG
     m_bModal = false;
 #endif //_DEBUG
-    m_hWnd = ::CreateDialogParamW(_AtlBaseModule.GetResourceInstance(), MAKEINTRESOURCEW(static_cast<T*>(this)->IDD), hParent, T::StartDialogProc, NULL);
-    if (m_hWnd == NULL)
+    m_hWnd = ::CreateDialogParamW(_AtlBaseModule.GetResourceInstance(), MAKEINTRESOURCEW(static_cast<T*>(this)->IDD), hParent, T::StartDialogProc, (LPARAM)nullptr);
+    if (m_hWnd == nullptr)
     {
         return false;
     }
@@ -63,7 +63,7 @@ void CGPRTab64::RefreshValues(CSystemThread * DebugThread)
         Arm64Opcode::ARM64_REG_X28, Arm64Opcode::ARM64_REG_X29, Arm64Opcode::ARM64_REG_X30, Arm64Opcode::ARM64_REG_SP,
     };
 
-    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
+    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : nullptr;
     if (Reg)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
@@ -101,7 +101,7 @@ void CGPRTab32::RefreshValues(CSystemThread * DebugThread)
         Arm64Opcode::ARM64_REG_W28, Arm64Opcode::ARM64_REG_W29, Arm64Opcode::ARM64_REG_W30,
     };
 
-    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
+    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : nullptr;
     if (Reg)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
@@ -135,7 +135,7 @@ void CRegQTab::RefreshValues(CSystemThread * DebugThread)
         Arm64Opcode::ARM64_REG_Q12, Arm64Opcode::ARM64_REG_Q13, Arm64Opcode::ARM64_REG_Q14, Arm64Opcode::ARM64_REG_Q15,
     };
 
-    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
+    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : nullptr;
     if (Reg)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
@@ -171,7 +171,7 @@ void CRegQTab2::RefreshValues(CSystemThread * DebugThread)
         Arm64Opcode::ARM64_REG_Q28, Arm64Opcode::ARM64_REG_Q29, Arm64Opcode::ARM64_REG_Q30, Arm64Opcode::ARM64_REG_Q31,
     };
 
-    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
+    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : nullptr;
     if (Reg)
     {
         for (size_t i = 0, n = sizeof(m_Register) / sizeof(m_Register[0]); i < n; i++)
@@ -199,7 +199,7 @@ CPStateTab::~CPStateTab()
 
 void CPStateTab::RefreshValues(CSystemThread * DebugThread)
 {
-    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : NULL;
+    IRegisters * Reg = DebugThread ? &DebugThread->Reg() : nullptr;
     if (Reg)
     {
         const PSTATE & pstate = Reg->GetPstate();
@@ -214,9 +214,9 @@ void CPStateTab::RefreshValues(CSystemThread * DebugThread)
 
 CRegisterTabs::CRegisterTabs(CDebuggerUI * Debugger) :
     m_Debugger(Debugger),
-    m_GPRTab64(NULL),
-    m_GPRTab32(NULL),
-    m_PStateTab(NULL)
+    m_GPRTab64(nullptr),
+    m_GPRTab32(nullptr),
+    m_PStateTab(nullptr)
 {
 }
 
@@ -248,15 +248,15 @@ void CRegisterTabs::Attach(HWND hWndNew)
 void CRegisterTabs::Detach(void)
 {
     delete m_GPRTab64;
-    m_GPRTab64 = NULL;
+    m_GPRTab64 = nullptr;
     delete m_GPRTab32;
-    m_GPRTab32 = NULL;
+    m_GPRTab32 = nullptr;
     delete m_RegQTab;
-    m_RegQTab = NULL;
+    m_RegQTab = nullptr;
     delete m_RegQTab2;
-    m_RegQTab2 = NULL;
+    m_RegQTab2 = nullptr;
     delete m_PStateTab;
-    m_PStateTab = NULL;
+    m_PStateTab = nullptr;
     m_TabWindows.clear();
 
     CTabCtrl::Detach();
@@ -283,7 +283,7 @@ CRect CRegisterTabs::GetPageRect()
 
 void CRegisterTabs::AddTab(wchar_t* caption, CWindow * tabWin)
 {
-    if (tabWin == NULL)
+    if (tabWin == nullptr)
     {
         return;
     }
