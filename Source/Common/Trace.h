@@ -3,6 +3,7 @@
 
 enum TraceSeverity
 {
+    TraceNone = 0x00000000,
     TraceError = 0x00000001,
     TraceWarning = 0x00000002,
     TraceNotice = 0x00000003,
@@ -49,7 +50,7 @@ const char * TraceModule(uint32_t module);
 void TraceSetModuleName(uint8_t module, const char * Name);
 void CloseTrace(void);
 
-void WriteTraceFull(uint32_t module, uint8_t severity, const char * file, int line, const char * function, const char *format, ...);
+void WriteTraceFull(uint32_t module, uint8_t severity, const char * file, int line, const char * function, _Printf_format_string_ const char *format, ...);
 void TraceFlushLog(void);
 void TraceSetMaxModule(uint32_t MaxModule, uint8_t DefaultSeverity);
 

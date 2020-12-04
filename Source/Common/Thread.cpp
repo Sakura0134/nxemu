@@ -92,7 +92,7 @@ bool CThread::isRunning(void) const
     WriteTrace(TraceThread, TraceDebug, "Start");
     if (m_thread == nullptr)
     {
-        WriteTrace(TraceThread, TraceDebug, "Done (res: false), m_thread is nullptr");
+        WriteTrace(TraceThread, TraceDebug, "Done (res: false), m_thread is null");
         return false;
     }
 #ifndef _WIN32

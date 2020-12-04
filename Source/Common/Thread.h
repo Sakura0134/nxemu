@@ -14,7 +14,7 @@ public:
 
     bool Start(void * lpThreadParameter);
     
-    inline uint32_t ThreadID(void) const { return m_threadID;  }
+    uint32_t ThreadID(void) const { return m_threadID; }
     
     bool isRunning(void) const;
     void Terminate(void);

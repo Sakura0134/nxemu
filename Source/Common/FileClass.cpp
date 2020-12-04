@@ -232,7 +232,7 @@ bool CFile::Write(const void* lpBuf, uint32_t nCount)
 {
     if (nCount == 0)
     {
-        return true;     // avoid Win32 "nullptr-write" option
+        return true;     // avoid Win32 "null-write" option
     }
 
 #ifdef USE_WINDOWS_API
@@ -260,7 +260,7 @@ uint32_t CFile::Read(void* lpBuf, uint32_t nCount)
 {
     if (nCount == 0)
     {
-        return 0;   // avoid Win32 "nullptr-read"
+        return 0;   // avoid Win32 "null-read"
     }
 
 #ifdef USE_WINDOWS_API

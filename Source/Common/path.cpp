@@ -137,7 +137,7 @@ CPath::CPath(const char * lpszPath)
 
 CPath::CPath(const char * lpszPath, const char * NameExten)
 {
-    WriteTrace(TracePath, TraceDebug, "Start (lpszPath: \"%s\" NameExten: \"%s\")", lpszPath ? lpszPath : "(nullptr)", NameExten ? NameExten : "(nullptr)");
+    WriteTrace(TracePath, TraceDebug, "Start (lpszPath: \"%s\" NameExten: \"%s\")", lpszPath ? lpszPath : "(null)", NameExten ? NameExten : "(null)");
     Init();
 #ifdef _WIN32
     SetDriveDirectory(lpszPath);
@@ -648,7 +648,7 @@ void CPath::SetComponents(const char * lpszDirectory, const char * lpszName, con
         }
         strncat(buff_fullname,lpszExtension,sizeof(buff_fullname)-1);
     }
-    buff_fullname[sizeof(buff_fullname) - 1] = 0; //Make sure it is nullptr terminated
+    buff_fullname[sizeof(buff_fullname) - 1] = 0; //Make sure it is null terminated
     m_strPath.erase();
     m_strPath = buff_fullname;
 }
@@ -675,7 +675,7 @@ void CPath::SetDrive(char chDrive)
 //-------------------------------------------------------------
 void CPath::SetDirectory(const char * lpszDirectory, bool bEnsureAbsolute /*= false*/)
 {
-    WriteTrace(TracePath, TraceDebug, "start (lpszDirectory: \"%s\" bEnsureAbsolute: %s)", lpszDirectory ? lpszDirectory : "(nullptr)", bEnsureAbsolute ? "true" : "false");
+    WriteTrace(TracePath, TraceDebug, "start (lpszDirectory: \"%s\" bEnsureAbsolute: %s)", lpszDirectory ? lpszDirectory : "(null)", bEnsureAbsolute ? "true" : "false");
     std::string	Directory = lpszDirectory;
     std::string	Name;
     std::string	Extension;
