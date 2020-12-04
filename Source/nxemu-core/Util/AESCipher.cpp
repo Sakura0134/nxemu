@@ -1,6 +1,7 @@
 #include <nxemu-core\Util\AESCipher.h>
 #include "mbedtls/cipher.h"
 #include <algorithm>
+#include <memory>
 
 CAESCipher::CAESCipher(const uint8_t * key, uint32_t key_bitlen, Mode mode) :
 	m_CipherDec(nullptr),
@@ -37,7 +38,7 @@ bool CAESCipher::Decrypt(const uint8_t * Source, uint8_t * Dest, uint32_t Size)
 		return false;
 	}
 	bool SrcEqualsDst = Source == Dest;
-	std::auto_ptr<uint8_t> temp_dest(nullptr);
+	std::unique_ptr<uint8_t> temp_dest;
 	if (SrcEqualsDst)
 	{
 		temp_dest.reset(new uint8_t[Size]);

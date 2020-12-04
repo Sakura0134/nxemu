@@ -154,7 +154,7 @@ bool NCA::ReadRomFSSection(CSwitchKeys & Keys, CFile & file, int64_t Offset, con
 	const uint64_t romfs_offset = BaseOffset + ivfc_offset;
 	const uint64_t romfs_size = section.romfs.ivfc.levels[IVFC_MAX_LEVEL - 1].size;
 
-	std::auto_ptr<CEncryptedFile> EncryptedFile(new CEncryptedFile(file));
+	std::unique_ptr<CEncryptedFile> EncryptedFile(new CEncryptedFile(file));
 	if (!SetupEncryptedFile(*EncryptedFile.get(), Keys, section, romfs_offset))
 	{
 		return false;
@@ -192,7 +192,7 @@ bool NCA::ReadPFS0Section(CSwitchKeys & Keys, CFile & file, int64_t Offset, cons
 		return false;
 	}
 
-	std::auto_ptr<CPartitionFilesystem> npfs(new CPartitionFilesystem(EncryptedFile, MediaOffset, Offset, MediaSize));
+	std::unique_ptr<CPartitionFilesystem> npfs(new CPartitionFilesystem(EncryptedFile, MediaOffset, Offset, MediaSize));
 	if (!npfs->Valid())
 	{
 		WriteTrace(TraceGameFile, TraceError, "npfs is invalid");

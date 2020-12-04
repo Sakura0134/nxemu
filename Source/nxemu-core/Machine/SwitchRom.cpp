@@ -10,7 +10,7 @@ bool LaunchSwitchRom(const char * GamePath)
 		return false;
     }
 
-    std::auto_ptr<CSwitchSystem> SwitchSystem(new CSwitchSystem());
+    std::unique_ptr<CSwitchSystem> SwitchSystem(new CSwitchSystem());
     if (SwitchSystem.get() == nullptr)
     {
 		g_Notify->BreakPoint(__FILE__, __LINE__);

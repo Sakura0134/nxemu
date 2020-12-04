@@ -94,7 +94,7 @@ bool LoadNsoSegement(CProcessMemory & ProcessMemory, uint64_t LoadAddress, CEncr
 		g_Notify->BreakPoint(__FILE__, __LINE__);
 		return false;
 	}
-	std::auto_ptr<uint8_t> CompressedData(new uint8_t[CompressSize]);
+	std::unique_ptr<uint8_t> CompressedData(new uint8_t[CompressSize]);
 	if (EncryptedFile.Seek(FileOffset + SegmentOffset, CFileBase::begin) < 0)
 	{
 		return false; 
@@ -192,7 +192,7 @@ bool CSwitchSystem::LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile
 	{
 		enum ElfDynamicTag : uint64_t
 		{
-			DT_nullptr = 0,
+			DT_NULL = 0,
 			DT_PLTRELSZ = 2,
 			DT_PLTGOT = 3,
 			DT_HASH = 4,
@@ -220,7 +220,7 @@ bool CSwitchSystem::LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile
 			if (!m_ProcessMemory.Read64(DynamicOffset, TagVal)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
 			if (!m_ProcessMemory.Read64(DynamicOffset + 8, Value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
 
-			if ((ElfDynamicTag)TagVal == DT_nullptr)
+			if ((ElfDynamicTag)TagVal == DT_NULL)
 			{
 				break;
 			}

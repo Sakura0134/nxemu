@@ -106,7 +106,7 @@ bool CSwitchSystem::LoadGame(const char * GamePath)
 bool CSwitchSystem::LoadXCI(const CPath & XciFile)
 {
     WriteTrace(TraceGameFile, TraceInfo, "Start (XciFile: \"%s\")", (const char *)XciFile);
-    std::auto_ptr<CXci> xci(new CXci(m_Keys, XciFile));
+    std::unique_ptr<CXci> xci(new CXci(m_Keys, XciFile));
     if (xci.get() == nullptr || !xci->Valid())
     {
         WriteTrace(TraceGameFile, TraceError, "xci is %s", xci.get() == nullptr ? "nullptr" : "Not Valid");
