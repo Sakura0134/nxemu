@@ -361,13 +361,12 @@ ResultCode CHleKernel::SignalProcessWideKey(uint64_t ptr, uint32_t value)
         }
         CSystemThread* Owner = OwnerThread->second->GetSystemThreadPtr();
 
-        if (Thread->GetState() != CSystemThread::WaitCondVar)
+        if (Thread->GetState() != CSystemThread::ThreadState_WaitCondVar)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return RESULT_SUCCESS;
         }
-        //thread->InvalidateWakeupCallback();
-        Thread->SetState(CSystemThread::WaitMutex);
+        Thread->SetState(CSystemThread::ThreadState_WaitMutex);
         Owner->AddMutexWaiter(Thread);
     }
     WriteTrace(TraceHleKernel, TraceInfo, "Done (RESULT_SUCCESS)");
@@ -414,7 +413,7 @@ bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uin
         return false;
     }
     CSystemThread * Thread = ThreadObject->GetSystemThreadPtr();
-    Thread->SetState(CSystemThread::Ready);
+    Thread->SetState(CSystemThread::ThreadState_Ready);
     Thread->Reg().Set64(Arm64Opcode::ARM64_REG_X1, ThreadHandle);
     m_KernelObjects.insert(KernelObjectMap::value_type(ThreadHandle, ThreadObject));
     m_ThreadQueue.push_back(Thread);

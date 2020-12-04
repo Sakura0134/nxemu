@@ -9,7 +9,7 @@ CSystemThread::CSystemThread(CHleKernel * m_Kernel, CProcessMemory &ProcessMemor
     CInterpreterCPU(m_ThreadMemory),
     m_Kernel(m_Kernel),
     m_ThreadMemory(ProcessMemory, this),
-    m_State(Created),
+    m_State(ThreadState_Created),
     m_ThreadId(thread_id),
 	m_Priority(Priority),
     m_CondVarWaitAddress(0),

@@ -17,12 +17,12 @@ public:
     
     enum ThreadState
     {
-        Unknown,
-        Created,
-        Ready,
-        Running,
-        WaitCondVar,
-        WaitMutex,
+        ThreadState_Unknown,
+        ThreadState_Created,
+        ThreadState_Ready,
+        ThreadState_Running,
+        ThreadState_WaitCondVar,
+        ThreadState_WaitMutex,
     };
 
     CSystemThread(CHleKernel * m_Kernel, CProcessMemory &ProcessMemory, const char * name, uint64_t entry_point, uint32_t ThreadHandle, uint32_t thread_id, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
@@ -42,9 +42,9 @@ public:
     void SetState(ThreadState state);
 
 private:
-    CSystemThread();                               // Disable default constructor
-    CSystemThread(const CSystemThread&);            // Disable copy constructor
-    CSystemThread& operator=(const CSystemThread&); // Disable assignment
+    CSystemThread();
+    CSystemThread(const CSystemThread&);
+    CSystemThread& operator=(const CSystemThread&);
 
     HandleType GetHandleType() const { return Thread; }
     CSystemThread * GetSystemThreadPtr(void) { return this; }
