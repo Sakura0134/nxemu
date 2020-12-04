@@ -16,8 +16,9 @@ public:
     virtual void BreakPoint(const char * FileName, uint32_t LineNumber) = 0;
 
     //User Feedback
-    virtual void DisplayMessage(uint32_t DisplayTime, const char * Message) const = 0;
-    virtual void DisplayMessage(uint32_t DisplayTime, LanguageStringID StringID) const = 0;
+    virtual void DisplayMessage(const char * Message) const = 0;
+    virtual void DisplayMessageTime(uint32_t DisplayTime, const char * Message) const = 0;
+    virtual void DisplayMessageTime(uint32_t DisplayTime, LanguageStringID StringID) const = 0;
 
 	//Switch Keys
 	virtual bool GetSwitchKeys(CSwitchKeys * keys) const = 0;

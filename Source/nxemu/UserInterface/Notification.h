@@ -14,8 +14,9 @@ public:
     virtual void AppInitDone(void);
 
     //User Feedback
-    virtual void DisplayMessage(uint32_t DisplayTime, const char * Message) const;
-    virtual void DisplayMessage(uint32_t DisplayTime, LanguageStringID StringID) const;
+    virtual void DisplayMessage(const char* Message) const;
+    virtual void DisplayMessageTime(uint32_t DisplayTime, const char * Message) const;
+    virtual void DisplayMessageTime(uint32_t DisplayTime, LanguageStringID StringID) const;
 
 	//Switch Keys
 	virtual bool GetSwitchKeys(CSwitchKeys * keys) const;

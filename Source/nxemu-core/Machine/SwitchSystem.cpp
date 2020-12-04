@@ -21,7 +21,7 @@ CSwitchSystem::CSwitchSystem() :
 
 CSwitchSystem::~CSwitchSystem()
 {
-    if (m_Xci)
+    if (m_Xci != nullptr)
     {
         delete m_Xci;
     }
@@ -191,7 +191,7 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
         return false;
     }
 
-    g_Notify->DisplayMessage(0, GS(MSG_LOADED_XCI));
+    g_Notify->DisplayMessage(GS(MSG_LOADED_XCI));
     g_Settings->SaveString(Game_File, XciFile);
     g_Settings->SaveString(Game_Name, Nacp->GetApplicationName().c_str());
 

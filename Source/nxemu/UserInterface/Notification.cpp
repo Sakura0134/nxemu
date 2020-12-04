@@ -23,12 +23,17 @@ void CNotificationImp::DisplayError(const char * Message) const
     MessageBoxW(nullptr, stdstr(Message).ToUTF16().c_str(), L"Error", MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
 }
 
-void CNotificationImp::DisplayMessage(uint32_t DisplayTime, LanguageStringID StringID) const
+void CNotificationImp::DisplayMessage(const char* Message) const
 {
-    DisplayMessage(DisplayTime, g_Lang->GetString(StringID).c_str());
+    DisplayMessageTime(0, Message);
 }
 
-void CNotificationImp::DisplayMessage(uint32_t DisplayTime, const char * Message) const
+void CNotificationImp::DisplayMessageTime(uint32_t DisplayTime, LanguageStringID StringID) const
+{
+    DisplayMessageTime(DisplayTime, g_Lang->GetString(StringID).c_str());
+}
+
+void CNotificationImp::DisplayMessageTime(uint32_t DisplayTime, const char * Message) const
 {
     if (m_Gui == nullptr) { return; }
 
