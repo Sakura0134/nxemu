@@ -1,5 +1,6 @@
 #include <nxemu-core\hle\Services\FspSrv\IFileSystemProxy.h>
 #include <nxemu-core\hle\Services\FspSrv\IStorage.h>
+#include <nxemu-core\hle\Services\FspSrv\IFileSystem.h>
 #include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\FileFormat\xci.h>
 #include <nxemu-core\FileFormat\nca.h>
@@ -25,10 +26,13 @@ ResultCode IFileSystemProxy::CallMethod(CIPCRequest & Request)
 {
     switch (Request.RequestHeader().Command)
     {
-    case Method::SetCurrentProcess:
+    case Method_SetCurrentProcess:
         //stubbed; 
         break;
-    case Method::OpenDataStorageByCurrentProcess:
+	case Method_OpenSaveDataFileSystem:
+		ProcessOpenSaveDataFileSystem(Request);
+        break;
+    case Method_OpenDataStorageByCurrentProcess:
 		if (Request.SwitchSystem().Xci() != nullptr)
 		{
 			const NCA * Program = Request.SwitchSystem().Xci()->Program();
@@ -46,13 +50,18 @@ ResultCode IFileSystemProxy::CallMethod(CIPCRequest & Request)
 			g_Notify->BreakPoint(__FILE__, __LINE__);
 		}
 		break;
-    case Method::GetGlobalAccessLogMode: 
+    case Method_GetGlobalAccessLogMode:
         ProcessGetGlobalAccessLogMode(Request);
         break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 	return RESULT_SUCCESS;
+}
+
+void IFileSystemProxy::ProcessOpenSaveDataFileSystem(CIPCRequest & Request)
+{
+	Request.MakeObject(IFileSystem::CreateInstance(m_System)->GetServicePtr());
 }
 
 void IFileSystemProxy::ProcessGetGlobalAccessLogMode(CIPCRequest & Request)

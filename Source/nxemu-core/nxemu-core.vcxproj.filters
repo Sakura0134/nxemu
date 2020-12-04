@@ -347,6 +347,9 @@
     <ClInclude Include="hle\Services\acc\IManagerForApplication.h">
       <Filter>Header Files\hle\Services\acc</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\FspSrv\IFileSystem.h">
+      <Filter>Header Files\hle\Services\FspSrv</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -549,6 +552,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\acc\IManagerForApplication.cpp">
       <Filter>Source Files\hle\Services\acc</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\FspSrv\IFileSystem.cpp">
+      <Filter>Source Files\hle\Services\FspSrv</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
