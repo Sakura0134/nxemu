@@ -750,7 +750,7 @@ public:
 		rcItem = rcClient;
 		rcItem.top = ( m_bShowHeader ? m_nHeaderHeight : 0 ) + ( ( nItem - nTopItem ) * m_nItemHeight );
 		rcItem.bottom = rcItem.top + m_nItemHeight;
-		rcItem.right = min( rcClient.right, GetTotalWidth() );
+		rcItem.right = rcClient.right < GetTotalWidth() ? rcClient.right : GetTotalWidth();
 		
 		if ( nSubItem != NULL_SUBITEM )
 		{
@@ -3326,7 +3326,16 @@ public:
 														
 														// fill progress bar area
 														rcProgress.DeflateRect( 3, 3 );
-														rcProgress.right = rcProgress.left + (int)( (double)rcProgress.Width() * ( ( max( min(_tstof( strItemText ), 100 ), 0 ) ) / 100.0 ) );
+														int32_t Progress = (int32_t)_tstof(strItemText);
+														if (Progress > 100)
+														{
+															Progress = 100;
+														}
+														if (Progress < 0)
+														{
+															Progress = 0;
+														}
+														rcProgress.right = rcProgress.left + (int)( (double)rcProgress.Width() * (Progress / 100.0 ) );
 														DrawGradient( dcPaint, rcProgress, m_rgbProgressTop, m_rgbProgressBottom );
 													}					
 													break;
