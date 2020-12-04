@@ -1827,6 +1827,11 @@ void Arm64Op::Neg(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         Reg.Set64(Op.Operand(0).Reg, -((int64_t)(Reg.Get64(Op.Operand(1).Reg) << Op.Operand(1).shift.value)));
     }
     else if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is64bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(1).Reg) && Op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_LSR && Op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+    {
+        Reg.Set64(Op.Operand(0).Reg, -((int64_t)(Reg.Get64(Op.Operand(1).Reg) >> Op.Operand(1).shift.value)));
+    }
+    else if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg) && Op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
     {
         Reg.Set32(Op.Operand(0).Reg, -((int32_t)Reg.Get32(Op.Operand(1).Reg)));
