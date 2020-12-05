@@ -1,5 +1,4 @@
 #pragma once
-#include <nxemu-core\Machine\Interpreter\InterpreterCPU.h>
 #include <nxemu-core\Machine\CPU\MemoryManagement.h>
 #include <nxemu-core\hle\Memory\ProcessMemory.h>
 
@@ -7,7 +6,7 @@ class CSystemThreadMemory :
     public MemoryManagement
 {
 public:
-    CSystemThreadMemory(CProcessMemory &ProcessMemory, CInterpreterCPU * Executor);
+    CSystemThreadMemory(CProcessMemory &ProcessMemory);
     ~CSystemThreadMemory();
 
     bool Initialize(uint64_t StackTop, uint32_t StackSize, uint64_t TlsAddress, uint32_t TlsSize);
@@ -39,5 +38,4 @@ private:
     uint64_t m_tlsAddress;
     uint32_t m_tlsSize;
     uint8_t * m_tls;
-    CInterpreterCPU * m_Executor;
 };

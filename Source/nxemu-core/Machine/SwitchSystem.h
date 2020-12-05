@@ -13,6 +13,8 @@ class CXci;
 
 class CSwitchSystem 
 {
+    friend CSystemThread;
+
 public:
     CSwitchSystem();
     ~CSwitchSystem();
@@ -20,10 +22,11 @@ public:
     bool LoadGame(const char * GamePath);
     void StartEmulation(void);
 
-    inline KernelObjectMap & KernelObjects(void) { return m_Kernel.KernelObjects(); }
+    inline KernelObjectMap KernelObjects(void) { return m_Kernel.KernelObjects(); }
     inline CKernelObject * SystemThread(void) { return m_SystemThread.Get(); }
     inline CHleKernel & HleKernel(void) { return m_Kernel; }
     inline CXci * Xci(void) const { return m_Xci; }
+    inline bool & EndEmulation(void) { return m_EndEmulation; }
 
 private:
     CSwitchSystem(const CSwitchSystem&);             // Disable copy constructor
@@ -31,15 +34,10 @@ private:
 
 	bool LoadXCI(const CPath & XciFile);
 	bool LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile, const CPartitionFilesystem::VirtualFile * file, uint64_t base_addr, uint64_t &end_addr);
-    bool LoadNsoFile(const CPath & NsoFile, uint64_t base_addr, uint64_t &end_addr);
-    void EmulationThread(void);
-
-    static uint32_t stEmulationThread(void * _this) { ((CSwitchSystem*)_this)->EmulationThread(); return 0; }
 
     CHleKernel m_Kernel;
     CProcessMemory m_ProcessMemory;
     bool m_EndEmulation;
-    CThread m_EmulationThread;
     CTLS<CKernelObject> m_SystemThread;
 	CSwitchKeys m_Keys;
 	CXci * m_Xci;

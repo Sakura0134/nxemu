@@ -350,6 +350,12 @@
     <ClInclude Include="hle\Services\FspSrv\IFileSystem.h">
       <Filter>Header Files\hle\Services\FspSrv</Filter>
     </ClInclude>
+    <ClInclude Include="Machine\CPU\CPUExecutor.h">
+      <Filter>Header Files\Machine\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Machine\SystemTiming.h">
+      <Filter>Header Files\Machine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -555,6 +561,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\FspSrv\IFileSystem.cpp">
       <Filter>Source Files\hle\Services\FspSrv</Filter>
+    </ClCompile>
+    <ClCompile Include="Machine\SystemTiming.cpp">
+      <Filter>Source Files\Machine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

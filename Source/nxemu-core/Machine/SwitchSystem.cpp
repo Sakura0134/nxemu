@@ -14,7 +14,6 @@
 CSwitchSystem::CSwitchSystem() :
     m_Kernel(*this,m_ProcessMemory),
     m_EndEmulation(false),
-    m_EmulationThread(stEmulationThread),
     m_Xci(nullptr)
 {
 }
@@ -29,59 +28,18 @@ CSwitchSystem::~CSwitchSystem()
 
 void CSwitchSystem::StartEmulation(void)
 {
-    m_EmulationThread.Start(this);
-}
-
-void CSwitchSystem::EmulationThread(void)
-{
-    bool & Done = m_EndEmulation;
-    while (!Done)
+    KernelObjectMap KernelObjects = m_Kernel.KernelObjects();
+    for (KernelObjectMap::iterator itr = KernelObjects.begin(); itr != KernelObjects.end(); itr++)
     {
-        CKernelObjectPtr ThreadObject(nullptr);
+        if (itr->second->GetHandleType() != CKernelObject::Thread)
         {
-            KernelObjectList & ThreadQueue = m_Kernel.ThreadQueue();
-            for (size_t i = 0, n = ThreadQueue.size(); i < n; i++)
-            {
-                CSystemThread * Thread = ThreadQueue[i]->GetSystemThreadPtr();
-                if (Thread->GetState() == CSystemThread::ThreadState_Ready)
-                {
-                    ThreadObject = ThreadQueue[i];
-                    break;
-                }
-            }
+            continue;
         }
-
-        if (ThreadObject.get() == nullptr || ThreadObject->GetHandleType() != CKernelObject::HandleType::Thread)
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-            break;
-        }
-        m_SystemThread.Set(ThreadObject.get());
-        CSystemThread * Thread = ThreadObject->GetSystemThreadPtr();
-        if (Thread->GetState() != CSystemThread::ThreadState_Ready)
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-        }
-        Thread->SetState(CSystemThread::ThreadState_Running);
-        Thread->Execute(Done);
-        if (Thread->GetState() == CSystemThread::ThreadState_Running)
-        {
-            KernelObjectList & ThreadQueue = m_Kernel.ThreadQueue();
-            for (size_t i = 0, n = ThreadQueue.size(); i < n; i++)
-            {
-                if (ThreadQueue[i] != Thread)
-                {
-                    continue;
-                }
-                ThreadQueue.erase(ThreadQueue.begin() + i);
-                ThreadQueue.push_back(Thread);
-                break;
-            }
-            Thread->SetState(CSystemThread::ThreadState_Ready);
-        }
-        m_SystemThread.Set(nullptr);
+        CSystemThread * Thread = itr->second->GetSystemThreadPtr();
+        Thread->Start();
     }
 }
+
 
 bool CSwitchSystem::LoadGame(const char * GamePath)
 {

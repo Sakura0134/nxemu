@@ -1,4 +1,6 @@
 #include <nxemu-core\Machine\Interpreter\ArmInterpreterOps64.h>
+#include <nxemu-core\hle\Memory\SystemThreadMemory.h>
+#include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <Common\Maths.h>
 
@@ -197,8 +199,7 @@ void Arm64Op::B(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     if (Op.Operands() == 1 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
     {
-        IRegisters & Reg = Cpu.Reg();
-        Reg.Set64(Arm64Opcode::ARM64_REG_PC, Op.Operand(0).ImmVal);
+        Cpu.Jump(Op.Operand(0).ImmVal);
     }
     else
     {
@@ -329,11 +330,12 @@ void Arm64Op::Bic(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Bl(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
+    IRegisters & Reg = Cpu.Reg();
+
     if (Op.Operands() == 1 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
     {
-        IRegisters & Reg = Cpu.Reg();
         Reg.Set64(Arm64Opcode::ARM64_REG_LR, Reg.Get64(Arm64Opcode::ARM64_REG_PC) + 4);
-        Reg.Set64(Arm64Opcode::ARM64_REG_PC, Op.Operand(0).ImmVal);
+        Cpu.Jump(Op.Operand(0).ImmVal);
     }
     else
     {
@@ -343,11 +345,12 @@ void Arm64Op::Bl(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Blr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
+    IRegisters & Reg = Cpu.Reg();
+
     if (Op.Operands() == 1 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
     {
-        IRegisters & Reg = Cpu.Reg();
         Reg.Set64(Arm64Opcode::ARM64_REG_LR, Reg.Get64(Arm64Opcode::ARM64_REG_PC) + 4);
-        Reg.Set64(Arm64Opcode::ARM64_REG_PC, Reg.Get64(Op.Operand(0).Reg));
+        Cpu.Jump(Reg.Get64(Op.Operand(0).Reg));
     }
     else
     {
@@ -357,10 +360,11 @@ void Arm64Op::Blr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Br(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
+    IRegisters & Reg = Cpu.Reg();
+
     if (Op.Operands() == 1 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
     {
-        IRegisters & Reg = Cpu.Reg();
-        Reg.Set64(Arm64Opcode::ARM64_REG_PC, Reg.Get64(Op.Operand(0).Reg));
+        Cpu.Jump(Reg.Get64(Op.Operand(0).Reg));
     }
     else
     {
@@ -378,16 +382,14 @@ void Arm64Op::Cbnz(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         {
             if (Reg.Get64(Op.Operand(0).Reg) != 0)
             {
-                Reg.Set64(Arm64Opcode::ARM64_REG_PC, Op.Operand(1).ImmVal);
-                Cpu.Jumped();
+                Cpu.Jump(Op.Operand(1).ImmVal);
             }
         }
         else if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
             if (Reg.Get32(Op.Operand(0).Reg) != 0)
             {
-                Reg.Set64(Arm64Opcode::ARM64_REG_PC, Op.Operand(1).ImmVal);
-                Cpu.Jumped();
+                Cpu.Jump(Op.Operand(1).ImmVal);
             }
         }
         else
@@ -409,16 +411,14 @@ void Arm64Op::Cbz(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     {
         if (Reg.Get64(Op.Operand(0).Reg) == 0)
         {
-            Reg.Set64(Arm64Opcode::ARM64_REG_PC, Op.Operand(1).ImmVal);
-            Cpu.Jumped();
+            Cpu.Jump(Op.Operand(1).ImmVal);
         }
     }
     else if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM)
     {
         if (Reg.Get32(Op.Operand(0).Reg) == 0)
         {
-            Reg.Set64(Arm64Opcode::ARM64_REG_PC, Op.Operand(1).ImmVal);
-            Cpu.Jumped();
+            Cpu.Jump(Op.Operand(1).ImmVal);
         }
     }
     else
@@ -928,7 +928,7 @@ void Arm64Op::Ins(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ldarb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if ((Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM))
@@ -938,7 +938,7 @@ void Arm64Op::Ldarb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
             uint8_t value;
-            if (!MMU.Read8(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read8(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(0).Reg, value);
         }
         else
@@ -958,7 +958,7 @@ void Arm64Op::Ldarb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ldaxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
@@ -968,7 +968,7 @@ void Arm64Op::Ldaxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg))
         {
             uint64_t value;
-            if (!MMU.Read64(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read64(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             if (Op.Operand(0).Reg != Arm64Opcode::ARM64_REG_XZR)
             {
                 Reg.Set64(Op.Operand(0).Reg, value);
@@ -977,7 +977,7 @@ void Arm64Op::Ldaxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         else if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
             uint32_t value;
-            if (!MMU.Read32(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read32(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(0).Reg, value);
         }
         else
@@ -997,7 +997,7 @@ void Arm64Op::Ldaxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ldp(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM ||
@@ -1009,30 +1009,30 @@ void Arm64Op::Ldp(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(1).Reg))
         {
             uint64_t value;
-            if (!MMU.Read64(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read64(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set64(Op.Operand(0).Reg, value);
 
-            if (!MMU.Read64(target_addr + 8, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read64(target_addr + 8, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set64(Op.Operand(1).Reg, value);
         }
         else if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
         {
             uint32_t value;
-            if (!MMU.Read32(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read32(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(0).Reg, value);
 
-            if (!MMU.Read32(target_addr + 4, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read32(target_addr + 4, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(1).Reg, value);
         }
         else if (Arm64Opcode::Is128bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is128bitReg(Op.Operand(1).Reg))
         {
             uint64_t valueHi, valueLo;
-            if (!MMU.Read64(target_addr + 0x00, valueHi)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
-            if (!MMU.Read64(target_addr + 0x08, valueLo)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read64(target_addr + 0x00, valueHi)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read64(target_addr + 0x08, valueLo)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set128(Op.Operand(0).Reg, valueHi, valueLo);
 
-            if (!MMU.Read64(target_addr + 0x10, valueHi)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
-            if (!MMU.Read64(target_addr + 0x18, valueLo)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read64(target_addr + 0x10, valueHi)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read64(target_addr + 0x18, valueLo)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set128(Op.Operand(1).Reg, valueHi, valueLo);
         }
         else
@@ -1053,7 +1053,7 @@ void Arm64Op::Ldp(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ldr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if ((Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
@@ -1073,13 +1073,13 @@ void Arm64Op::Ldr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg))
         {
             uint64_t value;
-            if (!MMU.Read64(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read64(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set64(Op.Operand(0).Reg, value);
         }
         else if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
             uint32_t value;
-            if (!MMU.Read32(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read32(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(0).Reg, value);
         }
         else
@@ -1106,7 +1106,7 @@ void Arm64Op::Ldr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ldrb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if ((Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
@@ -1117,7 +1117,7 @@ void Arm64Op::Ldrb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
             uint8_t value;
-            if (!MMU.Read8(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read8(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(0).Reg, value);
         }
         else
@@ -1137,7 +1137,7 @@ void Arm64Op::Ldrb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ldrh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if ((Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
@@ -1148,7 +1148,7 @@ void Arm64Op::Ldrh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
             uint16_t value;
-            if (!MMU.Read16(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read16(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(0).Reg, value);
         }
         else
@@ -1168,7 +1168,7 @@ void Arm64Op::Ldrh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ldrsb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
@@ -1179,7 +1179,7 @@ void Arm64Op::Ldrsb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
             uint8_t value;
-            if (!MMU.Read8(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read8(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(0).Reg, (uint32_t)((int32_t)((int8_t)value)));
         }
         else
@@ -1199,7 +1199,7 @@ void Arm64Op::Ldrsb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ldrsw(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
@@ -1210,7 +1210,7 @@ void Arm64Op::Ldrsw(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg))
         {
             uint32_t value;
-            if (!MMU.Read32(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read32(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set64(Op.Operand(0).Reg, (uint64_t)((int64_t)((int32_t)value)));
         }
         else
@@ -1230,7 +1230,7 @@ void Arm64Op::Ldrsw(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ldur(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
@@ -1240,13 +1240,13 @@ void Arm64Op::Ldur(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg))
         {
             uint64_t value;
-            if (!MMU.Read64(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read64(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set64(Op.Operand(0).Reg, value);
         }
         else if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
             uint32_t value;
-            if (!MMU.Read32(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read32(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(0).Reg, value);
         }
         else
@@ -1266,7 +1266,7 @@ void Arm64Op::Ldur(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ldurb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
@@ -1276,7 +1276,7 @@ void Arm64Op::Ldurb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
             uint8_t value;
-            if (!MMU.Read8(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read8(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(0).Reg, value);
         }
         else
@@ -1296,7 +1296,7 @@ void Arm64Op::Ldurb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ldurh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement& MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
@@ -1306,7 +1306,7 @@ void Arm64Op::Ldurh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
             uint16_t value;
-            if (!MMU.Read16(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read16(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(0).Reg, value);
         }
         else
@@ -1326,7 +1326,7 @@ void Arm64Op::Ldurh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ldxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement& MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
@@ -1345,7 +1345,7 @@ void Arm64Op::Ldxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg))
         {
             uint64_t value;
-            if (!MMU.Read64(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            if (!ThreadMemory.Read64(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set64(Op.Operand(0).Reg, value);
         }
         else
@@ -1787,14 +1787,14 @@ void Arm64Op::Mul(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
-        Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg))
-    {
-        Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg) * Reg.Get32(Op.Operand(2).Reg));
-    }
-    else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
         Arm64Opcode::Is64bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(1).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(2).Reg))
     {
         Reg.Set64(Op.Operand(0).Reg, Reg.Get64(Op.Operand(1).Reg) * Reg.Get64(Op.Operand(2).Reg));
+    }
+    else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg))
+    {
+        Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg) * Reg.Get32(Op.Operand(2).Reg));
     }
     else
     {
@@ -1935,10 +1935,11 @@ void Arm64Op::Rbit(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Ret(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
+    IRegisters & Reg = Cpu.Reg();
+
     if (Op.Operands() == 0)
     {
-        IRegisters & Reg = Cpu.Reg();
-        Reg.Set64(Arm64Opcode::ARM64_REG_PC, Reg.Get64(Arm64Opcode::ARM64_REG_LR));
+        Cpu.Jump(Reg.Get64(Arm64Opcode::ARM64_REG_LR));
     }
     else
     {
@@ -1948,7 +1949,7 @@ void Arm64Op::Ret(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Stp(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if ((Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM) ||
@@ -1958,13 +1959,13 @@ void Arm64Op::Stp(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         uint64_t target_addr = Reg.Get64(Op.Operand(2).mem.base) + Op.Operand(2).mem.disp + index;
         if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(1).Reg))
         {
-            MMU.Write64(target_addr, Reg.Get64(Op.Operand(0).Reg));
-            MMU.Write64(target_addr + 8, Reg.Get64(Op.Operand(1).Reg));
+            ThreadMemory.Write64(target_addr, Reg.Get64(Op.Operand(0).Reg));
+            ThreadMemory.Write64(target_addr + 8, Reg.Get64(Op.Operand(1).Reg));
         }
         else if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
         {
-            MMU.Write32(target_addr, Reg.Get32(Op.Operand(0).Reg));
-            MMU.Write32(target_addr + 4, Reg.Get32(Op.Operand(1).Reg));
+            ThreadMemory.Write32(target_addr, Reg.Get32(Op.Operand(0).Reg));
+            ThreadMemory.Write32(target_addr + 4, Reg.Get32(Op.Operand(1).Reg));
         }
         else if (Arm64Opcode::Is128bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is128bitReg(Op.Operand(1).Reg))
         {
@@ -1973,7 +1974,7 @@ void Arm64Op::Stp(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             Reg.Get128(Op.Operand(0).Reg, data[0], data[1]);
             Reg.Get128(Op.Operand(1).Reg, data[2], data[3]);
 
-            if (!MMU.WriteBytes(target_addr, (uint8_t*)&data[0], sizeof(data)))
+            if (!ThreadMemory.WriteBytes(target_addr, (uint8_t*)&data[0], sizeof(data)))
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
@@ -2132,7 +2133,7 @@ void Arm64Op::Smull(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Stlr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement& MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
@@ -2141,7 +2142,7 @@ void Arm64Op::Stlr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         uint64_t target_addr = Reg.Get64(Op.Operand(1).mem.base) + Op.Operand(1).mem.disp + index;
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
-            if (!MMU.Write32(target_addr, Reg.Get32(Op.Operand(0).Reg)))
+            if (!ThreadMemory.Write32(target_addr, Reg.Get32(Op.Operand(0).Reg)))
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
@@ -2163,7 +2164,7 @@ void Arm64Op::Stlr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Stlrb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
@@ -2173,7 +2174,7 @@ void Arm64Op::Stlrb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
-            if (!MMU.Write8(target_addr, (uint8_t)Reg.Get32(Op.Operand(0).Reg)))
+            if (!ThreadMemory.Write8(target_addr, (uint8_t)Reg.Get32(Op.Operand(0).Reg)))
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
@@ -2195,7 +2196,7 @@ void Arm64Op::Stlrb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Str(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if ((Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
@@ -2218,21 +2219,21 @@ void Arm64Op::Str(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
         if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg))
         {
-            MMU.Write64(target_addr, Reg.Get64(Op.Operand(0).Reg));
+            ThreadMemory.Write64(target_addr, Reg.Get64(Op.Operand(0).Reg));
         }
         else if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
-            MMU.Write32(target_addr, Reg.Get32(Op.Operand(0).Reg));
+            ThreadMemory.Write32(target_addr, Reg.Get32(Op.Operand(0).Reg));
         }
         else if (Arm64Opcode::Is128bitReg(Op.Operand(0).Reg))
         {
             uint64_t valueHi, valueLo;
             Reg.Get128(Op.Operand(0).Reg, valueHi, valueLo);
-            if (!MMU.Write64(target_addr + 0x00, valueHi))
+            if (!ThreadMemory.Write64(target_addr + 0x00, valueHi))
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
-            MMU.Write64(target_addr + 0x08, valueLo);
+            ThreadMemory.Write64(target_addr + 0x08, valueLo);
         }
         else
         {
@@ -2258,7 +2259,7 @@ void Arm64Op::Str(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Strb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if ((Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
@@ -2269,7 +2270,7 @@ void Arm64Op::Strb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
-            if (!MMU.Write8(target_addr, (uint8_t)Reg.Get32(Op.Operand(0).Reg)))
+            if (!ThreadMemory.Write8(target_addr, (uint8_t)Reg.Get32(Op.Operand(0).Reg)))
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
@@ -2291,7 +2292,7 @@ void Arm64Op::Strb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Strh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if ((Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM) ||
@@ -2302,7 +2303,7 @@ void Arm64Op::Strh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
-            if (!MMU.Write16(target_addr, (uint16_t)Reg.Get32(Op.Operand(0).Reg)))
+            if (!ThreadMemory.Write16(target_addr, (uint16_t)Reg.Get32(Op.Operand(0).Reg)))
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
@@ -2324,7 +2325,7 @@ void Arm64Op::Strh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Stlxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_MEM)
@@ -2333,7 +2334,7 @@ void Arm64Op::Stlxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         uint64_t target_addr = Reg.Get64(Op.Operand(2).mem.base) + Op.Operand(2).mem.disp + index;
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(1).Reg))
         {
-            if (!MMU.Write64(target_addr, Reg.Get64(Op.Operand(1).Reg)))
+            if (!ThreadMemory.Write64(target_addr, Reg.Get64(Op.Operand(1).Reg)))
             {
                 Reg.Set32(Op.Operand(0).Reg, 1);
                 g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -2343,7 +2344,7 @@ void Arm64Op::Stlxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         }
         else if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
         {
-            if (!MMU.Write32(target_addr, Reg.Get32(Op.Operand(1).Reg)))
+            if (!ThreadMemory.Write32(target_addr, Reg.Get32(Op.Operand(1).Reg)))
             {
                 Reg.Set32(Op.Operand(0).Reg, 1);
                 g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -2368,7 +2369,7 @@ void Arm64Op::Stlxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Stur(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
@@ -2376,30 +2377,29 @@ void Arm64Op::Stur(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         uint64_t index = MemIndex(Op.Operand(1), Reg);
         uint64_t target_addr = Reg.Get64(Op.Operand(1).mem.base) + Op.Operand(1).mem.disp + index;
 
-
-        if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg))
+        if (Arm64Opcode::Is128bitReg(Op.Operand(0).Reg))
         {
-            if (!MMU.Write64(target_addr, Reg.Get64(Op.Operand(0).Reg)))
+            uint64_t valueHi, valueLo;
+            Reg.Get128(Op.Operand(0).Reg, valueHi, valueLo);
+            if (!ThreadMemory.Write64(target_addr + 0x00, valueHi))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+            if (!ThreadMemory.Write64(target_addr + 0x08, valueLo))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+        else if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg))
+        {
+            if (!ThreadMemory.Write64(target_addr, Reg.Get64(Op.Operand(0).Reg)))
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
         }
         else if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
-            if (!MMU.Write32(target_addr, Reg.Get32(Op.Operand(0).Reg)))
-            {
-                g_Notify->BreakPoint(__FILE__, __LINE__);
-            }
-        }
-        else if (Arm64Opcode::Is128bitReg(Op.Operand(0).Reg))
-        {
-            uint64_t valueHi, valueLo;
-            Reg.Get128(Op.Operand(0).Reg, valueHi, valueLo);
-            if (!MMU.Write64(target_addr + 0x00, valueHi))
-            {
-                g_Notify->BreakPoint(__FILE__, __LINE__);
-            }
-            if (!MMU.Write64(target_addr + 0x08, valueLo))
+            if (!ThreadMemory.Write32(target_addr, Reg.Get32(Op.Operand(0).Reg)))
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
@@ -2421,7 +2421,7 @@ void Arm64Op::Stur(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Sturb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
@@ -2431,7 +2431,7 @@ void Arm64Op::Sturb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
-            if (!MMU.Write8(target_addr, (uint8_t)Reg.Get32(Op.Operand(0).Reg)))
+            if (!ThreadMemory.Write8(target_addr, (uint8_t)Reg.Get32(Op.Operand(0).Reg)))
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
@@ -2453,7 +2453,7 @@ void Arm64Op::Sturb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Sturh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement & MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
@@ -2463,7 +2463,7 @@ void Arm64Op::Sturh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
         if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
-            if (!MMU.Write16(target_addr, (uint16_t)Reg.Get32(Op.Operand(0).Reg)))
+            if (!ThreadMemory.Write16(target_addr, (uint16_t)Reg.Get32(Op.Operand(0).Reg)))
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
@@ -2485,7 +2485,7 @@ void Arm64Op::Sturh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Stxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
-    MemoryManagement& MMU = Cpu.MMU();
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.UpdateFlags()) { g_Notify->BreakPoint(__FILE__, __LINE__); }
@@ -2497,7 +2497,7 @@ void Arm64Op::Stxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
         if (Arm64Opcode::Is64bitReg(Op.Operand(1).Reg))
         {
-            if (!MMU.Write64(target_addr, Reg.Get64(Op.Operand(1).Reg)))
+            if (!ThreadMemory.Write64(target_addr, Reg.Get64(Op.Operand(1).Reg)))
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
@@ -2531,7 +2531,7 @@ void Arm64Op::Svc(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     if (Op.Operands() == 1 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_IMM)
     {
-        Cpu.ServiceCall((uint32_t)Op.Operand(0).ImmVal);
+        Cpu.Thread().ServiceCall((uint32_t)Op.Operand(0).ImmVal);
     }
     else
     {
@@ -2554,6 +2554,7 @@ void Arm64Op::Sxtw(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Tbnz(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
+    IRegisters & Reg = Cpu.Reg();
     if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM &&
         Arm64Opcode::Is64bitReg(Op.Operand(0).Reg))
     {
@@ -2562,11 +2563,9 @@ void Arm64Op::Tbnz(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
         }
-        IRegisters & Reg = Cpu.Reg();
         if ((Reg.Get64(Op.Operand(0).Reg) & ((uint64_t)1 << Op.Operand(1).ImmVal)) != 0)
         {
-            Reg.Set64(Arm64Opcode::ARM64_REG_PC, Op.Operand(2).ImmVal);
-            Cpu.Jumped();
+            Cpu.Jump(Op.Operand(2).ImmVal);
         }
     }
     else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
@@ -2576,11 +2575,9 @@ void Arm64Op::Tbnz(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
         }
-        IRegisters & Reg = Cpu.Reg();
         if ((Reg.Get32(Op.Operand(0).Reg) & (1 << Op.Operand(1).ImmVal)) != 0)
         {
-            Reg.Set64(Arm64Opcode::ARM64_REG_PC, Op.Operand(2).ImmVal);
-            Cpu.Jumped();
+            Cpu.Jump(Op.Operand(2).ImmVal);
         }
     }
     else
@@ -2591,6 +2588,7 @@ void Arm64Op::Tbnz(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Tbz(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
+    IRegisters & Reg = Cpu.Reg();
     if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && Arm64Opcode::Is64bitReg(Op.Operand(0).Reg))
     {
         if (Op.Operand(1).ImmVal > 0x3F)
@@ -2598,11 +2596,9 @@ void Arm64Op::Tbz(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
         }
-        IRegisters & Reg = Cpu.Reg();
         if ((Reg.Get64(Op.Operand(0).Reg) & ((uint64_t)1 << Op.Operand(1).ImmVal)) == 0)
         {
-            Reg.Set64(Arm64Opcode::ARM64_REG_PC, Op.Operand(2).ImmVal);
-            Cpu.Jumped();
+            Cpu.Jump(Op.Operand(2).ImmVal);
         }
     }
     else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
@@ -2612,11 +2608,9 @@ void Arm64Op::Tbz(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
         }
-        IRegisters & Reg = Cpu.Reg();
         if ((Reg.Get32(Op.Operand(0).Reg) & (1 << Op.Operand(1).ImmVal)) == 0)
         {
-            Reg.Set64(Arm64Opcode::ARM64_REG_PC, Op.Operand(2).ImmVal);
-            Cpu.Jumped();
+            Cpu.Jump(Op.Operand(2).ImmVal);
         }
     }
     else
@@ -2796,10 +2790,11 @@ void Arm64Op::Udiv(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Umaddl(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
+    IRegisters& Reg = Cpu.Reg();
+
     if (Op.Operands() == 4 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(3).type == Arm64Opcode::ARM64_OP_REG &&
         Arm64Opcode::Is64bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(3).Reg))
     {
-        IRegisters & Reg = Cpu.Reg();
         Reg.Set64(Op.Operand(0).Reg, (uint64_t)(Reg.Get32(Op.Operand(1).Reg) * Reg.Get32(Op.Operand(2).Reg))+ Reg.Get64(Op.Operand(3).Reg));
     }
     else

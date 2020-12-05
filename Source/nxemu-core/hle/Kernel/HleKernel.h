@@ -105,9 +105,9 @@ public:
 
     bool AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
     KernelObjectList & ThreadQueue(void) { return m_ThreadQueue; }
-    KernelObjectMap & KernelObjects(void) { return m_KernelObjects; }
 
     uint32_t AddKernelObject(CKernelObject * object);
+    KernelObjectMap KernelObjects(void);
 
     ResultCode CloseHandle(uint32_t Handle);
     ResultCode ConnectToNamedPort(CSystemThreadMemory & ThreadMemory, uint32_t & SessionHandle, uint64_t NameAddr);

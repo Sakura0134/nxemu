@@ -57,8 +57,7 @@ class CRegisters :
     friend CInterpreterCPU;
 
 public:
-    
-    CRegisters(CInterpreterCPU * Executor);
+    CRegisters(void);
 
     uint32_t Get32(Arm64Opcode::arm64_reg reg);
     uint64_t Get64(Arm64Opcode::arm64_reg reg);
@@ -77,7 +76,6 @@ public:
     bool ConditionSet(Arm64Opcode::arm64_cc cc);
 
 private:
-    CRegisters(void);
     CRegisters(const CRegisters&);
     CRegisters& operator=(const CRegisters&);
 
@@ -93,7 +91,5 @@ private:
     uint64_t m_tpidrro_el0; /* User RO Thread register.  */
 
     PSTATE m_pstate;
-
-    CInterpreterCPU * m_Executor;
 };
 

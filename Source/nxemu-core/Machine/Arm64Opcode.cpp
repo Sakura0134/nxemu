@@ -322,7 +322,8 @@ bool Arm64Opcode::Is128bitReg(arm64_reg reg)
         return true;
     }
     if ((reg >= ARM64_REG_X0 && reg <= ARM64_REG_X30) ||
-        reg == ARM64_REG_XZR)
+        (reg >= ARM64_REG_W0 && reg <= ARM64_REG_W30) ||
+        reg == ARM64_REG_XZR || reg == ARM64_REG_WZR)
     {
         return false;
     }

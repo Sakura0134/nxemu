@@ -1,15 +1,14 @@
 #include <nxemu-core\hle\Memory\SystemThreadMemory.h>
 #include <nxemu-core\SystemGlobals.h>
 
-CSystemThreadMemory::CSystemThreadMemory(CProcessMemory &ProcessMemory, CInterpreterCPU * Executor) :
+CSystemThreadMemory::CSystemThreadMemory(CProcessMemory &ProcessMemory) :
     m_ProcessMemory(ProcessMemory),
     m_stackmem(nullptr),
     m_StackAddress(0),
     m_StackSize(0),
     m_tlsAddress(0),
     m_tlsSize(0),
-    m_tls(nullptr),
-    m_Executor(Executor)
+    m_tls(nullptr)
 {
 }
 

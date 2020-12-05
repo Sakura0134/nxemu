@@ -2,7 +2,7 @@
 #include <nxemu-core\Settings\Settings.h>
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\Machine\CPU\MemoryManagement.h>
-#include <nxemu-core\Machine\Interpreter\InterpreterCPU.h>
+#include <nxemu-core\Machine\CPU\CPUExecutor.h>
 #include <nxemu\UserInterface\Debugger\Debugger-Commands.h>
 #include <nxemu\UserInterface\Debugger\Debugger.h>
 #include <Common\StdString.h>
@@ -37,7 +37,7 @@ void CCommandList::ShowAddress(uint64_t address, bool top)
         m_ValidOp.clear();
         ClearBranchArrows();
         m_StartAddress = address;
-        MemoryManagement & ThreadMemory = m_Debugger->DebugThread()->GetSystemThreadPtr()->MMU();
+        CSystemThreadMemory & ThreadMemory = m_Debugger->DebugThread()->GetSystemThreadPtr()->ThreadMemory();
 
         for (uint32_t i = 0; i < m_CommandListRows; i++)
         {
@@ -356,7 +356,23 @@ LRESULT	CDebugCommandsView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARA
         m_StepButton.EnableWindow(TRUE);
         m_GoButton.EnableWindow(TRUE);
     }
+
     WindowCreated();
+    return TRUE;
+}
+
+LRESULT CDebugCommandsView::OnColorStatic(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+    ::SetBkMode((HDC)wParam, TRANSPARENT);
+    return (LRESULT)::GetSysColorBrush(COLOR_MENU);
+}
+
+LRESULT CDebugCommandsView::OnEraseBackground(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+    CDCHandle dc = (HDC)wParam;
+    RECT rect = { 0 };
+    GetClientRect(&rect);
+    dc.FillRect(&rect, COLOR_MENU);
     return TRUE;
 }
 

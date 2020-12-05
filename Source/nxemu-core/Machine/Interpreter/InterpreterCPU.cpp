@@ -1,23 +1,30 @@
 #include <nxemu-core\Machine\Interpreter\InterpreterCPU.h>
 #include <nxemu-core\Machine\Interpreter\ArmInterpreterOps64.h>
+#include <nxemu-core\Machine\SystemTiming.h>
+#include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\Settings\Settings.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Debugger.h>
-#include <Common\Maths.h>
 
-CInterpreterCPU::CInterpreterCPU(MemoryManagement & mmu) :
-    m_Reg(this),
-    m_MMU(mmu),
-    m_Jumped(false),
-    m_CpuTicks(0)
+
+CInterpreterCPU::CInterpreterCPU(CSwitchSystem & System, CSystemThread & Thread) :
+    m_System(System),
+    m_ThreadMemory(Thread.ThreadMemory()),
+    m_Thread(Thread),
+    m_JumpPC(0),
+    m_Jump(false)
 {
 }
 
-void CInterpreterCPU::Execute(bool & Done)
+void CInterpreterCPU::Execute()
 {
     uint64_t & PROGRAM_COUNTER = m_Reg.m_PROGRAM_COUNTER;
+    bool & Jump = m_Jump;
+    const uint64_t & JumpPC = m_JumpPC;
+    const bool & Done = m_System.EndEmulation();
     const bool & Stepping = isStepping();
     Arm64OpcodeCache & OpcodeCache = m_OpcodeCache;
+    uint64_t & CpuTicks = m_Thread.CpuTicks();
 
     while (!Done)
     {
@@ -26,12 +33,13 @@ void CInterpreterCPU::Execute(bool & Done)
             g_Debugger->WaitForStep();
         }
         uint32_t insn;
-        if (!m_MMU.Read32(PROGRAM_COUNTER, insn))
+        if (!m_ThreadMemory.Read32(PROGRAM_COUNTER, insn))
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
+
         Arm64Opcode op(OpcodeCache, PROGRAM_COUNTER, insn);
-        m_CpuTicks += 1;
+        CpuTicks += 1;
 
         if (!ShouldExecuteOp(op))
         {
@@ -135,28 +143,27 @@ void CInterpreterCPU::Execute(bool & Done)
             }
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
-
-        if (op.IsJump() || m_Jumped)
+        if (Jump)
         {
-            m_Jumped = false;
-            continue;
+            Jump = false;
+            PROGRAM_COUNTER = JumpPC;
         }
-        PROGRAM_COUNTER += 4;
+        else
+        {
+            PROGRAM_COUNTER += 4;
+        }
     }
 }
 
-void CInterpreterCPU::Jumped(void)
+void CInterpreterCPU::Jump(uint64_t PC)
 {
-    m_Jumped = true;
+    m_JumpPC = PC;
+    m_Jump = true;
 }
 
 uint64_t CInterpreterCPU::GetCycleCount(void) const
 {
-    const uint64_t CNTFREQ = 19200000;
-    const uint64_t BASE_CLOCK_RATE = 1019215872;
-    uint64_t hi, rem;
-    uint64_t lo = mull128_u64(m_CpuTicks, CNTFREQ, &hi);
-    return div128_to_64(hi, lo, BASE_CLOCK_RATE, &rem);
+    return CSystemTiming::CpuCyclesToClockCycles(m_Thread.CpuTicks());
 }
 
 bool CInterpreterCPU::ShouldExecuteOp(const Arm64Opcode & op)
@@ -181,3 +188,4 @@ bool CInterpreterCPU::ShouldExecuteOp(const Arm64Opcode & op)
     }
     return false;
 }
+

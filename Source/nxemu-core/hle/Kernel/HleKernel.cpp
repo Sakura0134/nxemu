@@ -39,6 +39,13 @@ uint32_t CHleKernel::AddKernelObject(CKernelObject * Object)
     return Handle;
 }
 
+KernelObjectMap CHleKernel::KernelObjects(void)
+{
+    KernelObjectMap Objects;
+    Objects = m_KernelObjects;
+    return Objects;
+}
+
 ResultCode CHleKernel::CloseHandle(uint32_t Handle)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (Handle: 0x%X)", Handle);
@@ -406,7 +413,7 @@ ResultCode CHleKernel::QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t 
 bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId)
 {
     ThreadHandle = GetNewHandle();
-    CKernelObjectPtr ThreadObject(new CSystemThread(this, m_ProcessMemory, name, entry_point, ThreadHandle, CreateNewThreadID(), ThreadContext, StackTop, StackSize, Priority, ProcessorId));
+    CKernelObjectPtr ThreadObject(new CSystemThread(m_System, m_ProcessMemory, name, entry_point, ThreadHandle, CreateNewThreadID(), ThreadContext, StackTop, StackSize, Priority, ProcessorId));
     if (ThreadObject.get() == nullptr)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
