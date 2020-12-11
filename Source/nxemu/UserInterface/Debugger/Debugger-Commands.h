@@ -83,6 +83,8 @@ private:
         MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
         MESSAGE_HANDLER(WM_SIZING, OnSizing)
         MESSAGE_HANDLER(WM_VSCROLL, OnScroll)
+        MESSAGE_HANDLER(WM_CTLCOLORSTATIC, OnColorStatic)
+        MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBackground)
         COMMAND_HANDLER(IDC_GO_BTN, BN_CLICKED, OnGo)
         COMMAND_HANDLER(IDC_STEP_BTN, BN_CLICKED, OnStep)
         COMMAND_HANDLER(IDCANCEL, BN_CLICKED, OnCancel)
@@ -103,6 +105,8 @@ private:
     static void StaticWaitingForStepChanged(CDebugCommandsView * _this) { _this->WaitingForStepChanged(); }
 
     LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+    LRESULT OnColorStatic(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+    LRESULT OnEraseBackground(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnSizing(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnScroll(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnGo(WORD wNotifyCode, WORD wID, HWND hwnd, BOOL& bHandled);
