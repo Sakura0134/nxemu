@@ -72,7 +72,7 @@ public:
         svcGetLastThreadInfo = 0x2F,
     };
 
-    enum GetInfoType : uint64_t
+    enum GetInfoType
     {
         AllowedCpuIdBitmask = 0,
         AllowedThreadPrioBitmask = 1,
@@ -113,6 +113,7 @@ public:
     ResultCode ConnectToNamedPort(CSystemThreadMemory & ThreadMemory, uint32_t & SessionHandle, uint64_t NameAddr);
     ResultCode GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId);
     ResultCode GetThreadPriority(uint32_t & Priority, uint32_t handle);
+    ResultCode MapMemory(uint64_t DstAddress, uint64_t SrcAddress, uint64_t Size);
     ResultCode QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t MemoryInfoAddr, uint64_t QueryAddr);
     ResultCode SendSyncRequest(uint32_t Handle);
     ResultCode SetHeapSize(uint64_t & HeapAddress, uint64_t size);
@@ -132,6 +133,7 @@ private:
     uint32_t CreateNewThreadID();
     static const char * GetInfoTypeName(GetInfoType Id);
 
+    CriticalSection m_CS;
     CSwitchSystem & m_System;
     CProcessMemory & m_ProcessMemory;
     KernelObjectMap m_KernelObjects;

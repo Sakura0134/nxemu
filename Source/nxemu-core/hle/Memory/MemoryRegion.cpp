@@ -1,6 +1,6 @@
 #include <nxemu-core\hle\Memory\MemoryRegion.h>
 
-MemoryRegion::MemoryRegion() :
+CMemoryRegion::CMemoryRegion() :
     m_Address(0),
     m_Size(0),
     m_Memory(nullptr),
@@ -11,7 +11,7 @@ MemoryRegion::MemoryRegion() :
 {
 }
 
-MemoryRegion::MemoryRegion(uint64_t Addr, uint64_t Size, uint8_t * Memory, MemoryState State, MemoryType Type, MemoryAttribute Attribute, MemoryPermission Permission) :
+CMemoryRegion::CMemoryRegion(uint64_t Addr, uint64_t Size, uint8_t * Memory, MemoryState State, MemoryType Type, MemoryAttribute Attribute, MemoryPermission Permission) :
     m_Address(Addr),
     m_Size(Size),
     m_Memory(Memory),
@@ -22,7 +22,7 @@ MemoryRegion::MemoryRegion(uint64_t Addr, uint64_t Size, uint8_t * Memory, Memor
 {
 }
 
-MemoryRegion::MemoryRegion(const MemoryRegion&rhs) :
+CMemoryRegion::CMemoryRegion(const CMemoryRegion&rhs) :
     m_Address(rhs.m_Address),
     m_Size(rhs.m_Size),
     m_Memory(rhs.m_Memory),
@@ -33,7 +33,7 @@ MemoryRegion::MemoryRegion(const MemoryRegion&rhs) :
 {
 }
 
-MemoryRegion& MemoryRegion::operator=(const MemoryRegion&rhs)
+CMemoryRegion & CMemoryRegion::operator=(const CMemoryRegion & rhs)
 {
     m_Address = rhs.m_Address;
     m_Size = rhs.m_Size;

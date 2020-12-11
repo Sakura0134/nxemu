@@ -76,6 +76,9 @@ void CSystemThread::ServiceCall(uint32_t index)
             Reg.Set64(Arm64Opcode::ARM64_REG_X1, HeapAddress);
         }
         break;
+    case CHleKernel::svcMapMemory:
+        Result = HleKernel.MapMemory(Reg.Get64(Arm64Opcode::ARM64_REG_X0), Reg.Get64(Arm64Opcode::ARM64_REG_X1), Reg.Get64(Arm64Opcode::ARM64_REG_X2));
+        break;
     case CHleKernel::svcQueryMemory:
         Result = HleKernel.QueryMemory(m_ThreadMemory, Reg.Get64(Arm64Opcode::ARM64_REG_X0), Reg.Get64(Arm64Opcode::ARM64_REG_X2));
         break;

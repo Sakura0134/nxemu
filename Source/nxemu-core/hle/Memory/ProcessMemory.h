@@ -27,6 +27,7 @@ public:
 
     bool GetMemoryInfo(uint64_t Address, QueryMemoryInfo & Info);
     uint8_t * MapMemory(uint64_t Address, uint32_t Size, MemoryPermission Perm, MemoryType Type);
+	bool MirrorMemory(uint64_t DstAddress, uint64_t Address, uint64_t Size);
     bool Read32(uint64_t Addr, uint32_t & value);
     bool Read64(uint64_t Addr, uint64_t & value);
     bool ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len);

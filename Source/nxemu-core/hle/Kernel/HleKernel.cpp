@@ -49,6 +49,7 @@ KernelObjectMap CHleKernel::KernelObjects(void)
 ResultCode CHleKernel::CloseHandle(uint32_t Handle)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (Handle: 0x%X)", Handle);
+    CGuard Guard(m_CS);
 
     KernelObjectMap::iterator itr = m_KernelObjects.find(Handle);
     if (itr != m_KernelObjects.end())
@@ -67,6 +68,7 @@ ResultCode CHleKernel::CloseHandle(uint32_t Handle)
 ResultCode CHleKernel::ConnectToNamedPort(CSystemThreadMemory & ThreadMemory, uint32_t & result, uint64_t NameAddr)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (NameAddr: 0x%I64X)", NameAddr);
+    CGuard Guard(m_CS);
 
     std::string Name;
     if (!ThreadMemory.ReadCString(NameAddr, Name))
@@ -103,6 +105,7 @@ ResultCode CHleKernel::ConnectToNamedPort(CSystemThreadMemory & ThreadMemory, ui
 ResultCode CHleKernel::GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (InfoType: %s handle: 0x%X SubId: 0x%I64X)", GetInfoTypeName(InfoType), handle, SubId);
+    CGuard Guard(m_CS);
     ResultCode Result = RESULT_SUCCESS;
 
     if (InfoType == RandomEntropy)
@@ -170,6 +173,8 @@ ResultCode CHleKernel::GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t h
 ResultCode CHleKernel::GetThreadPriority(uint32_t & Priority, uint32_t handle)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (Handle: 0x%X)", handle);
+    CGuard Guard(m_CS);
+
     KernelObjectMap::const_iterator itr = m_KernelObjects.find(handle);
     if (itr != m_KernelObjects.end() && itr->second->GetHandleType() == CKernelObject::HandleType::Thread)
     {
@@ -178,6 +183,19 @@ ResultCode CHleKernel::GetThreadPriority(uint32_t & Priority, uint32_t handle)
         return RESULT_SUCCESS;
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
+    return RESULT_SUCCESS;
+}
+
+ResultCode CHleKernel::MapMemory(uint64_t DstAddress, uint64_t SrcAddress, uint64_t Size)
+{
+    WriteTrace(TraceHleKernel, TraceDebug, "Start (DstAddress: 0x%I64X SrcAddress: 0x%I64X Size: 0x%I64X)", DstAddress, SrcAddress, Size);
+    CGuard Guard(m_CS);
+
+    if (!m_ProcessMemory.MirrorMemory(DstAddress, SrcAddress, Size))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return RESULT_SUCCESS;
+    }
     return RESULT_SUCCESS;
 }
 
@@ -246,14 +264,20 @@ ResultCode CHleKernel::ProcessSyncControl(CService * Service, CIPCRequest & Requ
 ResultCode CHleKernel::SendSyncRequest(uint32_t Handle)
 {
     WriteTrace(TraceHleKernel, TraceDebug, "Start (Handle: 0x%X)", Handle);
-    KernelObjectMap::iterator itr = m_KernelObjects.find(Handle);
-    if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != CKernelObject::HandleType::Service)
+    CService * Service = nullptr;
+    
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        WriteTrace(TraceHleKernel, TraceNotice, "Failed to find serivce for handle (Handle: 0x%X)", Handle);
-        return RESULT_SUCCESS;
+        CGuard Guard(m_CS);
+
+        KernelObjectMap::iterator itr = m_KernelObjects.find(Handle);
+        if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != CKernelObject::HandleType::Service)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            WriteTrace(TraceHleKernel, TraceNotice, "Failed to find serivce for handle (Handle: 0x%X)", Handle);
+            return RESULT_SUCCESS;
+        }
+        Service = itr->second->GetServicePtr();
     }
-    CService * Service = itr->second->GetServicePtr();
     CSystemThread * CurrentThread = m_System.SystemThread()->GetSystemThreadPtr();
     uint64_t tlsAddr = CurrentThread->TlsAddress();
     CIPCRequest Request(m_System, tlsAddr, Service);
@@ -282,6 +306,8 @@ ResultCode CHleKernel::SendSyncRequest(uint32_t Handle)
 ResultCode CHleKernel::SetHeapSize(uint64_t & HeapAddress, uint64_t size)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (size: 0x%I64X)", size);
+    CGuard Guard(m_CS);
+
     if ((size % 0x200000) != 0 || size >= 0x200000000)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -301,6 +327,8 @@ ResultCode CHleKernel::SetHeapSize(uint64_t & HeapAddress, uint64_t size)
 ResultCode CHleKernel::SignalProcessWideKey(uint64_t ptr, uint32_t value)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (ptr: 0x%I64X value: 0x%X)", ptr, value);
+    CGuard Guard(m_CS);
+
     typedef std::vector<CSystemThread*> ThreadList;
 
     ThreadList WaitingThreads;
@@ -383,6 +411,7 @@ ResultCode CHleKernel::SignalProcessWideKey(uint64_t ptr, uint32_t value)
 ResultCode CHleKernel::QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t MemoryInfoAddr, uint64_t QueryAddr)
 {
     WriteTrace(TraceServiceCall, TraceVerbose, "Start (MemoryInfoAddr: 0x%I64X QueryAddr: 0x%I64X)", MemoryInfoAddr, QueryAddr);
+    CGuard Guard(m_CS);
 
     QueryMemoryInfo Info = { 0 };
     if (!ThreadMemory.GetMemoryInfo(QueryAddr, Info))
@@ -412,6 +441,8 @@ ResultCode CHleKernel::QueryMemory(CSystemThreadMemory & ThreadMemory, uint64_t 
 
 bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId)
 {
+    CGuard Guard(m_CS);
+
     ThreadHandle = GetNewHandle();
     CKernelObjectPtr ThreadObject(new CSystemThread(m_System, m_ProcessMemory, name, entry_point, ThreadHandle, CreateNewThreadID(), ThreadContext, StackTop, StackSize, Priority, ProcessorId));
     if (ThreadObject.get() == nullptr)
@@ -429,6 +460,8 @@ bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uin
 
 ResultCode CHleKernel::WaitSynchronization(CSystemThreadMemory & ThreadMemory, uint32_t & HandleIndex, uint64_t HandlesPtr, uint32_t HandlesNum, uint64_t Timeout)
 {
+    CGuard Guard(m_CS);
+
     if (!ThreadMemory.IsValidAddress(HandlesPtr))
     {
         return ERR_INVALID_POINTER;

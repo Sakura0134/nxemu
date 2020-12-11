@@ -157,13 +157,13 @@ bool CSystemThreadMemory::FindAddressMemory(uint64_t Addr, uint32_t len, void *&
     MemoryRegionMap::const_iterator itr = ProcessMemory.lower_bound(Addr);
     if (itr != ProcessMemory.end() && Addr >= itr->second.Address() && Addr <= itr->first)
     {
-        if (itr->first < Addr + len)
+        if (itr->first + 1 < Addr + len)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return false;
         }
 
-        const MemoryRegion & region = itr->second;
+        const CMemoryRegion & region = itr->second;
         switch (region.State())
         {
         case MemoryState_AllocatedMemory:

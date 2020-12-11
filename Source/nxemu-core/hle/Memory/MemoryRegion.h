@@ -7,15 +7,15 @@
 
 class CProcessMemory;
 
-class MemoryRegion
+class CMemoryRegion
 {
     friend CProcessMemory;
 
 public:
-    MemoryRegion();
-    MemoryRegion(uint64_t Addr, uint64_t Size, uint8_t * Memory, MemoryState State, MemoryType Type, MemoryAttribute Attribute, MemoryPermission Permission);
-    MemoryRegion(const MemoryRegion&);
-    MemoryRegion& operator=(const MemoryRegion&);
+    CMemoryRegion();
+    CMemoryRegion(uint64_t Addr, uint64_t Size, uint8_t * Memory, MemoryState State, MemoryType Type, MemoryAttribute Attribute, MemoryPermission Permission);
+    CMemoryRegion(const CMemoryRegion&);
+    CMemoryRegion& operator=(const CMemoryRegion&);
 
     inline uint64_t Address(void) const { return m_Address; };
     inline uint64_t Size(void) const { return m_Size; };
@@ -35,5 +35,5 @@ private:
     MemoryPermission m_Permission;
 };
 
-typedef std::map<uint64_t, MemoryRegion> MemoryRegionMap;
+typedef std::map<uint64_t, CMemoryRegion> MemoryRegionMap;
 typedef MemoryRegionMap::iterator MemoryRegionMapIter;

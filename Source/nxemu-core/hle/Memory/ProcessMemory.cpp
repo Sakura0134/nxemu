@@ -77,7 +77,7 @@ bool CProcessMemory::Initialize(ProgramAddressSpaceType Type, bool Is64bit)
     WriteTrace(TraceMemory, TraceDebug, "TlsIoRegionBase: 0x%I64X MapRegionSize: 0x%I64X", m_TlsIoRegionBase, m_TlsIoRegionSize);
 
     uint64_t AddressSpaceEnd = 1ULL << m_AddressSpaceWidth;
-    MemoryRegion InitialMemRegion(0, AddressSpaceEnd, nullptr, MemoryState_None, MemoryType_Unmapped, MemoryAttr_None, MemoryPermission_Unmapped);
+    CMemoryRegion InitialMemRegion(0, AddressSpaceEnd, nullptr, MemoryState_None, MemoryType_Unmapped, MemoryAttr_None, MemoryPermission_Unmapped);
     WriteTrace(TraceMemory, TraceDebug, "Add base address space (Address: 0x%I64X Size: 0x%I64X)", InitialMemRegion.Address(), InitialMemRegion.Size());
     m_MemoryMap.insert(MemoryRegionMap::value_type(AddressSpaceEnd - 1, InitialMemRegion));
     WriteTrace(TraceMemory, TraceInfo, "Done (res: true)");
@@ -100,7 +100,7 @@ bool CProcessMemory::GetMemoryInfo(uint64_t Address, QueryMemoryInfo & Info)
     MemoryRegionMap::const_iterator itr = m_MemoryMap.lower_bound(Address);
     if (itr != m_MemoryMap.end() && Address >= itr->second.Address() && (Address & ~3) + 4 < itr->first)
     {
-        const MemoryRegion & Region = itr->second;
+        const CMemoryRegion & Region = itr->second;
         Info.BaseAddress = Region.Address();
         Info.Size = Region.Size();
         Info.Type = Region.Type();
@@ -156,7 +156,7 @@ uint8_t * CProcessMemory::MapMemory(uint64_t Address, uint32_t Size, MemoryPermi
         WriteTrace(TraceMemory, TraceInfo, "Done (res: nullptr)");
         return nullptr;
     }
-    MemoryRegion & Region = RegionItr->second;
+    CMemoryRegion & Region = RegionItr->second;
     uint8_t * Memory = (uint8_t *)AllocateAddressSpace(Size);
     if (Memory == nullptr || CommitMemory(Memory, Size, MEM_READWRITE) == nullptr)
     {
@@ -171,6 +171,59 @@ uint8_t * CProcessMemory::MapMemory(uint64_t Address, uint32_t Size, MemoryPermi
     Region.m_Permission = Perm;
     WriteTrace(TraceMemory, TraceInfo, "Done (Memory: 0x%I64X)", Memory);
     return Memory;
+}
+
+bool CProcessMemory::MirrorMemory(uint64_t DstAddress, uint64_t SrcAddress, uint64_t Size)
+{
+    MemoryRegionMapIter OrigDstRegionItr;
+    if (!FindMemoryRegion(DstAddress, OrigDstRegionItr))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+    if (OrigDstRegionItr->second.State() != MemoryState_None || OrigDstRegionItr->second.Type() != MemoryAttr_None)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+
+    MemoryRegionMapIter OrigSrcRegionItr;
+    if (!FindMemoryRegion(SrcAddress, OrigSrcRegionItr))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+    if (OrigSrcRegionItr->second.State() != MemoryState_AllocatedMemory || 
+        (OrigSrcRegionItr->second.Type() != MemoryType_Heap && OrigSrcRegionItr->second.Type() != MemoryType_CodeMutable))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+
+    MemoryRegionMapIter SrcRegionItr;
+    if (!CreateMemoryRegion(SrcAddress, Size, SrcRegionItr))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return nullptr;
+    }
+
+    MemoryRegionMapIter DstRegionItr;
+    if (!CreateMemoryRegion(DstAddress, Size, DstRegionItr))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return nullptr;
+    }
+
+    CMemoryRegion & SrcRegion = SrcRegionItr->second;
+    CMemoryRegion & DstRegion = DstRegionItr->second;
+    DstRegion.m_Attribute = SrcRegion.m_Attribute;
+    DstRegion.m_Type = SrcRegion.m_Type;
+    DstRegion.m_Permission = SrcRegion.m_Permission;
+    DstRegion.m_State = MemoryState_UnmanagedMemory;
+    DstRegion.m_Memory = SrcRegion.m_Memory;
+    DstRegion.m_Permission = MemoryPermission_ReadWrite;
+    SrcRegion.m_Permission = MemoryPermission_None;
+    return true;
 }
 
 bool CProcessMemory::Read32(uint64_t Addr, uint32_t & value)
@@ -204,7 +257,7 @@ bool CProcessMemory::ReadCString(uint64_t Addr, std::string & value)
     MemoryRegionMapIter itr;
     if (FindMemoryRegion(Addr, itr))
     {
-        MemoryRegion & Region = itr->second;
+        CMemoryRegion & Region = itr->second;
         uint64_t StartIndex = Addr - Region.Address();
         for (uint64_t index = StartIndex, endIndex = itr->first - Region.Address(); index < endIndex; index++)
         {
@@ -348,7 +401,7 @@ bool CProcessMemory::FindAddressMemory(uint64_t Address, uint32_t len, void *& b
     MemoryRegionMapIter itr;
     if (FindMemoryRegion(Address,itr))
     {
-        MemoryRegion & Region = itr->second;
+        CMemoryRegion & Region = itr->second;
         if ((Region.Address() + Region.Size()) < Address + len)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -365,8 +418,8 @@ bool CProcessMemory::SplitMemoryRegion(MemoryRegionMapIter &SplitRegionItr, uint
 {
     WriteTrace(TraceMemory, TraceVerbose, "Start (SplitRegionItr Address: 0x%I64X Size: 0x%I64X Offset: 0x%I64X)", SplitRegionItr->second.Address(), SplitRegionItr->second.Size(), Offset);
 
-    MemoryRegion OldRegion = SplitRegionItr->second;
-    MemoryRegion NewRegion = OldRegion;
+    CMemoryRegion OldRegion = SplitRegionItr->second;
+    CMemoryRegion NewRegion = OldRegion;
 
     if (Offset == 0)
     {
