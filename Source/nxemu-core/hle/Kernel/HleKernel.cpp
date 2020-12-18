@@ -28,12 +28,38 @@ CHleKernel::~CHleKernel()
 {
 }
 
+ResultCode CHleKernel::CreateThread(uint32_t & ThreadHandle, uint64_t EntryPoint, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "Start (EntryPoint: 0x%I64X ThreadContext: 0x%I64X StackTop: 0x%I64X StackSize: 0x%X Priority: 0x%X ProcessorId: 0x%X)", EntryPoint, ThreadContext, StackTop, StackSize, Priority, ProcessorId);
+    CGuard Guard(m_CS);
+
+    if (Priority > 0x3F)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return RESULT_SUCCESS;
+    }
+
+    uint32_t Handle = GetNewHandle();
+    std::string name = stdstr_f("Thread[%X-%X]", EntryPoint, Handle);
+    CSystemThread * thread = new CSystemThread(m_System, m_ProcessMemory, name.c_str(), EntryPoint, Handle, CreateNewThreadID(), ThreadContext, StackTop, StackSize, Priority, ProcessorId);
+    if (thread == nullptr)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return RESULT_SUCCESS;
+    }
+
+    m_KernelObjects.insert(KernelObjectMap::value_type(Handle, thread));
+    ThreadHandle = Handle;
+    return RESULT_SUCCESS;
+}
+
 uint32_t CHleKernel::AddKernelObject(CKernelObject * Object)
 {
     if (Object == nullptr)
     {
         return (uint32_t)-1;
     }
+    CGuard Guard(m_CS);
     uint32_t Handle = GetNewHandle();
     m_KernelObjects.insert(KernelObjectMap::value_type(Handle, Object));
     return Handle;
@@ -41,6 +67,7 @@ uint32_t CHleKernel::AddKernelObject(CKernelObject * Object)
 
 KernelObjectMap CHleKernel::KernelObjects(void)
 {
+    CGuard Guard(m_CS);
     KernelObjectMap Objects;
     Objects = m_KernelObjects;
     return Objects;

@@ -82,6 +82,13 @@ void CSystemThread::ServiceCall(uint32_t index)
     case CHleKernel::svcQueryMemory:
         Result = HleKernel.QueryMemory(m_ThreadMemory, Reg.Get64(Arm64Opcode::ARM64_REG_X0), Reg.Get64(Arm64Opcode::ARM64_REG_X2));
         break;
+    case CHleKernel::svcCreateThread:
+        {
+            uint32_t ThreadHandle = Reg.Get32(Arm64Opcode::ARM64_REG_W1);
+            Result = HleKernel.CreateThread(ThreadHandle, Reg.Get64(Arm64Opcode::ARM64_REG_X1), Reg.Get64(Arm64Opcode::ARM64_REG_X2), Reg.Get64(Arm64Opcode::ARM64_REG_X3), 0, Reg.Get32(Arm64Opcode::ARM64_REG_W4), Reg.Get32(Arm64Opcode::ARM64_REG_W5));
+            Reg.Set32(Arm64Opcode::ARM64_REG_W1, ThreadHandle);
+        }
+        break;
     case CHleKernel::svcGetThreadPriority:
         {
             uint32_t Priority = Reg.Get32(Arm64Opcode::ARM64_REG_W1);
