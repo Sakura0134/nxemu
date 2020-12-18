@@ -196,6 +196,11 @@ uint32_t CRegisters::GetFPCR() const
     return m_fpcr;
 }
 
+uint32_t CRegisters::GetFPSR() const
+{
+    return m_fpsr;
+}
+
 void CRegisters::SetConditionFlags(bool n, bool z, bool c, bool v)
 {
     m_pstate.N = n;
