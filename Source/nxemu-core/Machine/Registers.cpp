@@ -191,6 +191,11 @@ PSTATE CRegisters::GetPstate() const
     return m_pstate;
 }
 
+uint32_t CRegisters::GetFPCR() const
+{
+    return m_fpcr;
+}
+
 void CRegisters::SetConditionFlags(bool n, bool z, bool c, bool v)
 {
     m_pstate.N = n;

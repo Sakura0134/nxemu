@@ -1725,6 +1725,9 @@ void Arm64Op::Mrs(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         case Arm64Opcode::A64SysReg_CNTPCT_EL0:
             Reg.Set64(Op.Operand(0).Reg, Cpu.GetCycleCount());
             break;
+        case Arm64Opcode::A64SysReg_FPCR:
+            Reg.Set64(Op.Operand(0).Reg, Reg.GetFPCR());
+            break;
         default:
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
