@@ -189,6 +189,11 @@ void Arm64Op::Asr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     {
         Reg.Set64(Op.Operand(0).Reg, (int64_t)Reg.Get64(Op.Operand(1).Reg) >> Op.Operand(2).ImmVal);
     }
+    else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM &&
+        Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
+    {
+        Reg.Set32(Op.Operand(0).Reg, (int32_t)Reg.Get32(Op.Operand(1).Reg) >> Op.Operand(2).ImmVal);
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
