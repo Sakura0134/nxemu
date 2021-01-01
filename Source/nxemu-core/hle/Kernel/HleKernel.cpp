@@ -59,7 +59,7 @@ ResultCode CHleKernel::StartThread(uint32_t ThreadHandle)
     CGuard Guard(m_CS);
 
     KernelObjectMap::const_iterator itr = m_KernelObjects.find(ThreadHandle);
-    if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != CKernelObject::Thread)
+    if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != KernelObjectHandleType_Thread)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return ERR_INVALID_HANDLE;
@@ -225,7 +225,7 @@ ResultCode CHleKernel::GetThreadPriority(uint32_t & Priority, uint32_t handle)
     CGuard Guard(m_CS);
 
     KernelObjectMap::const_iterator itr = m_KernelObjects.find(handle);
-    if (itr != m_KernelObjects.end() && itr->second->GetHandleType() == CKernelObject::HandleType::Thread)
+    if (itr != m_KernelObjects.end() && itr->second->GetHandleType() == KernelObjectHandleType_Thread)
     {
         Priority = itr->second->GetSystemThreadPtr()->GetPriority();
         WriteTrace(TraceHleKernel, TraceInfo, "Done (Priority: 0x%X)", Priority);
@@ -319,7 +319,7 @@ ResultCode CHleKernel::SendSyncRequest(uint32_t Handle)
         CGuard Guard(m_CS);
 
         KernelObjectMap::iterator itr = m_KernelObjects.find(Handle);
-        if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != CKernelObject::HandleType::Service)
+        if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != KernelObjectHandleType_Service)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
             WriteTrace(TraceHleKernel, TraceNotice, "Failed to find serivce for handle (Handle: 0x%X)", Handle);
@@ -438,7 +438,7 @@ ResultCode CHleKernel::SignalProcessWideKey(uint64_t ptr, uint32_t value)
 
         uint32_t OwnerHandle = MutexVal & 0xBFFFFFFF;
         KernelObjectMap::iterator OwnerThread = m_KernelObjects.find(OwnerHandle);
-        if (OwnerThread == m_KernelObjects.end() || OwnerThread->second->GetHandleType() != CKernelObject::HandleType::Thread)
+        if (OwnerThread == m_KernelObjects.end() || OwnerThread->second->GetHandleType() != KernelObjectHandleType_Thread)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return RESULT_SUCCESS;
@@ -531,7 +531,7 @@ ResultCode CHleKernel::WaitSynchronization(CSystemThreadMemory & ThreadMemory, u
             return ERR_INVALID_HANDLE;
         }
         KernelObjectMap::const_iterator itr = m_KernelObjects.find(Handle);
-        if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != CKernelObject::HandleType::Event)
+        if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != KernelObjectHandleType_Event)
         {
             return ERR_INVALID_HANDLE;
         }

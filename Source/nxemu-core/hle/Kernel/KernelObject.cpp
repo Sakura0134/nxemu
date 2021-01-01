@@ -87,7 +87,7 @@ void CKernelObjectPtr::ReleaseRef()
     {
         switch (m_Object->GetHandleType())
         {
-        case CKernelObject::Service:
+        case KernelObjectHandleType_Service:
             delete m_Object->GetServicePtr();
             break;
         default:

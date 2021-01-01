@@ -9,7 +9,7 @@ CDebuggerUI::CDebuggerUI() :
     m_StepEvent(false),
     m_DebugThread(nullptr)
 {
-	g_Settings->RegisterChangeCB(Debugger_SteppingOps, this, (CSettings::SettingChangedFunc)SteppingOpsChanged);
+    g_Settings->RegisterChangeCB(Debugger_SteppingOps, this, (CSettings::SettingChangedFunc)SteppingOpsChanged);
 }
 
 CDebuggerUI::~CDebuggerUI()
@@ -60,7 +60,7 @@ void CDebuggerUI::SetDebugThread(void)
         for (KernelObjectMap::const_iterator itr = KernelObjects.begin(); itr != KernelObjects.end(); itr++)
         {
             CKernelObject * Object = itr->second.get();
-            if (Object->GetHandleType() != CKernelObject::Thread)
+            if (Object->GetHandleType() != KernelObjectHandleType_Thread)
             {
                 continue;
             }
@@ -83,7 +83,7 @@ void CDebuggerUI::SetDebugThread(void)
         for (KernelObjectMap::const_iterator itr = KernelObjects.begin(); itr != KernelObjects.end(); itr++)
         {
             CKernelObject * Object = itr->second.get();
-            if (Object->GetHandleType() != CKernelObject::Thread)
+            if (Object->GetHandleType() != KernelObjectHandleType_Thread)
             {
                 continue;
             }

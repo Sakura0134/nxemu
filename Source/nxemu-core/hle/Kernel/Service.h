@@ -1,8 +1,10 @@
 #pragma once
 #include <nxemu-core\hle\Kernel\KernelObject.h>
+#include <nxemu-core\hle\Kernel\ResultCode.h>
 #include <nxemu-core\hle\Services\IpcRequest.h>
 #include <map>
 #include <string>
+#include <memory>
 
 class CSwitchSystem;
 
@@ -33,7 +35,7 @@ private:
     CService(const CService&);
     CService& operator=(const CService&);
 	
-    HandleType GetHandleType() const { return Service; }
+    KernelObjectHandleType GetHandleType() const { return KernelObjectHandleType_Service; }
     CService * GetServicePtr(void) { return this; }
 
 	bool m_Domain;

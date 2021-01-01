@@ -52,7 +52,7 @@ private:
     CSystemThread(const CSystemThread&);
     CSystemThread& operator=(const CSystemThread&);
 
-    HandleType GetHandleType() const { return Thread; }
+    KernelObjectHandleType GetHandleType() const { return KernelObjectHandleType_Thread; }
     CSystemThread * GetSystemThreadPtr(void) { return this; }
 
     void EmulationThread(void);

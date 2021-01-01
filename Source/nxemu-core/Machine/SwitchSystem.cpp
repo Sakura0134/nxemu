@@ -31,7 +31,7 @@ void CSwitchSystem::StartEmulation(void)
     KernelObjectMap KernelObjects = m_Kernel.KernelObjects();
     for (KernelObjectMap::iterator itr = KernelObjects.begin(); itr != KernelObjects.end(); itr++)
     {
-        if (itr->second->GetHandleType() != CKernelObject::Thread)
+        if (itr->second->GetHandleType() != KernelObjectHandleType_Thread)
         {
             continue;
         }

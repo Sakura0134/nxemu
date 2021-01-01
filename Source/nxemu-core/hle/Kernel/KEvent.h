@@ -15,7 +15,7 @@ private:
     KEvent(const KEvent&);            // Disable copy constructor
     KEvent& operator=(const KEvent&); // Disable assignment
 
-    HandleType GetHandleType() const { return Event; }
+    KernelObjectHandleType GetHandleType() const { return KernelObjectHandleType_Event; }
     KEvent * GetKEventPtr(void) { return this; }
 
     bool m_Signaled;

@@ -7,29 +7,29 @@ class CSystemThread;
 class CService;
 class KEvent;
 
+enum KernelObjectHandleType
+{
+    KernelObjectHandleType_Unknown,
+    KernelObjectHandleType_Thread,
+    KernelObjectHandleType_Service,
+    KernelObjectHandleType_Event,
+};
+
 class CKernelObject
 {
     friend CKernelObjectPtr;
 
 public:
-    enum HandleType
-    {
-        Unknown,
-        Thread,
-        Service,
-        Event,
-    };
-
     CKernelObject(void);
     virtual ~CKernelObject();
 
-    virtual HandleType GetHandleType() const = 0;
+    virtual KernelObjectHandleType GetHandleType() const = 0;
     virtual CSystemThread * GetSystemThreadPtr(void);
     virtual CService * GetServicePtr(void);
     virtual KEvent * GetKEventPtr(void);
 
 private:
-    CKernelObject(const CKernelObject&);				// Disable copy constructor
+    CKernelObject(const CKernelObject&);
     CKernelObject& operator=(const CKernelObject&);		// Disable assignment
 
     uint32_t m_ref;
