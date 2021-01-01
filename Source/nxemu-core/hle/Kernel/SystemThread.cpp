@@ -89,6 +89,9 @@ void CSystemThread::ServiceCall(uint32_t index)
             Reg.Set32(Arm64Opcode::ARM64_REG_W1, ThreadHandle);
         }
         break;
+    case CHleKernel::svcStartThread:
+        Result = HleKernel.StartThread(Reg.Get32(Arm64Opcode::ARM64_REG_W0));
+        break;
     case CHleKernel::svcGetThreadPriority:
         {
             uint32_t Priority = Reg.Get32(Arm64Opcode::ARM64_REG_W1);

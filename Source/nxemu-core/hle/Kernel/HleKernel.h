@@ -119,6 +119,7 @@ public:
     ResultCode SendSyncRequest(uint32_t Handle);
     ResultCode SetHeapSize(uint64_t & HeapAddress, uint64_t size);
     ResultCode SignalProcessWideKey(uint64_t ptr, uint32_t value);
+    ResultCode StartThread(uint32_t ThreadHandle);
     ResultCode WaitSynchronization(CSystemThreadMemory & ThreadMemory, uint32_t & HandleIndex, uint64_t HandlesPtr, uint32_t HandlesNum, uint64_t Timeout);
 
     static const char * SvcGetCallStr(SvcGetCall svcCall);

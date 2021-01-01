@@ -53,6 +53,28 @@ ResultCode CHleKernel::CreateThread(uint32_t & ThreadHandle, uint64_t EntryPoint
     return RESULT_SUCCESS;
 }
 
+ResultCode CHleKernel::StartThread(uint32_t ThreadHandle)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "Start (ThreadHandle: 0x%X)", ThreadHandle);
+    CGuard Guard(m_CS);
+
+    KernelObjectMap::const_iterator itr = m_KernelObjects.find(ThreadHandle);
+    if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != CKernelObject::Thread)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return ERR_INVALID_HANDLE;
+    }
+    CSystemThread * thread = itr->second->GetSystemThreadPtr();
+    if (thread->GetState() != CSystemThread::ThreadState_Created)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return ERR_INVALID_HANDLE;
+    }
+    thread->SetState(CSystemThread::ThreadState_Ready);
+    thread->Start();
+    return RESULT_SUCCESS;
+}
+
 uint32_t CHleKernel::AddKernelObject(CKernelObject * Object)
 {
     if (Object == nullptr)
