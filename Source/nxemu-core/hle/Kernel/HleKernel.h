@@ -11,6 +11,57 @@
 
 class CSwitchSystem;
 
+enum SvcCall
+{
+    SvcCall_SetHeapSize = 0x01,
+    SvcCall_SetMemoryPermission = 0x02,
+    SvcCall_SetMemoryAttribute = 0x03,
+    SvcCall_MapMemory = 0x04,
+    SvcCall_UnmapMemory = 0x05,
+    SvcCall_QueryMemory = 0x06,
+    SvcCall_ExitProcess = 0x07,
+    SvcCall_CreateThread = 0x08,
+    SvcCall_StartThread = 0x09,
+    SvcCall_ExitThread = 0x0A,
+    SvcCall_SleepThread = 0x0B,
+    SvcCall_GetThreadPriority = 0x0C,
+    SvcCall_SetThreadPriority = 0x0D,
+    SvcCall_GetThreadCoreMask = 0x0E,
+    SvcCall_SetThreadCoreMask = 0x0F,
+    SvcCall_GetCurrentProcessorNumber = 0x10,
+    SvcCall_SignalEvent = 0x11,
+    SvcCall_ClearEvent = 0x12,
+    SvcCall_MapSharedMemory = 0x13,
+    SvcCall_UnmapSharedMemory = 0x14,
+    SvcCall_CreateTransferMemory = 0x15,
+    SvcCall_CloseHandle = 0x16,
+    SvcCall_ResetSignal = 0x17,
+    SvcCall_WaitSynchronization = 0x18,
+    SvcCall_CancelSynchronization = 0x19,
+    SvcCall_ArbitrateLock = 0x1A,
+    SvcCall_ArbitrateUnlock = 0x1B,
+    SvcCall_WaitProcessWideKeyAtomic = 0x1C,
+    SvcCall_SignalProcessWideKey = 0x1D,
+    SvcCall_GetSystemTick = 0x1E,
+    SvcCall_ConnectToNamedPort = 0x1F,
+    SvcCall_SendSyncRequestLight = 0x20,
+    SvcCall_SendSyncRequest = 0x21,
+    SvcCall_SendSyncRequestWithUserBuffer = 0x22,
+    SvcCall_SendAsyncRequestWithUserBuffer = 0x23,
+    SvcCall_GetProcessId = 0x24,
+    SvcCall_GetThreadId = 0x25,
+    SvcCall_Break = 0x26,
+    SvcCall_OutputDebugString = 0x27,
+    SvcCall_ReturnFromException = 0x28,
+    SvcCall_GetInfo = 0x29,
+    SvcCall_FlushEntireDataCache = 0x2A,
+    SvcCall_FlushDataCache = 0x2B,
+    SvcCall_MapPhysicalMemory = 0x2C,
+    SvcCall_UnmapPhysicalMemory = 0x2D,
+    SvcCall_GetDebugFutureThreadInfo = 0x2E,
+    SvcCall_GetLastThreadInfo = 0x2F,
+};
+
 class CHleKernel
 {
 public:
@@ -19,57 +70,6 @@ public:
     enum
     {
         HANDLE_CURRENT_PROCESS = 0xFFFF8001
-    };
-
-    enum SvcGetCall
-    {
-        svcSetHeapSize = 0x01,
-        svcSetMemoryPermission = 0x02,
-        svcSetMemoryAttribute = 0x03,
-        svcMapMemory = 0x04,
-        svcUnmapMemory = 0x05,
-        svcQueryMemory = 0x06,
-        svcExitProcess = 0x07,
-        svcCreateThread = 0x08,
-        svcStartThread = 0x09,
-        svcExitThread = 0x0A,
-        svcSleepThread = 0x0B,
-        svcGetThreadPriority = 0x0C,
-        svcSetThreadPriority = 0x0D,
-        svcGetThreadCoreMask = 0x0E,
-        svcSetThreadCoreMask = 0x0F,
-        svcGetCurrentProcessorNumber = 0x10,
-        svcSignalEvent = 0x11,
-        svcClearEvent = 0x12,
-        svcMapSharedMemory = 0x13,
-        svcUnmapSharedMemory = 0x14,
-        svcCreateTransferMemory = 0x15,
-        svcCloseHandle = 0x16,
-        svcResetSignal = 0x17,
-        svcWaitSynchronization = 0x18,
-        svcCancelSynchronization = 0x19,
-        svcArbitrateLock = 0x1A,
-        svcArbitrateUnlock = 0x1B,
-        svcWaitProcessWideKeyAtomic = 0x1C,
-        svcSignalProcessWideKey = 0x1D,
-        svcGetSystemTick = 0x1E,
-        svcConnectToNamedPort = 0x1F,
-        svcSendSyncRequestLight = 0x20,
-        svcSendSyncRequest = 0x21,
-        svcSendSyncRequestWithUserBuffer = 0x22,
-        svcSendAsyncRequestWithUserBuffer = 0x23,
-        svcGetProcessId = 0x24,
-        svcGetThreadId = 0x25,
-        svcBreak = 0x26,
-        svcOutputDebugString = 0x27,
-        svcReturnFromException = 0x28,
-        svcGetInfo = 0x29,
-        svcFlushEntireDataCache = 0x2A,
-        scvFlushDataCache = 0x2B,
-        svcMapPhysicalMemory = 0x2C,
-        svcUnmapPhysicalMemory = 0x2D,
-        svcGetDebugFutureThreadInfo = 0x2E,
-        svcGetLastThreadInfo = 0x2F,
     };
 
     enum GetInfoType
@@ -122,7 +122,7 @@ public:
     ResultCode StartThread(uint32_t ThreadHandle);
     ResultCode WaitSynchronization(CSystemThreadMemory & ThreadMemory, uint32_t & HandleIndex, uint64_t HandlesPtr, uint32_t HandlesNum, uint64_t Timeout);
 
-    static const char * SvcGetCallStr(SvcGetCall svcCall);
+    static const char * GetSvcCallStr(SvcCall Call);
 
 private:
     CHleKernel(void);                          // Disable default constructor

@@ -59,70 +59,70 @@ void CSystemThread::EmulationThread(void)
 
 void CSystemThread::ServiceCall(uint32_t index)
 {
-    CHleKernel::SvcGetCall svcCall = (CHleKernel::SvcGetCall)index;
-    WriteTrace(TraceServiceCall, TraceDebug, "Start (SvcCall: %s)", CHleKernel::SvcGetCallStr(svcCall));
+    SvcCall Call = (SvcCall)index;
+    WriteTrace(TraceServiceCall, TraceDebug, "Start (SvcCall: %s)", CHleKernel::GetSvcCallStr(Call));
     IRegisters & Reg = m_CPU->Reg();
     CHleKernel & HleKernel = m_System.HleKernel();
 
     ResultCode Result = RESULT_SUCCESS;
     bool VoidRes = false;
 
-    switch (svcCall)
+    switch (Call)
     {
-    case CHleKernel::svcSetHeapSize:
+    case SvcCall_SetHeapSize:
         {
             uint64_t HeapAddress = 0;
             Result = HleKernel.SetHeapSize(HeapAddress, Reg.Get64(Arm64Opcode::ARM64_REG_X1));
             Reg.Set64(Arm64Opcode::ARM64_REG_X1, HeapAddress);
         }
         break;
-    case CHleKernel::svcMapMemory:
+    case SvcCall_MapMemory:
         Result = HleKernel.MapMemory(Reg.Get64(Arm64Opcode::ARM64_REG_X0), Reg.Get64(Arm64Opcode::ARM64_REG_X1), Reg.Get64(Arm64Opcode::ARM64_REG_X2));
         break;
-    case CHleKernel::svcQueryMemory:
+    case SvcCall_QueryMemory:
         Result = HleKernel.QueryMemory(m_ThreadMemory, Reg.Get64(Arm64Opcode::ARM64_REG_X0), Reg.Get64(Arm64Opcode::ARM64_REG_X2));
         break;
-    case CHleKernel::svcCreateThread:
+    case SvcCall_CreateThread:
         {
             uint32_t ThreadHandle = Reg.Get32(Arm64Opcode::ARM64_REG_W1);
             Result = HleKernel.CreateThread(ThreadHandle, Reg.Get64(Arm64Opcode::ARM64_REG_X1), Reg.Get64(Arm64Opcode::ARM64_REG_X2), Reg.Get64(Arm64Opcode::ARM64_REG_X3), 0, Reg.Get32(Arm64Opcode::ARM64_REG_W4), Reg.Get32(Arm64Opcode::ARM64_REG_W5));
             Reg.Set32(Arm64Opcode::ARM64_REG_W1, ThreadHandle);
         }
         break;
-    case CHleKernel::svcStartThread:
+    case SvcCall_StartThread:
         Result = HleKernel.StartThread(Reg.Get32(Arm64Opcode::ARM64_REG_W0));
         break;
-    case CHleKernel::svcGetThreadPriority:
+    case SvcCall_GetThreadPriority:
         {
             uint32_t Priority = Reg.Get32(Arm64Opcode::ARM64_REG_W1);
             Result = HleKernel.GetThreadPriority(Priority, Priority);
             Reg.Set32(Arm64Opcode::ARM64_REG_W1, Priority);
         }
         break;
-    case CHleKernel::svcCloseHandle:
+    case SvcCall_CloseHandle:
         Result = HleKernel.CloseHandle(Reg.Get32(Arm64Opcode::ARM64_REG_W0));
         break;
-    case CHleKernel::svcWaitSynchronization:
+    case SvcCall_WaitSynchronization:
         {
             uint32_t HandleIndex = Reg.Get32(Arm64Opcode::ARM64_REG_W1);
             Result = HleKernel.WaitSynchronization(m_ThreadMemory, HandleIndex, Reg.Get64(Arm64Opcode::ARM64_REG_X1), Reg.Get32(Arm64Opcode::ARM64_REG_W2), Reg.Get64(Arm64Opcode::ARM64_REG_X3));
             Reg.Set32(Arm64Opcode::ARM64_REG_W1, HandleIndex);
         }
         break;
-    case CHleKernel::svcSignalProcessWideKey:
+    case SvcCall_SignalProcessWideKey:
         Result = HleKernel.SignalProcessWideKey(Reg.Get64(Arm64Opcode::ARM64_REG_X0), Reg.Get32(Arm64Opcode::ARM64_REG_W1));
         break;
-    case CHleKernel::svcConnectToNamedPort:
+    case SvcCall_ConnectToNamedPort:
         {
             uint32_t SessionHandle = Reg.Get32(Arm64Opcode::ARM64_REG_W1);
             Result = HleKernel.ConnectToNamedPort(m_ThreadMemory, SessionHandle, Reg.Get64(Arm64Opcode::ARM64_REG_X1));
             Reg.Set32(Arm64Opcode::ARM64_REG_W1, SessionHandle);
         }
         break;
-    case CHleKernel::svcSendSyncRequest:
+    case SvcCall_SendSyncRequest:
         Result = HleKernel.SendSyncRequest(Reg.Get32(Arm64Opcode::ARM64_REG_W0));
         break;
-    case CHleKernel::svcGetInfo:
+    case SvcCall_GetInfo:
         {
             uint64_t Info = Reg.Get64(Arm64Opcode::ARM64_REG_X1);
             Result = HleKernel.GetInfo(Info, (CHleKernel::GetInfoType)Reg.Get32(Arm64Opcode::ARM64_REG_W1), Reg.Get32(Arm64Opcode::ARM64_REG_W2), Reg.Get64(Arm64Opcode::ARM64_REG_X3));
