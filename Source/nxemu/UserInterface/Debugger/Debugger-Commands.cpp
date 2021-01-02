@@ -3,6 +3,7 @@
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\Machine\CPU\MemoryManagement.h>
 #include <nxemu-core\Machine\CPU\CPUExecutor.h>
+#include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu\UserInterface\Debugger\Debugger-Commands.h>
 #include <nxemu\UserInterface\Debugger\Debugger.h>
 #include <Common\StdString.h>
@@ -357,6 +358,34 @@ LRESULT	CDebugCommandsView::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARA
         m_GoButton.EnableWindow(TRUE);
     }
 
+    CListViewCtrl ThreadList = GetDlgItem(IDC_THREAD_LIST);
+    ThreadList.SetExtendedListViewStyle(LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+    
+    LV_COLUMN  col;
+    col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+    col.fmt = LVCFMT_LEFT;
+
+    col.pszText = _T("");
+    col.cx = 15;
+    col.iSubItem = 0;
+    ThreadList.InsertColumn(0, &col);
+
+    col.pszText = _T("ID");
+    col.cx = 40;
+    col.iSubItem = 1;
+    ThreadList.InsertColumn(1, &col);
+
+    col.pszText = _T("Name");
+    col.cx = 140;
+    col.iSubItem = 2;
+    ThreadList.InsertColumn(2, &col);
+
+    col.pszText = _T("State");
+    col.cx = 60;
+    col.iSubItem = 3;
+    ThreadList.InsertColumn(3, &col);
+
+    RefreshThreadList();
     WindowCreated();
     return TRUE;
 }
@@ -428,7 +457,11 @@ LRESULT CDebugCommandsView::OnCancel(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*
     EndDialog(0);
     return TRUE;
 }
-    
+
+LRESULT	CDebugCommandsView::OnCommandListDblClicked(NMHDR * /*pNMHDR*/)
+{
+    return 0;
+}
 
 LRESULT	CDebugCommandsView::OnSizing(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
@@ -476,4 +509,91 @@ void CDebugCommandsView::WaitingForStepChanged(void)
         m_GoButton.EnableWindow(false);
     }
     m_CommandList.Invalidate();
+}
+
+void CDebugCommandsView::RefreshThreadList(void)
+{
+    if (m_hWnd == NULL)
+    {
+        return;
+    }
+    CListViewCtrl ThreadList = GetDlgItem(IDC_THREAD_LIST);
+    const KernelObjectMap & KernelObjects = g_BaseMachine != NULL ? g_BaseMachine->KernelObjects() : KernelObjectMap();
+    int32_t CurrentIndex = 0;
+    for (KernelObjectMap::const_iterator itr = KernelObjects.begin(); itr != KernelObjects.end(); itr++)
+    {
+        CKernelObject * Object = itr->second.get();
+        if (Object->GetHandleType() != KernelObjectHandleType_Thread)
+        {
+            continue;
+        }
+        CSystemThread * Thread = Object->GetSystemThreadPtr();
+        bool ActiveThread = m_Debugger->m_DebugThread != NULL && Thread->SystemThreadId() == m_Debugger->m_DebugThread->GetSystemThreadPtr()->SystemThreadId();
+        LV_ITEM item = { 0 };
+        item.mask = LVIF_TEXT;
+        item.iItem = CurrentIndex;
+        item.pszText = ActiveThread ? L"*" : L"";
+        item.iSubItem = 0;
+        
+        if (ThreadList.GetItemCount() <= CurrentIndex)
+        {
+            ThreadList.InsertItem(&item);
+        }
+        else
+        {
+            ThreadList.SetItem(&item);
+        }
+
+        ThreadList.SetItemData(item.iItem, Thread->SystemThreadId());
+
+        std::wstring ThreadId = stdstr_f("%X", Thread->SystemThreadId()).ToUTF16();
+        std::wstring ThreadName = stdstr(Thread->GetName()).ToUTF16();
+        std::wstring ThreadState = stdstr(Thread->GetStateName()).ToUTF16();
+
+        item.iSubItem = 1;
+        item.pszText = (LPWSTR)ThreadId.c_str();
+        ThreadList.SetItem(&item);
+
+        item.iSubItem = 2;
+        item.pszText = (LPWSTR)ThreadName.c_str();
+        ThreadList.SetItem(&item);
+
+        item.iSubItem = 3;
+        item.pszText = (LPWSTR)ThreadState.c_str();
+        ThreadList.SetItem(&item);
+
+        CurrentIndex += 1;
+    }
+}
+
+LRESULT	CDebugCommandsView::OnThreadListDblClicked(NMHDR* pNMHDR)
+{
+    const KernelObjectMap & KernelObjects = g_BaseMachine != NULL ? g_BaseMachine->KernelObjects() : KernelObjectMap();
+    CListViewCtrl ThreadList = GetDlgItem(IDC_THREAD_LIST);
+    CListNotify * listNotify = reinterpret_cast<CListNotify*>(pNMHDR);
+
+    if (listNotify->m_nItem >= ThreadList.GetItemCount())
+    {
+        return 0;
+    }
+    uint32_t ThreadId = (uint32_t)ThreadList.GetItemData(listNotify->m_nItem);
+    for (KernelObjectMap::const_iterator itr = KernelObjects.begin(); itr != KernelObjects.end(); itr++)
+    {
+        CKernelObject * Object = itr->second.get();
+        if (Object->GetHandleType() != KernelObjectHandleType_Thread)
+        {
+            continue;
+        }
+        CSystemThread * Thread = Object->GetSystemThreadPtr();
+        if (Thread->SystemThreadId() == ThreadId)
+        {
+            m_Debugger->m_DebugThread = Object;
+            RefreshThreadList();
+            uint64_t PC = Thread->Reg().Get64(Arm64Opcode::ARM64_REG_PC);
+            m_CommandList.ShowAddress(PC, TRUE);
+            m_RegisterTabs.RefreshRegisterTabs();
+            break;
+        }
+    }
+    return 0;
 }

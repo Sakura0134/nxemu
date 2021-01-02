@@ -88,6 +88,8 @@ private:
         COMMAND_HANDLER(IDC_GO_BTN, BN_CLICKED, OnGo)
         COMMAND_HANDLER(IDC_STEP_BTN, BN_CLICKED, OnStep)
         COMMAND_HANDLER(IDCANCEL, BN_CLICKED, OnCancel)
+        NOTIFY_HANDLER_EX(IDC_CMD_LIST, LCN_DBLCLICK, OnCommandListDblClicked)
+        NOTIFY_HANDLER_EX(IDC_THREAD_LIST, NM_DBLCLK, OnThreadListDblClicked)
         NOTIFY_HANDLER_EX(IDC_REG_TABS, TCN_SELCHANGE, OnRegisterTabChange)
         MSG_WM_DESTROY(OnDestroy)
         CHAIN_MSG_MAP(CDialogResize<CDebugCommandsView>)
@@ -97,6 +99,8 @@ private:
     BEGIN_DLGRESIZE_MAP(CDebugCommandsView)
         DLGRESIZE_CONTROL(IDC_GO_BTN, DLSZ_MOVE_X)
         DLGRESIZE_CONTROL(IDC_STEP_BTN, DLSZ_MOVE_X)
+        DLGRESIZE_CONTROL(IDC_THREAD_GROUP, DLSZ_MOVE_X)
+        DLGRESIZE_CONTROL(IDC_THREAD_LIST, DLSZ_MOVE_X)
         DLGRESIZE_CONTROL(IDC_REG_TABS, DLSZ_MOVE_X)
         DLGRESIZE_CONTROL(IDC_CMD_LIST, DLSZ_SIZE_X | DLSZ_SIZE_Y)
         DLGRESIZE_CONTROL(IDC_SCRL_BAR, DLSZ_MOVE_X | DLSZ_SIZE_Y)
@@ -112,11 +116,14 @@ private:
     LRESULT OnGo(WORD wNotifyCode, WORD wID, HWND hwnd, BOOL& bHandled);
     LRESULT OnCancel(WORD wNotifyCode, WORD wID, HWND hwnd, BOOL& bHandled);
     LRESULT OnStep(WORD wNotifyCode, WORD wID, HWND hwnd, BOOL& bHandled);
+    LRESULT	OnCommandListDblClicked(NMHDR* pNMHDR);
+    LRESULT	OnThreadListDblClicked(NMHDR* pNMHDR);
     LRESULT OnRegisterTabChange(NMHDR* pNMHDR);
     LRESULT OnDestroy(void);
 
     void CPUResume();
     void WaitingForStepChanged(void);
+    void RefreshThreadList(void);
 
     CCommandList m_CommandList;
     CScrollBar m_Scrollbar;

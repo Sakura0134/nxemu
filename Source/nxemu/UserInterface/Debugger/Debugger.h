@@ -19,8 +19,10 @@ public:
     inline CKernelObjectPtr DebugThread() { return m_DebugThread; }
 
 private:
-    CDebuggerUI(const CDebuggerUI&);				// Disable copy constructor
-    CDebuggerUI& operator=(const CDebuggerUI&);		// Disable assignment
+    friend CDebugCommandsView;
+
+    CDebuggerUI(const CDebuggerUI&);
+    CDebuggerUI& operator=(const CDebuggerUI&);
 
     static void SteppingOpsChanged(CDebuggerUI * _this);
 

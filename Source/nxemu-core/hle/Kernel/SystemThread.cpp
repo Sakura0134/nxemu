@@ -5,6 +5,7 @@
 #include <nxemu-core\Machine\Interpreter\InterpreterCPU.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
+#include <Common\StdString.h>
 #include <algorithm>
 
 CSystemThread::CSystemThread(CSwitchSystem & System, CProcessMemory &ProcessMemory, const char * Name, uint64_t EntryPoint, uint32_t /*ThreadHandle*/, uint32_t ThreadId, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t /*ProcessorId*/) :
@@ -157,6 +158,22 @@ void CSystemThread::TriggerSyncEvent(void)
 void CSystemThread::WaitSyncEvent(int32_t iWaitTime)
 {
     m_SyncEvent.IsTriggered(iWaitTime);
+}
+
+const char * CSystemThread::GetStateName() const
+{
+    switch (m_State)
+    {
+    case ThreadState_Unknown: return "Unknown";
+    case ThreadState_Created: return "Created";
+    case ThreadState_Ready: return "Ready";
+    case ThreadState_Running: return "Running";
+    case ThreadState_WaitCondVar: return "Wait Cond Var";
+    case ThreadState_WaitMutex: return "Wait Mutex";
+    }
+    static stdstr UnknownSate;
+    UnknownSate.Format("Unknown %d", m_State);
+    return UnknownSate.c_str();
 }
 
 IRegisters& CSystemThread::Reg(void)

@@ -31,9 +31,11 @@ public:
     CSystemThread(CSwitchSystem & System, CProcessMemory &ProcessMemory, const char * Name, uint64_t EntryPoint, uint32_t ThreadHandle, uint32_t ThreadId, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
     ~CSystemThread();
 
+    inline uint32_t SystemThreadId() const { return m_ThreadId; }
     inline CSystemThreadMemory & ThreadMemory() { return m_ThreadMemory; }
     inline uint32_t GetPriority() const { return m_Priority; }
     inline ThreadState GetState() const { return m_State; }
+    inline const char * GetName() const { return m_Name.c_str(); }
     inline const MutexWaitingThreads & GetWaitMutexThreads() const { return m_WaitMutexThreads; }
     inline uint64_t GetCondVarWaitAddress() const { return m_CondVarWaitAddress; }
     inline uint64_t GetMutexWaitAddress() const { return m_MutexWaitAddress; }
@@ -42,6 +44,7 @@ public:
     inline uint64_t TlsAddress() const { return m_TlsAddress; }
     inline uint64_t & CpuTicks() { return m_CpuTicks; }
 
+    const char * GetStateName() const;
     IRegisters & Reg(void);
     void AddMutexWaiter(CSystemThread * thread);
     void RemoveMutexWaiter(CSystemThread * thread);
