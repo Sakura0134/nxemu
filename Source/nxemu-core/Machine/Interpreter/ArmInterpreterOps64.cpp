@@ -572,6 +572,10 @@ void Arm64Op::Cinc(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
+void Arm64Op::Clrex(CInterpreterCPU & /*core*/, const Arm64Opcode & /*Op*/)
+{
+}
+
 void Arm64Op::Clz(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();

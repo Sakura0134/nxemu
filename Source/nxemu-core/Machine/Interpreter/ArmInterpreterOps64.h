@@ -20,6 +20,7 @@ public:
     static void Cbz(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ccmp(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Cinc(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Clrex(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Clz(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Cmn(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Cmp(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
