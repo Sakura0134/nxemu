@@ -95,6 +95,26 @@ KernelObjectMap CHleKernel::KernelObjects(void)
     return Objects;
 }
 
+ResultCode CHleKernel::ArbitrateUnlock(uint64_t MutexAddress)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "Start (MutexAddress: 0x%I64X)", MutexAddress);
+    CGuard Guard(m_CS);
+
+    if ((MutexAddress & 0x3) != 0)
+    {
+        return ERR_INVALID_ADDRESS;
+    }
+
+    CSystemThread * CurrentThread = m_System.SystemThread()->GetSystemThreadPtr();
+    if (CurrentThread == nullptr)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return RESULT_SUCCESS;
+    }
+
+    return m_Mutex.Release(MutexAddress, CurrentThread);
+}
+
 ResultCode CHleKernel::CloseHandle(uint32_t Handle)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (Handle: 0x%X)", Handle);

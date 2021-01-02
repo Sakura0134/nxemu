@@ -111,6 +111,9 @@ void CSystemThread::ServiceCall(uint32_t index)
             Reg.Set32(Arm64Opcode::ARM64_REG_W1, HandleIndex);
         }
         break;
+    case SvcCall_ArbitrateUnlock:
+        Result = HleKernel.ArbitrateUnlock(Reg.Get64(Arm64Opcode::ARM64_REG_X0));
+        break;
     case SvcCall_WaitProcessWideKeyAtomic:
         Result = HleKernel.WaitProcessWideKeyAtomic(Reg.Get64(Arm64Opcode::ARM64_REG_X0), Reg.Get64(Arm64Opcode::ARM64_REG_X1), Reg.Get32(Arm64Opcode::ARM64_REG_W2), Reg.Get64(Arm64Opcode::ARM64_REG_X3));
         break;
