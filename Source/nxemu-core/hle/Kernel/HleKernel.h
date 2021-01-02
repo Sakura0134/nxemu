@@ -108,6 +108,7 @@ public:
     uint32_t AddKernelObject(CKernelObject * object);
     KernelObjectMap KernelObjects(void);
 
+    ResultCode ArbitrateLock(uint32_t Handle, uint64_t MutexAddress, uint32_t Tag);
     ResultCode ArbitrateUnlock(uint64_t MutexAddress);
     ResultCode CloseHandle(uint32_t Handle);
     ResultCode ConnectToNamedPort(CSystemThreadMemory & ThreadMemory, uint32_t & SessionHandle, uint64_t NameAddr);

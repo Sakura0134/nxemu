@@ -95,6 +95,42 @@ KernelObjectMap CHleKernel::KernelObjects(void)
     return Objects;
 }
 
+ResultCode CHleKernel::ArbitrateLock(uint32_t Handle, uint64_t MutexAddress, uint32_t Tag)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "Start (handle: 0x%X, MutexAddress: 0x%I64X, handle: 0x%X)", Handle, MutexAddress, Tag);
+    CGuard Guard(m_CS);
+
+    CSystemThread * CurrentThread = m_System.SystemThread()->GetSystemThreadPtr();
+    if (CurrentThread == nullptr)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return RESULT_SUCCESS;
+    }
+
+    KernelObjectMap::const_iterator itr = m_KernelObjects.find(Handle);
+    if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != KernelObjectHandleType_Thread)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return ERR_INVALID_HANDLE;
+    }
+    CSystemThread * HoldingThread = itr->second->GetSystemThreadPtr();
+
+    itr = m_KernelObjects.find(Tag);
+    if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != KernelObjectHandleType_Thread)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return ERR_INVALID_HANDLE;
+    }
+    CSystemThread * RequestingThread = itr->second->GetSystemThreadPtr();
+    if (RequestingThread != CurrentThread || CurrentThread == HoldingThread)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return RESULT_SUCCESS;
+    }
+
+    return m_Mutex.Acquire(MutexAddress, Handle, HoldingThread, Tag, RequestingThread);
+}
+
 ResultCode CHleKernel::ArbitrateUnlock(uint64_t MutexAddress)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (MutexAddress: 0x%I64X)", MutexAddress);
