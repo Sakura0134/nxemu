@@ -46,6 +46,7 @@
     <ClInclude Include="hle\Kernel\HleKernel.h" />
     <ClInclude Include="hle\Kernel\KernelObject.h" />
     <ClInclude Include="hle\Kernel\KEvent.h" />
+    <ClInclude Include="hle\Kernel\Mutex.h" />
     <ClInclude Include="hle\Kernel\ResultCode.h" />
     <ClInclude Include="hle\Kernel\Service.h" />
     <ClInclude Include="hle\Kernel\SystemThread.h" />
@@ -124,6 +125,7 @@
     <ClCompile Include="hle\Kernel\HleKernel.cpp" />
     <ClCompile Include="hle\Kernel\KernelObject.cpp" />
     <ClCompile Include="hle\Kernel\KEvent.cpp" />
+    <ClCompile Include="hle\Kernel\Mutex.cpp" />
     <ClCompile Include="hle\Kernel\ResultCode.cpp" />
     <ClCompile Include="hle\Kernel\Service.cpp" />
     <ClCompile Include="hle\Kernel\SystemThread.cpp" />

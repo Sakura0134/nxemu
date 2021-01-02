@@ -45,6 +45,7 @@ public:
 
     CKernelObject *get() const;
     CKernelObject *operator->() const;
+    void reset(CKernelObject * Object);
     
     operator CKernelObject *() { return m_Object; }
 

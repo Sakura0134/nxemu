@@ -5,6 +5,7 @@
 #include <nxemu-core\hle\Kernel\SystemThread.h>
 #include <nxemu-core\hle\Kernel\ResultCode.h>
 #include <nxemu-core\hle\Kernel\KEvent.h>
+#include <nxemu-core\hle\Kernel\Mutex.h>
 #include <nxemu-core\hle\Kernel\KernelObject.h>
 #include <nxemu-core\hle\kernel\Service.h>
 #include <Common\stdtypes.h>
@@ -104,8 +105,6 @@ public:
     ~CHleKernel();
 
     bool AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
-    KernelObjectList & ThreadQueue(void) { return m_ThreadQueue; }
-
     uint32_t AddKernelObject(CKernelObject * object);
     KernelObjectMap KernelObjects(void);
 
@@ -120,6 +119,7 @@ public:
     ResultCode SetHeapSize(uint64_t & HeapAddress, uint64_t size);
     ResultCode SignalProcessWideKey(uint64_t ptr, uint32_t value);
     ResultCode StartThread(uint32_t ThreadHandle);
+    ResultCode WaitProcessWideKeyAtomic(uint64_t ptr0, uint64_t ptr1, uint32_t ThreadHandle, uint64_t timeout);
     ResultCode WaitSynchronization(CSystemThreadMemory & ThreadMemory, uint32_t & HandleIndex, uint64_t HandlesPtr, uint32_t HandlesNum, uint64_t Timeout);
 
     static const char * GetSvcCallStr(SvcCall Call);
@@ -139,7 +139,7 @@ private:
     CSwitchSystem & m_System;
     CProcessMemory & m_ProcessMemory;
     KernelObjectMap m_KernelObjects;
-    KernelObjectList m_ThreadQueue;
+    CMutex m_Mutex;
     CServiceManger m_SM;
     NamedPortList m_NamedPorts;
     uint32_t m_NextHandle;

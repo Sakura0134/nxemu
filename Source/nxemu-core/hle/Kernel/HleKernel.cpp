@@ -381,15 +381,23 @@ ResultCode CHleKernel::SignalProcessWideKey(uint64_t ptr, uint32_t value)
     typedef std::vector<CSystemThread*> ThreadList;
 
     ThreadList WaitingThreads;
-    for (size_t i = 0, n = m_ThreadQueue.size(); i < n; i++)
+    for (KernelObjectMap::const_iterator itr = m_KernelObjects.begin(); itr != m_KernelObjects.end(); itr++)
     {
-        CSystemThread * thread = m_ThreadQueue[i]->GetSystemThreadPtr();
-        if (thread->GetCondVarWaitAddress() == ptr)
+        if (itr->second->GetHandleType() != KernelObjectHandleType_Thread)
         {
-            WaitingThreads.push_back(thread);
+            continue;
+        }
+        CSystemThread * Thread = itr->second->GetSystemThreadPtr();
+        if (Thread->GetCondVarWaitAddress() == ptr)
+        {
+            WaitingThreads.push_back(Thread);
         }
     }
-    WriteTrace(TraceHleKernel, TraceDebug, "Found %d waiting on address (0x%I64X)", ptr, value);
+
+    if (WaitingThreads.size() == 0)
+    {
+        return RESULT_SUCCESS;
+    }
 
     struct PrioritySort
     {
@@ -503,8 +511,50 @@ bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uin
     Thread->SetState(CSystemThread::ThreadState_Ready);
     Thread->Reg().Set64(Arm64Opcode::ARM64_REG_X1, ThreadHandle);
     m_KernelObjects.insert(KernelObjectMap::value_type(ThreadHandle, ThreadObject));
-    m_ThreadQueue.push_back(Thread);
     return true;
+}
+
+ResultCode CHleKernel::WaitProcessWideKeyAtomic(uint64_t MutexAddress, uint64_t ConditionAddr, uint32_t ThreadHandle, uint64_t timeout)
+{
+    if ((MutexAddress & 0x3) != 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return ERR_INVALID_ADDRESS;
+    }
+
+    CKernelObjectPtr CurrentThread(nullptr);
+    CSystemThread * Thread = nullptr;
+    {
+        CGuard Guard(m_CS);
+
+        KernelObjectMap::const_iterator itr = m_KernelObjects.find(ThreadHandle);
+        if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != KernelObjectHandleType_Thread)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return RESULT_SUCCESS;
+        }
+        CurrentThread.reset(m_System.SystemThread());
+        if (CurrentThread.get() == nullptr)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return RESULT_SUCCESS;
+        }
+        Thread = CurrentThread->GetSystemThreadPtr();
+        ResultCode ReleaseResult = m_Mutex.Release(MutexAddress, Thread);
+        if (ReleaseResult.IsError())
+        {
+            return ReleaseResult.Raw;
+        }
+        Thread->SetCondVarWaitAddress(ConditionAddr);
+        Thread->SetMutexWaitAddress(MutexAddress);
+        Thread->SetWaitHandle(ThreadHandle);
+        Thread->SetState(CSystemThread::ThreadState_WaitCondVar);
+        Thread->ResetSyncEvent();
+    }
+
+    Thread->WaitSyncEvent(timeout);
+    Thread->SetState(CSystemThread::ThreadState_Running);
+    return RESULT_SUCCESS;
 }
 
 ResultCode CHleKernel::WaitSynchronization(CSystemThreadMemory & ThreadMemory, uint32_t & HandleIndex, uint64_t HandlesPtr, uint32_t HandlesNum, uint64_t Timeout)

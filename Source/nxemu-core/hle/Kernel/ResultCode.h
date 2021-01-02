@@ -32,6 +32,7 @@ union ResultCode
 #pragma warning(pop)
 
 const ResultCode RESULT_SUCCESS(0);
+const ResultCode ERR_INVALID_ADDRESS(ErrorModule::Kernel, 102);
 const ResultCode ERR_INVALID_HANDLE( ErrorModule::Kernel, 114 );
 const ResultCode ERR_INVALID_POINTER( ErrorModule::Kernel, 115 );
 const ResultCode ERR_INVALID_COMBINATION(ErrorModule::Kernel, 116);

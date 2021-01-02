@@ -16,6 +16,7 @@ CSystemThread::CSystemThread(CSwitchSystem & System, CProcessMemory &ProcessMemo
     m_Priority(Priority),
     m_CondVarWaitAddress(0),
     m_MutexWaitAddress(0),
+    m_WaitHandle(0),
     m_TlsAddress(ProcessMemory.GetTlsIoRegionBase()),
     m_CpuTicks(0),
     m_LockOwner(nullptr),
@@ -109,6 +110,9 @@ void CSystemThread::ServiceCall(uint32_t index)
             Reg.Set32(Arm64Opcode::ARM64_REG_W1, HandleIndex);
         }
         break;
+    case SvcCall_WaitProcessWideKeyAtomic:
+        Result = HleKernel.WaitProcessWideKeyAtomic(Reg.Get64(Arm64Opcode::ARM64_REG_X0), Reg.Get64(Arm64Opcode::ARM64_REG_X1), Reg.Get32(Arm64Opcode::ARM64_REG_W2), Reg.Get64(Arm64Opcode::ARM64_REG_X3));
+        break;
     case SvcCall_SignalProcessWideKey:
         Result = HleKernel.SignalProcessWideKey(Reg.Get64(Arm64Opcode::ARM64_REG_X0), Reg.Get32(Arm64Opcode::ARM64_REG_W1));
         break;
@@ -138,6 +142,21 @@ void CSystemThread::ServiceCall(uint32_t index)
         Reg.Set64(Arm64Opcode::ARM64_REG_X0, Result.Raw);
     }
     WriteTrace(TraceServiceCall, TraceDebug, VoidRes ? "Done" : "Done (Result: %s)", ResultCodeStr(Result));
+}
+
+void CSystemThread::ResetSyncEvent(void)
+{
+    m_SyncEvent.Reset();
+}
+
+void CSystemThread::TriggerSyncEvent(void)
+{
+    m_SyncEvent.Trigger();
+}
+
+void CSystemThread::WaitSyncEvent(int32_t iWaitTime)
+{
+    m_SyncEvent.IsTriggered(iWaitTime);
 }
 
 IRegisters& CSystemThread::Reg(void)
@@ -180,6 +199,24 @@ void CSystemThread::AddMutexWaiter(CSystemThread * thread)
     thread->m_LockOwner = this;
 }
 
+void CSystemThread::RemoveMutexWaiter(CSystemThread * thread)
+{
+    if (thread->m_LockOwner != this)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+
+    MutexWaitingThreads::const_iterator itr = std::find(m_WaitMutexThreads.begin(), m_WaitMutexThreads.end(), thread);
+    if (itr == m_WaitMutexThreads.end())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    m_WaitMutexThreads.erase(itr);
+    thread->m_LockOwner = nullptr;
+}
+
 void CSystemThread::SetCondVarWaitAddress(uint64_t CondVarWaitAddress)
 {
     m_CondVarWaitAddress = CondVarWaitAddress;
@@ -190,9 +227,19 @@ void CSystemThread::SetMutexWaitAddress(uint64_t MutexWaitAddress)
     m_MutexWaitAddress = MutexWaitAddress;
 }
 
+void CSystemThread::SetWaitHandle(uint32_t WaitHandle)
+{
+    m_WaitHandle = WaitHandle;
+}
+
 void CSystemThread::SetState(ThreadState state)
 {
     m_State = state;
+}
+
+void CSystemThread::SetLockOwner(CSystemThread * LockThread)
+{
+    m_LockOwner = LockThread;
 }
 
 void CSystemThread::Start(void)

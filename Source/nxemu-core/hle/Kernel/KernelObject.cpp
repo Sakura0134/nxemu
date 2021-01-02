@@ -76,6 +76,16 @@ CKernelObject * CKernelObjectPtr::get() const
     return m_Object;
 }
 
+void CKernelObjectPtr::reset(CKernelObject* Object)
+{
+    ReleaseRef();
+    m_Object = Object;
+    if (m_Object)
+    {
+        m_Object->m_ref += 1;
+    }
+}
+
 void CKernelObjectPtr::ReleaseRef()
 {
     if (m_Object == nullptr)

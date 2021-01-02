@@ -356,6 +356,9 @@
     <ClInclude Include="Machine\SystemTiming.h">
       <Filter>Header Files\Machine</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Kernel\Mutex.h">
+      <Filter>Header Files\hle\Kernel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -564,6 +567,9 @@
     </ClCompile>
     <ClCompile Include="Machine\SystemTiming.cpp">
       <Filter>Source Files\Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Kernel\Mutex.cpp">
+      <Filter>Source Files\hle\Kernel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
