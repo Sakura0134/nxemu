@@ -782,6 +782,10 @@ void Arm64Op::Dmb(CInterpreterCPU & /*Cpu*/, const Arm64Opcode & /*Op*/)
 {
 }
 
+void Arm64Op::Dsb(CInterpreterCPU & /*core*/, const Arm64Opcode & /*Op*/)
+{
+}
+
 void Arm64Op::Eor(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();

@@ -74,6 +74,7 @@ void CInterpreterCPU::Execute()
         case Arm64Opcode::ARM64_INS_CSINV: Arm64Op::Csinv(*this, op); break;
         case Arm64Opcode::ARM64_INS_DUP: Arm64Op::Dup(*this, op); break;
         case Arm64Opcode::ARM64_INS_DMB: Arm64Op::Dmb(*this, op); break;
+        case Arm64Opcode::ARM64_INS_DSB: Arm64Op::Dsb(*this, op); break;
         case Arm64Opcode::ARM64_INS_EOR: Arm64Op::Eor(*this, op); break;
         case Arm64Opcode::ARM64_INS_FMOV: Arm64Op::Fmov(*this, op); break;
         case Arm64Opcode::ARM64_INS_INS: Arm64Op::Ins(*this, op); break;

@@ -29,6 +29,7 @@ public:
     static void Csinc(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Csinv(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Dmb(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Dsb(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Dup(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Eor(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fmov(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
