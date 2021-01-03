@@ -608,7 +608,7 @@ ResultCode CHleKernel::WaitProcessWideKeyAtomic(uint64_t MutexAddress, uint64_t 
         Thread->ResetSyncEvent();
     }
 
-    Thread->WaitSyncEvent(timeout);
+    Thread->WaitSyncEvent((int32_t)timeout);
     Thread->SetState(CSystemThread::ThreadState_Running);
     return RESULT_SUCCESS;
 }

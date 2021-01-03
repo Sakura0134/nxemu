@@ -46,10 +46,36 @@ ResultCode CMutex::Release(uint64_t MutexAddress, CSystemThread * HoldingThread)
 
 ResultCode CMutex::Acquire(uint64_t MutexAddress, uint32_t HoldingThreadHandle, CSystemThread * HoldingThread, uint32_t RequestingThreadHandle, CSystemThread * CurrentThread)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    uint32_t AddrValue;
+    if (!HoldingThread->ThreadMemory().Read32(MutexAddress, AddrValue))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return RESULT_SUCCESS;
+    }
+
+    if (AddrValue != (HoldingThreadHandle | MutexHasWaitersFlag))
+    {
+        return RESULT_SUCCESS;
+    }
+
+    if (HoldingThread->GetState() == CSystemThread::ThreadState_WaitCondVar &&
+        HoldingThread->GetMutexWaitAddress() == MutexAddress)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    if (CurrentThread->GetState() != CSystemThread::ThreadState_Running)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    CurrentThread->SetMutexWaitAddress(MutexAddress);
+    CurrentThread->SetWaitHandle(RequestingThreadHandle);
+    CurrentThread->SetState(CSystemThread::ThreadState_WaitMutex);
+    HoldingThread->AddMutexWaiter(CurrentThread);
+    CurrentThread->WaitSyncEvent(SyncEvent::INFINITE_TIMEOUT);
+    CurrentThread->SetState(CSystemThread::ThreadState_Running);
     return RESULT_SUCCESS;
 }
-
 
 CMutex::WaitingThread CMutex::GetHighestPriorityMutexWaitingThread(uint64_t Address, CSystemThread * Thread)
 {
