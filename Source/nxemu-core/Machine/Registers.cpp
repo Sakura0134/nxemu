@@ -61,6 +61,20 @@ uint64_t CRegisters::Get64(Arm64Opcode::arm64_reg reg)
     return 0;
 }
 
+float64_t CRegisters::Get64Float(Arm64Opcode::arm64_reg reg)
+{
+    float64_t value = { 0 };
+    if (reg >= Arm64Opcode::ARM64_REG_D0 && reg <= Arm64Opcode::ARM64_REG_D31)
+    {
+        value.v = m_vfp_regs[(reg - Arm64Opcode::ARM64_REG_D0) << 1];
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    return value;
+}
+
 void CRegisters::Get128(Arm64Opcode::arm64_reg reg, uint64_t & hiValue, uint64_t & loValue)
 {
     if (reg >= Arm64Opcode::ARM64_REG_Q0 && reg <= Arm64Opcode::ARM64_REG_Q31)

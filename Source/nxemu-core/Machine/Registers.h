@@ -34,6 +34,7 @@ __interface IRegisters
 {
     uint32_t Get32(Arm64Opcode::arm64_reg reg) = 0;
     uint64_t Get64(Arm64Opcode::arm64_reg reg) = 0;
+    float64_t Get64Float(Arm64Opcode::arm64_reg reg) = 0;
     void Get128(Arm64Opcode::arm64_reg reg, uint64_t& hiValue, uint64_t& loValue) = 0;
     PSTATE GetPstate() const = 0;
     uint32_t GetFPCR() const = 0;
@@ -63,6 +64,7 @@ public:
 
     uint32_t Get32(Arm64Opcode::arm64_reg reg);
     uint64_t Get64(Arm64Opcode::arm64_reg reg);
+    float64_t Get64Float(Arm64Opcode::arm64_reg reg);
     void Get128(Arm64Opcode::arm64_reg reg, uint64_t & hiValue, uint64_t & loValue);
     PSTATE GetPstate() const;
     uint32_t GetFPCR() const;
