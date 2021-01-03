@@ -126,6 +126,12 @@
     <Filter Include="Header Files\hle\Services\acc">
       <UniqueIdentifier>{d93107a1-9ee0-4046-b00e-785a36fb2270}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hle\Services\ssl">
+      <UniqueIdentifier>{fb2d5fef-3c98-4575-9afc-53ca061ddf91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hle\Services\ssl">
+      <UniqueIdentifier>{f276f23c-01f5-44ec-9e09-908305e9c25a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -359,6 +365,9 @@
     <ClInclude Include="hle\Kernel\Mutex.h">
       <Filter>Header Files\hle\Kernel</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\ssl\SSLservices.h">
+      <Filter>Header Files\hle\Services\ssl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -570,6 +579,9 @@
     </ClCompile>
     <ClCompile Include="hle\Kernel\Mutex.cpp">
       <Filter>Source Files\hle\Kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\ssl\SSLservices.cpp">
+      <Filter>Source Files\hle\Services\ssl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
