@@ -41,6 +41,7 @@ __interface IRegisters
     uint32_t GetFPSR() const = 0;
 
     void Set32(Arm64Opcode::arm64_reg reg, uint32_t value) = 0;
+    void Set32Float(Arm64Opcode::arm64_reg reg, float32_t value) = 0;
     void Set64(Arm64Opcode::arm64_reg reg, uint64_t value) = 0;
     void Set64Float(Arm64Opcode::arm64_reg reg, float64_t value) = 0;
     void Set128(Arm64Opcode::arm64_reg reg, uint64_t hiValue, uint64_t loValue) = 0;
@@ -71,6 +72,7 @@ public:
     uint32_t GetFPSR() const;
 
     void Set32(Arm64Opcode::arm64_reg reg, uint32_t value);
+    void Set32Float(Arm64Opcode::arm64_reg reg, float32_t value);
     void Set64(Arm64Opcode::arm64_reg reg, uint64_t value);
     void Set64Float(Arm64Opcode::arm64_reg reg, float64_t value);
     void Set128(Arm64Opcode::arm64_reg reg, uint64_t hiValue, uint64_t loValue);

@@ -268,11 +268,22 @@ bool Arm64Opcode::Is32bitReg(arm64_reg reg)
         return true;
     }
     if ((reg >= ARM64_REG_X0 && reg <= ARM64_REG_X30) ||
+        (reg >= ARM64_REG_S0 && reg <= ARM64_REG_S31) ||
         (reg >= ARM64_REG_D0 && reg <= ARM64_REG_D31) ||
         (reg >= ARM64_REG_Q0 && reg <= ARM64_REG_Q31) ||
         reg == ARM64_REG_XZR)
     {
         return false;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
+bool Arm64Opcode::Is32bitFloatReg(arm64_reg reg)
+{
+    if (reg >= ARM64_REG_S0 && reg <= ARM64_REG_S31)
+    {
+        return true;
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
@@ -289,6 +300,7 @@ bool Arm64Opcode::Is64bitReg(arm64_reg reg)
     if ((reg >= ARM64_REG_Q0 && reg <= ARM64_REG_Q31) ||
         (reg >= ARM64_REG_W0 && reg <= ARM64_REG_W30) ||
         (reg >= ARM64_REG_D0 && reg <= ARM64_REG_D31) ||
+        (reg >= ARM64_REG_S0 && reg <= ARM64_REG_S31) ||
         reg == ARM64_REG_WZR)
     {
         return false;
@@ -545,6 +557,38 @@ Arm64Opcode::arm64_reg Arm64Opcode::Arm64OpcodeDetail::TranslateArm64Reg(capston
     case CAPSTONE_ARM64_REG_D29: return ARM64_REG_D29;
     case CAPSTONE_ARM64_REG_D30: return ARM64_REG_D30;
     case CAPSTONE_ARM64_REG_D31: return ARM64_REG_D31;
+    case CAPSTONE_ARM64_REG_S0: return ARM64_REG_S0;
+    case CAPSTONE_ARM64_REG_S1: return ARM64_REG_S1;
+    case CAPSTONE_ARM64_REG_S2: return ARM64_REG_S2;
+    case CAPSTONE_ARM64_REG_S3: return ARM64_REG_S3;
+    case CAPSTONE_ARM64_REG_S4: return ARM64_REG_S4;
+    case CAPSTONE_ARM64_REG_S5: return ARM64_REG_S5;
+    case CAPSTONE_ARM64_REG_S6: return ARM64_REG_S6;
+    case CAPSTONE_ARM64_REG_S7: return ARM64_REG_S7;
+    case CAPSTONE_ARM64_REG_S8: return ARM64_REG_S8;
+    case CAPSTONE_ARM64_REG_S9: return ARM64_REG_S9;
+    case CAPSTONE_ARM64_REG_S10: return ARM64_REG_S10;
+    case CAPSTONE_ARM64_REG_S11: return ARM64_REG_S11;
+    case CAPSTONE_ARM64_REG_S12: return ARM64_REG_S12;
+    case CAPSTONE_ARM64_REG_S13: return ARM64_REG_S13;
+    case CAPSTONE_ARM64_REG_S14: return ARM64_REG_S14;
+    case CAPSTONE_ARM64_REG_S15: return ARM64_REG_S15;
+    case CAPSTONE_ARM64_REG_S16: return ARM64_REG_S16;
+    case CAPSTONE_ARM64_REG_S17: return ARM64_REG_S17;
+    case CAPSTONE_ARM64_REG_S18: return ARM64_REG_S18;
+    case CAPSTONE_ARM64_REG_S19: return ARM64_REG_S19;
+    case CAPSTONE_ARM64_REG_S20: return ARM64_REG_S20;
+    case CAPSTONE_ARM64_REG_S21: return ARM64_REG_S21;
+    case CAPSTONE_ARM64_REG_S22: return ARM64_REG_S22;
+    case CAPSTONE_ARM64_REG_S23: return ARM64_REG_S23;
+    case CAPSTONE_ARM64_REG_S24: return ARM64_REG_S24;
+    case CAPSTONE_ARM64_REG_S25: return ARM64_REG_S25;
+    case CAPSTONE_ARM64_REG_S26: return ARM64_REG_S26;
+    case CAPSTONE_ARM64_REG_S27: return ARM64_REG_S27;
+    case CAPSTONE_ARM64_REG_S28: return ARM64_REG_S28;
+    case CAPSTONE_ARM64_REG_S29: return ARM64_REG_S29;
+    case CAPSTONE_ARM64_REG_S30: return ARM64_REG_S30;
+    case CAPSTONE_ARM64_REG_S31: return ARM64_REG_S31;
     case CAPSTONE_ARM64_REG_SP: return ARM64_REG_SP;
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);

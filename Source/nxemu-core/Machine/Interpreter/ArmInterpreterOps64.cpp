@@ -1095,6 +1095,12 @@ void Arm64Op::Ldr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             if (!ThreadMemory.Read32(target_addr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(0).Reg, value);
         }
+        else if (Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg))
+        {
+            float32_t value;
+            if (!ThreadMemory.Read32(target_addr, value.v)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set32Float(Op.Operand(0).Reg, value);
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);

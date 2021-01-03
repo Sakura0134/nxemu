@@ -642,6 +642,38 @@ public:
         ARM64_REG_D29,
         ARM64_REG_D30,
         ARM64_REG_D31,
+        ARM64_REG_S0,
+        ARM64_REG_S1,
+        ARM64_REG_S2,
+        ARM64_REG_S3,
+        ARM64_REG_S4,
+        ARM64_REG_S5,
+        ARM64_REG_S6,
+        ARM64_REG_S7,
+        ARM64_REG_S8,
+        ARM64_REG_S9,
+        ARM64_REG_S10,
+        ARM64_REG_S11,
+        ARM64_REG_S12,
+        ARM64_REG_S13,
+        ARM64_REG_S14,
+        ARM64_REG_S15,
+        ARM64_REG_S16,
+        ARM64_REG_S17,
+        ARM64_REG_S18,
+        ARM64_REG_S19,
+        ARM64_REG_S20,
+        ARM64_REG_S21,
+        ARM64_REG_S22,
+        ARM64_REG_S23,
+        ARM64_REG_S24,
+        ARM64_REG_S25,
+        ARM64_REG_S26,
+        ARM64_REG_S27,
+        ARM64_REG_S28,
+        ARM64_REG_S29,
+        ARM64_REG_S30,
+        ARM64_REG_S31,
 
         ARM64_REG_TPIDR_EL0,
         ARM64_REG_TPIDRRO_EL0,
@@ -1714,6 +1746,7 @@ public:
     static bool Is64bitReg(arm64_reg reg);
     static bool Is64bitFloatReg(arm64_reg reg);
     static bool Is32bitReg(arm64_reg reg);
+    static bool Is32bitFloatReg(arm64_reg reg);
     static bool IsVectorReg(arm64_reg reg);
 
 private:

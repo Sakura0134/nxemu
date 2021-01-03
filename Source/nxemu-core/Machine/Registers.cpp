@@ -100,6 +100,20 @@ void CRegisters::Set32(Arm64Opcode::arm64_reg reg, uint32_t value)
     }
 }
 
+void CRegisters::Set32Float(Arm64Opcode::arm64_reg reg, float32_t value)
+{
+    if (reg >= Arm64Opcode::ARM64_REG_S0 && reg <= Arm64Opcode::ARM64_REG_S31)
+    {
+        int Index = (reg - Arm64Opcode::ARM64_REG_S0) << 1;
+        m_vfp_regs[Index] = value.v;
+        m_vfp_regs[Index + 1] = 0;
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void CRegisters::Set64(Arm64Opcode::arm64_reg reg, uint64_t value)
 {
     if (reg >= Arm64Opcode::ARM64_REG_X0 && reg <= Arm64Opcode::ARM64_REG_X30)
