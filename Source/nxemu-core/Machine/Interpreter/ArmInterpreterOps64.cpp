@@ -736,6 +736,27 @@ void Arm64Op::Csel(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
+void Arm64Op::Cset(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
+{
+    IRegisters & Reg = Cpu.Reg();
+
+    if (Op.Operands() == 1 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
+    {
+        if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
+        {
+            Reg.Set32(Op.Operand(0).Reg, Reg.ConditionSet(Op.cc()) ? 1 : 0);
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Csetm(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();
@@ -775,6 +796,25 @@ void Arm64Op::Csinv(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
     {
         Reg.Set32(Op.Operand(0).Reg, Reg.ConditionSet(Op.cc()) ? Reg.Get32(Op.Operand(1).Reg) : ~Reg.Get32(Op.Operand(2).Reg));
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
+void Arm64Op::Dup(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
+{
+    IRegisters & Reg = Cpu.Reg();
+
+    if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG)
+    {
+        // this is wrong, it is intilizing the vector to 0 in boot.
+        //When vector registers are being used this code needs to be fixed
+        if (Reg.Get64(Op.Operand(1).Reg) != 0)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
     }
     else
     {
@@ -855,42 +895,6 @@ void Arm64Op::Eor(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
-void Arm64Op::Fmul(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
-{
-    IRegisters & Reg = Cpu.Reg();
-
-    if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
-        Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitFloatReg(Op.Operand(1).Reg) && Arm64Opcode::Is32bitFloatReg(Op.Operand(2).Reg))
-    {
-        Reg.Set32Float(Op.Operand(0).Reg, f32_mul(Reg.Get32Float(Op.Operand(1).Reg),Reg.Get32Float(Op.Operand(2).Reg)));
-    }
-    else
-    {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-    }
-}
-
-void Arm64Op::Cset(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
-{
-    IRegisters & Reg = Cpu.Reg();
-
-    if (Op.Operands() == 1 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG)
-    {
-        if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
-        {
-            Reg.Set32(Op.Operand(0).Reg, Reg.ConditionSet(Op.cc()) ? 1 : 0);
-        }
-        else
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-        }
-    }
-    else
-    {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-    }
-}
-
 void Arm64Op::Fmov(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();
@@ -903,6 +907,10 @@ void Arm64Op::Fmov(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             reg.v = Reg.Get64(Op.Operand(1).Reg);
             Reg.Set64Float(Op.Operand(0).Reg, reg);
         }
+        else if (Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitFloatReg(Op.Operand(1).Reg))
+        {
+            Reg.Set32(Op.Operand(0).Reg, Reg.Get32Float(Op.Operand(1).Reg).v);
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -914,18 +922,14 @@ void Arm64Op::Fmov(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
-void Arm64Op::Dup(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
+void Arm64Op::Fmul(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();
 
-    if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG)
+    if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitFloatReg(Op.Operand(1).Reg) && Arm64Opcode::Is32bitFloatReg(Op.Operand(2).Reg))
     {
-        // this is wrong, it is intilizing the vector to 0 in boot.
-        //When vector registers are being used this code needs to be fixed
-        if (Reg.Get64(Op.Operand(1).Reg) != 0)
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-        }
+        Reg.Set32Float(Op.Operand(0).Reg, f32_mul(Reg.Get32Float(Op.Operand(1).Reg),Reg.Get32Float(Op.Operand(2).Reg)));
     }
     else
     {
