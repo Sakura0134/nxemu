@@ -33,6 +33,7 @@ typedef union
 __interface IRegisters
 {
     uint32_t Get32(Arm64Opcode::arm64_reg reg) = 0;
+    float32_t Get32Float(Arm64Opcode::arm64_reg reg) = 0;
     uint64_t Get64(Arm64Opcode::arm64_reg reg) = 0;
     float64_t Get64Float(Arm64Opcode::arm64_reg reg) = 0;
     void Get128(Arm64Opcode::arm64_reg reg, uint64_t& hiValue, uint64_t& loValue) = 0;
@@ -64,6 +65,7 @@ public:
     CRegisters(void);
 
     uint32_t Get32(Arm64Opcode::arm64_reg reg);
+    float32_t Get32Float(Arm64Opcode::arm64_reg reg);
     uint64_t Get64(Arm64Opcode::arm64_reg reg);
     float64_t Get64Float(Arm64Opcode::arm64_reg reg);
     void Get128(Arm64Opcode::arm64_reg reg, uint64_t & hiValue, uint64_t & loValue);

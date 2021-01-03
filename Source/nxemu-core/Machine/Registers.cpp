@@ -31,6 +31,21 @@ uint32_t CRegisters::Get32(Arm64Opcode::arm64_reg reg)
     return 0;
 }
 
+float32_t CRegisters::Get32Float(Arm64Opcode::arm64_reg reg)
+{
+    float32_t value = { 0 };
+
+    if (reg >= Arm64Opcode::ARM64_REG_S0 && reg <= Arm64Opcode::ARM64_REG_S31)
+    {
+        value.v = (uint32_t)m_vfp_regs[(reg - Arm64Opcode::ARM64_REG_S0) << 1];
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    return value;
+}
+
 uint64_t CRegisters::Get64(Arm64Opcode::arm64_reg reg)
 {
     if (reg >= Arm64Opcode::ARM64_REG_X0 && reg <= Arm64Opcode::ARM64_REG_X30)
@@ -79,12 +94,19 @@ void CRegisters::Get128(Arm64Opcode::arm64_reg reg, uint64_t & hiValue, uint64_t
 {
     if (reg >= Arm64Opcode::ARM64_REG_Q0 && reg <= Arm64Opcode::ARM64_REG_Q31)
     {
-        hiValue = m_vfp_regs[(reg - Arm64Opcode::ARM64_REG_Q0) << 1];
-        loValue = m_vfp_regs[((reg - Arm64Opcode::ARM64_REG_Q0) << 1) + 1];
+        int Index = (reg - Arm64Opcode::ARM64_REG_Q0) << 1;
+        hiValue = m_vfp_regs[Index];
+        loValue = m_vfp_regs[Index + 1];
+    }
+    else if (reg >= Arm64Opcode::ARM64_REG_V0 && reg <= Arm64Opcode::ARM64_REG_V31)
+    {
+        int Index = (reg - Arm64Opcode::ARM64_REG_V0) << 1;
+        hiValue = m_vfp_regs[Index];
+        loValue = m_vfp_regs[Index + 1];
     }
     else
     {
-          g_Notify->BreakPoint(__FILE__, __LINE__);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
 
@@ -161,6 +183,12 @@ void CRegisters::Set128(Arm64Opcode::arm64_reg reg, uint64_t hiValue, uint64_t l
     if (reg >= Arm64Opcode::ARM64_REG_Q0 && reg <= Arm64Opcode::ARM64_REG_Q31)
     {
         int Index = (reg - Arm64Opcode::ARM64_REG_Q0) << 1;
+        m_vfp_regs[Index] = hiValue;
+        m_vfp_regs[Index + 1] = loValue;
+    }
+    else if (reg >= Arm64Opcode::ARM64_REG_V0 && reg <= Arm64Opcode::ARM64_REG_V31)
+    {
+        int Index = (reg - Arm64Opcode::ARM64_REG_V0) << 1;
         m_vfp_regs[Index] = hiValue;
         m_vfp_regs[Index + 1] = loValue;
     }

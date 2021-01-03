@@ -855,6 +855,21 @@ void Arm64Op::Eor(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
+void Arm64Op::Fmul(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
+{
+    IRegisters & Reg = Cpu.Reg();
+
+    if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitFloatReg(Op.Operand(1).Reg) && Arm64Opcode::Is32bitFloatReg(Op.Operand(2).Reg))
+    {
+        Reg.Set32Float(Op.Operand(0).Reg, f32_mul(Reg.Get32Float(Op.Operand(1).Reg),Reg.Get32Float(Op.Operand(2).Reg)));
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Cset(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();
@@ -1506,6 +1521,21 @@ void Arm64Op::Mov(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             if (Op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_INVALID)
             {
                 Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg));
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+        else if (Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::IsVectorReg(Op.Operand(0).Reg) && Arm64Opcode::IsVectorReg(Op.Operand(1).Reg))
+        {
+            if (Op.Operand(0).Vas == Arm64Opcode::ARM64_VAS_INVALID && Op.Operand(0).Vess == Arm64Opcode::ARM64_VESS_INVALID &&
+                Op.Operand(1).Vas == Arm64Opcode::ARM64_VAS_INVALID && Op.Operand(1).Vess == Arm64Opcode::ARM64_VESS_INVALID)
+            {
+                uint64_t data[2];
+
+                Reg.Get128(Op.Operand(1).Reg, data[0], data[1]);
+                Reg.Set128(Op.Operand(0).Reg, data[0], data[1]);
             }
             else
             {

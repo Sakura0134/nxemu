@@ -133,6 +133,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_DUP:
     case ARM64_INS_EOR:
     case ARM64_INS_FMOV:
+    case ARM64_INS_FMUL:
     case ARM64_INS_INS:
     case ARM64_INS_LDARB:
     case ARM64_INS_LDAXR:
@@ -268,6 +269,7 @@ bool Arm64Opcode::Is32bitReg(arm64_reg reg)
         return true;
     }
     if ((reg >= ARM64_REG_X0 && reg <= ARM64_REG_X30) ||
+        (reg >= ARM64_REG_V0 && reg <= ARM64_REG_V31) ||
         (reg >= ARM64_REG_S0 && reg <= ARM64_REG_S31) ||
         (reg >= ARM64_REG_D0 && reg <= ARM64_REG_D31) ||
         (reg >= ARM64_REG_Q0 && reg <= ARM64_REG_Q31) ||
@@ -299,6 +301,7 @@ bool Arm64Opcode::Is64bitReg(arm64_reg reg)
     }
     if ((reg >= ARM64_REG_Q0 && reg <= ARM64_REG_Q31) ||
         (reg >= ARM64_REG_W0 && reg <= ARM64_REG_W30) ||
+        (reg >= ARM64_REG_V0 && reg <= ARM64_REG_V31) ||
         (reg >= ARM64_REG_D0 && reg <= ARM64_REG_D31) ||
         (reg >= ARM64_REG_S0 && reg <= ARM64_REG_S31) ||
         reg == ARM64_REG_WZR)
