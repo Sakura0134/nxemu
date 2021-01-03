@@ -66,6 +66,7 @@ public:
     static void Ret(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Sbfiz(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Sbfx(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Scvtf(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Sdiv(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Smaddl(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Smulh(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
