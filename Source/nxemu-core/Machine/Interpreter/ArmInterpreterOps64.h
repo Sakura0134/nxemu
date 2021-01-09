@@ -34,6 +34,7 @@ public:
     static void Dup(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Eor(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fadd(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Fcsel(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fmov(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fmul(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ins(CInterpreterCPU & Cpu, const Arm64Opcode & Op);

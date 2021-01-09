@@ -78,6 +78,7 @@ void CInterpreterCPU::Execute()
         case Arm64Opcode::ARM64_INS_DSB: Arm64Op::Dsb(*this, op); break;
         case Arm64Opcode::ARM64_INS_EOR: Arm64Op::Eor(*this, op); break;
         case Arm64Opcode::ARM64_INS_FADD: Arm64Op::Fadd(*this, op); break;
+        case Arm64Opcode::ARM64_INS_FCSEL: Arm64Op::Fcsel(*this, op); break;
         case Arm64Opcode::ARM64_INS_FMOV: Arm64Op::Fmov(*this, op); break;
         case Arm64Opcode::ARM64_INS_FMUL: Arm64Op::Fmul(*this, op); break;
         case Arm64Opcode::ARM64_INS_INS: Arm64Op::Ins(*this, op); break;
@@ -188,6 +189,7 @@ bool CInterpreterCPU::ShouldExecuteOp(const Arm64Opcode & op)
     case Arm64Opcode::ARM64_INS_CSETM: return true;
     case Arm64Opcode::ARM64_INS_CSINC: return true;
     case Arm64Opcode::ARM64_INS_CSINV: return true;
+    case Arm64Opcode::ARM64_INS_FCSEL: return true;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
