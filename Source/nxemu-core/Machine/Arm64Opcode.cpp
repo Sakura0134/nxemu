@@ -287,6 +287,10 @@ bool Arm64Opcode::Is32bitFloatReg(arm64_reg reg)
     {
         return true;
     }
+    else if (reg >= ARM64_REG_Q0 && reg <= ARM64_REG_Q31)
+    {
+        return false;
+    }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }
