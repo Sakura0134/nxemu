@@ -75,6 +75,7 @@ public:
     static void Orr(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Rbit(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ret(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Ror(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Sbfiz(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Sbfx(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Scvtf(CInterpreterCPU & Cpu, const Arm64Opcode & Op);

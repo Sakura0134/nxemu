@@ -119,6 +119,7 @@ void CInterpreterCPU::Execute()
         case Arm64Opcode::ARM64_INS_ORR: Arm64Op::Orr(*this, op); break;
         case Arm64Opcode::ARM64_INS_RBIT: Arm64Op::Rbit(*this, op); break;
         case Arm64Opcode::ARM64_INS_RET: Arm64Op::Ret(*this, op); break;
+        case Arm64Opcode::ARM64_INS_ROR: Arm64Op::Ror(*this, op); break;
         case Arm64Opcode::ARM64_INS_SBFIZ: Arm64Op::Sbfiz(*this, op); break;
         case Arm64Opcode::ARM64_INS_SBFX: Arm64Op::Sbfx(*this, op); break;
         case Arm64Opcode::ARM64_INS_SCVTF: Arm64Op::Scvtf(*this, op); break;

@@ -2302,6 +2302,34 @@ void Arm64Op::Ret(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
+void Arm64Op::Ror(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
+{
+    IRegisters & Reg = Cpu.Reg();
+
+    if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
+    {
+        if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg) && Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+        {
+            uint32_t value = Reg.Get32(Op.Operand(1).Reg);
+            uint32_t size = Reg.Get32(Op.Operand(2).Reg);
+            if (size > 32)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+            Reg.Set32(Op.Operand(0).Reg, (value >> size) | (value << (32 - size)));
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Stp(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
