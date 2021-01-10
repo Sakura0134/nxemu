@@ -1400,6 +1400,7 @@ public:
         arm64_op_type type;
         arm64_reg Reg;
         int64_t ImmVal;
+        double fp;
         A64SysRegValues SysReg;
         struct 
         {

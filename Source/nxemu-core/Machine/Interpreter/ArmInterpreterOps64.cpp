@@ -958,6 +958,13 @@ void Arm64Op::Fmov(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         {
             Reg.Set32(Op.Operand(0).Reg, Reg.Get32Float(Op.Operand(1).Reg).v);
         }
+        else if (Op.Operand(1).type == Arm64Opcode::ARM64_OP_FP && Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg))
+        {
+            float f = (float)Op.Operand(1).fp;
+            float32_t value;
+            value.v = *((uint32_t *)&f);
+            Reg.Set32Float(Op.Operand(0).Reg, value);
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);

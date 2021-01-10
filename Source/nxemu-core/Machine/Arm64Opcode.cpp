@@ -72,6 +72,9 @@ Arm64Opcode::Arm64OpcodeDetail::Arm64OpcodeDetail(uint64_t pc, uint32_t insn) :
                 operand.ImmVal = src_operand.imm;
             }
             break;
+        case ARM64_OP_FP:
+            operand.fp = src_operand.fp;
+            break;
         case ARM64_OP_MEM:
             operand.mem.base = TranslateArm64Reg((capstone_arm64_reg)src_operand.mem.base);
             operand.mem.index = TranslateArm64Reg((capstone_arm64_reg)src_operand.mem.index);
