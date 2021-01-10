@@ -811,14 +811,10 @@ void Arm64Op::Dup(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();
 
-    if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG)
+    if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::IsVectorReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(1).Reg))
     {
-        // this is wrong, it is intilizing the vector to 0 in boot.
-        //When vector registers are being used this code needs to be fixed
-        if (Reg.Get64(Op.Operand(1).Reg) != 0)
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-        }
+        Reg.Set64Vector(Op.Operand(0).Reg, Op.Operand(0).VectorIndex, Op.Operand(0).Vess, Op.Operand(0).Vas, Reg.Get64(Op.Operand(1).Reg));
     }
     else
     {

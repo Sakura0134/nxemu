@@ -200,8 +200,21 @@ void CRegisters::Set128(Arm64Opcode::arm64_reg reg, uint64_t hiValue, uint64_t l
 
 void CRegisters::Set64Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Arm64Opcode::arm64_vess Vess, Arm64Opcode::arm64_vas Vas, uint64_t value)
 {
-    if (Vess == Arm64Opcode::ARM64_VESS_D)
+    switch (Vess)
     {
+    case Arm64Opcode::ARM64_VESS_INVALID:
+        if (VectorIndex == -1 && Vas == Arm64Opcode::ARM64_VAS_2D && reg >= Arm64Opcode::ARM64_REG_V0 && reg <= Arm64Opcode::ARM64_REG_V31)
+        {
+            m_vfp_regs[(reg - Arm64Opcode::ARM64_REG_V0) * 2] = value;
+            m_vfp_regs[((reg - Arm64Opcode::ARM64_REG_V0) * 2) + 1] = value;
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        break;
+    case Arm64Opcode::ARM64_VESS_D:
         if (Vas == Arm64Opcode::ARM64_VAS_INVALID && reg >= Arm64Opcode::ARM64_REG_V0 && reg <= Arm64Opcode::ARM64_REG_V31)
         {
             if (VectorIndex > 1)
@@ -225,9 +238,8 @@ void CRegisters::Set64Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Ar
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
-    }
-    else
-    {
+        break;
+    default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
