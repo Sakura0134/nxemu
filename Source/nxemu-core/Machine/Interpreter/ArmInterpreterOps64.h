@@ -72,6 +72,7 @@ public:
     static void Mul(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Mvn(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Neg(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Orn(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Orr(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Rbit(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ret(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
