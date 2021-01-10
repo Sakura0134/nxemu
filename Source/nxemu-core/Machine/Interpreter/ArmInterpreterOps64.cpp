@@ -3206,6 +3206,19 @@ void Arm64Op::Udiv(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             Reg.Set64(Op.Operand(0).Reg, Reg.Get64(Op.Operand(1).Reg) / divisor);
         }
     }
+    else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg))
+    {
+        uint32_t divisor = Reg.Get32(Op.Operand(2).Reg);
+        if (divisor == 0)
+        {
+            Reg.Set32(Op.Operand(0).Reg, 0);
+        }
+        else
+        {
+            Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg) / divisor);
+        }
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
