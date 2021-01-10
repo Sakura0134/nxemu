@@ -77,5 +77,6 @@ private:
 
 	void ProcessPopLaunchParameter(CIPCRequest & Request);
 	void ProcessEnsureSaveData(CIPCRequest & Request);
+    void ProcessGetDesiredLanguage(CIPCRequest & Request);
 	void ProcessNotifyRunning(CIPCRequest & Request);
 };

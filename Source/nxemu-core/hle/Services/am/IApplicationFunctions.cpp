@@ -24,6 +24,7 @@ ResultCode IApplicationFunctions::CallMethod(CIPCRequest & Request)
     {
 	case Method_PopLaunchParameter: ProcessPopLaunchParameter(Request); break;
     case Method_EnsureSaveData: ProcessEnsureSaveData(Request); break;
+    case Method_GetDesiredLanguage: ProcessGetDesiredLanguage(Request); break;
     case Method_NotifyRunning: ProcessNotifyRunning(Request); break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -52,6 +53,15 @@ void IApplicationFunctions::ProcessPopLaunchParameter(CIPCRequest & Request)
 	params.current_user[1] = 0x77a43cb14da4c0b4;
 
 	Request.MakeObject(IAMStorage::CreateInstance(m_System, (uint8_t*)&params, sizeof(params))->GetServicePtr());
+}
+
+void IApplicationFunctions::ProcessGetDesiredLanguage(CIPCRequest & Request)
+{
+	CIPCRequest::REQUEST_DATA & ResponseData = Request.ResponseData();
+	ResponseData.resize(sizeof(uint64_t));
+
+    const uint64_t EN_US = 0x00000053552D6E65;
+	((uint64_t *)ResponseData.data())[0] = EN_US;
 }
 
 void IApplicationFunctions::ProcessEnsureSaveData(CIPCRequest & Request)
