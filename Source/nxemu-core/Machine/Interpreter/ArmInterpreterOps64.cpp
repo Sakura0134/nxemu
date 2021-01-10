@@ -1097,6 +1097,12 @@ void Arm64Op::Fmov(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         {
             Reg.Set32(Op.Operand(0).Reg, Reg.Get32Float(Op.Operand(1).Reg).v);
         }
+        else if (Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
+        {
+            float32_t reg;
+            reg.v = Reg.Get32(Op.Operand(1).Reg);
+            Reg.Set32Float(Op.Operand(0).Reg, reg);
+        }
         else if (Op.Operand(1).type == Arm64Opcode::ARM64_OP_FP && Arm64Opcode::Is64bitFloatReg(Op.Operand(0).Reg))
         {
             double f = (double)Op.Operand(1).fp;
