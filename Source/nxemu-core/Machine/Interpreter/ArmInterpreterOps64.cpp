@@ -2767,6 +2767,38 @@ void Arm64Op::Strh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
+void Arm64Op::Stlrh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
+{
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
+    IRegisters & Reg = Cpu.Reg();
+
+    if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
+    {
+        uint64_t index = MemIndex(Op.Operand(1), Reg);
+        uint64_t target_addr = Reg.Get64(Op.Operand(1).mem.base) + Op.Operand(1).mem.disp + index;
+
+        if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
+        {
+            if (!ThreadMemory.Write16(target_addr, (uint16_t)Reg.Get32(Op.Operand(0).Reg)))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        if (Op.WriteBack())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Stlxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();

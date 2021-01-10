@@ -87,6 +87,7 @@ public:
     static void Smull(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Stlr(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Stlrb(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Stlrh(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Stlxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Stp(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Str(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
