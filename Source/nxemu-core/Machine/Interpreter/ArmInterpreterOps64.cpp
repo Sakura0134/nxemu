@@ -1071,6 +1071,13 @@ void Arm64Op::Fneg(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         val.v ^= 0x8000000000000000LL;
         Reg.Set64Float(Op.Operand(0).Reg, val);
     }
+    else if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitFloatReg(Op.Operand(1).Reg))
+    {
+        float32_t val = Reg.Get32Float(Op.Operand(1).Reg);
+        val.v ^= 0x80000000;
+        Reg.Set32Float(Op.Operand(0).Reg, val);
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
