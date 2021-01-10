@@ -40,6 +40,7 @@ public:
     static void Fdiv(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fmov(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fmul(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Fsub(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ins(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ldarb(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ldaxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
