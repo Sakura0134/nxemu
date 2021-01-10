@@ -33,6 +33,7 @@ public:
     static void Dsb(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Dup(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Eor(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Fabs(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fadd(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fcsel(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fcvt(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
