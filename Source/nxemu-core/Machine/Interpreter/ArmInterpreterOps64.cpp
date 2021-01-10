@@ -928,7 +928,14 @@ void Arm64Op::Fcsel(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 void Arm64Op::Fcvtzs(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();
-    if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) &&
+    if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) &&
+        Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitFloatReg(Op.Operand(1).Reg))
+    {
+        float32_t val = Reg.Get32Float(Op.Operand(1).Reg);
+        bool sign = (val.v >> 31) != 0;
+        Reg.Set32(Op.Operand(0).Reg, f32_to_i32(Reg.Get32Float(Op.Operand(1).Reg), (uint_fast8_t)(sign ? softfloat_round_max : softfloat_round_min), true));
+    }
+    else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) &&
         Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitFloatReg(Op.Operand(1).Reg) &&
         Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
     {
