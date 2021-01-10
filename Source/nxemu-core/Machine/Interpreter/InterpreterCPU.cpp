@@ -92,6 +92,7 @@ void CInterpreterCPU::Execute()
         case Arm64Opcode::ARM64_INS_FSUB: Arm64Op::Fsub(*this, op); break;
         case Arm64Opcode::ARM64_INS_INS: Arm64Op::Ins(*this, op); break;
         case Arm64Opcode::ARM64_INS_LDARB: Arm64Op::Ldarb(*this, op); break;
+        case Arm64Opcode::ARM64_INS_LDARH: Arm64Op::Ldarh(*this, op); break;
         case Arm64Opcode::ARM64_INS_LDAXR: Arm64Op::Ldaxr(*this, op); break;
         case Arm64Opcode::ARM64_INS_LDP: Arm64Op::Ldp(*this, op); break;
         case Arm64Opcode::ARM64_INS_LDR: Arm64Op::Ldr(*this, op); break;

@@ -48,6 +48,7 @@ public:
     static void Fsub(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ins(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ldarb(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Ldarh(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ldaxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ldp(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ldr(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
