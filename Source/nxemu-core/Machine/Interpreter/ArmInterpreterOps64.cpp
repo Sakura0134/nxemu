@@ -938,6 +938,11 @@ void Arm64Op::Fcvt(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     {
         Reg.Set64Float(Op.Operand(0).Reg, f32_to_f64(Reg.Get32Float(Op.Operand(1).Reg)));
     }
+    else if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg) &&
+        Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is64bitFloatReg(Op.Operand(1).Reg))
+    {
+        Reg.Set32Float(Op.Operand(0).Reg, f64_to_f32(Reg.Get64Float(Op.Operand(1).Reg)));
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
