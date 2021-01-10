@@ -1101,6 +1101,22 @@ void Arm64Op::Fneg(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
+void Arm64Op::Fsqrt(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
+{
+    IRegisters & Reg = Cpu.Reg();
+
+    if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is64bitFloatReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitFloatReg(Op.Operand(1).Reg))
+    {
+        float64_t val = Reg.Get64Float(Op.Operand(1).Reg);
+        Reg.Set64Float(Op.Operand(0).Reg, f64_sqrt(val));
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Fsub(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();
