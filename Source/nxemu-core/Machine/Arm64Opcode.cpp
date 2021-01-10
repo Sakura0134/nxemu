@@ -290,7 +290,8 @@ bool Arm64Opcode::Is32bitFloatReg(arm64_reg reg)
     {
         return true;
     }
-    else if (reg >= ARM64_REG_Q0 && reg <= ARM64_REG_Q31)
+    else if ((reg >= ARM64_REG_Q0 && reg <= ARM64_REG_Q31) ||
+        (reg >= ARM64_REG_D0 && reg <= ARM64_REG_D31))
     {
         return false;
     }
