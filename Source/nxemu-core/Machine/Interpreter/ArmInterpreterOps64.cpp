@@ -932,6 +932,37 @@ void Arm64Op::Fadd(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
+void Arm64Op::Fcmp(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
+{
+    IRegisters & Reg = Cpu.Reg();
+
+    if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is64bitFloatReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitFloatReg(Op.Operand(1).Reg))
+    {
+        float64_t a = Reg.Get64Float(Op.Operand(0).Reg);
+        float64_t b = Reg.Get64Float(Op.Operand(1).Reg);
+        bool n = false, z = false, c = false, v = false;
+        if (f64_eq(a, b))
+        {
+            z = true;
+            c = true;
+        }
+        else if (f64_lt(a, b))
+        {
+            n = true;
+        }
+        else
+        {
+            c = true;
+        }
+        Reg.SetConditionFlags(n, z, c, v);
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Fcsel(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();

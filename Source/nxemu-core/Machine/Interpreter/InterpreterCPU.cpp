@@ -79,6 +79,7 @@ void CInterpreterCPU::Execute()
         case Arm64Opcode::ARM64_INS_EOR: Arm64Op::Eor(*this, op); break;
         case Arm64Opcode::ARM64_INS_FABS: Arm64Op::Fabs(*this, op); break;
         case Arm64Opcode::ARM64_INS_FADD: Arm64Op::Fadd(*this, op); break;
+        case Arm64Opcode::ARM64_INS_FCMP: Arm64Op::Fcmp(*this, op); break;
         case Arm64Opcode::ARM64_INS_FCSEL: Arm64Op::Fcsel(*this, op); break;
         case Arm64Opcode::ARM64_INS_FCVT: Arm64Op::Fcvt(*this, op); break;
         case Arm64Opcode::ARM64_INS_FCVTZS: Arm64Op::Fcvtzs(*this, op); break;
