@@ -138,6 +138,12 @@
     <Filter Include="Source Files\hle\Services\set">
       <UniqueIdentifier>{2ac101f3-8879-4bbf-98b0-c3ac3b5541db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hle\Services\nv">
+      <UniqueIdentifier>{037b76de-18b1-4911-a8a2-e6a2c9014b2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hle\Services\nv">
+      <UniqueIdentifier>{a7eea552-7f7e-48d6-9b41-30b76a6c9568}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -380,6 +386,9 @@
     <ClInclude Include="hle\Memory\TransferMemory.h">
       <Filter>Header Files\hle\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\nv\INvDrvServices.h">
+      <Filter>Header Files\hle\Services\nv</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -600,6 +609,9 @@
     </ClCompile>
     <ClCompile Include="hle\Memory\TransferMemory.cpp">
       <Filter>Source Files\hle\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\nv\INvDrvServices.cpp">
+      <Filter>Source Files\hle\Services\nv</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

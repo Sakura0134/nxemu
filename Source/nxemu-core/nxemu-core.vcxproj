@@ -77,6 +77,7 @@
     <ClInclude Include="hle\Services\lm\logger.h" />
     <ClInclude Include="hle\Services\NamedPort.h" />
     <ClInclude Include="hle\Services\ns\IAddOnContentManager.h" />
+    <ClInclude Include="hle\Services\nv\INvDrvServices.h" />
     <ClInclude Include="hle\Services\pctl\IParentalControlService.h" />
     <ClInclude Include="hle\Services\pctl\IParentalControlServiceFactory.h" />
     <ClInclude Include="hle\Services\ServiceManager.h" />
@@ -159,6 +160,7 @@
     <ClCompile Include="hle\Services\lm\lm.cpp" />
     <ClCompile Include="hle\Services\lm\Logger.cpp" />
     <ClCompile Include="hle\Services\ns\IAddOnContentManager.cpp" />
+    <ClCompile Include="hle\Services\nv\INvDrvServices.cpp" />
     <ClCompile Include="hle\Services\pctl\IParentalControlService.cpp" />
     <ClCompile Include="hle\Services\pctl\IParentalControlServiceFactory.cpp" />
     <ClCompile Include="hle\Services\ServiceManager.cpp" />
