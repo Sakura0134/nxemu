@@ -85,6 +85,7 @@
     <ClInclude Include="hle\Services\ssl\SSLservices.h" />
     <ClInclude Include="hle\Services\vi\IApplicationDisplayService.h" />
     <ClInclude Include="hle\Services\vi\IApplicationRootService.h" />
+    <ClInclude Include="hle\Services\vi\IManagerDisplayService.h" />
     <ClInclude Include="hle\Services\vi\IManagerRootService.h" />
     <ClInclude Include="hle\Services\vi\ISystemRootService.h" />
     <ClInclude Include="Language\Language.h" />
@@ -172,6 +173,7 @@
     <ClCompile Include="hle\Services\ssl\SSLservices.cpp" />
     <ClCompile Include="hle\Services\vi\IApplicationDisplayService.cpp" />
     <ClCompile Include="hle\Services\vi\IApplicationRootService.cpp" />
+    <ClCompile Include="hle\Services\vi\IManagerDisplayService.cpp" />
     <ClCompile Include="hle\Services\vi\IManagerRootService.cpp" />
     <ClCompile Include="hle\Services\vi\ISystemRootService.cpp" />
     <ClCompile Include="Language\Language.cpp" />
