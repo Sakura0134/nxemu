@@ -403,6 +403,10 @@ ResultCode CHleKernel::ProcessSyncControl(CService * Service, CIPCRequest & Requ
         Request.SetDomainRequest(false);
         response_data.insert(response_data.end(), { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 });
         break;
+    case CloneCurrentObjectEx:
+        Request.AddResponseHandlesToMove(AddKernelObject(Service));
+        Request.SetDomainRequest(false);
+        break;
     case QueryPointerBufferSize:
         response_data.insert(response_data.end(), { 0x00, 0x05, 0x00, 0x00 });
         break;
