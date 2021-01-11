@@ -33,6 +33,8 @@ union ResultCode
 
 const ResultCode RESULT_SUCCESS(0);
 const ResultCode ERR_INVALID_ADDRESS(ErrorModule::Kernel, 102);
+const ResultCode ERR_INVALID_ADDRESS_STATE(ErrorModule::Kernel, 106);
+const ResultCode ERR_INVALID_MEMORY_PERMISSIONS(ErrorModule::Kernel, 108);
 const ResultCode ERR_INVALID_HANDLE( ErrorModule::Kernel, 114 );
 const ResultCode ERR_INVALID_POINTER( ErrorModule::Kernel, 115 );
 const ResultCode ERR_INVALID_COMBINATION(ErrorModule::Kernel, 116);

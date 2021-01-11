@@ -207,6 +207,52 @@ ResultCode CHleKernel::ConnectToNamedPort(CSystemThreadMemory & ThreadMemory, ui
     return 0;
 }
 
+ResultCode CHleKernel::CreateTransferMemory(uint32_t & TransferMemoryHandle, uint64_t Addr, uint64_t Size, MemoryPermission Permission)
+{
+    WriteTrace(TraceHleKernel, TraceNotice, "Start (Addr: 0x%I64X Size: 0x%I64X Permissions: 0x%X)", Addr, Size, Permission);
+    CGuard Guard(m_CS);
+
+    TransferMemoryHandle = 0;
+
+    if ((Addr & 0xFFF) != 0)
+    {
+        WriteTrace(TraceHleKernel, TraceWarning, "Addr (0x%I64X) is not page aligned", Addr);
+        WriteTrace(TraceHleKernel, TraceInfo, "Done (TransferMemoryHandle: 0x%I64X Return: ERR_INVALID_ADDRESS)", TransferMemoryHandle);
+        return ERR_INVALID_ADDRESS;
+    }
+
+    if ((Size & 0xFFF) != 0 || Size == 0)
+    {
+        WriteTrace(TraceHleKernel, TraceWarning, "Size (0x%I64X) is not page aligned or equal to zero!", Size);
+        WriteTrace(TraceHleKernel, TraceInfo, "Done (TransferMemoryHandle: 0x%I64X Return: ERR_INVALID_ADDRESS)", TransferMemoryHandle);
+        return ERR_INVALID_ADDRESS;
+    }
+
+    if (Addr + Size <= Addr)
+    {
+        WriteTrace(TraceHleKernel, TraceWarning, "Address and size cause overflow! (Addr=0x%I64X, Size=0x%I64X)", Addr, Size);
+        WriteTrace(TraceHleKernel, TraceInfo, "Done (TransferMemoryHandle: 0x%I64X Return: ERR_INVALID_ADDRESS_STATE)", TransferMemoryHandle);
+        return ERR_INVALID_ADDRESS_STATE;
+    }
+
+    if (Permission != MemoryPermission_None && Permission != MemoryPermission_Read && Permission != MemoryPermission_ReadWrite)
+    {
+        WriteTrace(TraceHleKernel, TraceWarning, "Invalid memory permissions (Permission: 0x%X)", Permission);
+        WriteTrace(TraceHleKernel, TraceInfo, "Done (TransferMemoryHandle: 0x%I64X Return: ERR_INVALID_MEMORY_PERMISSIONS)", TransferMemoryHandle);
+        return ERR_INVALID_MEMORY_PERMISSIONS;
+    }
+
+    CTransferMemory * TransferMemory = new CTransferMemory(Addr, Size, Permission);
+    if (TransferMemory == nullptr)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return RESULT_SUCCESS;
+    }
+    TransferMemoryHandle = AddKernelObject(TransferMemory);
+    WriteTrace(TraceHleKernel, TraceInfo, "Done (TransferMemoryHandle: 0x%I64X Return: RESULT_SUCCESS)", TransferMemoryHandle);
+    return RESULT_SUCCESS;
+}
+
 ResultCode CHleKernel::GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId)
 {
     WriteTrace(TraceHleKernel, TraceInfo, "Start (InfoType: %s handle: 0x%X SubId: 0x%I64X)", GetInfoTypeName(InfoType), handle, SubId);

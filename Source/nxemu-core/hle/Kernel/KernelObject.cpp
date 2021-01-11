@@ -29,6 +29,12 @@ KEvent * CKernelObject::GetKEventPtr(void)
     return nullptr;
 }
 
+CTransferMemory * CKernelObject::GetTransferMemoryPtr(void)
+{
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return nullptr;
+}
+
 CKernelObjectPtr::CKernelObjectPtr(CKernelObject * Object) :
     m_Object(Object)
 {

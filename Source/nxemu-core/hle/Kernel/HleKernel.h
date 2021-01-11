@@ -6,6 +6,7 @@
 #include <nxemu-core\hle\Kernel\ResultCode.h>
 #include <nxemu-core\hle\Kernel\KEvent.h>
 #include <nxemu-core\hle\Kernel\Mutex.h>
+#include <nxemu-core\hle\Memory\TransferMemory.h>
 #include <nxemu-core\hle\Kernel\KernelObject.h>
 #include <nxemu-core\hle\kernel\Service.h>
 #include <Common\stdtypes.h>
@@ -113,6 +114,7 @@ public:
     ResultCode CloseHandle(uint32_t Handle);
     ResultCode ConnectToNamedPort(CSystemThreadMemory & ThreadMemory, uint32_t & SessionHandle, uint64_t NameAddr);
     ResultCode CreateThread(uint32_t & ThreadHandle, uint64_t EntryPoint, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
+    ResultCode CreateTransferMemory(uint32_t & TransferMemoryHandle, uint64_t Addr, uint64_t Size, MemoryPermission Permissions);
     ResultCode GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId);
     ResultCode GetThreadPriority(uint32_t & Priority, uint32_t handle);
     ResultCode MapMemory(uint64_t DstAddress, uint64_t SrcAddress, uint64_t Size);

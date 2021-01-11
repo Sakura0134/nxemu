@@ -377,6 +377,9 @@
     <ClInclude Include="hle\Services\set\set.h">
       <Filter>Header Files\hle\Services\set</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Memory\TransferMemory.h">
+      <Filter>Header Files\hle\Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -594,6 +597,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\set\set.cpp">
       <Filter>Source Files\hle\Services\set</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Memory\TransferMemory.cpp">
+      <Filter>Source Files\hle\Memory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

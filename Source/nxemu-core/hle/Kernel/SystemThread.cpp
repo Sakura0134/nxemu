@@ -101,6 +101,13 @@ void CSystemThread::ServiceCall(uint32_t index)
             Reg.Set32(Arm64Opcode::ARM64_REG_W1, Priority);
         }
         break;
+    case SvcCall_CreateTransferMemory:
+        {
+            uint32_t TransferMemoryHandle = Reg.Get32(Arm64Opcode::ARM64_REG_W1);
+            Result = HleKernel.CreateTransferMemory(TransferMemoryHandle, Reg.Get64(Arm64Opcode::ARM64_REG_X1), Reg.Get64(Arm64Opcode::ARM64_REG_X2), (MemoryPermission)Reg.Get32(Arm64Opcode::ARM64_REG_W3));
+            Reg.Set32(Arm64Opcode::ARM64_REG_W1, TransferMemoryHandle);
+        }
+        break;
     case SvcCall_CloseHandle:
         Result = HleKernel.CloseHandle(Reg.Get32(Arm64Opcode::ARM64_REG_W0));
         break;

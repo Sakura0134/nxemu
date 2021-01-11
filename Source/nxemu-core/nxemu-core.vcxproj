@@ -53,6 +53,7 @@
     <ClInclude Include="hle\Memory\MemoryTypes.h" />
     <ClInclude Include="hle\Memory\ProcessMemory.h" />
     <ClInclude Include="hle\Memory\SystemThreadMemory.h" />
+    <ClInclude Include="hle\Memory\TransferMemory.h" />
     <ClInclude Include="hle\Services\acc\acc_u0.h" />
     <ClInclude Include="hle\Services\acc\IManagerForApplication.h" />
     <ClInclude Include="hle\Services\am\appletOE.h" />
@@ -135,6 +136,7 @@
     <ClCompile Include="hle\Memory\MemoryTypes.cpp" />
     <ClCompile Include="hle\Memory\ProcessMemory.cpp" />
     <ClCompile Include="hle\Memory\SystemThreadMemory.cpp" />
+    <ClCompile Include="hle\Memory\TransferMemory.cpp" />
     <ClCompile Include="hle\Services\acc\acc_u0.cpp" />
     <ClCompile Include="hle\Services\acc\IManagerForApplication.cpp" />
     <ClCompile Include="hle\Services\am\appletOE.cpp" />
