@@ -625,6 +625,9 @@
     <ClCompile Include="hle\Services\vi\IManagerRootService.cpp">
       <Filter>Source Files\hle\Services\vi</Filter>
     </ClCompile>
+    <ClCompile Include="hle\Services\vi\ISystemRootService.cpp">
+      <Filter>Source Files\hle\Services\vi</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Version.h.in">

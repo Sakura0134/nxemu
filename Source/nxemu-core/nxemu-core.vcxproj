@@ -168,6 +168,7 @@
     <ClCompile Include="hle\Services\set\set.cpp" />
     <ClCompile Include="hle\Services\ssl\SSLservices.cpp" />
     <ClCompile Include="hle\Services\vi\IManagerRootService.cpp" />
+    <ClCompile Include="hle\Services\vi\ISystemRootService.cpp" />
     <ClCompile Include="Language\Language.cpp" />
     <ClCompile Include="LaunchRunFile.cpp" />
     <ClCompile Include="Machine\Arm64Opcode.cpp" />
