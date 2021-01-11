@@ -89,6 +89,19 @@ public:
     
     typedef struct
     {
+        struct
+        {
+            unsigned Counter5_0 : 6;
+            unsigned Address38_36 : 3;
+            unsigned Counter11_9 : 3;
+            unsigned Address35_32 : 4;
+            unsigned Size : 16;
+        } p;
+        uint32_t Address31_0;
+    } IpcPointerDescPack;
+
+    typedef struct
+    {
         uint32_t Address31_0;
         struct
         {
@@ -110,11 +123,19 @@ public:
         uint64_t Size;
     } IpcRecvBuffDesc;
 
+    typedef struct
+    {
+        uint64_t Address;
+        uint32_t Size;
+        uint32_t Counter;
+    } IpcPointerDesc;
+
     typedef std::vector<uint8_t> REQUEST_DATA;
     typedef std::vector<uint8_t> RequestBuffer;
     typedef std::vector<uint32_t> HandleList;
     typedef std::vector<IpcBuffDesc> IpcBuffDescList;
     typedef std::vector<IpcRecvBuffDesc> IpcRecvBuffDescList;
+    typedef std::vector<IpcPointerDesc> IpcPointerDescList;
 
     CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CService * Service);
 
@@ -122,7 +143,9 @@ public:
     inline const IpcRequestHeader & RequestHeader(void) const { return m_RequestHeader; }
     inline const REQUEST_DATA & RequestData() const { return m_RequestData; }
     inline const IpcDomainMessage & DomainMessage() const { return m_DomainMessage; }
+    inline const IpcPointerDescList & PointerBuff() const { return m_PointerBuff; }
     inline const IpcRecvBuffDescList & RecvBuffList() const { return m_RecvBuffList; }
+    inline const IpcBuffDescList & SendBuff() const { return m_SendBuff; }
     inline const IpcBuffDescList & ReceiveBuff() const { return m_ReceiveBuff; }
     inline bool IsDomainRequest(void) const { return m_IsDomainRequest; }
 	inline REQUEST_DATA & ResponseData() { return m_ResponseData; }
@@ -146,6 +169,7 @@ private:
     CIPCRequest& operator=(const CIPCRequest&);
 
     void ReadBuffList(uint64_t & read_addr, IpcBuffDescList & list, uint32_t size);
+    void ReadBuffXList(uint64_t & read_addr, IpcPointerDescList & list, uint32_t size);
     void ReadRecvBuffList(uint64_t & read_addr, IpcRecvBuffDescList & list, uint32_t size);
     static uint32_t GetPadSize16(uint32_t address);
 
@@ -160,7 +184,8 @@ private:
     HandleList m_RequestHandlesToCopy;
     HandleList m_ResponseHandlesToMove, m_ResponseHandlesToCopy;
 	HandleList m_ObjectIds;
-    IpcBuffDescList m_ReceiveBuff;
+    IpcBuffDescList m_SendBuff, m_ReceiveBuff;
+    IpcPointerDescList m_PointerBuff;
     IpcRecvBuffDescList m_RecvBuffList;
     REQUEST_DATA m_RequestData, m_ResponseData;
     CKernelObjectPtr m_Service;

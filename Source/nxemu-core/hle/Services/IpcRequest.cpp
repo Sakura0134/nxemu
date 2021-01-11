@@ -63,8 +63,8 @@ CIPCRequest::CIPCRequest(CSwitchSystem & System, uint64_t RequestAddress, CServi
         }
     }
 
-    if (m_cmd.num_buf_x_descriptors != 0) { g_Notify->BreakPoint(__FILE__, __LINE__); }
-    if (m_cmd.num_buf_a_descriptors != 0) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+    ReadBuffXList(ipc_read_addr, m_PointerBuff, m_cmd.num_buf_x_descriptors);
+    ReadBuffList(ipc_read_addr, m_SendBuff, m_cmd.num_buf_a_descriptors);
     ReadBuffList(ipc_read_addr, m_ReceiveBuff, m_cmd.num_buf_b_descriptors);
     if (m_cmd.num_buf_w_descriptors != 0) { g_Notify->BreakPoint(__FILE__, __LINE__); }
     uint64_t RecvListPos = ipc_read_addr + m_cmd.data_size * sizeof(uint32_t);
@@ -299,6 +299,29 @@ void CIPCRequest::ReadBuffList(uint64_t & read_addr, IpcBuffDescList & list, uin
         BuffDesc.Size = (uint64_t)BuffDescPack.Size31_0 | ((uint64_t)(BuffDescPack.p.Size35_32) << 32);
         BuffDesc.Address = BuffDescPack.Address31_0 | ((uint64_t)(BuffDescPack.p.Address35_32) << 32) | ((uint64_t)(BuffDescPack.p.Address38_36) << 36);
         BuffDesc.Flags = BuffDescPack.p.Flags;
+        list.push_back(BuffDesc);
+    }
+}
+
+void CIPCRequest::ReadBuffXList(uint64_t & read_addr, IpcPointerDescList & list, uint32_t size)
+{
+    for (uint32_t i = 0; i < size; i++)
+    {
+        IpcPointerDescPack PointerDescPack = { 0 };
+        if (!m_ThreadMemory.ReadBytes(read_addr, (uint8_t*)&PointerDescPack, sizeof(PointerDescPack)))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        read_addr += sizeof(PointerDescPack);
+        IpcPointerDesc BuffDesc = { 0 };
+		BuffDesc.Address = PointerDescPack.Address31_0 | ((uint64_t)(PointerDescPack.p.Address35_32) << 32) | ((uint64_t)(PointerDescPack.p.Address38_36) << 36);
+        BuffDesc.Size = PointerDescPack.p.Size;
+        if (PointerDescPack.p.Counter11_9 != 0 ||
+            PointerDescPack.p.Counter5_0 != 0)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
         list.push_back(BuffDesc);
     }
 }
