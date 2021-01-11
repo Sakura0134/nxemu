@@ -30,6 +30,9 @@ ResultCode INvDrvServices::CallMethod(CIPCRequest & Request)
     case Method_Initialize:
         NvInitialize(Request);
         break;
+	case Method_SetAruid:
+		NvSetAruid(Request);
+		break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
@@ -42,4 +45,11 @@ void INvDrvServices::NvInitialize(CIPCRequest & Request)
     CIPCRequest::REQUEST_DATA & ResponseData = Request.ResponseData();
     ResponseData.resize(sizeof(uint32_t));
     *((uint32_t *)ResponseData.data()) = nvResult_Success;
+}
+
+void INvDrvServices::NvSetAruid(CIPCRequest & Request)
+{
+    CIPCRequest::REQUEST_DATA & ResponseData = Request.ResponseData();
+    ResponseData.resize(sizeof(uint32_t));
+    *((uint32_t *)&ResponseData[0]) = nvResult_Success;
 }
