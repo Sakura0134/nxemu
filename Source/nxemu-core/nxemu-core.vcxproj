@@ -79,6 +79,7 @@
     <ClInclude Include="hle\Services\pctl\IParentalControlService.h" />
     <ClInclude Include="hle\Services\pctl\IParentalControlServiceFactory.h" />
     <ClInclude Include="hle\Services\ServiceManager.h" />
+    <ClInclude Include="hle\Services\set\set.h" />
     <ClInclude Include="hle\Services\ssl\SSLservices.h" />
     <ClInclude Include="Language\Language.h" />
     <ClInclude Include="Language\LanguageStringID.h" />
@@ -159,6 +160,7 @@
     <ClCompile Include="hle\Services\pctl\IParentalControlService.cpp" />
     <ClCompile Include="hle\Services\pctl\IParentalControlServiceFactory.cpp" />
     <ClCompile Include="hle\Services\ServiceManager.cpp" />
+    <ClCompile Include="hle\Services\set\set.cpp" />
     <ClCompile Include="hle\Services\ssl\SSLservices.cpp" />
     <ClCompile Include="Language\Language.cpp" />
     <ClCompile Include="LaunchRunFile.cpp" />

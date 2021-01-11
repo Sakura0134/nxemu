@@ -132,6 +132,12 @@
     <Filter Include="Source Files\hle\Services\ssl">
       <UniqueIdentifier>{f276f23c-01f5-44ec-9e09-908305e9c25a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hle\Services\set">
+      <UniqueIdentifier>{976b01a7-7d4e-4afa-9924-3290fc418282}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hle\Services\set">
+      <UniqueIdentifier>{2ac101f3-8879-4bbf-98b0-c3ac3b5541db}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -368,6 +374,9 @@
     <ClInclude Include="hle\Services\ssl\SSLservices.h">
       <Filter>Header Files\hle\Services\ssl</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\set\set.h">
+      <Filter>Header Files\hle\Services\set</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -582,6 +591,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\ssl\SSLservices.cpp">
       <Filter>Source Files\hle\Services\ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\set\set.cpp">
+      <Filter>Source Files\hle\Services\set</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

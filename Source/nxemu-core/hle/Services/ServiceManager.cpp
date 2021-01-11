@@ -6,6 +6,7 @@
 #include <nxemu-core\hle\Services\lm\lm.h>
 #include <nxemu-core\hle\Services\ns\IAddOnContentManager.h>
 #include <nxemu-core\hle\Services\pctl\IParentalControlServiceFactory.h>
+#include <nxemu-core\hle\Services\set\set.h>
 #include <nxemu-core\hle\Services\ssl\SSLservices.h>
 #include <nxemu-core\hle\Services\FspSrv\IFileSystemProxy.h>
 #include <nxemu-core\Machine\SwitchSystem.h>
@@ -23,6 +24,7 @@ CServiceManger::CServiceManger(CSwitchSystem & System) :
     m_ServiceCreateList.insert(ServiceCreateList::value_type("fsp-srv", IFileSystemProxy::CreateInstance));
     m_ServiceCreateList.insert(ServiceCreateList::value_type("lm", LM::CreateInstance));
     m_ServiceCreateList.insert(ServiceCreateList::value_type("pctl:a", IParentalControlServiceFactory::CreateInstance));
+    m_ServiceCreateList.insert(ServiceCreateList::value_type("set", SetServices::CreateInstance));
     m_ServiceCreateList.insert(ServiceCreateList::value_type("ssl", SSLServices::CreateInstance));
 }
 
