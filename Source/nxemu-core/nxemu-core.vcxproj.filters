@@ -144,6 +144,12 @@
     <Filter Include="Source Files\hle\Services\nv">
       <UniqueIdentifier>{a7eea552-7f7e-48d6-9b41-30b76a6c9568}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hle\Services\vi">
+      <UniqueIdentifier>{b3006d9b-3209-48fc-8713-eb6ab00ab115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hle\Services\vi">
+      <UniqueIdentifier>{85dc6853-71e5-4a5e-8bab-9cbe3668e989}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -389,6 +395,9 @@
     <ClInclude Include="hle\Services\nv\INvDrvServices.h">
       <Filter>Header Files\hle\Services\nv</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\vi\IManagerRootService.h">
+      <Filter>Header Files\hle\Services\vi</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -612,6 +621,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\nv\INvDrvServices.cpp">
       <Filter>Source Files\hle\Services\nv</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\vi\IManagerRootService.cpp">
+      <Filter>Source Files\hle\Services\vi</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
