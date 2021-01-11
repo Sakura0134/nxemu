@@ -13,7 +13,7 @@ private:
     CTransferMemory(const CTransferMemory&);
     CTransferMemory& operator=(const CTransferMemory&);
 
-    KernelObjectHandleType GetHandleType() const { return KernelObjectHandleType_Event; }
+    KernelObjectHandleType GetHandleType() const { return KernelObjectHandleType_TransferMemory; }
     CTransferMemory * GetTransferMemoryPtr(void) { return this; }
 
     uint64_t m_Addr;

@@ -106,6 +106,9 @@ void CKernelObjectPtr::ReleaseRef()
         case KernelObjectHandleType_Service:
             delete m_Object->GetServicePtr();
             break;
+        case KernelObjectHandleType_TransferMemory:
+            delete m_Object->GetTransferMemoryPtr();
+            break;
         default:
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
