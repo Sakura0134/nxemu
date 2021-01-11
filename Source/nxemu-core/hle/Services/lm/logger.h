@@ -4,6 +4,11 @@
 class LMLogger :
     public CService
 {
+    enum
+    {
+        Method_LogMessage = 0,
+    };
+
 public:
     static CKernelObjectPtr CreateInstance(CSwitchSystem & System);
 
@@ -18,4 +23,6 @@ private:
     LMLogger& operator=(const LMLogger&);
 
     LMLogger(CSwitchSystem & System);
+
+    void ProcessLogMessage(CIPCRequest & Request);
 };

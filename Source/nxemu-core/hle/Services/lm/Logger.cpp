@@ -17,8 +17,18 @@ bool LMLogger::Connect(void)
     return true;
 }
 
-ResultCode LMLogger::CallMethod(CIPCRequest & /*Request*/)
+ResultCode LMLogger::CallMethod(CIPCRequest & Request)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    switch (Request.RequestHeader().Command)
+    {
+    case Method_LogMessage: ProcessLogMessage(Request); break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
     return RESULT_SUCCESS;
+}
+
+void LMLogger::ProcessLogMessage(CIPCRequest & /*Request*/)
+{
+    //Stubbed;
 }
