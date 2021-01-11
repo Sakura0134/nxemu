@@ -5,6 +5,11 @@ class IManagerRootService :
     public CService
 {
 public:
+    enum Method
+    {
+        Method_GetDisplayService = 2,
+        Method_GetDisplayServiceWithProxyNameExchange = 3,
+    };
     static CKernelObjectPtr CreateInstance(CSwitchSystem & System);
 
     //__interface IService

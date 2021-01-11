@@ -1,4 +1,5 @@
 #include <nxemu-core\hle\Services\ServiceManager.h>
+#include <nxemu-core\hle\Services\vi\IApplicationDisplayService.h>
 #include <nxemu-core\hle\Services\vi\IManagerRootService.h>
 #include <nxemu-core\SystemGlobals.h>
 
@@ -22,6 +23,9 @@ ResultCode IManagerRootService::CallMethod(CIPCRequest & Request)
 {
     switch (Request.RequestHeader().Command)
     {
+    case Method_GetDisplayService:
+		Request.MakeObject(IApplicationDisplayService::CreateInstance(m_System)->GetServicePtr());
+        break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;

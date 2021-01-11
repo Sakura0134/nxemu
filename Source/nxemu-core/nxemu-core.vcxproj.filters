@@ -404,6 +404,9 @@
     <ClInclude Include="hle\Services\vi\ISystemRootService.h">
       <Filter>Header Files\hle\Services\vi</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\vi\IApplicationDisplayService.h">
+      <Filter>Header Files\hle\Services\vi</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -635,6 +638,9 @@
       <Filter>Source Files\hle\Services\vi</Filter>
     </ClCompile>
     <ClCompile Include="hle\Services\vi\IApplicationRootService.cpp">
+      <Filter>Source Files\hle\Services\vi</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\vi\IApplicationDisplayService.cpp">
       <Filter>Source Files\hle\Services\vi</Filter>
     </ClCompile>
   </ItemGroup>
