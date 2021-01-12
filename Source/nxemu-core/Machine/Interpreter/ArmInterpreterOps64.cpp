@@ -778,6 +778,11 @@ void Arm64Op::Csinc(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();
     if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is64bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(1).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(1).Reg))
+    {
+        Reg.Set64(Op.Operand(0).Reg, Reg.ConditionSet(Op.cc()) ? Reg.Get64(Op.Operand(1).Reg) : (Reg.Get64(Op.Operand(2).Reg) + 1));
+    }
+    else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
         Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
     {
         Reg.Set32(Op.Operand(0).Reg, Reg.ConditionSet(Op.cc()) ? Reg.Get32(Op.Operand(1).Reg) : (Reg.Get32(Op.Operand(2).Reg) + 1));
