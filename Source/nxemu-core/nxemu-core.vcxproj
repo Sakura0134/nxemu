@@ -43,6 +43,8 @@
     <ClInclude Include="FileFormat\xci.h" />
     <ClInclude Include="FileSystem\EncryptedFile.h" />
     <ClInclude Include="FileSystem\PartitionFilesystem.h" />
+    <ClInclude Include="hle\Display\Display.h" />
+    <ClInclude Include="hle\Display\Nvidia\nvResult.h" />
     <ClInclude Include="hle\Kernel\HleKernel.h" />
     <ClInclude Include="hle\Kernel\KernelObject.h" />
     <ClInclude Include="hle\Kernel\KEvent.h" />
@@ -133,6 +135,7 @@
     <ClCompile Include="FileFormat\xci.cpp" />
     <ClCompile Include="FileSystem\EncryptedFile.cpp" />
     <ClCompile Include="FileSystem\PartitionFilesystem.cpp" />
+    <ClCompile Include="hle\Display\Display.cpp" />
     <ClCompile Include="hle\Kernel\HleKernel.cpp" />
     <ClCompile Include="hle\Kernel\KernelObject.cpp" />
     <ClCompile Include="hle\Kernel\KEvent.cpp" />

@@ -9,6 +9,7 @@ enum ErrorModule
 {
     Kernel = 1,
     IPC = 11,
+    VI = 114,
     AM = 128,
 };
 
@@ -43,6 +44,7 @@ const ResultCode ERR_OUT_OF_RANGE(ErrorModule::Kernel, 119);
 const ResultCode ERR_INVALID_ENUM_VALUE(ErrorModule::Kernel, 120);
 const ResultCode ERR_NOT_FOUND(ErrorModule::Kernel, 121);
 const ResultCode IPC_ERR_REMOTE_PROCESS_DEAD(ErrorModule::IPC, 301);
+const ResultCode VI_ERR_NOT_FOUND(ErrorModule::VI, 7);
 const ResultCode AM_ERR_NO_MESSAGES(ErrorModule::AM, 0x3);
 
 const char * ResultCodeStr(ResultCode code);

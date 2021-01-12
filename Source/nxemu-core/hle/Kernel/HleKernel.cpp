@@ -9,6 +9,7 @@
 #include <algorithm>
 
 CHleKernel::CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory) :
+    m_Display(System),
     m_System(System),
     m_ProcessMemory(ProcessMemory),
     m_SM(System),

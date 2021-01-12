@@ -1,4 +1,5 @@
 #pragma once
+#include <nxemu-core\hle\Display\Display.h>
 #include <nxemu-core\hle\Memory\ProcessMemory.h>
 #include <nxemu-core\hle\Services\ServiceManager.h>
 #include <nxemu-core\hle\Services\NamedPort.h>
@@ -125,6 +126,7 @@ public:
     ResultCode StartThread(uint32_t ThreadHandle);
     ResultCode WaitProcessWideKeyAtomic(uint64_t ptr0, uint64_t ptr1, uint32_t ThreadHandle, uint64_t timeout);
     ResultCode WaitSynchronization(CSystemThreadMemory & ThreadMemory, uint32_t & HandleIndex, uint64_t HandlesPtr, uint32_t HandlesNum, uint64_t Timeout);
+    inline CDisplay & GetDisplay(void) { return m_Display; }
 
     static const char * GetSvcCallStr(SvcCall Call);
 
@@ -140,6 +142,7 @@ private:
     static const char * GetInfoTypeName(GetInfoType Id);
 
     CriticalSection m_CS;
+    CDisplay m_Display;
     CSwitchSystem & m_System;
     CProcessMemory & m_ProcessMemory;
     KernelObjectMap m_KernelObjects;

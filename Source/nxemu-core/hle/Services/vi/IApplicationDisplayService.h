@@ -41,4 +41,6 @@ private:
     IApplicationDisplayService& operator=(const IApplicationDisplayService&); 
     
     IApplicationDisplayService(CSwitchSystem & System);
+
+    ResultCode ViOpenDisplay(CIPCRequest & Request);
 };
