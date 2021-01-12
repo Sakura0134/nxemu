@@ -1,5 +1,6 @@
 #include <nxemu-core\hle\Services\vi\IApplicationDisplayService.h>
 #include <nxemu-core\hle\Services\vi\IManagerDisplayService.h>
+#include <nxemu-core\hle\Services\vi\ISystemDisplayService.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CKernelObjectPtr IApplicationDisplayService::CreateInstance(CSwitchSystem & System)
@@ -22,6 +23,9 @@ ResultCode IApplicationDisplayService::CallMethod(CIPCRequest & Request)
 {
     switch (Request.RequestHeader().Command)
     {
+    case Method_GetSystemDisplayService:
+        Request.MakeObject(ISystemDisplayService::CreateInstance(m_System)->GetServicePtr());
+        break;
     case Method_GetManagerDisplayService:
         Request.MakeObject(IManagerDisplayService::CreateInstance(m_System)->GetServicePtr());
         break;
