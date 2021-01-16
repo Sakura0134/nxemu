@@ -36,6 +36,8 @@ ResultCode IApplicationDisplayService::CallMethod(CIPCRequest & Request)
         break;
     case Method_OpenDisplay:
         return ViOpenDisplay(Request);
+    case Method_OpenLayer:
+        return ViOpenLayer(Request);
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
@@ -60,3 +62,27 @@ ResultCode IApplicationDisplayService::ViOpenDisplay(CIPCRequest & Request)
 	((uint64_t *)ResponseData.data())[0] = DisplayId;
     return RESULT_SUCCESS;
 }
+
+ResultCode IApplicationDisplayService::ViOpenLayer(CIPCRequest & Request)
+{
+    const CIPCRequest::REQUEST_DATA & data = Request.RequestData();
+    std::string DisplayName((const char *)data.data(), 0x40);
+
+    CDisplay & Display = m_System.HleKernel().GetDisplay();
+    uint32_t DisplayId = 0;
+    if (!Display.Open(DisplayName.c_str(), DisplayId))
+    {
+        return VI_ERR_NOT_FOUND;
+    }
+    uint64_t LayerId = *((uint64_t *)&data[0x40]);
+
+    uint32_t BufferQueueId;
+    if (!Display.FindBufferQueueId(DisplayId, (uint32_t)LayerId, BufferQueueId))
+    {
+        return VI_ERR_NOT_FOUND;
+    }
+
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return RESULT_SUCCESS;
+}
+

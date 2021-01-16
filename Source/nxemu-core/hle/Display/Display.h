@@ -18,6 +18,7 @@ public:
 
     bool Open(const char * name, uint32_t & DisplayId);
     bool CreateLayer(uint32_t DisplayId, uint32_t & LayerId);
+    bool FindBufferQueueId(uint32_t DisplayId, uint32_t LayerId, uint32_t & QueueId);
 
 private:
     CDisplay(void);

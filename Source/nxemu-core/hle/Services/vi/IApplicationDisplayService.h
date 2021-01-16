@@ -43,4 +43,5 @@ private:
     IApplicationDisplayService(CSwitchSystem & System);
 
     ResultCode ViOpenDisplay(CIPCRequest & Request);
+    ResultCode ViOpenLayer(CIPCRequest & Request);
 };

@@ -9,6 +9,9 @@ class CLayer
 public:
     CLayer(uint32_t id, std::shared_ptr<CBufferQueue> buffer_queue);
     
+    inline CBufferQueue * BufferQueue(void) { return m_buffer_queue.get(); }
+    inline uint32_t Id() const { return m_id; }
+
 private:
     CLayer(void);
     CLayer(const CLayer&);

@@ -47,6 +47,23 @@ bool CDisplay::CreateLayer(uint32_t DisplayId, uint32_t & LayerId)
     return display->CreateLayer(LayerId, BufferQueue);
 }
 
+
+bool CDisplay::FindBufferQueueId(uint32_t DisplayId, uint32_t LayerId, uint32_t & QueueId)
+{
+    CDisplayDevice * DisplayDevice = FindDisplay(DisplayId);
+    if (DisplayDevice == nullptr)
+    {
+        return false;
+    }
+    CLayer * Layer = DisplayDevice->FindLayer(LayerId);
+    if (Layer == nullptr)
+    {
+        return false;
+    }
+    QueueId = Layer->BufferQueue()->Id();
+    return true;
+}
+
 CDisplayDevice * CDisplay::FindDisplay(uint32_t DisplayId)
 {
     for (size_t i = 0, n = m_DisplayList.size(); i < n; i++)
