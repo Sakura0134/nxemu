@@ -159,6 +159,9 @@
     <Filter Include="Source Files\hle\Display">
       <UniqueIdentifier>{ed7c63d3-dc1f-4ff6-82ae-c79be03125c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\hle\Display\Nvidia">
+      <UniqueIdentifier>{395ac624-2b0e-4bb8-90de-71e8ef4a9db4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -434,6 +437,9 @@
     <ClInclude Include="hle\Display\DisplayDevice.h">
       <Filter>Header Files\hle\Display</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Display\Nvidia\BufferQueue.h">
+      <Filter>Header Files\hle\Display\Nvidia</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -684,6 +690,9 @@
     </ClCompile>
     <ClCompile Include="hle\Display\DisplayDevice.cpp">
       <Filter>Source Files\hle\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Display\Nvidia\BufferQueue.cpp">
+      <Filter>Source Files\hle\Display\Nvidia</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
