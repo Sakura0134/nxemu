@@ -48,8 +48,14 @@ bool CDisplay::CreateLayer(uint32_t DisplayId, uint32_t & LayerId)
     return false;
 }
 
-CDisplayDevice * CDisplay::FindDisplay(uint32_t /*DisplayId*/)
+CDisplayDevice * CDisplay::FindDisplay(uint32_t DisplayId)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    for (size_t i = 0, n = m_DisplayList.size(); i < n; i++)
+    {
+        if (m_DisplayList[i]->Id() == DisplayId)
+        {
+            return m_DisplayList[i].get();
+        }
+    }
     return nullptr;
 }
