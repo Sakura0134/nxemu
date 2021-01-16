@@ -44,8 +44,7 @@ bool CDisplay::CreateLayer(uint32_t DisplayId, uint32_t & LayerId)
     const uint32_t BufferQueueId = m_NextBufferQueueId++;
     std::shared_ptr<CBufferQueue> BufferQueue = std::make_shared<CBufferQueue>(BufferQueueId, LayerId);
     m_BufferQueue.push_back(BufferQueue);
-    g_Notify->BreakPoint(__FILE__, __LINE__);
-    return false;
+    return display->CreateLayer(LayerId, BufferQueue);
 }
 
 CDisplayDevice * CDisplay::FindDisplay(uint32_t DisplayId)

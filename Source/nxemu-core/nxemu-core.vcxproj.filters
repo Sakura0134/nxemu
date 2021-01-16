@@ -440,6 +440,9 @@
     <ClInclude Include="hle\Display\Nvidia\BufferQueue.h">
       <Filter>Header Files\hle\Display\Nvidia</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Display\Layer.h">
+      <Filter>Header Files\hle\Display</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -693,6 +696,9 @@
     </ClCompile>
     <ClCompile Include="hle\Display\Nvidia\BufferQueue.cpp">
       <Filter>Source Files\hle\Display\Nvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Display\Layer.cpp">
+      <Filter>Source Files\hle\Display</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
