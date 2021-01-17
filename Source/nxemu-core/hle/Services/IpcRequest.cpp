@@ -379,6 +379,36 @@ uint64_t CIPCRequest::GetWriteBufferSize(uint32_t BufferIndex)
 	return 0;
 }
 
+bool CIPCRequest::ReadBuffer(std::vector<uint8_t> & Data, uint32_t BufferIndex)
+{
+    uint64_t DataPos = 0;
+    uint32_t DataSize = 0;
+
+    if (m_PointerBuff.size() > 0 && m_PointerBuff[BufferIndex].Address != 0 && m_PointerBuff[BufferIndex].Size > 0)
+    {
+        DataPos = m_PointerBuff[BufferIndex].Address;
+        DataSize = m_PointerBuff[BufferIndex].Size;
+    }
+    else if (m_SendBuff.size() > 0 && m_SendBuff[BufferIndex].Address != 0 && m_SendBuff[BufferIndex].Size > 0)
+    {
+        DataPos = m_SendBuff[BufferIndex].Address;
+        DataSize = (uint32_t)m_SendBuff[BufferIndex].Size;
+    }
+    if (DataSize == 0 || DataSize > 0x200)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+
+    Data.resize(DataSize);
+    if (!m_ThreadMemory.ReadBytes(DataPos, Data.data(), DataSize))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+    return true;
+}
+
 bool CIPCRequest::WriteBuffer(const RequestBuffer& Buffer, uint32_t BufferIndex) const
 {
     return WriteBuffer(Buffer.data(), (uint32_t)Buffer.size(), BufferIndex);

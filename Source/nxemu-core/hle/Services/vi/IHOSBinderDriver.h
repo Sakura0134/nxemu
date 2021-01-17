@@ -29,4 +29,5 @@ private:
 
     void ViAdjustRefcount(void);
     void ViGetNativeHandle(CIPCRequest & Request);
+    ResultCode ViTransactParcel(CIPCRequest & Request);
 };

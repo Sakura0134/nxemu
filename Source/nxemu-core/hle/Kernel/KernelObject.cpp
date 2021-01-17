@@ -1,5 +1,6 @@
 #include <nxemu-core\hle\Kernel\KernelObject.h>
 #include <nxemu-core\hle\Kernel\Service.h>
+#include <nxemu-core\hle\Memory\TransferMemory.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CKernelObject::CKernelObject() :

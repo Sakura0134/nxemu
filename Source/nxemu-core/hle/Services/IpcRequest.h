@@ -160,6 +160,7 @@ public:
 	void SetDomainRequest(bool DomainRequest);
 	void MakeObject(CService * Service);
 	uint64_t GetWriteBufferSize(uint32_t BufferIndex = 0);
+    bool ReadBuffer(RequestBuffer & Buffer, uint32_t BufferIndex = 0);
     bool WriteBuffer(const RequestBuffer & Buffer, uint32_t BufferIndex = 0) const;
     bool WriteBuffer(const uint8_t * buffer, uint32_t size, uint32_t BufferIndex = 0) const;
 
