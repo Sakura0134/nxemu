@@ -1,6 +1,7 @@
 #pragma once
 #include <nxemu-core\FileSystem\EncryptedFile.h>
 #include <Common\stdtypes.h>
+#include <string>
 
 class NACP
 {

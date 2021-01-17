@@ -15,7 +15,7 @@ public:
 
     bool CreateLayer(uint32_t id, std::shared_ptr<CBufferQueue> buffer_queue);
     CLayer * FindLayer(uint32_t id);
-    
+
     inline uint32_t Id(void) const { return m_Id; }
     inline const char * Name(void) const { return m_Name.c_str(); }
 

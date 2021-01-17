@@ -2,8 +2,41 @@
 #include <nxemu-core\hle\Services\vi\IManagerDisplayService.h>
 #include <nxemu-core\hle\Services\vi\ISystemDisplayService.h>
 #include <nxemu-core\hle\Services\vi\IHOSBinderDriver.h>
+#include <nxemu-core\hle\Services\vi\ViParcel.h>
 #include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\SystemGlobals.h>
+
+class CNativeWindow : 
+    public ViParcel {
+public:
+    CNativeWindow(uint32_t id) :
+        m_data({ 0 })
+    {
+        m_data.magic = 2;
+        m_data.process_id = 1;
+        m_data.id = id;
+        strcpy((char *)&m_data.dispdrv[0], "dispdrv");
+    }
+
+protected:
+    void SerializeData() 
+    {
+        Write(&m_data,sizeof(m_data));
+    }
+
+private:
+    struct Data 
+    {
+        uint32_t magic;
+        uint32_t process_id;
+        uint32_t id;
+        uint32_t padding[3];
+        uint8_t dispdrv[8];
+        uint32_t padding2[2];
+    };
+
+    Data m_data;
+};
 
 CKernelObjectPtr IApplicationDisplayService::CreateInstance(CSwitchSystem & System)
 {
@@ -82,7 +115,13 @@ ResultCode IApplicationDisplayService::ViOpenLayer(CIPCRequest & Request)
         return VI_ERR_NOT_FOUND;
     }
 
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    CNativeWindow NativeWindow(BufferQueueId);
+    CIPCRequest::RequestBuffer NativeWindowData = NativeWindow.Serialize();
+    Request.WriteBuffer(NativeWindowData);
+
+    CIPCRequest::REQUEST_DATA & ResponseData = Request.ResponseData();
+    ResponseData.resize(sizeof(uint64_t));
+    ((uint64_t *)ResponseData.data())[0] = NativeWindowData.size();
     return RESULT_SUCCESS;
 }
 

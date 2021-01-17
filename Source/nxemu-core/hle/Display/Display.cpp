@@ -47,7 +47,6 @@ bool CDisplay::CreateLayer(uint32_t DisplayId, uint32_t & LayerId)
     return display->CreateLayer(LayerId, BufferQueue);
 }
 
-
 bool CDisplay::FindBufferQueueId(uint32_t DisplayId, uint32_t LayerId, uint32_t & QueueId)
 {
     CDisplayDevice * DisplayDevice = FindDisplay(DisplayId);

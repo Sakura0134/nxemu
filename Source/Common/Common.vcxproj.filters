@@ -125,5 +125,8 @@
     <ClInclude Include="ThreadLocalStorage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="align.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
