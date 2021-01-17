@@ -63,6 +63,18 @@ bool CDisplay::FindBufferQueueId(uint32_t DisplayId, uint32_t LayerId, uint32_t 
     return true;
 }
 
+CBufferQueue * CDisplay::FindBufferQueue(uint32_t QueueId)
+{
+    for (size_t i = 0, n = m_BufferQueue.size(); i < n; i++)
+    {
+        if (m_BufferQueue[i]->Id() == QueueId)
+        {
+            return m_BufferQueue[i].get();
+        }
+    }
+    return nullptr;
+}
+
 CDisplayDevice * CDisplay::FindDisplay(uint32_t DisplayId)
 {
     for (size_t i = 0, n = m_DisplayList.size(); i < n; i++)

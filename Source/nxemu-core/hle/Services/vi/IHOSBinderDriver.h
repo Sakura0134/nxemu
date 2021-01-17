@@ -5,6 +5,13 @@ class IHOSBinderDriver :
     public CService
 {
 public:
+    enum Method
+    {
+        Method_TransactParcel = 0,
+        Method_AdjustRefcount = 1,
+        Method_GetNativeHandle = 2,
+        Method_TransactParcelAuto = 3,
+    };
     static CKernelObjectPtr CreateInstance(CSwitchSystem & System);
     ~IHOSBinderDriver();
 
@@ -19,4 +26,7 @@ private:
     IHOSBinderDriver& operator=(const IHOSBinderDriver&);
     
     IHOSBinderDriver(CSwitchSystem & System);
+
+    void ViAdjustRefcount(void);
+    void ViGetNativeHandle(CIPCRequest & Request);
 };
