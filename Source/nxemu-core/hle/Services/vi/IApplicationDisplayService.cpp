@@ -71,6 +71,9 @@ ResultCode IApplicationDisplayService::CallMethod(CIPCRequest & Request)
         return ViOpenDisplay(Request);
     case Method_OpenLayer:
         return ViOpenLayer(Request);
+    case Method_SetLayerScalingMode:
+        ViSetLayerScalingMode(Request);
+        break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
@@ -123,5 +126,10 @@ ResultCode IApplicationDisplayService::ViOpenLayer(CIPCRequest & Request)
     ResponseData.resize(sizeof(uint64_t));
     ((uint64_t *)ResponseData.data())[0] = NativeWindowData.size();
     return RESULT_SUCCESS;
+}
+
+void IApplicationDisplayService::ViSetLayerScalingMode(CIPCRequest & /*Request*/)
+{
+    //stubbed
 }
 

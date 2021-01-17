@@ -44,4 +44,5 @@ private:
 
     ResultCode ViOpenDisplay(CIPCRequest & Request);
     ResultCode ViOpenLayer(CIPCRequest & Request);
+    void ViSetLayerScalingMode(CIPCRequest & Request);
 };
