@@ -45,6 +45,10 @@ void Arm64Op::Add(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             {
                 b = (uint32_t)(Reg.Get32(Op.Operand(2).Reg));
             }
+            else if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_SXTW)
+            {
+                b = (int64_t)((int32_t)(Reg.Get32(Op.Operand(2).Reg)));
+            }
             else if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_SXTW)
             {
                b = ((int64_t)(int32_t)Reg.Get32(Op.Operand(2).Reg)) << Op.Operand(2).shift.value;
