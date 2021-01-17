@@ -70,7 +70,12 @@ void Arm64Op::Add(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         Reg.Set64(Op.Operand(0).Reg, result);
         if (Op.UpdateFlags())
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            bool n = (result & 0x8000000000000000) != 0;
+            bool z = result == 0;
+            bool c = result < a;
+            bool v = (((result ^ a) & (a ^ b)) & 0x8000000000000000) != 0;
+
+            Reg.SetConditionFlags(n, z, c, v);
         }
     }
     else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
