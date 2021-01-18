@@ -2812,6 +2812,11 @@ void Arm64Op::Sub(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         {
             b = Reg.Get32(Op.Operand(2).Reg);
         }
+        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg) &&
+            Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_SXTW)
+        {
+            b = (int64_t)((int32_t)Reg.Get32(Op.Operand(2).Reg));
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
