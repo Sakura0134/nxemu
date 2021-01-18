@@ -851,47 +851,53 @@ void Arm64Op::Eor(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         Arm64Opcode::Is64bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(1).Reg))
     {
-        if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is64bitReg(Op.Operand(2).Reg) && Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+        uint64_t a = Reg.Get64(Op.Operand(1).Reg), b = 0;
+        if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
         {
-            Reg.Set64(Op.Operand(0).Reg, Reg.Get64(Op.Operand(1).Reg) ^ Reg.Get64(Op.Operand(2).Reg));
+            b = Op.Operand(2).ImmVal;
+        }
+        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is64bitReg(Op.Operand(2).Reg))
+        {
+            if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                b = Reg.Get64(Op.Operand(2).Reg);
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
         }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
+        Reg.Set64(Op.Operand(0).Reg, a ^ b);
     }
     else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
     {
-        if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg))
+        uint32_t a = Reg.Get32(Op.Operand(1).Reg), b = 0;
+        if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+        {
+            b = (uint32_t)Op.Operand(2).ImmVal;
+        }
+        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg))
         {
             if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
             {
-                Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg) ^ Reg.Get32(Op.Operand(2).Reg));
+                b = Reg.Get32(Op.Operand(2).Reg);
             }
             else if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
             {
-                Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg) ^ (Reg.Get32(Op.Operand(2).Reg) << Op.Operand(2).shift.value));
+                b = (Reg.Get32(Op.Operand(2).Reg) << Op.Operand(2).shift.value);
             }
             else if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSR && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
             {
-                Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg) ^ (Reg.Get32(Op.Operand(2).Reg) >> Op.Operand(2).shift.value));
+                b = (Reg.Get32(Op.Operand(2).Reg) >> Op.Operand(2).shift.value);
             }
             else if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_ROR && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
             {
-                uint32_t value = (Reg.Get32(Op.Operand(2).Reg) >> Op.Operand(2).shift.value) | (Reg.Get32(Op.Operand(2).Reg) << (32 - Op.Operand(2).shift.value));
-                Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg) ^ value);
-            }
-            else
-            {
-                g_Notify->BreakPoint(__FILE__, __LINE__);
-            }
-        }
-        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
-        {
-            if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
-            {
-                Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg) ^ (uint32_t)Op.Operand(2).ImmVal);
+                b = (Reg.Get32(Op.Operand(2).Reg) >> Op.Operand(2).shift.value) | (Reg.Get32(Op.Operand(2).Reg) << (32 - Op.Operand(2).shift.value));
             }
             else
             {
@@ -902,6 +908,7 @@ void Arm64Op::Eor(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
+        Reg.Set32(Op.Operand(0).Reg, a ^ b);
     }
     else
     {
