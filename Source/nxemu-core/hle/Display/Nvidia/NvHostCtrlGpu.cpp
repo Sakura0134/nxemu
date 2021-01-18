@@ -14,6 +14,9 @@ nvResult CNvHostCtrlGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& 
         case IOCTL_GET_CHARACTERISTICS:
             GetCharacteristics(InData, OutData);
             break;
+        case IOCTL_GET_TPC_MASKS:
+            GetTpcMasks(InData, OutData);
+            break;
         default:
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -72,4 +75,21 @@ void CNvHostCtrlGpu::GetCharacteristics(const std::vector<uint8_t> & InData, std
     Characteristics.rop_l2_en_mask_1 = 0x0;
     Characteristics.chipname = 0x6230326d67;
     Characteristics.gr_compbit_store_base_hw = 0x0;
+}
+
+void CNvHostCtrlGpu::GetTpcMasks(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData)
+{
+	if (InData.size() < sizeof(NvGpuGpuGetTpcMasks))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+
+    OutData.resize(sizeof(NvGpuGpuGetTpcMasks));
+    memcpy(OutData.data(), InData.data(), InData.size());
+    NvGpuGpuGetTpcMasks & TpcMasks = *((NvGpuGpuGetTpcMasks *)OutData.data());
+    if (TpcMasks.MaskBufferSize != 0)
+    {
+        TpcMasks.TpcMask = 3;
+    }
 }

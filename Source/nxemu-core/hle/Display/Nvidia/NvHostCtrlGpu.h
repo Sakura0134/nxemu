@@ -56,6 +56,15 @@ class CNvHostCtrlGpu :
         uint64_t gr_compbit_store_base_hw;       // 0x0 (not supported)
     };
 
+    struct NvGpuGpuGetTpcMasks
+    {
+        uint32_t MaskBufferSize;
+        uint32_t Reserved;
+        uint64_t MaskBufferAddress;
+        uint32_t TpcMask;
+        uint32_t Padding;
+    };
+
 public:
     CNvHostCtrlGpu(void);
     nvResult Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& InData, CIPCRequest::RequestBuffer& OutData);
@@ -65,4 +74,5 @@ private:
     CNvHostCtrlGpu& operator=(const CNvHostCtrlGpu&);
 
     void GetCharacteristics(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
+    void GetTpcMasks(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
 };
