@@ -73,6 +73,7 @@ private:
     CNvHostCtrlGpu(const CNvHostCtrlGpu&);
     CNvHostCtrlGpu& operator=(const CNvHostCtrlGpu&);
 
+    void ZcullGetCtxSize(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
     void GetCharacteristics(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
     void GetTpcMasks(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
 };

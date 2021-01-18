@@ -11,6 +11,9 @@ nvResult CNvHostCtrlGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& 
     {
         switch (Ioctl.Cmd)
         {
+        case IOCTL_ZCULL_GET_CTX_SIZE:
+            ZcullGetCtxSize(InData, OutData);
+            break;
         case IOCTL_GET_CHARACTERISTICS:
             GetCharacteristics(InData, OutData);
             break;
@@ -26,6 +29,12 @@ nvResult CNvHostCtrlGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& 
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     return nvResult_Success;
+}
+
+void CNvHostCtrlGpu::ZcullGetCtxSize(const std::vector<uint8_t> & /*InData*/, std::vector<uint8_t> & OutData)
+{
+    OutData.resize(sizeof(uint32_t));
+    *((uint32_t *)OutData.data()) = 1;
 }
 
 void CNvHostCtrlGpu::GetCharacteristics(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData)
