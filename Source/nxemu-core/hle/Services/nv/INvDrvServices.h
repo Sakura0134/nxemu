@@ -1,4 +1,5 @@
 #pragma once
+#include <nxemu-core\hle\Display\Nvidia\NvDriver.h>
 #include <nxemu-core\hle\Kernel\Service.h>
 
 class INvDrvServices :
@@ -39,5 +40,8 @@ private:
     INvDrvServices(CSwitchSystem & System);
 
     void NvInitialize(CIPCRequest & Request);
+    void NvOpen(CIPCRequest & Request);
 	void NvSetAruid(CIPCRequest & Request);
+
+    CNvDriver & m_NvDriver;
 };

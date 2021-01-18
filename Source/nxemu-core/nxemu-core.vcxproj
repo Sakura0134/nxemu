@@ -47,6 +47,7 @@
     <ClInclude Include="hle\Display\DisplayDevice.h" />
     <ClInclude Include="hle\Display\Layer.h" />
     <ClInclude Include="hle\Display\Nvidia\BufferQueue.h" />
+    <ClInclude Include="hle\Display\Nvidia\NvDriver.h" />
     <ClInclude Include="hle\Display\Nvidia\nvResult.h" />
     <ClInclude Include="hle\Kernel\HleKernel.h" />
     <ClInclude Include="hle\Kernel\KernelObject.h" />
@@ -143,6 +144,7 @@
     <ClCompile Include="hle\Display\DisplayDevice.cpp" />
     <ClCompile Include="hle\Display\Layer.cpp" />
     <ClCompile Include="hle\Display\Nvidia\BufferQueue.cpp" />
+    <ClCompile Include="hle\Display\Nvidia\NvDriver.cpp" />
     <ClCompile Include="hle\Kernel\HleKernel.cpp" />
     <ClCompile Include="hle\Kernel\KernelObject.cpp" />
     <ClCompile Include="hle\Kernel\KEvent.cpp" />

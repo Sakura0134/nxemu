@@ -12,6 +12,7 @@
 #include <Common\FileClass.h>
 
 CSwitchSystem::CSwitchSystem() :
+    m_NvDriver(*this),
     m_Kernel(*this,m_ProcessMemory),
     m_EndEmulation(false),
     m_Xci(nullptr)

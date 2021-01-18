@@ -2,6 +2,7 @@
 #include <nxemu-core\hle\Memory\ProcessMemory.h>
 #include <nxemu-core\hle\Kernel\HleKernel.h>
 #include <nxemu-core\hle\Kernel\SystemThread.h>
+#include <nxemu-core\hle\Display\Nvidia\NvDriver.h>
 #include <nxemu-core\Machine\SwitchKeys.h>
 #include <nxemu-core\FileSystem\EncryptedFile.h>
 #include <nxemu-core\FileSystem\PartitionFilesystem.h>
@@ -25,6 +26,7 @@ public:
     inline KernelObjectMap KernelObjects(void) { return m_Kernel.KernelObjects(); }
     inline CKernelObject * SystemThread(void) { return m_SystemThread.Get(); }
     inline CHleKernel & HleKernel(void) { return m_Kernel; }
+    inline CNvDriver & NvDriver(void) { return m_NvDriver; }
     inline CXci * Xci(void) const { return m_Xci; }
     inline bool & EndEmulation(void) { return m_EndEmulation; }
 
@@ -35,6 +37,7 @@ private:
 	bool LoadXCI(const CPath & XciFile);
 	bool LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile, const CPartitionFilesystem::VirtualFile * file, uint64_t base_addr, uint64_t &end_addr);
 
+    CNvDriver m_NvDriver;
     CHleKernel m_Kernel;
     CProcessMemory m_ProcessMemory;
     bool m_EndEmulation;
