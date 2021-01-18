@@ -1947,100 +1947,6 @@ void Arm64Op::Movi(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
-void Arm64Op::Sub(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
-{
-    IRegisters & Reg = Cpu.Reg();
-
-    if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
-        Arm64Opcode::Is64bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(1).Reg))
-    {
-        uint64_t a = Reg.Get64(Op.Operand(1).Reg), b = 0;
-        if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
-        {
-            b = Op.Operand(2).ImmVal;
-        }
-        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is64bitReg(Op.Operand(2).Reg))
-        {
-            if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
-            {
-                b = Reg.Get64(Op.Operand(2).Reg);
-            }
-            else if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
-            {
-                b = Reg.Get64(Op.Operand(2).Reg) << Op.Operand(2).shift.value;
-            }
-            else
-            {
-                g_Notify->BreakPoint(__FILE__, __LINE__);
-            }
-        }
-        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg) &&
-            Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_UXTW)
-        {
-            b = Reg.Get32(Op.Operand(2).Reg);
-        }
-        else
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-        }
-
-        uint64_t result = a - b;
-        Reg.Set64(Op.Operand(0).Reg, result);
-        if (Op.UpdateFlags())
-        {
-            bool n = (result & 0x8000000000000000) != 0;
-            bool z = result == 0;
-            bool c = a >= b; //if the result of a subtraction is positive or zero
-            bool v = ((((a ^ b) & (a ^ result)) >> 20) & 0x80000000) != 0;
-
-            Reg.SetConditionFlags(n, z, c, v);
-        }
-    }
-    else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
-        Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
-    {
-        uint32_t a = Reg.Get32(Op.Operand(1).Reg), b = 0;
-        if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
-        {
-            b = (uint32_t)(Op.Operand(2).ImmVal);
-        }
-        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg))
-        {
-            if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
-            {
-                b = Reg.Get32(Op.Operand(2).Reg);
-            }
-            else if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_UXTB)
-            {
-                b = (uint8_t)Reg.Get32(Op.Operand(2).Reg);
-            }
-            else
-            {
-                g_Notify->BreakPoint(__FILE__, __LINE__);
-            }
-        }
-        else
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-        }
-        uint32_t result = a - b;
-        Reg.Set32(Op.Operand(0).Reg, result);
-        if (Op.UpdateFlags())
-        {
-            bool n = (result & 0x80000000) != 0;
-            bool z = result == 0;
-            bool c = a >= b; //if the result of a subtraction is positive or zero
-            bool v = ((((a ^ b) & (a ^ result)) >> 20) & 0x80000000) != 0;
-
-            Reg.SetConditionFlags(n, z, c, v);
-        }
-    }
-    else
-    {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-    }
-}
-
 void Arm64Op::Movk(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();
@@ -2866,6 +2772,100 @@ void Arm64Op::Stlrh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         if (Op.WriteBack())
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
+void Arm64Op::Sub(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
+{
+    IRegisters & Reg = Cpu.Reg();
+
+    if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is64bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(1).Reg))
+    {
+        uint64_t a = Reg.Get64(Op.Operand(1).Reg), b = 0;
+        if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            b = Op.Operand(2).ImmVal;
+        }
+        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is64bitReg(Op.Operand(2).Reg))
+        {
+            if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                b = Reg.Get64(Op.Operand(2).Reg);
+            }
+            else if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                b = Reg.Get64(Op.Operand(2).Reg) << Op.Operand(2).shift.value;
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg) &&
+            Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_UXTW)
+        {
+            b = Reg.Get32(Op.Operand(2).Reg);
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+
+        uint64_t result = a - b;
+        Reg.Set64(Op.Operand(0).Reg, result);
+        if (Op.UpdateFlags())
+        {
+            bool n = (result & 0x8000000000000000) != 0;
+            bool z = result == 0;
+            bool c = a >= b; //if the result of a subtraction is positive or zero
+            bool v = ((((a ^ b) & (a ^ result)) >> 20) & 0x80000000) != 0;
+
+            Reg.SetConditionFlags(n, z, c, v);
+        }
+    }
+    else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
+    {
+        uint32_t a = Reg.Get32(Op.Operand(1).Reg), b = 0;
+        if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM)
+        {
+            b = (uint32_t)(Op.Operand(2).ImmVal);
+        }
+        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg))
+        {
+            if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                b = Reg.Get32(Op.Operand(2).Reg);
+            }
+            else if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_UXTB)
+            {
+                b = (uint8_t)Reg.Get32(Op.Operand(2).Reg);
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        uint32_t result = a - b;
+        Reg.Set32(Op.Operand(0).Reg, result);
+        if (Op.UpdateFlags())
+        {
+            bool n = (result & 0x80000000) != 0;
+            bool z = result == 0;
+            bool c = a >= b; //if the result of a subtraction is positive or zero
+            bool v = ((((a ^ b) & (a ^ result)) >> 20) & 0x80000000) != 0;
+
+            Reg.SetConditionFlags(n, z, c, v);
         }
     }
     else
