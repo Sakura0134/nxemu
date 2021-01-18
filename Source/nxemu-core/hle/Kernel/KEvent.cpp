@@ -1,16 +1,20 @@
 #include <nxemu-core\hle\Kernel\KEvent.h>
 
-KEvent::KEvent() :
-    m_Signaled(false)
+KEvent::KEvent()
 {
+}
+
+void KEvent::Clear()
+{
+    m_Event.Reset();
 }
 
 void KEvent::Signal()
 {
-    m_Signaled = true;
+    m_Event.Trigger();
 }
 
 bool KEvent::ShouldWait(void) const
 {
-    return !m_Signaled;
+    return m_Event.IsTriggered(0);
 }

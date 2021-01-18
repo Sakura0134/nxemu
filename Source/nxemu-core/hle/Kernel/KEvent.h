@@ -1,5 +1,6 @@
 #pragma once
 #include <Common\stdtypes.h>
+#include <Common\SyncEvent.h>
 #include <nxemu-core\hle\Kernel\KernelObject.h>
 
 class KEvent :
@@ -8,6 +9,7 @@ class KEvent :
 public:
     KEvent();
 
+    void Clear();
     void Signal();
     bool ShouldWait(void) const;
 
@@ -18,6 +20,6 @@ private:
     KernelObjectHandleType GetHandleType() const { return KernelObjectHandleType_Event; }
     KEvent * GetKEventPtr(void) { return this; }
 
-    bool m_Signaled;
+    SyncEvent m_Event;
 };
 

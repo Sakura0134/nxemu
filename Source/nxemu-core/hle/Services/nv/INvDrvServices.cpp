@@ -37,6 +37,9 @@ ResultCode INvDrvServices::CallMethod(CIPCRequest & Request)
     case Method_Initialize:
         NvInitialize(Request);
         break;
+    case Method_QueryEvent:
+        NvQueryEvent(Request);
+        break;
 	case Method_SetAruid:
 		NvSetAruid(Request);
 		break;
@@ -109,6 +112,32 @@ void INvDrvServices::NvOpen(CIPCRequest & Request)
     ResponseData.resize(sizeof(uint64_t));
     *((uint32_t *)&ResponseData[0]) = fd;
     *((uint32_t *)&ResponseData[4]) = nvResult_Success;
+}
+
+void INvDrvServices::NvQueryEvent(CIPCRequest & Request)
+{
+	if (Request.RequestData().size() < 8)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    uint32_t EventId = *(uint32_t *)(&Request.RequestData()[4]) & 0x000000FF;
+
+    CIPCRequest::REQUEST_DATA& ResponseData = Request.ResponseData();
+    ResponseData.resize(sizeof(uint32_t));
+    if (EventId < CNvEvents::MaxEvents)
+    {
+        CKernelObjectPtr Event = m_NvDriver.Events().GetEvent(EventId);
+        Event->GetKEventPtr()->Clear();
+        CHleKernel& HleKernel = Request.SwitchSystem().HleKernel();
+        uint32_t handle = HleKernel.AddKernelObject(Event);
+        Request.AddResponseHandlesToCopy(handle);
+        *((uint32_t*)&ResponseData[0]) = nvResult_Success;
+    }
+    else
+    {
+        *((uint32_t*)&ResponseData[0]) = nvResult_BadParameter;
+    }
 }
 
 void INvDrvServices::NvSetAruid(CIPCRequest & Request)

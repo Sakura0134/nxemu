@@ -42,6 +42,7 @@ private:
     void NvInitialize(CIPCRequest & Request);
     void NvIoctl(CIPCRequest & Request);
     void NvOpen(CIPCRequest & Request);
+	void NvQueryEvent(CIPCRequest & Request);
 	void NvSetAruid(CIPCRequest & Request);
 
     CNvDriver & m_NvDriver;
