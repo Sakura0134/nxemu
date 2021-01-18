@@ -2318,22 +2318,35 @@ void Arm64Op::Orr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
     {
+        uint32_t a = Reg.Get32(Op.Operand(1).Reg), b = 0;
         if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
         {
-            Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg) | (uint32_t)Op.Operand(2).ImmVal);
+            b = (uint32_t)Op.Operand(2).ImmVal;
         }
-        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg) && Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg))
         {
-            Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg) | (Reg.Get32(Op.Operand(2).Reg) << Op.Operand(2).shift.value));
-        }
-        else if (Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg) && Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
-        {
-            Reg.Set32(Op.Operand(0).Reg, Reg.Get32(Op.Operand(1).Reg) | Reg.Get32(Op.Operand(2).Reg));
+            if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                b = Reg.Get32(Op.Operand(2).Reg);
+            }
+            else if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSL && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                b = Reg.Get32(Op.Operand(2).Reg) << Op.Operand(2).shift.value;
+            }
+            else if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_LSR && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_INVALID)
+            {
+                b = Reg.Get32(Op.Operand(2).Reg) >> Op.Operand(2).shift.value;
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
         }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
+        Reg.Set32(Op.Operand(0).Reg, a | b);
     }
     else
     {
