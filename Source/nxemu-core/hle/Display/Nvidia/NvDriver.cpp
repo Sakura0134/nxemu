@@ -24,3 +24,14 @@ uint32_t CNvDriver::Open(const std::string& Name)
     m_Open.insert(OpenDeviceList::value_type(fd, itr->second));
     return fd;
 }
+
+nvResult CNvDriver::Ioctl(uint32_t Fd, nvIoctl Ioctl, const CIPCRequest::RequestBuffer& InData, CIPCRequest::RequestBuffer& OutData)
+{
+    OpenDeviceList::iterator itr = m_Open.find(Fd);
+    if (itr == m_Open.end())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return nvResult_Success;
+    }
+    return itr->second.Ioctl(Ioctl, InData, OutData);
+}

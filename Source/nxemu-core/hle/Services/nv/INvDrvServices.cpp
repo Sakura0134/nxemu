@@ -31,6 +31,9 @@ ResultCode INvDrvServices::CallMethod(CIPCRequest & Request)
     case Method_Open:
         NvOpen(Request);
         break;
+    case Method_Ioctl:
+        NvIoctl(Request);
+        break;
     case Method_Initialize:
         NvInitialize(Request);
         break;
@@ -49,6 +52,33 @@ void INvDrvServices::NvInitialize(CIPCRequest & Request)
     CIPCRequest::REQUEST_DATA & ResponseData = Request.ResponseData();
     ResponseData.resize(sizeof(uint32_t));
     *((uint32_t *)ResponseData.data()) = nvResult_Success;
+}
+
+void INvDrvServices::NvIoctl(CIPCRequest & Request)
+{
+    if (Request.RequestData().size() < 8)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    uint32_t Fd = *(uint32_t *)(&Request.RequestData()[0]);
+    nvIoctl Ioctl = *(nvIoctl*)(&Request.RequestData()[4]);
+
+    CIPCRequest::RequestBuffer InData, OutData;
+    if (Ioctl.In != 0 && !Request.ReadBuffer(InData))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    nvResult result = m_NvDriver.Ioctl(Fd, Ioctl, InData, OutData);
+    CIPCRequest::REQUEST_DATA& ResponseData = Request.ResponseData();
+    ResponseData.resize(sizeof(uint32_t));
+    ((uint32_t*)ResponseData.data())[0] = result;
+
+    if (Ioctl.Out != 0 && !Request.WriteBuffer(OutData))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
 }
 
 void INvDrvServices::NvOpen(CIPCRequest & Request)

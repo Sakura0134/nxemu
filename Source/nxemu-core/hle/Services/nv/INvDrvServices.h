@@ -40,6 +40,7 @@ private:
     INvDrvServices(CSwitchSystem & System);
 
     void NvInitialize(CIPCRequest & Request);
+    void NvIoctl(CIPCRequest & Request);
     void NvOpen(CIPCRequest & Request);
 	void NvSetAruid(CIPCRequest & Request);
 

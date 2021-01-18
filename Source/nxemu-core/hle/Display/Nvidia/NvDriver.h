@@ -16,6 +16,7 @@ public:
     ~CNvDriver();
 
     uint32_t Open(const std::string& Name);
+    nvResult Ioctl(uint32_t Fd, nvIoctl Ioctl, const CIPCRequest::RequestBuffer& InData, CIPCRequest::RequestBuffer & OutData);
 
 private:
     CNvDriver();
