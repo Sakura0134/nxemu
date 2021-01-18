@@ -14,6 +14,9 @@ nvResult CNvHostCtrlGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& 
         case IOCTL_ZCULL_GET_CTX_SIZE:
             ZcullGetCtxSize(InData, OutData);
             break;
+        case IOCTL_ZCULL_GET_INFO:
+            ZcullGetInfo(InData, OutData);
+            break;
         case IOCTL_GET_CHARACTERISTICS:
             GetCharacteristics(InData, OutData);
             break;
@@ -35,6 +38,22 @@ void CNvHostCtrlGpu::ZcullGetCtxSize(const std::vector<uint8_t> & /*InData*/, st
 {
     OutData.resize(sizeof(uint32_t));
     *((uint32_t *)OutData.data()) = 1;
+}
+
+void CNvHostCtrlGpu::ZcullGetInfo(const std::vector<uint8_t> & /*InData*/, std::vector<uint8_t> & OutData)
+{
+    OutData.resize(sizeof(NvGpuGpuZcullGetInfo));
+    NvGpuGpuZcullGetInfo & info = *((NvGpuGpuZcullGetInfo *)OutData.data());
+    info.width_align_pixels = 0x20;
+    info.height_align_pixels = 0x20;
+    info.pixel_squares_by_aliquots = 0x400;
+    info.aliquot_total = 0x800;
+    info.region_byte_multiplier = 0x20;
+    info.region_header_size = 0x20;
+    info.subregion_header_size = 0xc0;
+    info.subregion_width_align_pixels = 0x20;
+    info.subregion_height_align_pixels = 0x40;
+    info.subregion_count = 0x10;
 }
 
 void CNvHostCtrlGpu::GetCharacteristics(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData)

@@ -65,6 +65,20 @@ class CNvHostCtrlGpu :
         uint32_t Padding;
     };
 
+    struct NvGpuGpuZcullGetInfo
+    {
+        uint32_t width_align_pixels;
+        uint32_t height_align_pixels;
+        uint32_t pixel_squares_by_aliquots;
+        uint32_t aliquot_total;
+        uint32_t region_byte_multiplier;
+        uint32_t region_header_size;
+        uint32_t subregion_header_size;
+        uint32_t subregion_width_align_pixels;
+        uint32_t subregion_height_align_pixels;
+        uint32_t subregion_count;
+    };
+
 public:
     CNvHostCtrlGpu(void);
     nvResult Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& InData, CIPCRequest::RequestBuffer& OutData);
@@ -74,6 +88,7 @@ private:
     CNvHostCtrlGpu& operator=(const CNvHostCtrlGpu&);
 
     void ZcullGetCtxSize(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
+    void ZcullGetInfo(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
     void GetCharacteristics(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
     void GetTpcMasks(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
 };
