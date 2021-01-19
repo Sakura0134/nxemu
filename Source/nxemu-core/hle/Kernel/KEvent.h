@@ -12,6 +12,7 @@ public:
     void Clear();
     void Signal();
     bool ShouldWait(void) const;
+    bool Wait(int64_t NanoSeconds);
 
 private:
     KEvent(const KEvent&);            // Disable copy constructor

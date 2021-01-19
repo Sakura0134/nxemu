@@ -708,7 +708,18 @@ ResultCode CHleKernel::WaitSynchronization(CSystemThreadMemory & ThreadMemory, u
     {
         return RESULT_TIMEOUT;
     }
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    CSystemThread * CurrentThread = m_System.SystemThread()->GetSystemThreadPtr();
+    if (CurrentThread == nullptr)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return RESULT_SUCCESS;
+    }
+    int32_t EventTriggered = CurrentThread->WaitEvent(Events, Timeout);
+    if (EventTriggered >= 0)
+    {
+        HandleIndex = (uint32_t)EventTriggered;
+        return RESULT_SUCCESS;
+    }
     return RESULT_TIMEOUT;
 }
 

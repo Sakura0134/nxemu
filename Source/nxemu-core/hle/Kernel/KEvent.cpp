@@ -18,3 +18,8 @@ bool KEvent::ShouldWait(void) const
 {
     return m_Event.IsTriggered(0);
 }
+
+bool KEvent::Wait(int64_t NanoSeconds)
+{
+    return m_Event.IsTriggered((int32_t)(NanoSeconds == -1 ? SyncEvent::INFINITE_TIMEOUT : NanoSeconds / 1000000));
+}

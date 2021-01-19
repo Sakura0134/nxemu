@@ -26,6 +26,7 @@ public:
         ThreadState_Running,
         ThreadState_WaitCondVar,
         ThreadState_WaitMutex,
+        ThreadState_WaitEvent,
     };
 
     CSystemThread(CSwitchSystem & System, CProcessMemory &ProcessMemory, const char * Name, uint64_t EntryPoint, uint32_t ThreadHandle, uint32_t ThreadId, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
@@ -43,6 +44,8 @@ public:
     inline uint32_t GetWaitHandle() const { return m_WaitHandle; }
     inline uint64_t TlsAddress() const { return m_TlsAddress; }
     inline uint64_t & CpuTicks() { return m_CpuTicks; }
+
+    int32_t WaitEvent(const KernelObjectList & EventObjects, int64_t Timeout);
 
     const char * GetStateName() const;
     IRegisters & Reg(void);

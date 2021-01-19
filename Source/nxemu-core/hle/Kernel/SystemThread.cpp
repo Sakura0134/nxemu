@@ -194,6 +194,47 @@ IRegisters& CSystemThread::Reg(void)
     return m_CPU->Reg();
 }
 
+int32_t CSystemThread::WaitEvent(const KernelObjectList & EventObjects, int64_t Timeout)
+{
+    if (EventObjects.size() == 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return -1;
+    }
+
+    for (size_t i = 0, n = EventObjects.size(); i < n; i++)
+    {
+        if (EventObjects[i]->GetHandleType() != KernelObjectHandleType_Event)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return -1;
+        }
+    }
+    if (m_State != ThreadState_Ready && m_State != ThreadState_Running)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return -1;
+    }
+    SetState(ThreadState_WaitEvent);
+    if (EventObjects.size() > 1)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    else if (Timeout > 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    else
+    {
+        KEvent * Event = EventObjects[0]->GetKEventPtr();
+        int32_t res = Event->Wait(Timeout) ? 0 : -1;
+        SetState(ThreadState_Running);
+        return res;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return -1;
+}
+
 void CSystemThread::AddMutexWaiter(CSystemThread * thread)
 {
     if (thread->m_LockOwner == this)
