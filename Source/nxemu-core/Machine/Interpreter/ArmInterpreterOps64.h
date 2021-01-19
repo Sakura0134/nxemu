@@ -24,6 +24,7 @@ public:
     static void Clz(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Cmn(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Cmp(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Cnt(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Csel(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Cset(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Csetm(CInterpreterCPU & Cpu, const Arm64Opcode & Op);

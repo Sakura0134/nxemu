@@ -36,6 +36,7 @@ __interface IRegisters
     float32_t Get32Float(Arm64Opcode::arm64_reg reg) = 0;
     uint64_t Get64(Arm64Opcode::arm64_reg reg) = 0;
     float64_t Get64Float(Arm64Opcode::arm64_reg reg) = 0;
+    uint64_t Get64Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Arm64Opcode::arm64_vess Vess, Arm64Opcode::arm64_vas Vas) = 0;
     void Get128(Arm64Opcode::arm64_reg reg, uint64_t& hiValue, uint64_t& loValue) = 0;
     PSTATE GetPstate() const = 0;
     uint32_t GetFPCR() const = 0;
@@ -68,6 +69,7 @@ public:
     float32_t Get32Float(Arm64Opcode::arm64_reg reg);
     uint64_t Get64(Arm64Opcode::arm64_reg reg);
     float64_t Get64Float(Arm64Opcode::arm64_reg reg);
+    uint64_t Get64Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Arm64Opcode::arm64_vess Vess, Arm64Opcode::arm64_vas Vas);
     void Get128(Arm64Opcode::arm64_reg reg, uint64_t & hiValue, uint64_t & loValue);
     PSTATE GetPstate() const;
     uint32_t GetFPCR() const;

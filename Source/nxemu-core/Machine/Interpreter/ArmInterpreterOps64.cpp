@@ -728,6 +728,29 @@ void Arm64Op::Cmp(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
+void Arm64Op::Cnt(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
+{
+    IRegisters & Reg = Cpu.Reg();
+
+    if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::IsVectorReg(Op.Operand(0).Reg) &&
+        Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::IsVectorReg(Op.Operand(1).Reg))
+    {
+        uint64_t value = Reg.Get64Vector(Op.Operand(1).Reg, Op.Operand(1).VectorIndex, Op.Operand(1).Vess, Op.Operand(1).Vas);
+        uint32_t x_lo = (uint32_t)(value & 0xFFFFFFFF), x_hi = (uint32_t)(value >> 32);
+        x_lo = (x_lo & 0x55555555) + ((x_lo >> 1) & 0x55555555);
+        x_lo = (x_lo & 0x33333333) + ((x_lo >> 2) & 0x33333333);
+        x_lo = (x_lo & 0x0f0f0f0f) + ((x_lo >> 4) & 0x0f0f0f0f);
+        x_hi = (x_hi & 0x55555555) + ((x_hi >> 1) & 0x55555555);
+        x_hi = (x_hi & 0x33333333) + ((x_hi >> 2) & 0x33333333);
+        x_hi = (x_hi & 0x0f0f0f0f) + ((x_hi >> 4) & 0x0f0f0f0f);
+        Reg.Set64Vector(Op.Operand(0).Reg, Op.Operand(0).VectorIndex, Op.Operand(0).Vess, Op.Operand(0).Vas, (((uint64_t)x_hi << 32) | x_lo));
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Csel(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();

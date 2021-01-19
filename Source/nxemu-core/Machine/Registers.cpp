@@ -90,6 +90,26 @@ float64_t CRegisters::Get64Float(Arm64Opcode::arm64_reg reg)
     return value;
 }
 
+uint64_t CRegisters::Get64Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Arm64Opcode::arm64_vess Vess, Arm64Opcode::arm64_vas Vas)
+{
+    if (VectorIndex == -1 && Vess == Arm64Opcode::ARM64_VESS_INVALID && Vas == Arm64Opcode::ARM64_VAS_8B)
+    {
+        if (reg >= Arm64Opcode::ARM64_REG_V0 && reg <= Arm64Opcode::ARM64_REG_V31)
+        {
+            return m_vfp_regs[(reg - Arm64Opcode::ARM64_REG_V0) * 2];
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    return 0;
+}
+
 void CRegisters::Get128(Arm64Opcode::arm64_reg reg, uint64_t & hiValue, uint64_t & loValue)
 {
     if (reg >= Arm64Opcode::ARM64_REG_Q0 && reg <= Arm64Opcode::ARM64_REG_Q31)
@@ -203,7 +223,12 @@ void CRegisters::Set64Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Ar
     switch (Vess)
     {
     case Arm64Opcode::ARM64_VESS_INVALID:
-        if (VectorIndex == -1 && Vas == Arm64Opcode::ARM64_VAS_2D && reg >= Arm64Opcode::ARM64_REG_V0 && reg <= Arm64Opcode::ARM64_REG_V31)
+        if (VectorIndex == -1 && Vas == Arm64Opcode::ARM64_VAS_8B && reg >= Arm64Opcode::ARM64_REG_V0 && reg <= Arm64Opcode::ARM64_REG_V31)
+        {
+            m_vfp_regs[(reg - Arm64Opcode::ARM64_REG_V0) * 2] = value;
+            m_vfp_regs[((reg - Arm64Opcode::ARM64_REG_V0) * 2) + 1] = 0;
+        }
+        else if (VectorIndex == -1 && Vas == Arm64Opcode::ARM64_VAS_2D && reg >= Arm64Opcode::ARM64_REG_V0 && reg <= Arm64Opcode::ARM64_REG_V31)
         {
             m_vfp_regs[(reg - Arm64Opcode::ARM64_REG_V0) * 2] = value;
             m_vfp_regs[((reg - Arm64Opcode::ARM64_REG_V0) * 2) + 1] = value;
