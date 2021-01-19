@@ -42,6 +42,7 @@ private:
 class CKernelObjectPtr
 {
 public:
+    CKernelObjectPtr();
     CKernelObjectPtr(CKernelObject * Object);
     CKernelObjectPtr(const CKernelObjectPtr&);
     CKernelObjectPtr& operator=(const CKernelObjectPtr&);

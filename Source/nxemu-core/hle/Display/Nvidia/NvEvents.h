@@ -18,4 +18,6 @@ public:
 private:
     CNvEvents(const CNvEvents&);
     CNvEvents& operator=(const CNvEvents&);
+
+    CKernelObjectPtr m_Event[MaxEvents];
 };

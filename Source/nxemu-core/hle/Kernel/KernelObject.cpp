@@ -36,6 +36,11 @@ CTransferMemory * CKernelObject::GetTransferMemoryPtr(void)
     return nullptr;
 }
 
+CKernelObjectPtr::CKernelObjectPtr() :
+    m_Object(nullptr)
+{
+}
+
 CKernelObjectPtr::CKernelObjectPtr(CKernelObject * Object) :
     m_Object(Object)
 {
