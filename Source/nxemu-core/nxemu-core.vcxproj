@@ -50,6 +50,7 @@
     <ClInclude Include="hle\Display\Nvidia\NvDevice.h" />
     <ClInclude Include="hle\Display\Nvidia\NvDriver.h" />
     <ClInclude Include="hle\Display\Nvidia\NvEvents.h" />
+    <ClInclude Include="hle\Display\Nvidia\NvHostAsGpu.h" />
     <ClInclude Include="hle\Display\Nvidia\NvHostCtrlGpu.h" />
     <ClInclude Include="hle\Display\Nvidia\nvIoctl.h" />
     <ClInclude Include="hle\Display\Nvidia\nvResult.h" />
@@ -150,6 +151,7 @@
     <ClCompile Include="hle\Display\Nvidia\BufferQueue.cpp" />
     <ClCompile Include="hle\Display\Nvidia\NvDriver.cpp" />
     <ClCompile Include="hle\Display\Nvidia\NvEvents.cpp" />
+    <ClCompile Include="hle\Display\Nvidia\NvHostAsGpu.cpp" />
     <ClCompile Include="hle\Display\Nvidia\NvHostCtrlGpu.cpp" />
     <ClCompile Include="hle\Kernel\HleKernel.cpp" />
     <ClCompile Include="hle\Kernel\KernelObject.cpp" />

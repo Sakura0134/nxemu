@@ -1,6 +1,7 @@
 #pragma once
 #include <nxemu-core\hle\Display\Nvidia\NvDevice.h>
 #include <nxemu-core\hle\Display\Nvidia\NvHostCtrlGpu.h>
+#include <nxemu-core\hle\Display\Nvidia\NvHostAsGpu.h>
 #include <nxemu-core\hle\Display\Nvidia\NvEvents.h>
 #include <Common\stdtypes.h>
 #include <string>
@@ -29,6 +30,8 @@ private:
     DeviceList m_Devices;
     OpenDeviceList m_Open;
     uint32_t m_NextFD;
+
+    CNvHostAsGpu m_NvHostAsGpu;
     CNvHostCtrlGpu m_NvHostCtrlGpu;
     CNvEvents m_Events;
     CSwitchSystem & m_System;
