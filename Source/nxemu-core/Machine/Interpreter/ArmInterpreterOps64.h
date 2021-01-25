@@ -105,6 +105,7 @@ public:
     static void Tbnz(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Tbz(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Tst(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Uaddlv(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ubfiz(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ubfx(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Udiv(CInterpreterCPU & Cpu, const Arm64Opcode & Op);

@@ -269,6 +269,19 @@ void CRegisters::Set64Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Ar
     }
 }
 
+void CRegisters::Set16Simd(Arm64Opcode::arm64_reg reg, uint16_t value)
+{
+    if (reg >= Arm64Opcode::ARM64_REG_H0 && reg <= Arm64Opcode::ARM64_REG_H31)
+    {
+        m_vfp_regs[(reg - Arm64Opcode::ARM64_REG_H0) * 2] = value;
+        m_vfp_regs[((reg - Arm64Opcode::ARM64_REG_H0) * 2) + 1] = 0;
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void CRegisters::SetFPCR(uint32_t value)
 {
     m_fpcr = value;

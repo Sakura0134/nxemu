@@ -3258,6 +3258,32 @@ void Arm64Op::Tst(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
+void Arm64Op::Uaddlv(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
+{
+    IRegisters & Reg = Cpu.Reg();
+
+    if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is16bitSimdReg(Op.Operand(0).Reg) && Arm64Opcode::IsVectorReg(Op.Operand(1).Reg) && Op.Operand(1).Vas == Arm64Opcode::ARM64_VAS_8B)
+    {
+        uint64_t value = Reg.Get64Vector(Op.Operand(1).Reg, Op.Operand(1).VectorIndex, Op.Operand(1).Vess, Op.Operand(1).Vas);
+        uint8_t * src = (uint8_t *)&value;
+        uint16_t add_value = src[0];
+        add_value += src[1];
+        add_value += src[2];
+        add_value += src[3];
+        add_value += src[4];
+        add_value += src[5];
+        add_value += src[6];
+        add_value += src[7];
+        Reg.Set16Simd(Op.Operand(0).Reg, add_value);
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    return;
+}
+
 void Arm64Op::Ubfiz(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();

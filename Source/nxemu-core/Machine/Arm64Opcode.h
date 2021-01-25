@@ -1781,6 +1781,7 @@ public:
     static bool Is32bitReg(arm64_reg reg);
     static bool Is32bitFloatReg(arm64_reg reg);
     static bool IsVectorReg(arm64_reg reg);
+    static bool Is16bitSimdReg(arm64_reg reg);
 
 private:
     Arm64OpcodeDetail * m_Details;

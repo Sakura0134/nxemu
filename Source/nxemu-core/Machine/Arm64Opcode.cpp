@@ -346,6 +346,16 @@ bool Arm64Opcode::IsVectorReg(arm64_reg reg)
     return false;
 }
 
+bool Arm64Opcode::Is16bitSimdReg(arm64_reg reg)
+{
+    if (reg >= ARM64_REG_H0 && reg <= ARM64_REG_H31)
+    {
+        return true;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
 bool Arm64Opcode::Is128bitReg(arm64_reg reg)
 {
     if (reg >= ARM64_REG_Q0 && reg <= ARM64_REG_Q31)
