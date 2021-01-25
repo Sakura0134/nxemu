@@ -800,6 +800,10 @@ void Arm64Op::Csetm(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     {
         Reg.Set64(Op.Operand(0).Reg, Reg.ConditionSet(Op.cc()) ? 0xFFFFFFFFFFFFFFFF : 0);
     }
+    else if (Op.Operands() == 1 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
+    {
+        Reg.Set32(Op.Operand(0).Reg, Reg.ConditionSet(Op.cc()) ? 0xFFFFFFFF : 0);
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
