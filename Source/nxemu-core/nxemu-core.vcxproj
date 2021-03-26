@@ -32,6 +32,8 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\nxemu-plugin-spec\Base.h" />
+    <ClInclude Include="..\nxemu-plugin-spec\Video.h" />
     <ClInclude Include="AppInit.h" />
     <ClInclude Include="FileFormat\cnmt.h" />
     <ClInclude Include="FileFormat\formats.h" />
@@ -116,6 +118,8 @@
     <ClInclude Include="Machine\SwitchSystem.h" />
     <ClInclude Include="Machine\SystemTiming.h" />
     <ClInclude Include="Notification.h" />
+    <ClInclude Include="Plugins\PluginBase.h" />
+    <ClInclude Include="Plugins\VideoPlugin.h" />
     <ClInclude Include="Settings\Debug.h" />
     <ClInclude Include="Settings\Settings.h" />
     <ClInclude Include="Settings\SettingsID.h" />

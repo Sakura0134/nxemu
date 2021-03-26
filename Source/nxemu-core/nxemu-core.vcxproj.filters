@@ -162,6 +162,12 @@
     <Filter Include="Source Files\hle\Display\Nvidia">
       <UniqueIdentifier>{395ac624-2b0e-4bb8-90de-71e8ef4a9db4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Plugins">
+      <UniqueIdentifier>{8f559fca-f849-4215-b224-c0440de52d8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Plugins\PluginSpec">
+      <UniqueIdentifier>{f0013fb6-6f96-4ec6-aa2f-b6a82f25d852}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -463,6 +469,18 @@
     </ClInclude>
     <ClInclude Include="hle\Display\Nvidia\NvHostAsGpu.h">
       <Filter>Header Files\hle\Display\Nvidia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\nxemu-plugin-spec\Base.h">
+      <Filter>Header Files\Plugins\PluginSpec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\nxemu-plugin-spec\Video.h">
+      <Filter>Header Files\Plugins\PluginSpec</Filter>
+    </ClInclude>
+    <ClInclude Include="Plugins\PluginBase.h">
+      <Filter>Header Files\Plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="Plugins\VideoPlugin.h">
+      <Filter>Header Files\Plugins</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
