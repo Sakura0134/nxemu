@@ -128,5 +128,8 @@
     <ClInclude Include="align.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Padding.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

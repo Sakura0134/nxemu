@@ -53,6 +53,7 @@
     <ClInclude Include="Maths.h" />
     <ClInclude Include="MemoryManagement.h" />
     <ClInclude Include="MemTest.h" />
+    <ClInclude Include="Padding.h" />
     <ClInclude Include="path.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="Random.h" />
