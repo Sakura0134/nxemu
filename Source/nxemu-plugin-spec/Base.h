@@ -62,7 +62,6 @@ EXPORT void CALL GetPluginInfo(PLUGIN_INFO * PluginInfo);
 __interface IPluginNotification
 {
     void DisplayError(const char* Message);
-    void FatalError(const char* Message);
     void DisplayMessage(const char* Message);
     void DisplayMessageTime(int DisplayTime, const char* Message);
     void BreakPoint(const char* FileName, uint32_t LineNumber);

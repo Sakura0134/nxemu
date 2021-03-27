@@ -1,7 +1,7 @@
 #include "Machine\SwitchRom.h"
 #include <string>
 
-bool LaunchRunFile(int argc, char **argv)
+bool LaunchRunFile(IRenderWindow & Window, int argc, char **argv)
 {
     std::string LaunchFile;
 
@@ -17,7 +17,7 @@ bool LaunchRunFile(int argc, char **argv)
     {
         return true;
     }
-    if (!LaunchSwitchRom(LaunchFile.c_str()))
+    if (!LaunchSwitchRom(Window, LaunchFile.c_str()))
     {
         return false;
     }

@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nxemu", "Source\nxemu\nxemu.vcxproj", "{DB21FF66-14D1-4469-8DBD-140C0085ADFD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CBA22B21-1981-4116-859E-D05B070DCC92} = {CBA22B21-1981-4116-859E-D05B070DCC92}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nxemu-core", "Source\nxemu-core\nxemu-core.vcxproj", "{18098A2D-F1C3-4325-BEFC-A464FCB97BA1}"
 EndProject

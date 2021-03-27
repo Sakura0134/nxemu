@@ -1,3 +1,4 @@
 #pragma once
+#include <nxemu-core\Plugins\PluginBase.h>
 
-bool LaunchSwitchRom(const char * SwitchFile);
+bool LaunchSwitchRom(IRenderWindow & Window, const char * SwitchFile);

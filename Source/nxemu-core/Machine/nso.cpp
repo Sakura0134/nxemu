@@ -171,7 +171,7 @@ bool CSwitchSystem::LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile
 	uint32_t BssSize = header.BssSize;
 	if (Mod0Offset != 0)
 	{
-		if (!m_ProcessMemory.ReadBytes(base_addr + Mod0Offset, (uint8_t *)&mod_info, sizeof(mod_info))) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+		if (!m_ProcessMemory.ReadBytes(base_addr + Mod0Offset, (uint8_t *)&mod_info, sizeof(mod_info), false)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
 		if (mod_info.Magic != *((uint32_t *)(&"MOD0")))
 		{
 			g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -241,7 +241,7 @@ bool CSwitchSystem::LoadNSOModule(uint64_t offset, CEncryptedFile &EncryptedFile
 			for (; SymTblAddr < StrTblAddr; SymTblAddr += SymEntSize)
 			{
 				ELF_SYM symbol;
-				if (!m_ProcessMemory.ReadBytes(SymTblAddr, (uint8_t *)&symbol, sizeof(symbol))) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+				if (!m_ProcessMemory.ReadBytes(SymTblAddr, (uint8_t *)&symbol, sizeof(symbol), false)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
 
 				if (symbol.value != 0)
 				{

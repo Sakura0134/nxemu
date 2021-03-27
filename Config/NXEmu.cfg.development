@@ -1,2 +1,7 @@
 ﻿[Settings]
 KeyFile=..\..\Config\switch.keys
+
+[Plugin Directory]
+Directory=..\..\Plugin\
+Use Selected=1
+

@@ -14,8 +14,7 @@ CVideo::~CVideo()
 
 bool CVideo::Initialize(void)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
-    return false;
+    return true;
 }
 
 void CVideo::PushGPUEntries(const uint64_t * Entries, uint32_t NoOfEntries)

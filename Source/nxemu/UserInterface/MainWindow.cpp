@@ -171,7 +171,7 @@ LRESULT CMainGui::OnOpenGame(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*
     {
         return 0;
     }
-    LaunchSwitchRom(File.c_str());
+    LaunchSwitchRom(*this, File.c_str());
     return 0;
 }
 
@@ -205,7 +205,7 @@ LRESULT CMainGui::OnRecetGame(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, 
     std::string FileName = UISettingsLoadStringIndex(File_RecentGameFileIndex, LOWORD(wID) - CMainMenu::ID_RECENT_GAME_START);
     if (FileName.length() > 0)
     {
-        LaunchSwitchRom(FileName.c_str());
+        LaunchSwitchRom(*this, FileName.c_str());
     }
     return 0;
 }
@@ -257,6 +257,11 @@ void CMainGui::SetStatusText(int Panel, const wchar_t * Text)
     {
         PostMessageW((HWND)m_hStatusWnd, SB_SETTEXTW, Panel, (LPARAM)Msg);
     }
+}
+
+void * CMainGui::RenderSurface(void) const
+{
+    return m_hWnd;
 }
 
 void CMainGui::GameFileChanged(CMainGui * Gui)

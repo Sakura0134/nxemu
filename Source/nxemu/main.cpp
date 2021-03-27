@@ -8,7 +8,7 @@
 #include <memory>
 #include <windows.h>
 
-bool LaunchRunFile(int argc, char **argv);
+bool LaunchRunFile(IRenderWindow & Window, int argc, char **argv);
 
 WTLModule _Module;
 
@@ -19,7 +19,7 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /
     g_Debugger = MainWindow.get();
     Notify().SetMainWindow(MainWindow.get());
 
-    if (!LaunchRunFile(__argc, __argv))
+    if (!LaunchRunFile(*MainWindow.get(),__argc, __argv))
     {
         AppCleanup();
         return false;

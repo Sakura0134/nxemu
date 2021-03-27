@@ -1,11 +1,13 @@
 #pragma once
 #include <string>
+#include <nxemu-core\Plugins\PluginBase.h>
 #include <nxemu\UserInterface\Debugger\Debugger.h>
 #include "MainMenu.h"
 #include "WTLApp.h"
 
 class CMainGui :
-    public CDebuggerUI
+    public CDebuggerUI,
+    public IRenderWindow
 {
     enum
     {
@@ -35,6 +37,7 @@ public:
     void Show(bool ShowWindow); //Show or Hide the current window
     void SetStatusText(int Panel, const wchar_t * Text);
 	HWND hWnd(void) const { return m_hWnd; }
+    void * RenderSurface(void) const;
 
 private:
     CMainGui(void);                       // Disable default constructor

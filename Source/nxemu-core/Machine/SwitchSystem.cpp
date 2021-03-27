@@ -27,6 +27,16 @@ CSwitchSystem::~CSwitchSystem()
     }
 }
 
+bool CSwitchSystem::Initialize(IRenderWindow & Window)
+{
+    if (!m_Plugins.Initiate(Window, *this))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+    return true;
+}
+
 void CSwitchSystem::StartEmulation(void)
 {
     KernelObjectMap KernelObjects = m_Kernel.KernelObjects();
@@ -39,6 +49,37 @@ void CSwitchSystem::StartEmulation(void)
         CSystemThread * Thread = itr->second->GetSystemThreadPtr();
         Thread->Start();
     }
+}
+uint8_t * CSwitchSystem::GetCPUMemoryPointer(uint64_t CpuAddr)
+{
+    return m_ProcessMemory.GetPointer(CpuAddr);
+}
+
+const uint8_t * CSwitchSystem::GetCPUMemoryPointer(uint64_t CpuAddr) const
+{
+    return m_ProcessMemory.GetPointer(CpuAddr);
+}
+
+bool CSwitchSystem::ReadCPUMemory(uint64_t CpuAddr, void * DestBuffer, uint64_t Size) const
+{
+    return m_ProcessMemory.ReadBytes(CpuAddr, (uint8_t*)DestBuffer, (uint32_t)Size, true);
+}
+
+bool CSwitchSystem::WriteCPUMemory(uint64_t CpuAddr, const void * SrcBuffer, uint64_t Size)
+{
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
+}
+
+void CSwitchSystem::MarkRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool cached)
+{
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+}
+
+uint64_t CSwitchSystem::TitleID(void)
+{
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return 0;
 }
 
 
@@ -162,11 +203,4 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
     }
     WriteTrace(TraceGameFile, TraceInfo, "Done (res: true)");
     return true;
-}
-
-IVideo & CSwitchSystem::Video(void)
-{
-    g_Notify->BreakPoint(__FILE__, __LINE__);
-    static IVideo * NullVideo = nullptr;
-    return *NullVideo;
 }

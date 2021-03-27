@@ -20,11 +20,18 @@ enum SettingID
 	SupportFile_Keys,
 	SupportFile_KeysDefault,
 
+    //Plugins
+    Plugin_Video_Selected,
+
     //Individual Game Settings
     Game_File,
     Game_Name,
 
     //Directory settings
+    Directory_Plugin,
+    Directory_PluginInitial,
+    Directory_PluginSelected,
+    Directory_PluginUseSelected,
     Directory_Log,
     Directory_LogInitial,
     Directory_LogSelected,

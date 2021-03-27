@@ -226,33 +226,49 @@ bool CProcessMemory::MirrorMemory(uint64_t DstAddress, uint64_t SrcAddress, uint
     return true;
 }
 
-bool CProcessMemory::Read32(uint64_t Addr, uint32_t & value)
+bool CProcessMemory::Read32(uint64_t Addr, uint32_t & value) const
 {
     if ((Addr & 3) != 0) { g_Notify->BreakPoint(__FILE__, __LINE__); }
 
-    return ReadBytes(Addr, (uint8_t *)&value, sizeof(value));
+    return ReadBytes(Addr, (uint8_t *)&value, sizeof(value), false);
 }
 
-bool CProcessMemory::Read64(uint64_t Addr, uint64_t & value)
+bool CProcessMemory::Read64(uint64_t Addr, uint64_t & value) const
 {
     if ((Addr & 7) != 0) { g_Notify->BreakPoint(__FILE__, __LINE__); }
 
-    return ReadBytes(Addr, (uint8_t *)&value, sizeof(value));
+    return ReadBytes(Addr, (uint8_t *)&value, sizeof(value), false);
 }
 
-bool CProcessMemory::ReadBytes(uint64_t Address, uint8_t * buffer, uint32_t len)
+bool CProcessMemory::ReadBytes(uint64_t Address, uint8_t * buffer, uint32_t len, bool external) const
 {
-    void * ReadBuffer = nullptr;
-    if (!FindAddressMemory(Address, len, ReadBuffer))
+    MemoryRegionMapIter itr;
+    if (!FindMemoryRegion(Address, itr))
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return false;
     }
+    CMemoryRegion& Region = itr->second;
+    if ((Region.Address() + Region.Size()) < Address + len)
+    {
+        uint64_t Regionlen = Region.Size() - (Region.Address() - Address);
+        if (!ReadBytes(Address + Regionlen, buffer + Regionlen, len - (uint32_t)Regionlen, external))
+        {
+            return false;
+        }
+        len = (uint32_t)Regionlen;
+    }
+    if (Region.Memory() == nullptr)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+    void* ReadBuffer = (void*)&(Region.Memory()[Address - Region.Address()]);
     memcpy(buffer, ReadBuffer, len);
     return true;
 }
 
-bool CProcessMemory::ReadCString(uint64_t Addr, std::string & value)
+bool CProcessMemory::ReadCString(uint64_t Addr, std::string & value) const
 {
     MemoryRegionMapIter itr;
     if (FindMemoryRegion(Addr, itr))
@@ -272,6 +288,38 @@ bool CProcessMemory::ReadCString(uint64_t Addr, std::string & value)
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
+}
+
+uint8_t* CProcessMemory::GetPointer(uint64_t Address)
+{
+    MemoryRegionMapIter itr;
+    if (FindMemoryRegion(Address, itr))
+    {
+        CMemoryRegion& Region = itr->second;
+        if (Region.Memory() == nullptr)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        return (uint8_t*)&(Region.Memory()[Address - Region.Address()]);
+    }
+    return nullptr;
+}
+
+const uint8_t * CProcessMemory::GetPointer(uint64_t Address) const
+{
+    MemoryRegionMap::const_iterator itr = m_MemoryMap.lower_bound(Address);
+    if (itr != m_MemoryMap.end() && Address >= itr->second.Address() && Address <= itr->first)
+    {
+        const CMemoryRegion & Region = itr->second;
+        if (Region.Memory() == nullptr)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return nullptr;
+        }
+        return (const uint8_t*)&(Region.Memory()[Address - Region.Address()]);
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return nullptr;
 }
 
 bool CProcessMemory::CreateMemoryRegion(uint64_t Address, uint64_t Size, MemoryRegionMapIter & Region)
@@ -385,9 +433,9 @@ bool CProcessMemory::CreateMemoryRegion(uint64_t Address, uint64_t Size, MemoryR
     return true;
 }
 
-bool CProcessMemory::FindMemoryRegion(uint64_t Address, MemoryRegionMapIter & RegionItr)
+bool CProcessMemory::FindMemoryRegion(uint64_t Address, MemoryRegionMap::const_iterator& RegionItr) const
 {
-    MemoryRegionMapIter itr = m_MemoryMap.lower_bound(Address);
+    MemoryRegionMap::const_iterator itr = m_MemoryMap.lower_bound(Address);
     if (itr != m_MemoryMap.end() && Address >= itr->second.Address() && Address <= itr->first)
     {
         RegionItr = itr;

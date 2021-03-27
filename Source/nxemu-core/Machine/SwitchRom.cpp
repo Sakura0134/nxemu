@@ -2,7 +2,7 @@
 #include <nxemu-core\Machine\SwitchSystem.h>
 #include <memory>
 
-bool LaunchSwitchRom(const char * GamePath)
+bool LaunchSwitchRom(IRenderWindow & Window, const char * GamePath)
 {
     if (g_BaseMachine != nullptr)
     {
@@ -16,7 +16,11 @@ bool LaunchSwitchRom(const char * GamePath)
 		g_Notify->BreakPoint(__FILE__, __LINE__);
 		return false;
     }
-
+    if (!SwitchSystem->Initialize(Window))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
 	if (!SwitchSystem->LoadGame(GamePath))
 	{
 		g_Notify->BreakPoint(__FILE__, __LINE__);

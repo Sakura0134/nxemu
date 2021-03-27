@@ -168,6 +168,9 @@
     <Filter Include="Header Files\Plugins\PluginSpec">
       <UniqueIdentifier>{f0013fb6-6f96-4ec6-aa2f-b6a82f25d852}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Plugins">
+      <UniqueIdentifier>{8176fd77-a708-4cd1-9740-536f9228f583}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -753,6 +756,15 @@
     </ClCompile>
     <ClCompile Include="hle\Display\Nvidia\NvHostAsGpu.cpp">
       <Filter>Source Files\hle\Display\Nvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\Plugins.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\PluginBase.cpp">
+      <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugins\VideoPlugin.cpp">
+      <Filter>Source Files\Plugins</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

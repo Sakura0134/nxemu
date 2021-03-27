@@ -66,11 +66,22 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
 	AddHandler(SupportFile_Keys, new CSettingTypeApplicationPath("Settings", "KeyFile", SupportFile_KeysDefault));
 	AddHandler(SupportFile_KeysDefault, new CSettingTypeRelativePath("Config", "switch.keys"));
 
+    //Plugins
+#ifdef _DEBUG
+    AddHandler(Plugin_Video_Selected, new CSettingTypeApplication("Plugin", "Video", "Video\\NXEmu-Video_d.dll"));
+#else
+    AddHandler(Plugin_Video_Selected, new CSettingTypeApplication("Plugin", "Video", "Video\\NXEmu-Video.dll"));
+#endif
+
     //Individual Game Settings
     AddHandler(Game_File, new CSettingTypeTempString(""));
     AddHandler(Game_Name, new CSettingTypeTempString(""));
 
     //Directory settings
+    AddHandler(Directory_Plugin, new CSettingTypeSelectedDirectory("Dir:Plugin", Directory_PluginInitial, Directory_PluginSelected, Directory_PluginUseSelected, Directory_Plugin));
+    AddHandler(Directory_PluginInitial, new CSettingTypeRelativePath("Plugin", ""));
+    AddHandler(Directory_PluginSelected, new CSettingTypeApplicationPath("Plugin Directory", "Directory", Directory_PluginInitial));
+    AddHandler(Directory_PluginUseSelected, new CSettingTypeApplication("Plugin Directory", "Use Selected", false));
     AddHandler(Directory_Log, new CSettingTypeSelectedDirectory("Dir:Log", Directory_LogInitial, Directory_LogSelected, Directory_LogUseSelected, Directory_Log));
     AddHandler(Directory_LogInitial, new CSettingTypeRelativePath("Logs", ""));
     AddHandler(Directory_LogSelected, new CSettingTypeApplicationPath("Log Directory", "Directory", Directory_LogInitial));
