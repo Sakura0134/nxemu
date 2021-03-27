@@ -3,7 +3,8 @@
 #include <nxemu-core\hle\Display\Nvidia\NvHostCtrlGpu.h>
 #include <nxemu-core\hle\Display\Nvidia\NvHostAsGpu.h>
 #include <nxemu-core\hle\Display\Nvidia\NvEvents.h>
-#include <Common\stdtypes.h>
+#include <nxemu-core\Plugins\VideoPlugin.h>
+#include <stdint.h>
 #include <string>
 
 class CSwitchSystem;
@@ -21,6 +22,8 @@ public:
     nvResult Ioctl(uint32_t Fd, nvIoctl Ioctl, const CIPCRequest::RequestBuffer& InData, CIPCRequest::RequestBuffer & OutData);
 
     inline CNvEvents & Events(void) { return m_Events; }
+
+    IVideo & Video(void);
 
 private:
     CNvDriver();

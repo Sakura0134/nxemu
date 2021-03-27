@@ -30,6 +30,8 @@ public:
     inline CXci * Xci(void) const { return m_Xci; }
     inline bool & EndEmulation(void) { return m_EndEmulation; }
 
+    IVideo & Video(void);
+
 private:
     CSwitchSystem(const CSwitchSystem&);             // Disable copy constructor
     CSwitchSystem& operator=(const CSwitchSystem&);	 // Disable assignment

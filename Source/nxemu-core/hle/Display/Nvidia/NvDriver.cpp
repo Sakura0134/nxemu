@@ -1,4 +1,5 @@
 #include <nxemu-core\hle\Display\Nvidia\NvDriver.h>
+#include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CNvDriver::CNvDriver(CSwitchSystem& System) :
@@ -12,6 +13,11 @@ CNvDriver::CNvDriver(CSwitchSystem& System) :
 
 CNvDriver::~CNvDriver()
 {
+}
+
+IVideo & CNvDriver::Video()
+{
+    return m_System.Video();
 }
 
 uint32_t CNvDriver::Open(const std::string& Name)

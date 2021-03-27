@@ -163,3 +163,10 @@ bool CSwitchSystem::LoadXCI(const CPath & XciFile)
     WriteTrace(TraceGameFile, TraceInfo, "Done (res: true)");
     return true;
 }
+
+IVideo & CSwitchSystem::Video(void)
+{
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    static IVideo * NullVideo = nullptr;
+    return *NullVideo;
+}

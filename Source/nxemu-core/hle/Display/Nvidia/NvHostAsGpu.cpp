@@ -1,4 +1,6 @@
+#include <nxemu-core\Plugins\VideoPlugin.h>
 #include <nxemu-core\hle\Display\Nvidia\NvHostAsGpu.h>
+#include <nxemu-core\hle\Display\Nvidia\NvDriver.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CNvHostAsGpu::CNvHostAsGpu(CNvDriver& NvDriver) :
@@ -12,6 +14,9 @@ nvResult CNvHostAsGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& In
     {
         switch (Ioctl.Cmd)
         {
+        case IOCTL_ALLOC_SPACE:
+            AllocSpace(InData, OutData);
+            break;
         case IOCTL_GET_VA_REGIONS:
             GetVaRegions(InData, OutData);
             break;
@@ -54,3 +59,27 @@ void CNvHostAsGpu::InitializeEx(const std::vector<uint8_t>& /*InData*/, std::vec
 {
     //stubbed
 }
+
+void CNvHostAsGpu::AllocSpace(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData)
+{
+    if (InData.size() < sizeof(NvGpuASAllocSpace))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    OutData.resize(sizeof(NvGpuASAllocSpace));
+    memcpy(OutData.data(), InData.data(), InData.size());
+    NvGpuASAllocSpace & Params = *((NvGpuASAllocSpace *)OutData.data());
+    IVideo & Video = m_NvDriver.Video();
+    uint64_t Size = (uint64_t)Params.Pages * (uint64_t)Params.PageSize;
+
+    if ((Params.Flags & AddressSpaceFlags_FixedOffset) != AddressSpaceFlags_None)
+    {
+        Params.Offset = Video.VideoMemoryAllocateFixed(Params.Offset, Size);
+    }
+    else 
+    {
+        Params.Offset = Video.VideoMemoryAllocate(Size, Params.Align);
+    }
+}
+
