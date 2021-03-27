@@ -25,6 +25,11 @@ Thumbs.db
 /Bin/Release64
 /build
 /ipch
+/Plugin/Video/lib
+/Plugin/Video/map
+/Plugin/Video/pdb
+/Plugin/Video/NXEmu-Video.dll
+/Plugin/Video/NXEmu-Video_d.dll
 /Source/nxemu-core/Version.h
 /Config/NXEmu.cfg
 /Config/switch.keys

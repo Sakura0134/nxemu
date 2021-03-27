@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <RootNamespace>nxemuvideo</RootNamespace>
+    <ProjectGuid>{CBA22B21-1981-4116-859E-D05B070DCC92}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Condition="'$(Configuration)'=='Debug'" Project="$(SolutionDir)PropertySheets\Platform.Debug.props" />
+    <Import Condition="'$(Configuration)'=='Release'" Project="$(SolutionDir)PropertySheets\Platform.Release.props" />
+  </ImportGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <TargetName>NXEmu-Video</TargetName>
+    <TargetName Condition="'$(Configuration)'=='Debug'">NXEmu-Video_d</TargetName>
+    <OutDir>$(SolutionDir)Plugin\Video\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <PreBuildEvent>
+      <Command>"$(SolutionDir)Source\Script\UpdateVersion.cmd" "Debug64" "$(SolutionDir)Source\nxemu-video-mutate\Version.h.in" "$(SolutionDir)Source\nxemu-video-mutate\Version.h"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{8b2a12db-47ee-4eed-80c4-53ea04f13d57}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="NXEmu-video.cpp" />
+    <ClCompile Include="Video.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Video.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

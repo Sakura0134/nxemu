@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "capstone", "Source\3rdParty
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SoftFloat", "Source\3rdParty\SoftFloat-3e\SoftFloat.vcxproj", "{9D00D803-80D4-4904-A45D-A33605D27CC6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nxemu-video", "Source\nxemu-video\nxemu-video.vcxproj", "{CBA22B21-1981-4116-859E-D05B070DCC92}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -65,6 +67,10 @@ Global
 		{9D00D803-80D4-4904-A45D-A33605D27CC6}.Debug|x64.Build.0 = Debug|x64
 		{9D00D803-80D4-4904-A45D-A33605D27CC6}.Release|x64.ActiveCfg = Release|x64
 		{9D00D803-80D4-4904-A45D-A33605D27CC6}.Release|x64.Build.0 = Release|x64
+		{CBA22B21-1981-4116-859E-D05B070DCC92}.Debug|x64.ActiveCfg = Debug|x64
+		{CBA22B21-1981-4116-859E-D05B070DCC92}.Debug|x64.Build.0 = Debug|x64
+		{CBA22B21-1981-4116-859E-D05B070DCC92}.Release|x64.ActiveCfg = Release|x64
+		{CBA22B21-1981-4116-859E-D05B070DCC92}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
