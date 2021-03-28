@@ -2,6 +2,7 @@
 #include <nxemu-core\hle\Display\Nvidia\NvDevice.h>
 #include <nxemu-core\hle\Display\Nvidia\NvHostCtrlGpu.h>
 #include <nxemu-core\hle\Display\Nvidia\NvHostAsGpu.h>
+#include <nxemu-core\hle\Display\Nvidia\NvMap.h>
 #include <nxemu-core\hle\Display\Nvidia\NvEvents.h>
 #include <nxemu-core\Plugins\VideoPlugin.h>
 #include <stdint.h>
@@ -36,6 +37,7 @@ private:
 
     CNvHostAsGpu m_NvHostAsGpu;
     CNvHostCtrlGpu m_NvHostCtrlGpu;
+    CNvMap m_NvMap;
     CNvEvents m_Events;
     CSwitchSystem & m_System;
 };

@@ -485,6 +485,9 @@
     <ClInclude Include="Plugins\VideoPlugin.h">
       <Filter>Header Files\Plugins</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Display\Nvidia\NvMap.h">
+      <Filter>Header Files\hle\Display\Nvidia</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -765,6 +768,9 @@
     </ClCompile>
     <ClCompile Include="Plugins\VideoPlugin.cpp">
       <Filter>Source Files\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Display\Nvidia\NvMap.cpp">
+      <Filter>Source Files\hle\Display\Nvidia</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

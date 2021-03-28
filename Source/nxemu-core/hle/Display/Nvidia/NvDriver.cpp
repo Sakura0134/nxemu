@@ -9,6 +9,7 @@ CNvDriver::CNvDriver(CSwitchSystem& System) :
 {
     m_Devices.insert(DeviceList::value_type("/dev/nvhost-as-gpu", m_NvHostAsGpu));
     m_Devices.insert(DeviceList::value_type("/dev/nvhost-ctrl-gpu", m_NvHostCtrlGpu));
+    m_Devices.insert(DeviceList::value_type("/dev/nvmap", m_NvMap));
 }
 
 CNvDriver::~CNvDriver()
