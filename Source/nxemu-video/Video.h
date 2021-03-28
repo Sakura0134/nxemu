@@ -1,5 +1,7 @@
 #pragma once
+#include "VideoMemoryManager.h"
 #include <nxemu-plugin-spec\Video.h>
+#include <Common\CriticalSection.h>
 
 class CVideo :
     public IVideo
@@ -27,4 +29,6 @@ private:
 
     IRenderWindow & m_RenderWindow;
     ISwitchSystem & m_SwitchSystem;
+    CVideoMemory m_Memory;
+    mutable CriticalSection m_CS;
 };

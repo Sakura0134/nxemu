@@ -4,7 +4,8 @@
 
 CVideo::CVideo(IRenderWindow & RenderWindow, ISwitchSystem & SwitchSystem) :
     m_RenderWindow(RenderWindow),
-    m_SwitchSystem(SwitchSystem)
+    m_SwitchSystem(SwitchSystem),
+    m_Memory(SwitchSystem)
 {
 }
 
@@ -50,8 +51,8 @@ void CVideo::FlushRegion(uint64_t CpuAddr, uint64_t size)
 
 uint64_t CVideo::VideoMemoryAllocate(uint64_t Size, uint64_t Align)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
-    return 0;
+    CGuard Guard(m_CS);
+    return m_Memory.Allocate(Size, Align);
 }
 
 uint64_t CVideo::VideoMemoryAllocateFixed(uint64_t GpuAddr, uint64_t Size)
