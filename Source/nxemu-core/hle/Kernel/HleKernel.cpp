@@ -4,6 +4,7 @@
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
 #include <Common\StdString.h>
+#include <Common\align.h>
 #include <Common\Random.h>
 #include <ctime>
 #include <algorithm>
@@ -481,6 +482,59 @@ ResultCode CHleKernel::SetHeapSize(uint64_t & HeapAddress, uint64_t size)
     }
     HeapAddress = m_ProcessMemory.GetHeapRegionBaseAddr();
     WriteTrace(TraceHleKernel, TraceInfo, "Done (HeapAddress: 0x%I64X)", HeapAddress);
+    return RESULT_SUCCESS;
+}
+
+ResultCode CHleKernel::SetMemoryAttribute(uint64_t Addr, uint64_t Size, uint32_t Mask, uint32_t Attribute)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "(Addr: 0x%I64X size: 0x%I64X Mask: 0x%X, Attribute: 0x%X)", Addr, Size, Mask, Attribute);
+    CGuard Guard(m_CS);
+
+    if (!Align::Is4KBAligned(Addr))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return ERR_INVALID_ADDRESS;
+    }
+
+    if (Size == 0 || !Align::Is4KBAligned(Size))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return ERR_INVALID_ADDRESS;
+    }
+
+    if (Addr + Size <= Addr)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return ERR_INVALID_ADDRESS_STATE;
+    }
+
+    MemoryAttribute MemAttr = (MemoryAttribute)Attribute;
+    MemoryAttribute MemMask = (MemoryAttribute)Mask;
+    if ((MemAttr | MemMask) != MemMask)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return ERR_INVALID_COMBINATION;
+    }
+
+    if ((MemAttr | MemMask | MemoryAttr_Uncached) != MemoryAttr_Uncached)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return ERR_INVALID_COMBINATION;
+    }
+
+    uint64_t AddressSpaceBaseStart = m_ProcessMemory.GetAddressSpaceBaseAddr();
+    uint64_t AddressSpaceBaseEnd = AddressSpaceBaseStart + m_ProcessMemory.GetAddressSpaceSize();
+    if (Addr < AddressSpaceBaseAddr || (Addr + Size) > AddressSpaceBaseEnd)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return ERR_INVALID_ADDRESS_STATE;
+    }
+
+    if (!m_ProcessMemory.SetMemoryAttribute(Addr, Size, MemMask, MemAttr))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return ERR_INVALID_ADDRESS;
+    }
     return RESULT_SUCCESS;
 }
 

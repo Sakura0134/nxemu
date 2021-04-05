@@ -24,6 +24,7 @@ public:
 
     bool Initialize(ProgramAddressSpaceType Type, bool Is64bit);
     bool SetHeapSize(uint64_t Size);
+    bool SetMemoryAttribute(uint64_t Addr, uint64_t Size, MemoryAttribute Mask, MemoryAttribute Attribute);
 
     bool GetMemoryInfo(uint64_t Address, QueryMemoryInfo & Info);
     uint8_t * MapMemory(uint64_t Address, uint32_t Size, MemoryPermission Perm, MemoryType Type);

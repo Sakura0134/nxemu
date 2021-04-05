@@ -78,6 +78,9 @@ void CSystemThread::ServiceCall(uint32_t index)
             Reg.Set64(Arm64Opcode::ARM64_REG_X1, HeapAddress);
         }
         break;
+    case SvcCall_SetMemoryAttribute:
+        Result = HleKernel.SetMemoryAttribute(Reg.Get64(Arm64Opcode::ARM64_REG_X0), Reg.Get64(Arm64Opcode::ARM64_REG_X1), Reg.Get32(Arm64Opcode::ARM64_REG_W2), Reg.Get32(Arm64Opcode::ARM64_REG_W3));
+        break;
     case SvcCall_MapMemory:
         Result = HleKernel.MapMemory(Reg.Get64(Arm64Opcode::ARM64_REG_X0), Reg.Get64(Arm64Opcode::ARM64_REG_X1), Reg.Get64(Arm64Opcode::ARM64_REG_X2));
         break;

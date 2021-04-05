@@ -8,6 +8,12 @@ public:
     {
         return (T)(Value + (Size - Value % Size) % Size);
     }
+
+    template <typename T>
+    static bool Is4KBAligned(T Value)
+    {
+        return (Value & 0xFFF) == 0;
+    }
 private:
     Align(void);
     Align(const Align&);

@@ -53,6 +53,7 @@ enum MemoryType
 enum MemoryAttribute
 {
     MemoryAttr_None = 0,
+    MemoryAttr_Uncached = 8,
 };
 
 enum MemoryState

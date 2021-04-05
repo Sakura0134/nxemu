@@ -95,6 +95,19 @@ bool CProcessMemory::SetHeapSize(uint64_t Size)
     return m_heap != nullptr;
 }
 
+
+bool CProcessMemory::SetMemoryAttribute(uint64_t Addr, uint64_t Size, MemoryAttribute Mask, MemoryAttribute Attribute)
+{
+    MemoryRegionMapIter RegionItr;
+    if (!CreateMemoryRegion(Addr, Size, RegionItr))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return nullptr;
+    }
+    CMemoryRegion& Region = RegionItr->second;
+    Region.m_Attribute = (MemoryAttribute)((Region.Attribute() & ~Mask) | (Mask & Attribute));
+    return true;
+}
 bool CProcessMemory::GetMemoryInfo(uint64_t Address, QueryMemoryInfo & Info)
 {
     MemoryRegionMap::const_iterator itr = m_MemoryMap.lower_bound(Address);
