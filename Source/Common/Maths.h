@@ -1,5 +1,5 @@
 #pragma once
-#include "stdtypes.h"
+#include <stdint.h>
 
 uint32_t mullhi_u32(uint32_t x, uint32_t y);
 uint64_t mullhi_u64(uint64_t x, uint64_t y);

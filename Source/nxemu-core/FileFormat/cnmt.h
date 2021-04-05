@@ -1,7 +1,7 @@
 #pragma once
 #include <nxemu-core\FileSystem\PartitionFilesystem.h>
 #include <nxemu-core\FileSystem\EncryptedFile.h>
-#include <Common\stdtypes.h>
+#include <stdint.h>
 #include <vector>
 
 class CNMT

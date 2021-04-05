@@ -62,7 +62,6 @@
     <ClInclude Include="sha256.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StdString.h" />
-    <ClInclude Include="stdtypes.h" />
     <ClInclude Include="SyncEvent.h" />
     <ClInclude Include="Thread.h" />
     <ClInclude Include="ThreadLocalStorage.h" />

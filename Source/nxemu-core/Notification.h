@@ -1,6 +1,6 @@
 #pragma once
-#include <Common/stdtypes.h>
 #include <nxemu-core/Language/Language.h>
+#include <stdint.h>
 
 #ifndef _MSC_VER
 #define __interface struct

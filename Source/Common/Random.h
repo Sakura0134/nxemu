@@ -5,7 +5,7 @@
  *
  */
 #pragma once
-#include <Common/stdtypes.h>
+#include <stdint.h>
 
 class CRandom
 {

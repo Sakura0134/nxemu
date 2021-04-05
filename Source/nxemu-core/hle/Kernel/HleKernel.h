@@ -10,7 +10,7 @@
 #include <nxemu-core\hle\Memory\TransferMemory.h>
 #include <nxemu-core\hle\Kernel\KernelObject.h>
 #include <nxemu-core\hle\kernel\Service.h>
-#include <Common\stdtypes.h>
+#include <stdint.h>
 
 class CSwitchSystem;
 

@@ -1,6 +1,6 @@
 #pragma once
-#include <Common\stdtypes.h>
 #include <nxemu-core\hle\Memory\MemoryTypes.h>
+#include <stdint.h>
 
 class CPageTable
 {

@@ -1,6 +1,7 @@
 #pragma once
-#include <Common\stdtypes.h>
 #include <nxemu-core\Machine\Arm64Opcode.h>
+#include <stdint.h>
+
 extern "C" {
 #include <softfloat.h>
 }
@@ -106,4 +107,3 @@ private:
 
     PSTATE m_pstate;
 };
-

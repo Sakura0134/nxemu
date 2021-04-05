@@ -1,7 +1,7 @@
 #pragma once
-#include <Common\stdtypes.h>
 #include <nxemu-core\Machine\PageTable.h>
 #include <nxemu-core\hle\Memory\MemoryRegion.h>
+#include <stdint.h>
 #include <map>
 
 class CSystemThreadMemory;

@@ -1,6 +1,6 @@
 #pragma once
 #include <nxemu-core\hle\Kernel\KernelObject.h>
-#include <Common/stdtypes.h>
+#include <stdint.h>
 
 class CNvEvents
 {

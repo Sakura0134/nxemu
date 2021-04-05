@@ -1,6 +1,6 @@
 #pragma once
 #include <nxemu-core\hle\Display\Nvidia\NvDevice.h>
-#include <Common\stdtypes.h>
+#include <stdint.h>
 #include <vector>
 
 class CNvHostCtrlGpu :

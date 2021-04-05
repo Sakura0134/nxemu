@@ -86,9 +86,6 @@
     <ClInclude Include="Platform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdtypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Trace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -135,6 +132,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DynamicLibrary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

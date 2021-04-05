@@ -1,6 +1,6 @@
 #pragma once
-#include <Common\stdtypes.h>
 #include <Common\IniFileClass.h>
+#include <stdint.h>
 #include <vector>
 #include <map>
 

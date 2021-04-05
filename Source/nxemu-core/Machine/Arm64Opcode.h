@@ -1,6 +1,6 @@
 #pragma once
-#include <Common\stdtypes.h>
 #include <Common\CriticalSection.h>
+#include <stdint.h>
 #include <string>
 #include <vector>
 #include <map>

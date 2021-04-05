@@ -33,7 +33,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)Source\Script\UpdateVersion.cmd" "Debug64" "$(SolutionDir)Source\nxemu-video-mutate\Version.h.in" "$(SolutionDir)Source\nxemu-video-mutate\Version.h"</Command>
+      <Command>"$(SolutionDir)Source\Script\UpdateVersion.cmd" "Debug64" "$(SolutionDir)Source\nxemu-video\Version.h.in" "$(SolutionDir)Source\nxemu-video\Version.h"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

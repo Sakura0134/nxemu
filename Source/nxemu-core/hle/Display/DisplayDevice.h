@@ -1,6 +1,6 @@
 #pragma once
 #include <nxemu-core\hle\Display\Layer.h>
-#include <Common\stdtypes.h>
+#include <stdint.h>
 #include <string>
 #include <vector>
 #include <memory>

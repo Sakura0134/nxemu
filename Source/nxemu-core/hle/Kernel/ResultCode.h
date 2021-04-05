@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Common\stdtypes.h>
+#include <stdint.h>
 
 #pragma warning(push)
 #pragma warning(disable : 4201) // nonstandard extension used : nameless struct/union

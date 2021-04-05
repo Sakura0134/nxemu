@@ -1,8 +1,8 @@
 #pragma once
-#include <Common\stdtypes.h>
 #include <nxemu-core\hle\Memory\SystemThreadMemory.h>
 #include <nxemu-core\hle\Kernel\ResultCode.h>
 #include <nxemu-core\hle\Kernel\KernelObject.h>
+#include <stdint.h>
 #include <vector>
 #include <memory>
 

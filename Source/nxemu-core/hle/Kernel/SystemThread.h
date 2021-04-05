@@ -3,9 +3,9 @@
 #include <nxemu-core\hle\Memory\SystemThreadMemory.h>
 #include <nxemu-core\hle\Memory\ProcessMemory.h>
 #include <nxemu-core\hle\Kernel\KernelObject.h>
-#include <Common\stdtypes.h>
 #include <Common\Thread.h>
 #include <Common\SyncEvent.h>
+#include <stdint.h>
 #include <map>
 
 class CSwitchSystem;

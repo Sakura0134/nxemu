@@ -1,8 +1,8 @@
 #pragma once
+#include <nxemu-core\hle\Services\IpcRequest.h>
 #include <vector>
 #include <string>
-#include <Common\stdtypes.h>
-#include <nxemu-core\hle\Services\IpcRequest.h>
+#include <stdint.h>
 
 class ViParcel
 {

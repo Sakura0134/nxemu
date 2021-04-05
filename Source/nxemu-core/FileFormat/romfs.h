@@ -1,9 +1,9 @@
 #pragma once
 #include <nxemu-core\Machine\SwitchKeys.h>
 #include <nxemu-core\FileSystem\EncryptedFile.h>
-#include <Common\stdtypes.h>
 #include <Common\FileClass.h>
 #include <string>
+#include <stdint.h>
 
 class RomFS
 {

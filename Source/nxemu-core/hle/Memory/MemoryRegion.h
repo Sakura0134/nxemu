@@ -1,6 +1,6 @@
 #pragma once
 #include <nxemu-core\hle\Memory\MemoryTypes.h>
-#include <Common\stdtypes.h>
+#include <stdint.h>
 #include <map>
 #include <memory>
 #include <vector>

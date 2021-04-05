@@ -1,7 +1,7 @@
 #pragma once
-#include <Common\stdtypes.h>
 #include <Common\SyncEvent.h>
 #include <nxemu-core\hle\Kernel\KernelObject.h>
+#include <stdint.h>
 
 class KEvent :
     public CKernelObject

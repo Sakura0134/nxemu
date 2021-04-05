@@ -1,7 +1,7 @@
 #pragma once
 #include <nxemu-core\hle\Display\DisplayDevice.h>
 #include <nxemu-core\hle\Display\Nvidia\BufferQueue.h>
-#include <Common\stdtypes.h>
+#include <stdint.h>
 #include <memory>
 #include <vector>
 
