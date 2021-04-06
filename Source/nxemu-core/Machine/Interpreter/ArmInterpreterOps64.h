@@ -43,6 +43,7 @@ public:
     static void Fcvtzs(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fdiv(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fmaxnm(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Fminnm(CInterpreterCPU & Cpu, const Arm64Opcode& op);
     static void Fmov(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fmul(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fneg(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
