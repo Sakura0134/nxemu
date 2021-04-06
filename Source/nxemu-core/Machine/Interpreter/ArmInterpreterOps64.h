@@ -41,6 +41,7 @@ public:
     static void Fcsel(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fcvt(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fcvtzs(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Fcvtzu(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fdiv(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fmaxnm(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fminnm(CInterpreterCPU & Cpu, const Arm64Opcode& op);
