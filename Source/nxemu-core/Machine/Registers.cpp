@@ -323,6 +323,7 @@ bool CRegisters::ConditionSet(Arm64Opcode::arm64_cc cc)
     case Arm64Opcode::ARM64_CC_NE: return m_pstate.Z == 0;
     case Arm64Opcode::ARM64_CC_HS: return m_pstate.C != 0;
     case Arm64Opcode::ARM64_CC_LO: return m_pstate.C == 0;
+    case Arm64Opcode::ARM64_CC_PL: return m_pstate.N == 0;
     case Arm64Opcode::ARM64_CC_VC: return m_pstate.V == 0;
     case Arm64Opcode::ARM64_CC_HI: return m_pstate.C != 0 && m_pstate.Z == 0;
     case Arm64Opcode::ARM64_CC_LS: return m_pstate.C == 0 || m_pstate.Z != 0;
