@@ -2482,6 +2482,11 @@ void Arm64Op::Stp(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             ThreadMemory.Write64(target_addr, Reg.Get64Float(Op.Operand(0).Reg).v);
             ThreadMemory.Write64(target_addr + 8, Reg.Get64Float(Op.Operand(1).Reg).v);
         }
+        else if (Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitFloatReg(Op.Operand(1).Reg))
+        {
+            ThreadMemory.Write32(target_addr, Reg.Get32Float(Op.Operand(0).Reg).v);
+            ThreadMemory.Write32(target_addr + 4, Reg.Get32Float(Op.Operand(1).Reg).v);
+        }
         else if (Arm64Opcode::Is128bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is128bitReg(Op.Operand(1).Reg))
         {
             uint64_t data[4];
