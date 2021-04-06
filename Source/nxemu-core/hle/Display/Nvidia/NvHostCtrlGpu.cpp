@@ -23,6 +23,9 @@ nvResult CNvHostCtrlGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& 
         case IOCTL_GET_TPC_MASKS:
             GetTpcMasks(InData, OutData);
             break;
+        case IOCTL_ZBC_GET_ACTIVE_SLOT_MASK:
+            GetActiveSlotMask(InData, OutData);
+            break;
         default:
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -120,4 +123,12 @@ void CNvHostCtrlGpu::GetTpcMasks(const std::vector<uint8_t> & InData, std::vecto
     {
         TpcMasks.TpcMask = 3;
     }
+}
+
+void CNvHostCtrlGpu::GetActiveSlotMask(const std::vector<uint8_t> & /*InData*/, std::vector<uint8_t> & OutData)
+{
+    OutData.resize(sizeof(NvGpuGpuGetActiveSlotMask));
+    NvGpuGpuGetActiveSlotMask & ActiveSlot = *((NvGpuGpuGetActiveSlotMask *)OutData.data());
+    ActiveSlot.Slot = 0x07;
+    ActiveSlot.Mask = 0x01;
 }

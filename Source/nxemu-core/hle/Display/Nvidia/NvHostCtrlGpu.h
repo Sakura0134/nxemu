@@ -79,6 +79,12 @@ class CNvHostCtrlGpu :
         uint32_t subregion_count;
     };
 
+    struct NvGpuGpuGetActiveSlotMask
+    {
+        uint32_t Slot;
+        uint32_t Mask;
+    };
+
 public:
     CNvHostCtrlGpu(void);
     nvResult Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& InData, CIPCRequest::RequestBuffer& OutData);
@@ -91,4 +97,5 @@ private:
     void ZcullGetInfo(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
     void GetCharacteristics(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
     void GetTpcMasks(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
+    void GetActiveSlotMask(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
 };
