@@ -2686,6 +2686,10 @@ void Arm64Op::Str(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         {
             ThreadMemory.Write32(target_addr, Reg.Get32(Op.Operand(0).Reg));
         }
+        else if (Arm64Opcode::Is64bitFloatReg(Op.Operand(0).Reg))
+        {
+            ThreadMemory.Write64(target_addr, Reg.Get64Float(Op.Operand(0).Reg).v);
+        }
         else if (Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg))
         {
             ThreadMemory.Write32(target_addr, Reg.Get32Float(Op.Operand(0).Reg).v);
