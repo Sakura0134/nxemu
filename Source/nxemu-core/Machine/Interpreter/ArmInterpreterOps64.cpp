@@ -3465,6 +3465,13 @@ void Arm64Op::Ucvtf(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     IRegisters & Reg = Cpu.Reg();
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
+    {
+        float32_t val;
+        val.v = Reg.Get32(Op.Operand(1).Reg);
+        Reg.Set32Float(Op.Operand(0).Reg, val);
+    }
+    else if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
         Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitFloatReg(Op.Operand(1).Reg))
     {
         float32_t val = Reg.Get32Float(Op.Operand(1).Reg);
