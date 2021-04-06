@@ -1504,6 +1504,15 @@ void Arm64Op::Ldp(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             if (!ThreadMemory.Read64(target_addr + 8, value.v)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set64Float(Op.Operand(1).Reg, value);
         }
+        else if (Arm64Opcode::Is32bitFloatReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitFloatReg(Op.Operand(1).Reg))
+        {
+            float32_t value;
+            if (!ThreadMemory.Read32(target_addr, value.v)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set32Float(Op.Operand(0).Reg, value);
+
+            if (!ThreadMemory.Read32(target_addr + 4, value.v)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set32Float(Op.Operand(1).Reg, value);
+        }
         else if (Arm64Opcode::Is128bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is128bitReg(Op.Operand(1).Reg))
         {
             uint64_t valueHi, valueLo;
