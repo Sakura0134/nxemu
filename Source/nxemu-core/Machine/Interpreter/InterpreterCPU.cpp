@@ -155,6 +155,7 @@ void CInterpreterCPU::Execute()
         case Arm64Opcode::ARM64_INS_UADDLV: Arm64Op::Uaddlv(*this, op); break;
         case Arm64Opcode::ARM64_INS_UBFIZ: Arm64Op::Ubfiz(*this, op); break;
         case Arm64Opcode::ARM64_INS_UBFX: Arm64Op::Ubfx(*this, op); break;
+        case Arm64Opcode::ARM64_INS_UCVTF: Arm64Op::Ucvtf(*this, op); break;
         case Arm64Opcode::ARM64_INS_UDIV: Arm64Op::Udiv(*this, op); break;
         case Arm64Opcode::ARM64_INS_UMADDL: Arm64Op::Umaddl(*this, op); break;
         case Arm64Opcode::ARM64_INS_UMULH: Arm64Op::Umulh(*this, op); break;
