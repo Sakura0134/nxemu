@@ -46,6 +46,7 @@ public:
     ~CNvMap(void);
 
     nvResult Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& InData, CIPCRequest::RequestBuffer& OutData);
+    NvMapHandle * FindNvMapHandle(uint32_t handle);
 
 private:
     CNvMap(const CNvMap&);

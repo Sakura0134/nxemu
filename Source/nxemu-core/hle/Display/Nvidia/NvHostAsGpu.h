@@ -29,6 +29,17 @@ class CNvHostAsGpu :
         };
     };
 
+    struct NvGpuASMapBufferEx
+    {
+        uint32_t Flags; 
+        uint32_t Kind;
+        uint32_t NvmapHandle;
+        uint32_t PageSize;
+        uint64_t BufferOffset;
+        uint64_t MappingSize;
+        uint64_t Offset;
+    };
+
 	struct IoctlVaRegion 
 	{
 		uint64_t Offset;
@@ -62,9 +73,28 @@ private:
     CNvHostAsGpu(const CNvHostAsGpu&);
     CNvHostAsGpu& operator=(const CNvHostAsGpu&);
 
+    class BufferMap 
+    {
+    public:
+        BufferMap(uint64_t StartAddr, uint64_t Size, uint64_t CpuAddr, bool Allocated);
+
+    private:
+        BufferMap();
+        BufferMap& operator=(const BufferMap&);
+
+        uint64_t m_StartAddr;
+        uint64_t m_EndAddr;
+        uint64_t m_CpuAddr;
+        bool Allocated;
+    };
+    typedef std::map<uint64_t, BufferMap> BufferMappings;
+
     void AllocSpace(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
+    void MapBufferEx(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
     void GetVaRegions(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
     void InitializeEx(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
+    void AddBufferMap(uint64_t GpuAddr, uint64_t Size, uint64_t CpuAddr, bool IsAllocated);
     
     CNvDriver & m_NvDriver;
+    BufferMappings m_BufferMappings;
 };

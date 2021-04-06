@@ -108,6 +108,17 @@ void CNvMap::Alloc(const CIPCRequest::RequestBuffer & InData, CIPCRequest::Reque
     }
 }
 
+NvMapHandle * CNvMap::FindNvMapHandle(uint32_t handle)
+{
+    NvMapHandleMap::iterator itr = m_Handles.find(handle);
+    if (itr == m_Handles.end())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return nullptr;
+    }
+    return &itr->second;
+}
+
 NvMapHandle::NvMapHandle(uint32_t Size) :
     m_Address(0),
     m_Size(Size),

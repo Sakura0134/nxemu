@@ -22,6 +22,7 @@ public:
     uint32_t Open(const std::string& Name);
     nvResult Ioctl(uint32_t Fd, nvIoctl Ioctl, const CIPCRequest::RequestBuffer& InData, CIPCRequest::RequestBuffer & OutData);
 
+    inline CNvMap & NvMap(void) { return m_NvMap; }
     inline CNvEvents & Events(void) { return m_Events; }
 
     IVideo & Video(void);
