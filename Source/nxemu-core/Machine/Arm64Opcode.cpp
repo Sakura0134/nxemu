@@ -6,9 +6,13 @@ Arm64Opcode::Arm64OpcodeDetail::Arm64OpcodeDetail(uint64_t pc, uint32_t insn) :
     m_pc(pc),
     m_WriteBack(false),
     m_Opc(ARM64_INS_INVALID),
+    m_OperandCount(0),
     m_UpdateFlags(false),
     m_cc(ARM64_CC_INVALID)
 {
+    m_Name[0] = '\0';
+    m_Param[0] = '\0';
+    memset(m_Operands, 0, sizeof(m_Operands));
     csh handle;
     cs_err err = cs_open(CS_ARCH_ARM64, CS_MODE_ARM, &handle);
     if (err)
@@ -27,15 +31,16 @@ Arm64Opcode::Arm64OpcodeDetail::Arm64OpcodeDetail(uint64_t pc, uint32_t insn) :
     }
 
     m_Opc = (instruct_t)results[0].id;
-    m_Name = results[0].mnemonic;
-    m_Param = results[0].op_str;
+    strcpy(m_Name,results[0].mnemonic);
+    strcpy(m_Param,results[0].op_str);
     m_cc = (Arm64Opcode::arm64_cc)results[0].detail->arm64.cc;
     m_WriteBack = results[0].detail->arm64.writeback;
     m_UpdateFlags = results[0].detail->arm64.update_flags;
+    m_OperandCount = results[0].detail->arm64.op_count;
     for (uint8_t i = 0, n = results[0].detail->arm64.op_count; i < n; i++)
     {
         cs_arm64_op & src_operand = results[0].detail->arm64.operands[i];
-        MCOperand operand;
+        MCOperand &operand = m_Operands[i];
         memset(&operand, 0, sizeof(operand));
 
         operand.type = (arm64_op_type)src_operand.type;
@@ -89,12 +94,11 @@ Arm64Opcode::Arm64OpcodeDetail::Arm64OpcodeDetail(uint64_t pc, uint32_t insn) :
             operand.SysReg = (A64SysRegValues)src_operand.imm;
             break;
         case ARM64_OP_BARRIER:
+        case ARM64_OP_SYS:
             break;
         default:
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
-
-        m_Operands.push_back(operand);
     }
     cs_free(results, count);
     cs_close(&handle);
@@ -116,6 +120,7 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_RET:
         return true;
     case ARM64_INS_ADD:
+    case ARM64_INS_ADR:
     case ARM64_INS_ADRP:
     case ARM64_INS_AND:
     case ARM64_INS_ASR:
@@ -124,35 +129,61 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_BIC:
     case ARM64_INS_CCMP:
     case ARM64_INS_CINC:
+    case ARM64_INS_CLREX:
     case ARM64_INS_CLZ:
     case ARM64_INS_CMN:
     case ARM64_INS_CMP:
+    case ARM64_INS_CNT:
     case ARM64_INS_CSEL:
     case ARM64_INS_CSET:
     case ARM64_INS_CSETM:
     case ARM64_INS_CSINC:
     case ARM64_INS_CSINV:
+    case ARM64_INS_DC:
     case ARM64_INS_DMB:
+    case ARM64_INS_DSB:
     case ARM64_INS_DUP:
     case ARM64_INS_EOR:
+    case ARM64_INS_EXTR:
+    case ARM64_INS_FABS:
+    case ARM64_INS_FADD:
+    case ARM64_INS_FCMP:
+    case ARM64_INS_FCSEL:
+    case ARM64_INS_FCVT:
+    case ARM64_INS_FCVTMS:
+    case ARM64_INS_FCVTPS:
+    case ARM64_INS_FCVTZS:
+    case ARM64_INS_FCVTZU:
+    case ARM64_INS_FDIV:
+    case ARM64_INS_FMAXNM:
+    case ARM64_INS_FMINNM:
     case ARM64_INS_FMOV:
     case ARM64_INS_FMUL:
+    case ARM64_INS_FNEG:
+    case ARM64_INS_FSQRT:
+    case ARM64_INS_FSUB:
     case ARM64_INS_INS:
+    case ARM64_INS_LDAR:
     case ARM64_INS_LDARB:
+    case ARM64_INS_LDARH:
     case ARM64_INS_LDAXR:
     case ARM64_INS_LDP:
+    case ARM64_INS_LDPSW:
     case ARM64_INS_LDR:
     case ARM64_INS_LDRB:
     case ARM64_INS_LDRH:
     case ARM64_INS_LDRSB:
+    case ARM64_INS_LDRSH:
     case ARM64_INS_LDRSW:
     case ARM64_INS_LDUR:
     case ARM64_INS_LDURB:
     case ARM64_INS_LDURH:
+    case ARM64_INS_LDURSW:
     case ARM64_INS_LDXR:
     case ARM64_INS_LSL:
     case ARM64_INS_LSR:
     case ARM64_INS_MADD:
+    case ARM64_INS_MNEG:
     case ARM64_INS_MOV:
     case ARM64_INS_MOVI:
     case ARM64_INS_MOVK:
@@ -164,16 +195,21 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_MUL:
     case ARM64_INS_MVN:
     case ARM64_INS_NEG:
+    case ARM64_INS_NOP:
+    case ARM64_INS_ORN:
     case ARM64_INS_ORR:
     case ARM64_INS_RBIT:
+    case ARM64_INS_ROR:
     case ARM64_INS_SBFIZ:
     case ARM64_INS_SBFX:
+    case ARM64_INS_SCVTF:
     case ARM64_INS_SDIV:
     case ARM64_INS_SMADDL:
     case ARM64_INS_SMULH:
     case ARM64_INS_SMULL:
     case ARM64_INS_STLR:
     case ARM64_INS_STLRB:
+    case ARM64_INS_STLRH:
     case ARM64_INS_STLXR:
     case ARM64_INS_STP:
     case ARM64_INS_STR:
@@ -187,8 +223,10 @@ bool Arm64Opcode::IsJump(void) const
     case ARM64_INS_SVC:
     case ARM64_INS_SXTW:
     case ARM64_INS_TST:
+    case ARM64_INS_UADDLV:
     case ARM64_INS_UBFIZ:
     case ARM64_INS_UBFX:
+    case ARM64_INS_UCVTF:
     case ARM64_INS_UDIV:
     case ARM64_INS_UMADDL:
     case ARM64_INS_UMULH:
@@ -379,40 +417,33 @@ Arm64OpcodeCache::Arm64OpcodeCache()
 
 Arm64OpcodeCache::~Arm64OpcodeCache()
 {
-    CGuard guard(m_CacheCS);
-
-    for (OPCODE_CACHE::const_iterator itr = m_OpcodeCache.begin(); itr != m_OpcodeCache.end(); itr++)
-    {
-        delete itr->second;
-    }
-    m_OpcodeCache.clear();
 }
 
-Arm64Opcode::Arm64OpcodeDetail * Arm64OpcodeCache::GetOpcodeDetail(uint64_t pc, uint32_t insn)
+const Arm64Opcode::Arm64OpcodeDetail & Arm64OpcodeCache::GetOpcodeDetail(uint64_t pc, uint32_t insn)
 {
-    Arm64Opcode::Arm64OpcodeDetail * Details = nullptr;
     OpcodeKey key{ pc,insn };
     {
         CGuard guard(m_CacheCS);
         OPCODE_CACHE::const_iterator itr = m_OpcodeCache.find(key);
         if (itr != m_OpcodeCache.end())
         {
-            Details = itr->second;
+            return itr->second;
         }
     }
-    if (Details == nullptr)
+    Arm64Opcode::Arm64OpcodeDetail Details(pc, insn);
     {
-        Details = new Arm64Opcode::Arm64OpcodeDetail(pc, insn);
+        CGuard guard(m_CacheCS);
+        std::pair<OPCODE_CACHE::const_iterator, bool> res = m_OpcodeCache.insert(OPCODE_CACHE::value_type(key, std::move(Details)));
+        if (!res.second)
         {
-            CGuard guard(m_CacheCS);
-            std::pair<OPCODE_CACHE::const_iterator, bool> res = m_OpcodeCache.insert(OPCODE_CACHE::value_type(key, Details));
-            if (!res.second)
-            {
-                g_Notify->BreakPoint(__FILE__, __LINE__);
-            }
+            g_Notify->BreakPoint(__FILE__, __LINE__);
         }
+        return res.first->second;
     }
-    return Details;
+
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    static Arm64Opcode::Arm64OpcodeDetail NullDetails(0, 0);
+    return NullDetails;
 }
 
 Arm64Opcode::arm64_reg Arm64Opcode::Arm64OpcodeDetail::TranslateArm64Reg(capstone_arm64_reg reg)

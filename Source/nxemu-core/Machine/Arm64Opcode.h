@@ -1450,7 +1450,6 @@ public:
         arm64_vess Vess;
         arm64_vas Vas;
     };
-    typedef std::vector<MCOperand> MCOperands;
 private:
     class Arm64OpcodeDetail
     {
@@ -1460,10 +1459,10 @@ private:
         Arm64OpcodeDetail(uint64_t pc, uint32_t insn);
 
         inline uint64_t PC(void) const { return m_pc; }
-        inline const char * Name(void) const { return m_Name.c_str(); }
-        inline const char * Param(void) const { return m_Param.c_str(); }
+        inline const char * Name(void) const { return m_Name; }
+        inline const char * Param(void) const { return m_Param; }
         inline instruct_t Opc(void) const { return m_Opc; }
-        inline size_t Operands(void) const { return m_Operands.size(); }
+        inline size_t Operands(void) const { return m_OperandCount; }
         inline const MCOperand & Operand(uint32_t index) const { return m_Operands[index]; }
         inline arm64_cc cc(void) const { return m_cc; }
         inline bool UpdateFlags(void) const { return m_UpdateFlags; }
@@ -1749,11 +1748,12 @@ private:
         arm64_reg TranslateArm64Reg(capstone_arm64_reg reg);
 
         uint64_t m_pc;
-        std::string m_Name;
-        std::string m_Param;
+        char m_Name[40];
+        char m_Param[200];
         bool m_WriteBack;
         instruct_t m_Opc;
-        MCOperands m_Operands;
+        uint32_t m_OperandCount;
+        MCOperand m_Operands[8];
         bool m_UpdateFlags;
         arm64_cc m_cc;
     };
@@ -1761,15 +1761,15 @@ private:
 public:
     Arm64Opcode(Arm64OpcodeCache &cache, uint64_t pc, uint32_t insn);
 
-    inline uint64_t PC(void) const { return m_Details->PC(); }
-    inline const char * Name ( void ) const { return m_Details->Name(); }
-    inline const char * Param ( void ) const { return m_Details->Param(); }
-    inline instruct_t Opc(void) const { return m_Details->Opc(); }
-    inline size_t Operands(void) const { return m_Details->Operands(); }
-    inline const MCOperand & Operand(uint32_t index) const { return m_Details->Operand(index); }
-    inline arm64_cc cc(void) const { return m_Details->cc(); }
-    inline bool UpdateFlags(void) const { return m_Details->UpdateFlags(); }
-    inline bool WriteBack(void) const { return m_Details->WriteBack(); }
+    inline uint64_t PC(void) const { return m_Details.PC(); }
+    inline const char * Name ( void ) const { return m_Details.Name(); }
+    inline const char * Param ( void ) const { return m_Details.Param(); }
+    inline instruct_t Opc(void) const { return m_Details.Opc(); }
+    inline size_t Operands(void) const { return m_Details.Operands(); }
+    inline const MCOperand & Operand(uint32_t index) const { return m_Details.Operand(index); }
+    inline arm64_cc cc(void) const { return m_Details.cc(); }
+    inline bool UpdateFlags(void) const { return m_Details.UpdateFlags(); }
+    inline bool WriteBack(void) const { return m_Details.WriteBack(); }
 
     bool IsJump(void) const;
     bool IsBranch(void) const;
@@ -1784,7 +1784,7 @@ public:
     static bool Is16bitSimdReg(arm64_reg reg);
 
 private:
-    Arm64OpcodeDetail * m_Details;
+    const Arm64OpcodeDetail & m_Details;
 };
 
 class Arm64OpcodeCache
@@ -1805,12 +1805,13 @@ class Arm64OpcodeCache
         }
     };
 
-    typedef std::map<OpcodeKey, Arm64Opcode::Arm64OpcodeDetail *> OPCODE_CACHE;
+    typedef std::map<OpcodeKey, Arm64Opcode::Arm64OpcodeDetail> OPCODE_CACHE;
+
 public:
     Arm64OpcodeCache();
     ~Arm64OpcodeCache();
 
-    Arm64Opcode::Arm64OpcodeDetail * GetOpcodeDetail(uint64_t pc, uint32_t insn);
+    const Arm64Opcode::Arm64OpcodeDetail & GetOpcodeDetail(uint64_t pc, uint32_t insn);
 
 private:
     Arm64OpcodeCache(const Arm64OpcodeCache&);
