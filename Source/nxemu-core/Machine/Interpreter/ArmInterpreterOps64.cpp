@@ -2050,14 +2050,7 @@ void Arm64Op::Movi(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
     if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_IMM && Arm64Opcode::IsVectorReg(Op.Operand(0).Reg))
     {
-        if (Op.Operand(1).ImmVal == 0)
-        {
-            Reg.Set64Vector(Op.Operand(0).Reg, 0, Arm64Opcode::ARM64_VESS_D, Arm64Opcode::ARM64_VAS_2D, Op.Operand(1).ImmVal);
-        }
-        else
-        {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
-        }
+        Reg.Set64Vector(Op.Operand(0).Reg, Op.Operand(0).VectorIndex, Op.Operand(0).Vess, Op.Operand(0).Vas, Op.Operand(1).ImmVal);
     }
     else
     {

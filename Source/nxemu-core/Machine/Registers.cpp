@@ -233,6 +233,11 @@ void CRegisters::Set64Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Ar
             m_vfp_regs[(reg - Arm64Opcode::ARM64_REG_V0) * 2] = value;
             m_vfp_regs[((reg - Arm64Opcode::ARM64_REG_V0) * 2) + 1] = value;
         }
+        else if (VectorIndex == -1 && Vas == Arm64Opcode::ARM64_VAS_4S && reg >= Arm64Opcode::ARM64_REG_V0 && reg <= Arm64Opcode::ARM64_REG_V31)
+        {
+            m_vfp_regs[(reg - Arm64Opcode::ARM64_REG_V0) * 2] = (value & 0xFFFFFFFF) | (value << 32);
+            m_vfp_regs[((reg - Arm64Opcode::ARM64_REG_V0) * 2) + 1] = m_vfp_regs[(reg - Arm64Opcode::ARM64_REG_V0) * 2];
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
