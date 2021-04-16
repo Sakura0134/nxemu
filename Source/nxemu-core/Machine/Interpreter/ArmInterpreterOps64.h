@@ -30,6 +30,7 @@ public:
     static void Csetm(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Csinc(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Csinv(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Dc(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Dmb(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Dsb(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Dup(CInterpreterCPU & Cpu, const Arm64Opcode & Op);

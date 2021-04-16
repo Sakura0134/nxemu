@@ -853,6 +853,11 @@ void Arm64Op::Csinv(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
+void Arm64Op::Dc(CInterpreterCPU & /*core*/, const Arm64Opcode& /*Op*/)
+{
+    //ignore cache ops
+}
+
 void Arm64Op::Dup(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     IRegisters & Reg = Cpu.Reg();
