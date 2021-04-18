@@ -5,6 +5,7 @@
 #include <nxemu-core\hle\Services\vi\ViParcel.h>
 #include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\SystemGlobals.h>
+#include <Common\Padding.h>
 
 class CNativeWindow : 
     public ViParcel {
@@ -30,9 +31,9 @@ private:
         uint32_t magic;
         uint32_t process_id;
         uint32_t id;
-        uint32_t padding[3];
+        PADDING_WORDS(3);
         uint8_t dispdrv[8];
-        uint32_t padding2[2];
+        PADDING_WORDS(2);
     };
 
     Data m_data;
