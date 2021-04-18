@@ -12,13 +12,17 @@ public:
     ViParcel();
     ViParcel(const std::vector<uint8_t> & Buffer);
 
-    CIPCRequest::RequestBuffer Serialize();
+    const CIPCRequest::RequestBuffer & Serialize();
+    void Deserialize();
 
 protected:
     virtual void SerializeData() {}
     virtual void DeserializeData() {}
 
-    void Write(const void * val, size_t valSize );
+    std::wstring ReadInterfaceToken();
+    void Write(const void * Value, size_t Size );
+    void Read(void * Buffer, size_t Size);
+    void ReadUnaligned(void * dst, size_t size);
 
 protected:
     struct Header

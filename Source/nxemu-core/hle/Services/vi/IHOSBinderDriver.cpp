@@ -1,38 +1,105 @@
 #include <nxemu-core\hle\Services\vi\IHOSBinderDriver.h>
 #include <nxemu-core\hle\Services\vi\ViParcel.h>
+#include <nxemu-core\hle\Display\Nvidia\NvMultiFence.h>
 #include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\SystemGlobals.h>
 
-class IGBPConnectResponseParcel : 
-    public ViParcel 
+class IGBPConnectResponseParcel :
+    public ViParcel
 {
 public:
-    IGBPConnectResponseParcel(uint32_t width, uint32_t height)  :
-        m_data({ 0 })
+    IGBPConnectResponseParcel(uint32_t Width, uint32_t Height)
     {
-        m_data.width = width;
-        m_data.height = height;
+        memset(&m_Data, 0, sizeof(m_Data));
+        m_Data.Width = Width;
+        m_Data.Height = Height;
     }
 
 protected:
     void SerializeData()
     {
-        Write(&m_data, sizeof(m_data));
+        Write(&m_Data, sizeof(m_Data));
     }
 
 private:
-    struct Data 
+    struct Data
     {
-        uint32_t width;
-        uint32_t height;
-        uint32_t transform_hint;
-        uint32_t num_pending_buffers;
-        uint32_t status;
+        uint32_t Width;
+        uint32_t Height;
+        uint32_t TransformHint;
+        uint32_t NumPendingBuffers;
+        uint32_t Status;
     };
 
-    Data m_data;
+    Data m_Data;
 };
 
+class IGBPQueueBufferRequestParcel :
+    public ViParcel
+{
+    struct Data
+    {
+        uint32_t Slot;
+        PADDING_WORDS(3);
+        uint32_t Timestamp;
+        int32_t AutoTimestamp;
+        CBufferQueue::Rectangle Crop;
+        int32_t ScalingMode;
+        BufferTransformFlags Transform;
+        uint32_t StickyTransform;
+        PADDING_WORDS(1);
+        uint32_t SwapInterval;
+        NvMultiFence MultiFence;
+    };
+
+public:
+    IGBPQueueBufferRequestParcel(const std::vector<uint8_t> & Buffer) :
+        ViParcel(Buffer)
+    {
+        Deserialize();
+    }
+
+    void DeserializeData()
+    {
+        std::wstring token = ReadInterfaceToken();
+        Read(&m_Data, sizeof(m_Data));
+    }
+
+    inline const struct Data data(void) const { return m_Data; }
+
+private:
+    Data m_Data;
+};
+
+class IGBPQueueBufferResponseParcel :
+    public ViParcel
+{
+public:
+    IGBPQueueBufferResponseParcel(uint32_t Width, uint32_t Height)
+    {
+        memset(&m_Data, 0, sizeof(m_Data));
+        m_Data.Width = Width;
+        m_Data.Height = Height;
+    }
+
+protected:
+    void SerializeData()
+    {
+        Write(&m_Data, sizeof(m_Data));
+    }
+
+private:
+    struct Data
+    {
+        uint32_t Width;
+        uint32_t Height;
+        uint32_t TransformHint;
+        uint32_t PendingBuffers;
+        uint32_t Status;
+    };
+
+    Data m_Data;
+};
 
 CKernelObjectPtr IHOSBinderDriver::CreateInstance(CSwitchSystem & System)
 {
@@ -177,6 +244,15 @@ ResultCode IHOSBinderDriver::ViTransactParcel(CIPCRequest & Request)
         uint32_t UndockedHeight = 720;
 
         Request.WriteBuffer(IGBPConnectResponseParcel(UndockedWidth, UndockedHeight).Serialize());
+    }
+    else if (transaction == TransactionId::QueueBuffer)
+    {
+        IGBPQueueBufferRequestParcel RequestParcel(ReadData);
+        BufferQueue->QueueBuffer(RequestParcel.data().Slot, RequestParcel.data().Transform,
+            RequestParcel.data().Crop, RequestParcel.data().SwapInterval,
+            RequestParcel.data().MultiFence);
+
+        Request.WriteBuffer(IGBPQueueBufferResponseParcel(1280, 720).Serialize());
     }
     else
     {
