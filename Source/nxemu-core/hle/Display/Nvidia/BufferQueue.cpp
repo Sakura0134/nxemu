@@ -9,6 +9,21 @@ CBufferQueue::CBufferQueue(uint32_t Id, uint64_t LayerId) :
 {
 }
 
+uint32_t CBufferQueue::Query(BufferQueueQueryType Type)
+{
+    enum
+    {
+        FormatABGR8 = 1
+    };
+
+    switch (Type)
+    {
+    case BufferQueueQueryType_Format: return FormatABGR8;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return 0;
+}
+
 void CBufferQueue::QueueBuffer(uint32_t Slot, BufferTransformFlags Transform, const Rectangle & CropRect, uint32_t SwapInterval, const NvMultiFence & MultiFence)
 {
     CGuard Guard(m_CS);

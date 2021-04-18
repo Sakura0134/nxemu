@@ -8,9 +8,9 @@ class IGBPConnectResponseParcel :
     public ViParcel
 {
 public:
-    IGBPConnectResponseParcel(uint32_t Width, uint32_t Height)
+    IGBPConnectResponseParcel(uint32_t Width, uint32_t Height) :
+        m_Data({ 0 })
     {
-        memset(&m_Data, 0, sizeof(m_Data));
         m_Data.Width = Width;
         m_Data.Height = Height;
     }
@@ -22,16 +22,58 @@ protected:
     }
 
 private:
-    struct Data
+    struct stData
     {
         uint32_t Width;
         uint32_t Height;
         uint32_t TransformHint;
-        uint32_t NumPendingBuffers;
+        uint32_t PendingBuffers;
         uint32_t Status;
     };
 
-    Data m_Data;
+    stData m_Data;
+};
+
+class IGBPQueryResponseParcel :
+    public ViParcel
+{
+public:
+    IGBPQueryResponseParcel(uint32_t Data) :
+        m_Data(Data)
+    {
+    }
+
+protected:
+    void SerializeData()
+    {
+        Write(&m_Data, sizeof(m_Data));
+    }
+
+private:
+    uint32_t m_Data;
+};
+
+class IGBPQueryRequestParcel :
+    public ViParcel
+{
+public:
+    IGBPQueryRequestParcel(const CIPCRequest::RequestBuffer & Buffer) :
+        ViParcel(Buffer),
+        m_Type(BufferQueueQueryType_Width)
+    {
+        Deserialize();
+    }
+
+    void DeserializeData()
+    {
+        std::wstring token = ReadInterfaceToken();
+        Read(&m_Type, sizeof(m_Type));
+    }
+
+    BufferQueueQueryType Type(void) const { return m_Type; }
+
+private:
+    BufferQueueQueryType m_Type;
 };
 
 class IGBPQueueBufferRequestParcel :
@@ -165,6 +207,7 @@ void IHOSBinderDriver::ViGetNativeHandle(CIPCRequest & Request)
     uint32_t handle = HleKernel.AddKernelObject(BufferQueue->WaitEvent());
     Request.AddResponseHandlesToCopy(handle);
 }
+
 ResultCode IHOSBinderDriver::ViTransactParcel(CIPCRequest & Request)
 {
     const CIPCRequest::REQUEST_DATA & RequestData = Request.RequestData();
@@ -253,6 +296,12 @@ ResultCode IHOSBinderDriver::ViTransactParcel(CIPCRequest & Request)
             RequestParcel.data().MultiFence);
 
         Request.WriteBuffer(IGBPQueueBufferResponseParcel(1280, 720).Serialize());
+    }
+    else if (transaction == TransactionId::Query)
+    {
+        IGBPQueryRequestParcel RequestParcel(ReadData);
+        uint32_t Value = BufferQueue ? BufferQueue->Query((BufferQueueQueryType)RequestParcel.Type()) : 0;
+        Request.WriteBuffer(IGBPQueryResponseParcel(Value).Serialize());
     }
     else
     {
