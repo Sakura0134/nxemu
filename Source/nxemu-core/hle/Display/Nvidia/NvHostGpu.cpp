@@ -6,8 +6,28 @@ CNvHostGpu::CNvHostGpu(CNvDriver & NvDriver) :
 {
 }
 
-nvResult CNvHostGpu::Ioctl(nvIoctl /*Ioctl*/, const CIPCRequest::RequestBuffer & /*InData*/, CIPCRequest::RequestBuffer & /*OutData*/)
+nvResult CNvHostGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    if (Ioctl.Group == nvIoctl::NvHostMagic)
+    {
+        switch (Ioctl.Cmd)
+        {
+        case CHANNEL_SET_NVMAP_FD:
+            SetNvMap(InData, OutData);
+            break;
+        default:
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
     return nvResult_Success;
 }
+
+void CNvHostGpu::SetNvMap(const CIPCRequest::RequestBuffer & /*InData*/, CIPCRequest::RequestBuffer & /*OutData*/)
+{
+    //Stubbed
+}
+

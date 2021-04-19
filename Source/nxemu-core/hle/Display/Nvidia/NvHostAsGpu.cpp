@@ -14,6 +14,9 @@ nvResult CNvHostAsGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& In
     {
         switch (Ioctl.Cmd)
         {
+        case IOCTL_BIND_CHANNEL: 
+            BindChannel(InData, OutData);
+            break;
         case IOCTL_ALLOC_SPACE:
             AllocSpace(InData, OutData);
             break;
@@ -35,6 +38,11 @@ nvResult CNvHostAsGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& In
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     return nvResult_Success;
+}
+
+void CNvHostAsGpu::BindChannel(const std::vector<uint8_t> & /*InData*/, std::vector<uint8_t> & /*OutData*/)
+{
+    //stubbed
 }
 
 void CNvHostAsGpu::GetVaRegions(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData)

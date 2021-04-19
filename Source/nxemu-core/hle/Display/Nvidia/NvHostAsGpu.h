@@ -89,6 +89,7 @@ private:
     };
     typedef std::map<uint64_t, BufferMap> BufferMappings;
 
+    void BindChannel(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
     void AllocSpace(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
     void MapBufferEx(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);
     void GetVaRegions(const std::vector<uint8_t> & InData, std::vector<uint8_t> & OutData);

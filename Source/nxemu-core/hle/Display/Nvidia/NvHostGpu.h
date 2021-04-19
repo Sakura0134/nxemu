@@ -6,6 +6,11 @@ class CNvDriver;
 class CNvHostGpu :
     public INvDevice
 {
+    enum 
+    {
+        CHANNEL_SET_NVMAP_FD = 0x01,
+    };
+
 public:
     CNvHostGpu(CNvDriver& NvDriver);
 
@@ -15,6 +20,8 @@ private:
     CNvHostGpu(void);
     CNvHostGpu(const CNvHostGpu&);
     CNvHostGpu& operator=(const CNvHostGpu&);
+
+    void SetNvMap(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
 
     CNvDriver & m_NvDriver;
 };
