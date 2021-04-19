@@ -24,6 +24,19 @@ uint32_t CBufferQueue::Query(BufferQueueQueryType Type)
     return 0;
 }
 
+void CBufferQueue::SetPreallocatedBuffer(uint32_t slot, const IGBPBuffer& igbp_buffer)
+{
+    CGuard Guard(m_CS);
+
+    Buffer buffer = {0};
+    buffer.Slot = slot;
+    buffer.IgbpBuffer = igbp_buffer;
+    buffer.Status = BufferQueueStatus_Free;
+
+    m_Queue.emplace_back(buffer);
+    m_WaitEvent->GetKEventPtr()->Signal();
+}
+
 void CBufferQueue::QueueBuffer(uint32_t Slot, BufferTransformFlags Transform, const Rectangle & CropRect, uint32_t SwapInterval, const NvMultiFence & MultiFence)
 {
     CGuard Guard(m_CS);

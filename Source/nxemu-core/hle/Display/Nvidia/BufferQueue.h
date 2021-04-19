@@ -74,6 +74,7 @@ public:
 
     CBufferQueue(uint32_t Id, uint64_t LayerId);
     uint32_t Query(BufferQueueQueryType Type);
+    void SetPreallocatedBuffer(uint32_t slot, const IGBPBuffer& igbp_buffer);
     void QueueBuffer(uint32_t Slot, BufferTransformFlags Transform, const Rectangle & CropRect, uint32_t SwapInterval, const NvMultiFence & MultiFence);
 
     inline uint32_t Id(void) const { return m_Id; }

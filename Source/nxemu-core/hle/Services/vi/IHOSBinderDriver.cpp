@@ -76,6 +76,52 @@ private:
     BufferQueueQueryType m_Type;
 };
 
+class IGBPSetPreallocatedBufferRequestParcel :
+    public ViParcel
+{
+public:
+    IGBPSetPreallocatedBufferRequestParcel(const std::vector<uint8_t> & Buffer) :
+        ViParcel(Buffer),
+        m_Data({0}),
+        m_Buffer({0})
+    {
+        Deserialize();
+    }
+
+    void DeserializeData()
+    {
+        std::wstring Token = ReadInterfaceToken();
+        Read(&m_Data, sizeof(m_Data));
+        Read(&m_Buffer, sizeof(m_Buffer));
+    }
+
+    struct stData
+    {
+        uint32_t Slot;
+        PADDING_WORDS(1);
+        uint32_t GraphicBufferLength;
+        PADDING_WORDS(1);
+    };
+
+    const stData & Data(void) const { return m_Data; }
+    const IGBPBuffer & Buffer(void) const { return m_Buffer; }
+
+private:
+    stData m_Data;
+    IGBPBuffer m_Buffer;
+};
+
+class IGBPSetPreallocatedBufferResponseParcel :
+    public ViParcel
+{
+protected:
+    void SerializeData()
+    {
+        uint32_t Value = 0;
+        Write(&Value, sizeof(Value));
+    }
+};
+
 class IGBPQueueBufferRequestParcel :
     public ViParcel
 {
@@ -287,6 +333,12 @@ ResultCode IHOSBinderDriver::ViTransactParcel(CIPCRequest & Request)
         uint32_t UndockedHeight = 720;
 
         Request.WriteBuffer(IGBPConnectResponseParcel(UndockedWidth, UndockedHeight).Serialize());
+    }
+    else if (transaction == TransactionId::SetPreallocatedBuffer)
+    {
+        IGBPSetPreallocatedBufferRequestParcel RequestParcel(ReadData);
+        BufferQueue->SetPreallocatedBuffer(RequestParcel.Data().Slot, RequestParcel.Buffer());
+        Request.WriteBuffer(IGBPSetPreallocatedBufferResponseParcel().Serialize());
     }
     else if (transaction == TransactionId::QueueBuffer)
     {
