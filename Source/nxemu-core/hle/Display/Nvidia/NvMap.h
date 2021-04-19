@@ -32,6 +32,13 @@ class CNvMap :
     {
         NVMAP_IOC_CREATE = 0x01,
         NVMAP_IOC_ALLOC = 0x04,
+        NVMAP_IOC_GET_ID = 0x0E,
+    };
+
+    struct NvMapGetId
+    {
+        uint32_t Id;
+        uint32_t Handle;
     };
 
     enum
@@ -46,7 +53,7 @@ public:
     ~CNvMap(void);
 
     nvResult Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer& InData, CIPCRequest::RequestBuffer& OutData);
-    NvMapHandle * FindNvMapHandle(uint32_t handle);
+    NvMapHandle & FindNvMapHandle(uint32_t handle);
 
 private:
     CNvMap(const CNvMap&);
@@ -54,6 +61,7 @@ private:
 
     void Create(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
     void Alloc(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
+    void GetId(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
 
     NvMapHandleMap m_Handles;
     uint32_t m_NextNvHandle;

@@ -22,6 +22,9 @@ nvResult CNvMap::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer & InData,
         case NVMAP_IOC_ALLOC:
             Alloc(InData, OutData);
             break;
+        case NVMAP_IOC_GET_ID:
+            GetId(InData, OutData);
+            break;
         default:
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -108,15 +111,35 @@ void CNvMap::Alloc(const CIPCRequest::RequestBuffer & InData, CIPCRequest::Reque
     }
 }
 
-NvMapHandle * CNvMap::FindNvMapHandle(uint32_t handle)
+void CNvMap::GetId(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData)
+{
+    if (InData.size() < sizeof(NvMapGetId))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    OutData.resize(sizeof(NvMapGetId));
+    memcpy(OutData.data(), InData.data(), InData.size());
+    NvMapGetId & Args = *((NvMapGetId *)OutData.data());
+    NvMapHandleMap::iterator itr = m_Handles.find(Args.Handle);
+    if (itr == m_Handles.end())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    Args.Id = Args.Handle;
+}
+
+NvMapHandle & CNvMap::FindNvMapHandle(uint32_t handle)
 {
     NvMapHandleMap::iterator itr = m_Handles.find(handle);
     if (itr == m_Handles.end())
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
-        return nullptr;
+        static NvMapHandle Empty(0);
+        return Empty;
     }
-    return &itr->second;
+    return itr->second;
 }
 
 NvMapHandle::NvMapHandle(uint32_t Size) :

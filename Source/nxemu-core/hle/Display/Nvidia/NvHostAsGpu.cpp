@@ -100,16 +100,10 @@ void CNvHostAsGpu::MapBufferEx(const std::vector<uint8_t> & InData, std::vector<
     {
         return;
     }
-    CNvMap & NvMap = m_NvDriver.NvMap();
-    NvMapHandle * Map = NvMap.FindNvMapHandle(Params.NvmapHandle);
-    if (Map == nullptr)
-    {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        return;
-    }
-    uint64_t PhysicalAddress = Map->Address() + Params.BufferOffset;
-    uint64_t Size = Params.MappingSize != 0 ? Params.MappingSize : Map->Size();
-    uint64_t PageSize = Params.PageSize != 0 ? Params.PageSize : Map->Align();
+    NvMapHandle & Map = m_NvDriver.NvMap().FindNvMapHandle(Params.NvmapHandle);
+    uint64_t PhysicalAddress = Map.Address() + Params.BufferOffset;
+    uint64_t Size = Params.MappingSize != 0 ? Params.MappingSize : Map.Size();
+    uint64_t PageSize = Params.PageSize != 0 ? Params.PageSize : Map.Align();
 
     bool IsAlloc = (Params.Flags & AddressSpaceFlags_FixedOffset) == AddressSpaceFlags_None;
     bool Remap = (Params.Flags & AddressSpaceFlags_Remap) != AddressSpaceFlags_None;
