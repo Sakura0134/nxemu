@@ -697,6 +697,10 @@ void Arm64Op::Cmp(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         {
             b = Reg.Get64(Op.Operand(1).Reg) >> Op.Operand(1).shift.value;
         }
+        else if (Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg) && Op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_UXTW && Op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
+        {
+            b = Reg.Get32(Op.Operand(1).Reg);
+        }
         else if (Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg) && Op.Operand(1).Extend == Arm64Opcode::ARM64_EXT_SXTW && Op.Operand(1).shift.type == Arm64Opcode::ARM64_SFT_INVALID)
         {
             b = (int64_t)((int32_t)Reg.Get32(Op.Operand(1).Reg));
