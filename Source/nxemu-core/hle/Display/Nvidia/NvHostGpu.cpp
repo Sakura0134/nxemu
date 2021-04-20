@@ -18,6 +18,9 @@ nvResult CNvHostGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer & InD
         case CHANNEL_ALLOC_OBJ_CTX:
             AllocObjCtx(InData, OutData);
             break;
+        case CHANNEL_SET_ERROR_NOTIFIER:
+            SetErrorNotifier(InData, OutData);
+            break;
         case CHANNEL_ALLOC_GPFIFO_EX2:
             AllocGpfifoEx2(InData, OutData);
             break;
@@ -43,6 +46,11 @@ void CNvHostGpu::AllocObjCtx(const CIPCRequest::RequestBuffer & /*InData*/, CIPC
 }
 
 void CNvHostGpu::AllocGpfifoEx2(const CIPCRequest::RequestBuffer & /*InData*/, CIPCRequest::RequestBuffer & /*OutData*/)
+{
+    //Stubbed
+}
+
+void CNvHostGpu::SetErrorNotifier(const CIPCRequest::RequestBuffer & /*InData*/, CIPCRequest::RequestBuffer & /*OutData*/)
 {
     //Stubbed
 }

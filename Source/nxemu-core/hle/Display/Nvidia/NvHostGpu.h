@@ -10,6 +10,7 @@ class CNvHostGpu :
     {
         CHANNEL_SET_NVMAP_FD = 0x01,
         CHANNEL_ALLOC_OBJ_CTX = 0x09,
+        CHANNEL_SET_ERROR_NOTIFIER = 0x0C,
         CHANNEL_ALLOC_GPFIFO_EX2 = 0x1A,
     };
 
@@ -26,6 +27,7 @@ private:
     void SetNvMap(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
     void AllocObjCtx(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
     void AllocGpfifoEx2(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
+    void SetErrorNotifier(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
 
     CNvDriver & m_NvDriver;
 };
