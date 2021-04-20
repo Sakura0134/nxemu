@@ -65,10 +65,9 @@ bool CSwitchSystem::ReadCPUMemory(uint64_t CpuAddr, void * DestBuffer, uint64_t 
     return m_ProcessMemory.ReadBytes(CpuAddr, (uint8_t*)DestBuffer, (uint32_t)Size, true);
 }
 
-bool CSwitchSystem::WriteCPUMemory(uint64_t /*CpuAddr*/, const void * /*SrcBuffer*/, uint64_t /*Size*/)
+bool CSwitchSystem::WriteCPUMemory(uint64_t CpuAddr, const void * SrcBuffer, uint64_t Size)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
-    return false;
+    return m_ProcessMemory.WriteBytes(CpuAddr, (const uint8_t *)SrcBuffer, (uint32_t)Size, true);
 }
 
 void CSwitchSystem::MarkRasterizerMemory(uint64_t /*CpuAddr*/, uint64_t /*Size*/, bool /*cached*/)

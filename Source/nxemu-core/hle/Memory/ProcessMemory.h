@@ -1,6 +1,7 @@
 #pragma once
 #include <nxemu-core\Machine\PageTable.h>
 #include <nxemu-core\hle\Memory\MemoryRegion.h>
+#include <Common\CriticalSection.h>
 #include <stdint.h>
 #include <map>
 
@@ -33,6 +34,7 @@ public:
     bool Read64(uint64_t Addr, uint64_t & value) const;
     bool ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len, bool external) const;
     bool ReadCString(uint64_t Addr, std::string & value) const;
+    bool WriteBytes(uint64_t Addr, const uint8_t * Buffer, uint32_t Len, bool External);
     uint8_t* GetPointer(uint64_t Address);
     const uint8_t* GetPointer(uint64_t Address) const;
 
@@ -54,6 +56,8 @@ private:
     uint64_t m_HeapRegionBase, m_HeapRegionSize;
     uint64_t m_NewMapRegionBase, m_NewMapRegionSize;
     uint64_t m_TlsIoRegionBase, m_TlsIoRegionSize;
+
+    mutable CriticalSection m_CS;
     MemoryRegionMap m_MemoryMap;
     uint8_t * m_heap;
 };

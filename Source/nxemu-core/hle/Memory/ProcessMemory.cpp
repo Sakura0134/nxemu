@@ -95,7 +95,6 @@ bool CProcessMemory::SetHeapSize(uint64_t Size)
     return m_heap != nullptr;
 }
 
-
 bool CProcessMemory::SetMemoryAttribute(uint64_t Addr, uint64_t Size, MemoryAttribute Mask, MemoryAttribute Attribute)
 {
     MemoryRegionMapIter RegionItr;
@@ -255,6 +254,8 @@ bool CProcessMemory::Read64(uint64_t Addr, uint64_t & value) const
 
 bool CProcessMemory::ReadBytes(uint64_t Address, uint8_t * buffer, uint32_t len, bool external) const
 {
+    CGuard Guard(m_CS);
+
     MemoryRegionMapIter itr;
     if (!FindMemoryRegion(Address, itr))
     {
@@ -283,6 +284,8 @@ bool CProcessMemory::ReadBytes(uint64_t Address, uint8_t * buffer, uint32_t len,
 
 bool CProcessMemory::ReadCString(uint64_t Addr, std::string & value) const
 {
+    CGuard Guard(m_CS);
+
     MemoryRegionMapIter itr;
     if (FindMemoryRegion(Addr, itr))
     {
@@ -303,8 +306,40 @@ bool CProcessMemory::ReadCString(uint64_t Addr, std::string & value) const
     return false;
 }
 
+bool CProcessMemory::WriteBytes(uint64_t Address, const uint8_t* buffer, uint32_t len, bool external)
+{
+    CGuard Guard(m_CS);
+
+    MemoryRegionMapIter itr;
+    if (!FindMemoryRegion(Address, itr))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+    CMemoryRegion& Region = itr->second;
+    if ((Region.Address() + Region.Size()) < Address + len)
+    {
+        uint64_t Regionlen = Region.Size() - (Region.Address() - Address);
+        if (!WriteBytes(Address + Regionlen, buffer + Regionlen, len - (uint32_t)Regionlen, external))
+        {
+            return false;
+        }
+        len = (uint32_t)Regionlen;
+    }
+    if (Region.Memory() == nullptr)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+    void * WriteBuffer = (void*)&(Region.Memory()[Address - Region.Address()]);
+    memcpy(WriteBuffer, buffer, len);
+    return true;
+}
+
 uint8_t* CProcessMemory::GetPointer(uint64_t Address)
 {
+    CGuard Guard(m_CS);
+
     MemoryRegionMapIter itr;
     if (FindMemoryRegion(Address, itr))
     {
