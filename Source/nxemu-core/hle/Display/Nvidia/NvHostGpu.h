@@ -9,6 +9,7 @@ class CNvHostGpu :
     enum 
     {
         CHANNEL_SET_NVMAP_FD = 0x01,
+        CHANNEL_ALLOC_OBJ_CTX = 0x09,
         CHANNEL_ALLOC_GPFIFO_EX2 = 0x1A,
     };
 
@@ -23,6 +24,7 @@ private:
     CNvHostGpu& operator=(const CNvHostGpu&);
 
     void SetNvMap(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
+    void AllocObjCtx(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
     void AllocGpfifoEx2(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
 
     CNvDriver & m_NvDriver;
