@@ -171,6 +171,12 @@
     <Filter Include="Source Files\Plugins">
       <UniqueIdentifier>{8176fd77-a708-4cd1-9740-536f9228f583}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hle\Services\hid">
+      <UniqueIdentifier>{a96c4d02-7914-4eef-9933-cd49ba53c47f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hle\Services\hid">
+      <UniqueIdentifier>{fa88d8c7-56b8-4d77-b2df-5370510f23d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -491,6 +497,9 @@
     <ClInclude Include="hle\Display\Nvidia\NvHostGpu.h">
       <Filter>Header Files\hle\Display\Nvidia</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\hid\hid.h">
+      <Filter>Header Files\hle\Services\hid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -777,6 +786,9 @@
     </ClCompile>
     <ClCompile Include="hle\Display\Nvidia\NvHostGpu.cpp">
       <Filter>Source Files\hle\Display\Nvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\hid\hid.cpp">
+      <Filter>Source Files\hle\Services\hid</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
