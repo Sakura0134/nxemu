@@ -1832,6 +1832,12 @@ void Arm64Op::Ldur(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             if (!ThreadMemory.Read32(TargetAddr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
             Reg.Set32(Op.Operand(0).Reg, value);
         }
+        else if (Arm64Opcode::Is128bitReg(Op.Operand(0).Reg))
+        {
+            uint64_t value[2];
+            if (!ThreadMemory.ReadBytes(TargetAddr, (uint8_t*)&value[0], sizeof(value))) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set128(Op.Operand(0).Reg, value[0], value[1]);
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
