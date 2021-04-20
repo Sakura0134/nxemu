@@ -10,6 +10,7 @@ class CNvHostGpu :
     {
         CHANNEL_SET_NVMAP_FD = 0x01,
         CHANNEL_ALLOC_OBJ_CTX = 0x09,
+        CHANNEL_ZCULL_BIND = 0x0B,
         CHANNEL_SET_ERROR_NOTIFIER = 0x0C,
         CHANNEL_SET_PRIORITY = 0x0D,
         CHANNEL_SET_USER_DATA = 0x14,
@@ -32,6 +33,7 @@ private:
     void SetErrorNotifier(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
     void SetUserData(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
     void SetPriority(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
+    void ZcullBind(const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData);
 
     CNvDriver & m_NvDriver;
 };

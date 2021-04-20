@@ -29,6 +29,9 @@ nvResult CNvHostGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer & InD
         case CHANNEL_ALLOC_OBJ_CTX:
             AllocObjCtx(InData, OutData);
             break;
+        case CHANNEL_ZCULL_BIND:
+            ZcullBind(InData, OutData);
+            break;
         case CHANNEL_SET_ERROR_NOTIFIER:
             SetErrorNotifier(InData, OutData);
             break;
@@ -79,3 +82,7 @@ void CNvHostGpu::SetPriority(const CIPCRequest::RequestBuffer& /*InData*/, CIPCR
     //Stubbed
 }
 
+void CNvHostGpu::ZcullBind(const CIPCRequest::RequestBuffer & /*InData*/, CIPCRequest::RequestBuffer & /*OutData*/)
+{
+    //Stubbed
+}
