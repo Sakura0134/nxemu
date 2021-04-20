@@ -8,7 +8,18 @@ CNvHostGpu::CNvHostGpu(CNvDriver & NvDriver) :
 
 nvResult CNvHostGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer & InData, CIPCRequest::RequestBuffer & OutData)
 {
-    if (Ioctl.Group == nvIoctl::NvHostMagic)
+    if (Ioctl.Group == nvIoctl::NvGpuMagic)
+    {
+        switch (Ioctl.Cmd)
+        {
+        case CHANNEL_SET_USER_DATA:
+            SetUserData(InData, OutData);
+            break;
+        default:
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else if (Ioctl.Group == nvIoctl::NvHostMagic)
     {
         switch (Ioctl.Cmd)
         {
@@ -51,6 +62,11 @@ void CNvHostGpu::AllocGpfifoEx2(const CIPCRequest::RequestBuffer & /*InData*/, C
 }
 
 void CNvHostGpu::SetErrorNotifier(const CIPCRequest::RequestBuffer & /*InData*/, CIPCRequest::RequestBuffer & /*OutData*/)
+{
+    //Stubbed
+}
+
+void CNvHostGpu::SetUserData(const CIPCRequest::RequestBuffer & /*InData*/, CIPCRequest::RequestBuffer & /*OutData*/)
 {
     //Stubbed
 }
