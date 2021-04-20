@@ -32,6 +32,9 @@ nvResult CNvHostGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer & InD
         case CHANNEL_SET_ERROR_NOTIFIER:
             SetErrorNotifier(InData, OutData);
             break;
+        case CHANNEL_SET_PRIORITY:
+            SetPriority(InData, OutData);
+            break;
         case CHANNEL_ALLOC_GPFIFO_EX2:
             AllocGpfifoEx2(InData, OutData);
             break;
@@ -67,6 +70,11 @@ void CNvHostGpu::SetErrorNotifier(const CIPCRequest::RequestBuffer & /*InData*/,
 }
 
 void CNvHostGpu::SetUserData(const CIPCRequest::RequestBuffer & /*InData*/, CIPCRequest::RequestBuffer & /*OutData*/)
+{
+    //Stubbed
+}
+
+void CNvHostGpu::SetPriority(const CIPCRequest::RequestBuffer& /*InData*/, CIPCRequest::RequestBuffer& /*OutData*/)
 {
     //Stubbed
 }
