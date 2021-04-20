@@ -15,6 +15,9 @@ nvResult CNvHostGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer & InD
         case CHANNEL_SET_NVMAP_FD:
             SetNvMap(InData, OutData);
             break;
+        case CHANNEL_ALLOC_GPFIFO_EX2:
+            AllocGpfifoEx2(InData, OutData);
+            break;
         default:
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -27,6 +30,11 @@ nvResult CNvHostGpu::Ioctl(nvIoctl Ioctl, const CIPCRequest::RequestBuffer & InD
 }
 
 void CNvHostGpu::SetNvMap(const CIPCRequest::RequestBuffer & /*InData*/, CIPCRequest::RequestBuffer & /*OutData*/)
+{
+    //Stubbed
+}
+
+void CNvHostGpu::AllocGpfifoEx2(const CIPCRequest::RequestBuffer & /*InData*/, CIPCRequest::RequestBuffer & /*OutData*/)
 {
     //Stubbed
 }
