@@ -1,4 +1,5 @@
 #include <nxemu-core\hle\Services\hid\hid.h>
+#include <nxemu-core\hle\Services\hid\IAppletResource.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CKernelObjectPtr HID::CreateInstance(CSwitchSystem & System)
@@ -22,8 +23,18 @@ void HID::Close(void)
     delete this;
 }
 
-ResultCode HID::CallMethod(CIPCRequest & /*Request*/)
+ResultCode HID::CallMethod(CIPCRequest & Request)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    switch (Request.RequestHeader().Command)
+    {
+    case Method_CreateAppletResource: ProcessCreateAppletResource(Request); break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
     return RESULT_SUCCESS;
+}
+
+void HID::ProcessCreateAppletResource(CIPCRequest & Request)
+{
+    Request.MakeObject(IAppletResource::CreateInstance(m_System)->GetServicePtr());
 }

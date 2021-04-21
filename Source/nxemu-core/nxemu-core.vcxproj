@@ -88,6 +88,7 @@
     <ClInclude Include="hle\Services\FspSrv\IFileSystemProxy.h" />
     <ClInclude Include="hle\Services\FspSrv\IStorage.h" />
     <ClInclude Include="hle\Services\hid\hid.h" />
+    <ClInclude Include="hle\Services\hid\IAppletResource.h" />
     <ClInclude Include="hle\Services\IpcRequest.h" />
     <ClInclude Include="hle\Services\lm\lm.h" />
     <ClInclude Include="hle\Services\lm\logger.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="hle\Services\FspSrv\IFileSystemProxy.cpp" />
     <ClCompile Include="hle\Services\FspSrv\IStorage.cpp" />
     <ClCompile Include="hle\Services\hid\hid.cpp" />
+    <ClCompile Include="hle\Services\hid\IAppletResource.cpp" />
     <ClCompile Include="hle\Services\IpcRequest.cpp" />
     <ClCompile Include="hle\Services\lm\lm.cpp" />
     <ClCompile Include="hle\Services\lm\Logger.cpp" />

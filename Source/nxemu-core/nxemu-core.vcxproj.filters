@@ -500,6 +500,9 @@
     <ClInclude Include="hle\Services\hid\hid.h">
       <Filter>Header Files\hle\Services\hid</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\hid\IAppletResource.h">
+      <Filter>Header Files\hle\Services\hid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -788,6 +791,9 @@
       <Filter>Source Files\hle\Display\Nvidia</Filter>
     </ClCompile>
     <ClCompile Include="hle\Services\hid\hid.cpp">
+      <Filter>Source Files\hle\Services\hid</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\hid\IAppletResource.cpp">
       <Filter>Source Files\hle\Services\hid</Filter>
     </ClCompile>
   </ItemGroup>
