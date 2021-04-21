@@ -8,7 +8,8 @@ CKernelObjectPtr IAppletResource::CreateInstance(CSwitchSystem & System)
 }
 
 IAppletResource::IAppletResource(CSwitchSystem & System) :
-    CService(System)
+    CService(System),
+    m_SharedMem(m_System.HleKernel().InterfaceDevice().GetSharedMemory())
 {
 }
 
@@ -25,6 +26,20 @@ void IAppletResource::Close(void)
 
 ResultCode IAppletResource::CallMethod(CIPCRequest & Request)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    switch (Request.RequestHeader().Command)
+    {
+    case Method_GetSharedMemoryHandle:
+        ProcessGetSharedMemoryHandle(Request);
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
     return RESULT_SUCCESS;
 }
+
+void IAppletResource::ProcessGetSharedMemoryHandle(CIPCRequest & Request)
+{
+    uint32_t handle = m_System.HleKernel().AddKernelObject(m_SharedMem);
+    Request.AddResponseHandlesToCopy(handle);
+}
+

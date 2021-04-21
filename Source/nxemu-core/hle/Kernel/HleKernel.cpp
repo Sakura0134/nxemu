@@ -14,6 +14,7 @@ CHleKernel::CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory) :
     m_System(System),
     m_ProcessMemory(ProcessMemory),
     m_SM(System),
+    m_InterfaceDevice(*this),
     m_NextHandle(0x8002),
     m_NextThreadId(1)
 {

@@ -177,6 +177,12 @@
     <Filter Include="Source Files\hle\Services\hid">
       <UniqueIdentifier>{fa88d8c7-56b8-4d77-b2df-5370510f23d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hle\HID">
+      <UniqueIdentifier>{7cd5b3af-d0c5-4d92-8730-5c78116e188f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hle\HID">
+      <UniqueIdentifier>{faeffab0-5e69-41c4-8cb6-2b55d1dd76d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -503,6 +509,9 @@
     <ClInclude Include="hle\Services\hid\IAppletResource.h">
       <Filter>Header Files\hle\Services\hid</Filter>
     </ClInclude>
+    <ClInclude Include="hle\HID\InterfaceDevice.h">
+      <Filter>Header Files\hle\HID</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -795,6 +804,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\hid\IAppletResource.cpp">
       <Filter>Source Files\hle\Services\hid</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\HID\InterfaceDevice.cpp">
+      <Filter>Source Files\hle\HID</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

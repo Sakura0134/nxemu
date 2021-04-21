@@ -36,6 +36,12 @@ CTransferMemory * CKernelObject::GetTransferMemoryPtr(void)
     return nullptr;
 }
 
+CKernelSharedMemory * CKernelObject::GetSharedMemoryPtr(void)
+{
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return nullptr;
+}
+
 CKernelObjectPtr::CKernelObjectPtr() :
     m_Object(nullptr)
 {

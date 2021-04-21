@@ -7,6 +7,7 @@ class CSystemThread;
 class CService;
 class KEvent;
 class CTransferMemory;
+class CKernelSharedMemory;
 
 enum KernelObjectHandleType
 {
@@ -15,6 +16,7 @@ enum KernelObjectHandleType
     KernelObjectHandleType_Service,
     KernelObjectHandleType_Event,
     KernelObjectHandleType_TransferMemory,
+    KernelObjectHandleType_SharedMemory,
 };
 
 class CKernelObject
@@ -31,6 +33,7 @@ public:
     virtual CService * GetServicePtr(void);
     virtual KEvent * GetKEventPtr(void);
     virtual CTransferMemory * GetTransferMemoryPtr(void);
+    virtual CKernelSharedMemory * GetSharedMemoryPtr(void);
 
 private:
     CKernelObject(const CKernelObject&);

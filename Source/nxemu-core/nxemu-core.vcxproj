@@ -58,6 +58,7 @@
     <ClInclude Include="hle\Display\Nvidia\nvIoctl.h" />
     <ClInclude Include="hle\Display\Nvidia\NvMap.h" />
     <ClInclude Include="hle\Display\Nvidia\nvResult.h" />
+    <ClInclude Include="hle\HID\InterfaceDevice.h" />
     <ClInclude Include="hle\Kernel\HleKernel.h" />
     <ClInclude Include="hle\Kernel\KernelObject.h" />
     <ClInclude Include="hle\Kernel\KEvent.h" />
@@ -163,6 +164,7 @@
     <ClCompile Include="hle\Display\Nvidia\NvHostCtrlGpu.cpp" />
     <ClCompile Include="hle\Display\Nvidia\NvHostGpu.cpp" />
     <ClCompile Include="hle\Display\Nvidia\NvMap.cpp" />
+    <ClCompile Include="hle\HID\InterfaceDevice.cpp" />
     <ClCompile Include="hle\Kernel\HleKernel.cpp" />
     <ClCompile Include="hle\Kernel\KernelObject.cpp" />
     <ClCompile Include="hle\Kernel\KEvent.cpp" />

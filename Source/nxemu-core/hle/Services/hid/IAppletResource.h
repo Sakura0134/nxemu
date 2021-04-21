@@ -5,6 +5,10 @@ class IAppletResource :
     public CService
 {
 public:
+    enum Method
+    {
+        Method_GetSharedMemoryHandle = 0,
+    };
     static CKernelObjectPtr CreateInstance(CSwitchSystem & System);
 
     //__interface IService
@@ -19,4 +23,8 @@ private:
     IAppletResource& operator=(const IAppletResource&);
 
     IAppletResource(CSwitchSystem & System);
+
+    void ProcessGetSharedMemoryHandle(CIPCRequest & Request);
+
+    CKernelObjectPtr m_SharedMem;
 };

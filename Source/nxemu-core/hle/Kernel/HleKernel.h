@@ -10,6 +10,7 @@
 #include <nxemu-core\hle\Memory\TransferMemory.h>
 #include <nxemu-core\hle\Kernel\KernelObject.h>
 #include <nxemu-core\hle\kernel\Service.h>
+#include <nxemu-core\hle\HID\InterfaceDevice.h>
 #include <stdint.h>
 
 class CSwitchSystem;
@@ -106,6 +107,8 @@ public:
     CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory);
     ~CHleKernel();
 
+    CInterfaceDevice & InterfaceDevice() { return m_InterfaceDevice; }
+
     bool AddSystemThread(uint32_t & ThreadHandle, const char * name, uint64_t entry_point, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
     uint32_t AddKernelObject(CKernelObject * object);
     KernelObjectMap KernelObjects(void);
@@ -150,6 +153,7 @@ private:
     CMutex m_Mutex;
     CServiceManger m_SM;
     NamedPortList m_NamedPorts;
+    CInterfaceDevice m_InterfaceDevice;
     uint32_t m_NextHandle;
     uint32_t m_NextThreadId;
     uint64_t m_RandomEntropy[4];
