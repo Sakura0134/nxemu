@@ -104,6 +104,9 @@ void CSystemThread::ServiceCall(uint32_t index)
             Reg.Set32(Arm64Opcode::ARM64_REG_W1, Priority);
         }
         break;
+    case SvcCall_MapSharedMemory:
+        Result = HleKernel.MapSharedMemory(Reg.Get32(Arm64Opcode::ARM64_REG_W0), Reg.Get64(Arm64Opcode::ARM64_REG_X1), Reg.Get64(Arm64Opcode::ARM64_REG_X2), (MemoryPermission)Reg.Get32(Arm64Opcode::ARM64_REG_W3));
+        break;
     case SvcCall_CreateTransferMemory:
         {
             uint32_t TransferMemoryHandle = Reg.Get32(Arm64Opcode::ARM64_REG_W1);

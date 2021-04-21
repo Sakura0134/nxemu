@@ -61,6 +61,7 @@ enum MemoryState
     MemoryState_None,
     MemoryState_AllocatedMemory,
     MemoryState_UnmanagedMemory,
+    MemoryState_BackingMemory,
 };
 
 typedef struct

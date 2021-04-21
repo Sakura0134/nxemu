@@ -107,6 +107,30 @@ bool CProcessMemory::SetMemoryAttribute(uint64_t Addr, uint64_t Size, MemoryAttr
     Region.m_Attribute = (MemoryAttribute)((Region.Attribute() & ~Mask) | (Mask & Attribute));
     return true;
 }
+
+bool CProcessMemory::ReprotectRange(uint64_t Target, uint64_t Size, MemoryPermission NewPerm)
+{
+    MemoryRegionMapIter RegionItr;
+    if (!CreateMemoryRegion(Target, Size, RegionItr))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return nullptr;
+    }
+    uint64_t TargetEnd = Target + Size;
+    while (RegionItr != m_MemoryMap.end())
+    {
+        CMemoryRegion & Region = RegionItr->second;
+        Region.m_Permission = NewPerm;
+        RegionItr++;
+        if (RegionItr->second.Address() == TargetEnd)
+        {
+            break;
+        }
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    return true;
+}
+
 bool CProcessMemory::GetMemoryInfo(uint64_t Address, QueryMemoryInfo & Info)
 {
     MemoryRegionMap::const_iterator itr = m_MemoryMap.lower_bound(Address);
@@ -183,6 +207,24 @@ uint8_t * CProcessMemory::MapMemory(uint64_t Address, uint32_t Size, MemoryPermi
     Region.m_Permission = Perm;
     WriteTrace(TraceMemory, TraceInfo, "Done (Memory: 0x%I64X)", Memory);
     return Memory;
+}
+
+bool CProcessMemory::MapMemoryBlock(uint64_t Address, std::shared_ptr<std::vector<uint8_t>> Block, uint64_t Offset, uint64_t Size, MemoryType MemType)
+{
+    MemoryRegionMapIter RegionItr;
+    if (!CreateMemoryRegion(Address, Size, RegionItr))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return nullptr;
+    }
+
+    CMemoryRegion & Region = RegionItr->second;
+    Region.m_State = MemoryState_BackingMemory;
+    Region.m_Type = MemType;
+    Region.m_Permission = MemoryPermission_ReadWrite;
+    Region.m_BackingBlock = Block;
+    Region.m_BackingOffset = Offset;
+    return true;
 }
 
 bool CProcessMemory::MirrorMemory(uint64_t DstAddress, uint64_t SrcAddress, uint64_t Size)

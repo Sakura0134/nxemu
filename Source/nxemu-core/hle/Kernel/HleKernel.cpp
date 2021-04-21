@@ -214,6 +214,46 @@ ResultCode CHleKernel::ConnectToNamedPort(CSystemThreadMemory & ThreadMemory, ui
     return 0;
 }
 
+ResultCode CHleKernel::MapSharedMemory(uint32_t SharedMemoryHandle, uint64_t Address, uint64_t Size, MemoryPermission Permission)
+{
+    WriteTrace(TraceHleKernel, TraceInfo, "Start (SharedMemoryHandle: 0x%0X Address: 0x%I64X Size: 0x%I64X MemoryPermission: 0x%X)", SharedMemoryHandle, Address, Size, Permission);
+    CGuard Guard(m_CS);
+
+    if (!Align::Is4KBAligned(Address))
+    {
+        WriteTrace(TraceHleKernel, TraceWarning, "Address is not aligned to 4KB, Address: 0x%I64X", Address);
+        return ERR_INVALID_ADDRESS;
+    }
+
+    if (Size == 0)
+    {
+        WriteTrace(TraceHleKernel, TraceWarning, "Size is 0");
+        return ERR_INVALID_SIZE;
+    }
+
+    if (!Align::Is4KBAligned(Size))
+    {
+        WriteTrace(TraceHleKernel, TraceWarning, "Size is not aligned to 4KB, Size: 0x%I64X", Size);
+        return ERR_INVALID_SIZE;
+    }
+
+    if (Permission != MemoryPermission_Read && Permission != MemoryPermission_ReadWrite)
+    {
+        WriteTrace(TraceHleKernel, TraceWarning, "Expected Read or ReadWrite permission but got permission: 0x%X", Permission);
+        return ERR_INVALID_MEMORY_PERMISSIONS;
+    }
+
+    KernelObjectMap::const_iterator itr = m_KernelObjects.find(SharedMemoryHandle);
+    if (itr == m_KernelObjects.end() || itr->second->GetHandleType() != KernelObjectHandleType_SharedMemory)
+    {
+        WriteTrace(TraceHleKernel, TraceWarning, "Shared memory does not exist, SharedMemoryHandle: 0x%0X", SharedMemoryHandle);
+        return ERR_INVALID_HANDLE;
+    }
+
+    CKernelSharedMemory * SharedMemory = itr->second->GetSharedMemoryPtr();
+    return SharedMemory->Map(m_ProcessMemory, Address, Permission, MemoryPermission_DontCare);
+}
+
 ResultCode CHleKernel::CreateTransferMemory(uint32_t & TransferMemoryHandle, uint64_t Addr, uint64_t Size, MemoryPermission Permission)
 {
     WriteTrace(TraceHleKernel, TraceNotice, "Start (Addr: 0x%I64X Size: 0x%I64X Permissions: 0x%X)", Addr, Size, Permission);

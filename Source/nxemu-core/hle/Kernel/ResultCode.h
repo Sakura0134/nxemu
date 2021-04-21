@@ -33,6 +33,7 @@ union ResultCode
 #pragma warning(pop)
 
 const ResultCode RESULT_SUCCESS(0);
+const ResultCode ERR_INVALID_SIZE( ErrorModule::Kernel, 101 );
 const ResultCode ERR_INVALID_ADDRESS(ErrorModule::Kernel, 102);
 const ResultCode ERR_INVALID_ADDRESS_STATE(ErrorModule::Kernel, 106);
 const ResultCode ERR_INVALID_MEMORY_PERMISSIONS(ErrorModule::Kernel, 108);

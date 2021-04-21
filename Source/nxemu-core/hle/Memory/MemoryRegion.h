@@ -24,6 +24,7 @@ public:
     inline MemoryType Type(void) const { return m_Type; };
     inline MemoryAttribute Attribute(void) const { return m_Attribute; }
     inline MemoryPermission Permission(void) const { return m_Permission; };
+    inline uint8_t * BackingMemory(void) const { return m_BackingBlock.get() != nullptr ? &(*m_BackingBlock.get())[0] : nullptr; };
 
 private:
     uint64_t m_Address;
@@ -33,6 +34,8 @@ private:
     MemoryType m_Type;
     MemoryAttribute m_Attribute;
     MemoryPermission m_Permission;
+    std::shared_ptr<std::vector<uint8_t>> m_BackingBlock;
+    uint64_t m_BackingOffset;
 };
 
 typedef std::map<uint64_t, CMemoryRegion> MemoryRegionMap;

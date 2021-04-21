@@ -33,3 +33,29 @@ CKernelObjectPtr CKernelSharedMemory::Create(uint64_t Size, MemoryPermission Per
     }
     return memory;
 }
+
+ResultCode CKernelSharedMemory::Map(CProcessMemory & ProcessMemory, uint64_t Address, MemoryPermission Permissions, MemoryPermission OtherPermissions)
+{
+    if (m_Address == 0 && OtherPermissions != MemoryPermission_DontCare)
+    {
+        return ERR_INVALID_MEMORY_PERMISSIONS;
+    }
+
+    if (((uint32_t)Permissions & ~(uint32_t)m_OtherPermissions) != 0)
+    {
+        return ERR_INVALID_MEMORY_PERMISSIONS;
+    }
+
+    if (OtherPermissions != MemoryPermission_DontCare && m_Permissions & (uint32_t)OtherPermissions)
+    {
+        return ERR_INVALID_MEMORY_PERMISSIONS;
+    }
+
+    if (!ProcessMemory.MapMemoryBlock(Address, m_BackingBlock, m_BackingBlockOffset, m_Size, MemoryType_SharedMemory))
+    {
+        return ERR_INVALID_MEMORY_PERMISSIONS;
+    }
+
+    ProcessMemory.ReprotectRange(Address, m_Size, Permissions);
+    return RESULT_SUCCESS;
+}

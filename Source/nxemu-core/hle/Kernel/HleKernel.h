@@ -118,6 +118,7 @@ public:
     ResultCode CloseHandle(uint32_t Handle);
     ResultCode ConnectToNamedPort(CSystemThreadMemory & ThreadMemory, uint32_t & SessionHandle, uint64_t NameAddr);
     ResultCode CreateThread(uint32_t & ThreadHandle, uint64_t EntryPoint, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
+    ResultCode MapSharedMemory(uint32_t SharedMemoryHandle, uint64_t Address, uint64_t Size, MemoryPermission MemoryPermission);
     ResultCode CreateTransferMemory(uint32_t & TransferMemoryHandle, uint64_t Addr, uint64_t Size, MemoryPermission Permissions);
     ResultCode GetInfo(uint64_t & Info, GetInfoType InfoType, uint32_t handle, uint64_t SubId);
     ResultCode GetThreadPriority(uint32_t & Priority, uint32_t handle);

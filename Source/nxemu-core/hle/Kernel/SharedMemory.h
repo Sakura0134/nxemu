@@ -1,6 +1,8 @@
 #pragma once
 #include <nxemu-core\hle\Kernel\KernelObject.h>
 #include <nxemu-core\hle\Memory\MemoryTypes.h>
+#include <nxemu-core\hle\Memory\ProcessMemory.h>
+#include <nxemu-core\hle\Kernel\ResultCode.h>
 #include <memory>
 
 class CHleKernel;
@@ -10,6 +12,7 @@ class CKernelSharedMemory :
 {
 public:
     static CKernelObjectPtr Create(uint64_t Size, MemoryPermission Permissions, MemoryPermission OtherPermissions, uint64_t Address = 0, const char * Name = "Unknown");
+    ResultCode Map(CProcessMemory & ProcessMemory, uint64_t Address, MemoryPermission Permissions, MemoryPermission OtherPermissions);
 
 private:
     KernelObjectHandleType GetHandleType() const { return KernelObjectHandleType_SharedMemory; }

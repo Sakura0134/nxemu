@@ -26,9 +26,11 @@ public:
     bool Initialize(ProgramAddressSpaceType Type, bool Is64bit);
     bool SetHeapSize(uint64_t Size);
     bool SetMemoryAttribute(uint64_t Addr, uint64_t Size, MemoryAttribute Mask, MemoryAttribute Attribute);
+    bool ReprotectRange(uint64_t Target, uint64_t Size, MemoryPermission NewPerm);
 
     bool GetMemoryInfo(uint64_t Address, QueryMemoryInfo & Info);
     uint8_t * MapMemory(uint64_t Address, uint32_t Size, MemoryPermission Perm, MemoryType Type);
+    bool MapMemoryBlock(uint64_t Address, std::shared_ptr<std::vector<uint8_t>> Block, uint64_t Offset, uint64_t size, MemoryType MemType);
 	bool MirrorMemory(uint64_t DstAddress, uint64_t Address, uint64_t Size);
     bool Read32(uint64_t Addr, uint32_t & value) const;
     bool Read64(uint64_t Addr, uint64_t & value) const;
