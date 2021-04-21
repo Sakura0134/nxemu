@@ -2823,7 +2823,14 @@ void Arm64Op::Stlr(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     {
         uint64_t Index = MemIndex(Op.Operand(1), Reg);
         uint64_t TargetAddr = Reg.Get64(Op.Operand(1).mem.base) + Op.Operand(1).mem.disp + Index;
-        if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
+        if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg))
+        {
+            if (!ThreadMemory.Write64(TargetAddr, Reg.Get64(Op.Operand(0).Reg)))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+        else if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
             if (!ThreadMemory.Write32(TargetAddr, Reg.Get32(Op.Operand(0).Reg)))
             {
