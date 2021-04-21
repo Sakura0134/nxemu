@@ -171,6 +171,7 @@
     <ClCompile Include="hle\Kernel\Mutex.cpp" />
     <ClCompile Include="hle\Kernel\ResultCode.cpp" />
     <ClCompile Include="hle\Kernel\Service.cpp" />
+    <ClCompile Include="hle\Kernel\SharedMemory.cpp" />
     <ClCompile Include="hle\Kernel\SystemThread.cpp" />
     <ClCompile Include="hle\Memory\MemoryRegion.cpp" />
     <ClCompile Include="hle\Memory\MemoryTypes.cpp" />

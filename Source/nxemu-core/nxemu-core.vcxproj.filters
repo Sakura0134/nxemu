@@ -808,6 +808,9 @@
     <ClCompile Include="hle\HID\InterfaceDevice.cpp">
       <Filter>Source Files\hle\HID</Filter>
     </ClCompile>
+    <ClCompile Include="hle\Kernel\SharedMemory.cpp">
+      <Filter>Source Files\hle\Kernel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Version.h.in">

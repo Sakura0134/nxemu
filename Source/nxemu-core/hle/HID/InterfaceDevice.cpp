@@ -9,11 +9,17 @@ CInterfaceDevice::CInterfaceDevice(CHleKernel& Kernel) :
 
 CInterfaceDevice::~CInterfaceDevice()
 {
-
 }
 
 CKernelObjectPtr CInterfaceDevice::GetSharedMemory()
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
-    return nullptr;
+    if (m_SharedMem.get() == nullptr)
+    {
+        m_SharedMem = CKernelSharedMemory::Create(SHARED_MEMORY_SIZE, MemoryPermission_ReadWrite, MemoryPermission_Read, 0, "HID:SharedMemory");
+        if (m_SharedMem.get() == nullptr)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    return m_SharedMem;
 }
