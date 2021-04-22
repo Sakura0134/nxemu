@@ -183,6 +183,12 @@
     <Filter Include="Source Files\hle\HID">
       <UniqueIdentifier>{faeffab0-5e69-41c4-8cb6-2b55d1dd76d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hle\Services\audio">
+      <UniqueIdentifier>{40747ba4-0d4e-4506-9196-779b93a8ad82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hle\Services\audio">
+      <UniqueIdentifier>{baa4a436-3044-4ceb-bb93-c9892198ee0d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Version.h">
@@ -515,6 +521,9 @@
     <ClInclude Include="hle\Services\hid\IActiveVibrationDeviceList.h">
       <Filter>Header Files\hle\Services\hid</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\audio\AudOutU.h">
+      <Filter>Header Files\hle\Services\audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -816,6 +825,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\hid\IActiveVibrationDeviceList.cpp">
       <Filter>Source Files\hle\Services\hid</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\audio\AudOutU.cpp">
+      <Filter>Source Files\hle\Services\audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
