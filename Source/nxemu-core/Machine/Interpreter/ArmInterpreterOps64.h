@@ -71,6 +71,7 @@ public:
     static void Lsl(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Lsr(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Madd(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Mneg(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Mov(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Movi(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Movk(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
