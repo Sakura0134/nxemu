@@ -38,6 +38,7 @@ private:
 
     IAudioOut(CSwitchSystem & System, uint32_t SampleRate, uint16_t ChannelCount);
 
+    void ProcessGetReleasedAudioOutBuffers(CIPCRequest & Request);
     void ProcessRegisterBufferEvent(CIPCRequest & Request);
     void ProcessStart(CIPCRequest & Request);
 
