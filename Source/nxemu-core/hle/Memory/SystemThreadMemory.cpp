@@ -170,6 +170,9 @@ bool CSystemThreadMemory::FindAddressMemory(uint64_t Addr, uint32_t len, void *&
         case MemoryState_UnmanagedMemory:
             buffer = (void *)&region.Memory()[Addr - itr->second.Address()];
             break;
+        case MemoryState_BackingMemory:
+            buffer = (void *)&region.BackingMemory()[Addr - itr->second.Address()];
+            break;
         case MemoryState_None:
             return false;
         default:
