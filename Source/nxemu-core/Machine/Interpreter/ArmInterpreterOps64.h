@@ -41,6 +41,7 @@ public:
     static void Fcmp(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fcsel(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fcvt(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Fcvtms(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fcvtzs(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fcvtzu(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Fdiv(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
