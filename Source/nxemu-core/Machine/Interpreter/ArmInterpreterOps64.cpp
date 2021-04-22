@@ -2761,6 +2761,24 @@ void Arm64Op::Sbfiz(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
         }
         Reg.Set64(Op.Operand(0).Reg, (int64_t)(Reg.Get64(Op.Operand(1).Reg) << Width) >> (Width - Lsb));
     }
+    else if (Op.Operands() == 4 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM && Op.Operand(2).type == Arm64Opcode::ARM64_OP_IMM &&
+        Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
+    {
+        int64_t Lsb = Op.Operand(2).ImmVal;
+        int64_t Width = Op.Operand(3).ImmVal;
+
+        if (Lsb < 0 || Lsb > 31)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        if (Width < 1 || Width > 32)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        Reg.Set32(Op.Operand(0).Reg, (int64_t)(Reg.Get32(Op.Operand(1).Reg) << Width) >> (Width - Lsb));
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
