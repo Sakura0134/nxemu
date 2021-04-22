@@ -157,4 +157,5 @@ private:
 
     void ProcessCreateAppletResource(CIPCRequest & Request);
     void ProcessActivateDebugPad(CIPCRequest & Request);
+    void ProcessActivateNpad(CIPCRequest & Request);
 };
