@@ -524,6 +524,9 @@
     <ClInclude Include="hle\Services\audio\AudOutU.h">
       <Filter>Header Files\hle\Services\audio</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\audio\IAudioOut.h">
+      <Filter>Header Files\hle\Services\audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -827,6 +830,9 @@
       <Filter>Source Files\hle\Services\hid</Filter>
     </ClCompile>
     <ClCompile Include="hle\Services\audio\AudOutU.cpp">
+      <Filter>Source Files\hle\Services\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\audio\IAudioOut.cpp">
       <Filter>Source Files\hle\Services\audio</Filter>
     </ClCompile>
   </ItemGroup>

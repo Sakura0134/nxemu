@@ -86,6 +86,7 @@
     <ClInclude Include="hle\Services\am\IWindowController.h" />
     <ClInclude Include="hle\Services\apm\apm.h" />
     <ClInclude Include="hle\Services\audio\AudOutU.h" />
+    <ClInclude Include="hle\Services\audio\IAudioOut.h" />
     <ClInclude Include="hle\Services\FspSrv\IFileSystem.h" />
     <ClInclude Include="hle\Services\FspSrv\IFileSystemProxy.h" />
     <ClInclude Include="hle\Services\FspSrv\IStorage.h" />
@@ -196,6 +197,7 @@
     <ClCompile Include="hle\Services\am\IWindowController.cpp" />
     <ClCompile Include="hle\Services\apm\apm.cpp" />
     <ClCompile Include="hle\Services\audio\AudOutU.cpp" />
+    <ClCompile Include="hle\Services\audio\IAudioOut.cpp" />
     <ClCompile Include="hle\Services\FspSrv\IFileSystem.cpp" />
     <ClCompile Include="hle\Services\FspSrv\IFileSystemProxy.cpp" />
     <ClCompile Include="hle\Services\FspSrv\IStorage.cpp" />
