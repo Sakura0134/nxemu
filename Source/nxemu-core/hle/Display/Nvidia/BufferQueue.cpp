@@ -84,6 +84,27 @@ void CBufferQueue::SetPreallocatedBuffer(uint32_t slot, const IGBPBuffer& igbp_b
     m_WaitEvent->GetKEventPtr()->Signal();
 }
 
+const IGBPBuffer & CBufferQueue::RequestBuffer(uint32_t Slot)
+{
+    CGuard Guard(m_CS);
+
+    for (size_t i = 0, n = m_Queue.size(); i < n; i++)
+    {
+        if (m_Queue[i].Slot != Slot)
+        {
+            continue;
+        }
+        if (m_Queue[i].Status != BufferQueueStatus_Dequeued)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        return m_Queue[i].IgbpBuffer;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    static IGBPBuffer empty = { 0 };
+    return empty;
+}
+
 void CBufferQueue::QueueBuffer(uint32_t Slot, BufferTransformFlags Transform, const Rectangle & CropRect, uint32_t SwapInterval, const NvMultiFence & MultiFence)
 {
     CGuard Guard(m_CS);

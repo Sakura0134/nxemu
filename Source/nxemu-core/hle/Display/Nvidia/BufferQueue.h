@@ -76,6 +76,7 @@ public:
     uint32_t Query(BufferQueueQueryType Type);
     bool DequeueBuffer(uint32_t Width, uint32_t Height, uint32_t & Slot, NvMultiFence & MultiFence);
     void SetPreallocatedBuffer(uint32_t slot, const IGBPBuffer& igbp_buffer);
+    const IGBPBuffer & RequestBuffer(uint32_t slot);
     void QueueBuffer(uint32_t Slot, BufferTransformFlags Transform, const Rectangle & CropRect, uint32_t SwapInterval, const NvMultiFence & MultiFence);
 
     inline uint32_t Id(void) const { return m_Id; }

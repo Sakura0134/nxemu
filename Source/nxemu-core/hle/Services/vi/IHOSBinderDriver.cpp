@@ -176,6 +176,50 @@ protected:
     NvMultiFence m_MultiFence;
 };
 
+class IGBPRequestBufferRequestParcel :
+    public ViParcel
+{
+public:
+    IGBPRequestBufferRequestParcel(const CIPCRequest::RequestBuffer & Buffer) :
+        ViParcel(Buffer),
+        m_Slot(0)
+    {
+        Deserialize();
+    }
+    void DeserializeData()
+    {
+        std::wstring token = ReadInterfaceToken();
+        Read(&m_Slot, sizeof(m_Slot));
+    }
+
+    const uint32_t & slot(void) const { return m_Slot; }
+
+private:
+    uint32_t m_Slot;
+};
+
+class IGBPRequestBufferResponseParcel :
+    public ViParcel
+{
+public:
+    IGBPRequestBufferResponseParcel(const IGBPBuffer & Buffer) :
+        m_Buffer(Buffer)
+    {
+    }
+
+protected:
+    void SerializeData()
+    {
+        uint32_t Value0 = 0, Value1 = 1;
+
+        Write(&Value1, sizeof(Value1));
+        WriteObject(&m_Buffer, sizeof(m_Buffer));
+        Write(&Value0, sizeof(Value0));
+    }
+
+    IGBPBuffer m_Buffer;
+};
+
 class IGBPQueueBufferRequestParcel :
     public ViParcel
 {
@@ -425,6 +469,12 @@ ResultCode IHOSBinderDriver::ViTransactParcel(CIPCRequest & Request)
                 g_Notify->BreakPoint(__FILE__, __LINE__);
             }
         }
+    }
+    else if (transaction == TransactionId::RequestBuffer)
+    {
+        IGBPRequestBufferRequestParcel RequestParcel(ReadData);
+        IGBPRequestBufferResponseParcel Response(BufferQueue->RequestBuffer(RequestParcel.slot()));
+        Request.WriteBuffer(Response.Serialize());
     }
     else if (transaction == TransactionId::QueueBuffer)
     {
