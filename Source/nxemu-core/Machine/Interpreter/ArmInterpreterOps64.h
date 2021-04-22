@@ -64,6 +64,7 @@ public:
     static void Ldrb(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ldrh(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ldrsb(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Ldrsh(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ldrsw(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ldur(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Ldurb(CInterpreterCPU & Cpu, const Arm64Opcode & Op);

@@ -1850,6 +1850,37 @@ void Arm64Op::Ldrsb(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     }
 }
 
+void Arm64Op::Ldrsh(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
+{
+    CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
+    IRegisters & Reg = Cpu.Reg();
+
+    if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_MEM)
+    {
+        uint64_t Index = MemIndex(Op.Operand(1), Reg);
+        uint64_t TargetAddr = Reg.Get64(Op.Operand(1).mem.base) + Op.Operand(1).mem.disp + Index;
+
+        if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
+        {
+            uint16_t value;
+            if (!ThreadMemory.Read16(TargetAddr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set32(Op.Operand(0).Reg, (int16_t)value);
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        if (Op.WriteBack())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void Arm64Op::Ldrsw(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
     CSystemThreadMemory & ThreadMemory = Cpu.ThreadMemory();
