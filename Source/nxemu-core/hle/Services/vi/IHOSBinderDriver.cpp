@@ -80,7 +80,7 @@ class IGBPSetPreallocatedBufferRequestParcel :
     public ViParcel
 {
 public:
-    IGBPSetPreallocatedBufferRequestParcel(const std::vector<uint8_t> & Buffer) :
+    IGBPSetPreallocatedBufferRequestParcel(const CIPCRequest::RequestBuffer & Buffer) :
         ViParcel(Buffer),
         m_Data({0}),
         m_Buffer({0})
@@ -122,10 +122,64 @@ protected:
     }
 };
 
+class IGBPDequeueBufferRequestParcel :
+    public ViParcel
+{
+public:
+    IGBPDequeueBufferRequestParcel(const CIPCRequest::RequestBuffer & Buffer) :
+        ViParcel(Buffer),
+        m_Data({0})
+    {
+        Deserialize();
+    }
+    void DeserializeData()
+    {
+        std::wstring Token = ReadInterfaceToken();
+        Read(&m_Data, sizeof(m_Data));
+    }
+
+    struct stData
+    {
+        uint32_t PixelFormat;
+        uint32_t Width;
+        uint32_t Height;
+        uint32_t FrameTimestamps;
+        uint32_t Usage;
+    };
+
+    const stData & Data(void) const { return m_Data; }
+
+private:
+    stData m_Data;
+};
+
+class IGBPDequeueBufferResponseParcel :
+    public ViParcel
+{
+public:
+    IGBPDequeueBufferResponseParcel(uint32_t Slot, const NvMultiFence & MultiFence) :
+        m_Slot(Slot),
+        m_MultiFence(MultiFence)
+    {
+    }
+
+protected:
+    void SerializeData()
+    {
+        uint32_t Value0 = 0, Value1 = 1;
+        Write(&m_Slot, sizeof(m_Slot));
+        Write(&Value1, sizeof(Value1));
+        WriteObject(&m_MultiFence, sizeof(m_MultiFence));
+        Write(&Value0, sizeof(Value0));
+    }
+    uint32_t m_Slot;
+    NvMultiFence m_MultiFence;
+};
+
 class IGBPQueueBufferRequestParcel :
     public ViParcel
 {
-    struct Data
+    struct stData
     {
         uint32_t Slot;
         PADDING_WORDS(3);
@@ -141,8 +195,9 @@ class IGBPQueueBufferRequestParcel :
     };
 
 public:
-    IGBPQueueBufferRequestParcel(const std::vector<uint8_t> & Buffer) :
-        ViParcel(Buffer)
+    IGBPQueueBufferRequestParcel(const CIPCRequest::RequestBuffer & Buffer) :
+        ViParcel(Buffer),
+        m_Data({ 0 })
     {
         Deserialize();
     }
@@ -153,10 +208,10 @@ public:
         Read(&m_Data, sizeof(m_Data));
     }
 
-    inline const struct Data data(void) const { return m_Data; }
+    inline const struct stData Data(void) const { return m_Data; }
 
 private:
-    Data m_Data;
+    stData m_Data;
 };
 
 class IGBPQueueBufferResponseParcel :
@@ -177,7 +232,7 @@ protected:
     }
 
 private:
-    struct Data
+    struct stData
     {
         uint32_t Width;
         uint32_t Height;
@@ -186,7 +241,7 @@ private:
         uint32_t Status;
     };
 
-    Data m_Data;
+    stData m_Data;
 };
 
 CKernelObjectPtr IHOSBinderDriver::CreateInstance(CSwitchSystem & System)
@@ -340,12 +395,43 @@ ResultCode IHOSBinderDriver::ViTransactParcel(CIPCRequest & Request)
         BufferQueue->SetPreallocatedBuffer(RequestParcel.Data().Slot, RequestParcel.Buffer());
         Request.WriteBuffer(IGBPSetPreallocatedBufferResponseParcel().Serialize());
     }
+    else if (transaction == TransactionId::DequeueBuffer)
+    {
+        IGBPDequeueBufferRequestParcel RequestParcel(ReadData);
+        NvMultiFence MultiFence;
+        uint32_t Slot;
+        if (BufferQueue->DequeueBuffer(RequestParcel.Data().Width, RequestParcel.Data().Height, Slot, MultiFence))
+        {
+            Request.WriteBuffer(IGBPDequeueBufferResponseParcel(Slot, MultiFence).Serialize());
+        }
+        else
+        {
+            CSystemThread* CurrentThread = m_System.SystemThread()->GetSystemThreadPtr();
+            if (CurrentThread == nullptr)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                return RESULT_SUCCESS;
+            }
+
+            KernelObjectList EventObjects;
+            EventObjects.push_back(BufferQueue->WaitEvent());
+            CurrentThread->WaitEvent(EventObjects, -1);
+            if (BufferQueue->DequeueBuffer(RequestParcel.Data().Width, RequestParcel.Data().Height, Slot, MultiFence))
+            {
+                Request.WriteBuffer(IGBPDequeueBufferResponseParcel(Slot, MultiFence).Serialize());
+            }
+            else
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        }
+    }
     else if (transaction == TransactionId::QueueBuffer)
     {
         IGBPQueueBufferRequestParcel RequestParcel(ReadData);
-        BufferQueue->QueueBuffer(RequestParcel.data().Slot, RequestParcel.data().Transform,
-            RequestParcel.data().Crop, RequestParcel.data().SwapInterval,
-            RequestParcel.data().MultiFence);
+        BufferQueue->QueueBuffer(RequestParcel.Data().Slot, RequestParcel.Data().Transform,
+            RequestParcel.Data().Crop, RequestParcel.Data().SwapInterval,
+            RequestParcel.Data().MultiFence);
 
         Request.WriteBuffer(IGBPQueueBufferResponseParcel(1280, 720).Serialize());
     }

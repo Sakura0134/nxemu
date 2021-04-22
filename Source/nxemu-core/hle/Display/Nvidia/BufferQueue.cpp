@@ -24,6 +24,53 @@ uint32_t CBufferQueue::Query(BufferQueueQueryType Type)
     return 0;
 }
 
+bool CBufferQueue::DequeueBuffer(uint32_t Width, uint32_t Height, uint32_t & Slot, NvMultiFence & MultiFence)
+{
+    CGuard Guard(m_CS);
+
+    bool Found = false;
+    for (size_t i = 0, n = m_Queue.size(); i < n; i++)
+    {
+        if (m_Queue[i].Status != BufferQueueStatus_Free)
+        {
+            continue;
+        }
+        if (m_Queue[i].IgbpBuffer.Width != Width)
+        {
+            continue;
+        }
+        if (m_Queue[i].IgbpBuffer.Height != Height)
+        {
+            continue;
+        }
+        m_Queue[i].Status = BufferQueueStatus_Dequeued;
+        Slot = m_Queue[i].Slot;
+        MultiFence = m_Queue[i].MultiFence;
+        Found = true;
+        break;
+    }
+
+    if (Found)
+    {
+        bool FreeQueue = false;
+        for (size_t i = 0, n = m_Queue.size(); i < n; i++)
+        {
+            if (m_Queue[i].Status != BufferQueueStatus_Free)
+            {
+                continue;
+            }
+            FreeQueue = true;
+            break;
+        }
+
+        if (!FreeQueue)
+        {
+            m_WaitEvent->GetKEventPtr()->Clear();
+        }
+    }
+    return Found;
+}
+
 void CBufferQueue::SetPreallocatedBuffer(uint32_t slot, const IGBPBuffer& igbp_buffer)
 {
     CGuard Guard(m_CS);

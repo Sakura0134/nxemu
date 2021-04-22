@@ -21,6 +21,7 @@ protected:
 
     std::wstring ReadInterfaceToken();
     void Write(const void * Value, size_t Size );
+    void WriteObject(const void * val, size_t valSize);
     void Read(void * Buffer, size_t Size);
     void ReadUnaligned(void * dst, size_t size);
 

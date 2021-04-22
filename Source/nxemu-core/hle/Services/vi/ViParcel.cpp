@@ -65,6 +65,15 @@ void ViParcel::Write(const void * val, size_t valSize)
     m_WriteIndex = Align::Up(m_WriteIndex, 4);
 }
 
+void ViParcel::WriteObject(const void * val, size_t valSize)
+{
+    uint32_t Value0 = 0, Size = (uint32_t)valSize;
+
+    Write(&Size, sizeof(Size));
+    Write(&Value0, sizeof(Value0));
+    Write(val, valSize);
+}
+
 const CIPCRequest::RequestBuffer & ViParcel::Serialize()
 {
     if (m_ReadIndex != 0)
