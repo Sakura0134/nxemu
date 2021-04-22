@@ -23,8 +23,18 @@ void IActiveVibrationDeviceList::Close(void)
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
-ResultCode IActiveVibrationDeviceList::CallMethod(CIPCRequest & /*Request*/)
+ResultCode IActiveVibrationDeviceList::CallMethod(CIPCRequest & Request)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    switch (Request.RequestHeader().Command)
+    {
+    case Method_ActivateVibrationDevice: ProcessActivateVibrationDevice(Request); break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
     return RESULT_SUCCESS;
+}
+
+void IActiveVibrationDeviceList::ProcessActivateVibrationDevice(CIPCRequest & /*Request*/)
+{
+    //stub
 }

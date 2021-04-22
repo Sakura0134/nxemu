@@ -5,6 +5,10 @@ class IActiveVibrationDeviceList :
     public CService
 {
 public:
+    enum Method
+    {
+        Method_ActivateVibrationDevice = 0,
+    };
     static CKernelObjectPtr CreateInstance(CSwitchSystem & System);
 
     //__interface IService
@@ -19,4 +23,6 @@ private:
     IActiveVibrationDeviceList& operator=(const IActiveVibrationDeviceList&);
 
     IActiveVibrationDeviceList(CSwitchSystem & System);
+
+    void ProcessActivateVibrationDevice(CIPCRequest & Request);
 };
