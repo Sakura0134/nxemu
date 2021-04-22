@@ -10,7 +10,8 @@ CKernelObjectPtr IAudioOut::CreateInstance(CSwitchSystem & System, uint32_t Samp
 IAudioOut::IAudioOut(CSwitchSystem & System, uint32_t SampleRate, uint16_t ChannelCount) :
     CService(System),
     m_SampleRate(SampleRate),
-    m_ChannelCount(ChannelCount)
+    m_ChannelCount(ChannelCount),
+    m_BufferEvent(new KEvent)
 {
 }
 
@@ -20,8 +21,26 @@ bool IAudioOut::Connect(void)
     return false;
 }
 
-ResultCode IAudioOut::CallMethod(CIPCRequest & /*Request*/)
+ResultCode IAudioOut::CallMethod(CIPCRequest & Request)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    switch (Request.RequestHeader().Command)
+    {
+    case Method_Start: ProcessStart(Request); break;
+    case Method_RegisterBufferEvent: ProcessRegisterBufferEvent(Request); break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    }
     return RESULT_SUCCESS;
+}
+
+void IAudioOut::ProcessRegisterBufferEvent(CIPCRequest & Request)
+{
+    CHleKernel & HleKernel = Request.SwitchSystem().HleKernel();
+    Request.AddResponseHandlesToCopy(HleKernel.AddKernelObject(m_BufferEvent));
+}
+
+void IAudioOut::ProcessStart(CIPCRequest & /*Request*/)
+{
+    //Stub
 }
