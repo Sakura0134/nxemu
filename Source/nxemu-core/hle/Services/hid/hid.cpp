@@ -34,6 +34,7 @@ ResultCode HID::CallMethod(CIPCRequest & Request)
     case Method_SetSupportedNpadStyleSet: ProcessSetSupportedNpadStyleSet(Request); break;
     case Method_SetSupportedNpadIdType: ProcessSetSupportedNpadIdType(Request); break;
     case Method_ActivateNpad: ProcessActivateNpad(Request); break;
+    case Method_GetVibrationDeviceInfo: ProcessGetVibrationDeviceInfo(Request); break;
     case Method_CreateActiveVibrationDeviceList: ProcessCreateActiveVibrationDeviceList(Request); break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -64,6 +65,14 @@ void HID::ProcessActivateNpad(CIPCRequest & /*Request*/)
 void HID::ProcessActivateTouchScreen(CIPCRequest & /*Request*/)
 {
     //stub
+}
+
+void HID::ProcessGetVibrationDeviceInfo(CIPCRequest & Request)
+{
+    CIPCRequest::REQUEST_DATA & ResponseData = Request.ResponseData();
+    ResponseData.resize(sizeof(uint32_t) * 2);
+    ((uint32_t *)ResponseData.data())[0] = 1;
+    ((uint32_t *)ResponseData.data())[1] = 0;
 }
 
 void HID::ProcessSetSupportedNpadIdType(CIPCRequest & /*Request*/)
