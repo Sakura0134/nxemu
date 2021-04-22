@@ -156,4 +156,5 @@ private:
     HID(CSwitchSystem & System);
 
     void ProcessCreateAppletResource(CIPCRequest & Request);
+    void ProcessActivateDebugPad(CIPCRequest & Request);
 };

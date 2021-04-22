@@ -28,6 +28,7 @@ ResultCode HID::CallMethod(CIPCRequest & Request)
     switch (Request.RequestHeader().Command)
     {
     case Method_CreateAppletResource: ProcessCreateAppletResource(Request); break;
+    case Method_ActivateDebugPad: ProcessActivateDebugPad(Request); break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
@@ -37,4 +38,9 @@ ResultCode HID::CallMethod(CIPCRequest & Request)
 void HID::ProcessCreateAppletResource(CIPCRequest & Request)
 {
     Request.MakeObject(IAppletResource::CreateInstance(m_System)->GetServicePtr());
+}
+
+void HID::ProcessActivateDebugPad(CIPCRequest & /*Request*/)
+{
+    //stub
 }
