@@ -159,4 +159,5 @@ private:
     void ProcessActivateDebugPad(CIPCRequest & Request);
     void ProcessActivateNpad(CIPCRequest & Request);
     void ProcessActivateTouchScreen(CIPCRequest & Request);
+    void ProcessSetSupportedNpadStyleSet(CIPCRequest & Request);
 };
