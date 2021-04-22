@@ -1,4 +1,5 @@
 #include <nxemu-core\hle\Services\hid\hid.h>
+#include <nxemu-core\hle\Services\hid\IActiveVibrationDeviceList.h>
 #include <nxemu-core\hle\Services\hid\IAppletResource.h>
 #include <nxemu-core\SystemGlobals.h>
 
@@ -33,10 +34,16 @@ ResultCode HID::CallMethod(CIPCRequest & Request)
     case Method_SetSupportedNpadStyleSet: ProcessSetSupportedNpadStyleSet(Request); break;
     case Method_SetSupportedNpadIdType: ProcessSetSupportedNpadIdType(Request); break;
     case Method_ActivateNpad: ProcessActivateNpad(Request); break;
+    case Method_CreateActiveVibrationDeviceList: ProcessCreateActiveVibrationDeviceList(Request); break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     return RESULT_SUCCESS;
+}
+
+void HID::ProcessCreateActiveVibrationDeviceList(CIPCRequest & Request)
+{
+    Request.MakeObject(IActiveVibrationDeviceList::CreateInstance(m_System)->GetServicePtr());
 }
 
 void HID::ProcessCreateAppletResource(CIPCRequest & Request)

@@ -155,6 +155,7 @@ private:
 
     HID(CSwitchSystem & System);
 
+    void ProcessCreateActiveVibrationDeviceList(CIPCRequest & Request);
     void ProcessCreateAppletResource(CIPCRequest & Request);
     void ProcessActivateDebugPad(CIPCRequest & Request);
     void ProcessActivateNpad(CIPCRequest & Request);

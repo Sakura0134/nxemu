@@ -512,6 +512,9 @@
     <ClInclude Include="hle\HID\InterfaceDevice.h">
       <Filter>Header Files\hle\HID</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Services\hid\IActiveVibrationDeviceList.h">
+      <Filter>Header Files\hle\Services\hid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -810,6 +813,9 @@
     </ClCompile>
     <ClCompile Include="hle\Kernel\SharedMemory.cpp">
       <Filter>Source Files\hle\Kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Services\hid\IActiveVibrationDeviceList.cpp">
+      <Filter>Source Files\hle\Services\hid</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
