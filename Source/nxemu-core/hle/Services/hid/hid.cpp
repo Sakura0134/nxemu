@@ -29,6 +29,7 @@ ResultCode HID::CallMethod(CIPCRequest & Request)
     {
     case Method_CreateAppletResource: ProcessCreateAppletResource(Request); break;
     case Method_ActivateDebugPad: ProcessActivateDebugPad(Request); break;
+    case Method_ActivateTouchScreen: ProcessActivateTouchScreen(Request); break;
     case Method_ActivateNpad: ProcessActivateNpad(Request); break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -47,6 +48,11 @@ void HID::ProcessActivateDebugPad(CIPCRequest & /*Request*/)
 }
 
 void HID::ProcessActivateNpad(CIPCRequest & /*Request*/)
+{
+    //stub
+}
+
+void HID::ProcessActivateTouchScreen(CIPCRequest & /*Request*/)
 {
     //stub
 }
