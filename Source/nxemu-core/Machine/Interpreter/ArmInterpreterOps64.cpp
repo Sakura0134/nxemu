@@ -1415,7 +1415,13 @@ void Arm64Op::Ldar(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     {
         uint64_t Index = MemIndex(Op.Operand(1), Reg);
         uint64_t TargetAddr = Reg.Get64(Op.Operand(1).mem.base) + Op.Operand(1).mem.disp + Index;
-        if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
+        if (Arm64Opcode::Is64bitReg(Op.Operand(0).Reg))
+        {
+            uint64_t value;
+            if (!ThreadMemory.Read64(TargetAddr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
+            Reg.Set64(Op.Operand(0).Reg, value);
+        }
+        else if (Arm64Opcode::Is32bitReg(Op.Operand(0).Reg))
         {
             uint32_t value;
             if (!ThreadMemory.Read32(TargetAddr, value)) { g_Notify->BreakPoint(__FILE__, __LINE__); }
