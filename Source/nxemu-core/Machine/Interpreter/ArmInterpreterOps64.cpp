@@ -2770,6 +2770,11 @@ void Arm64Op::Sdiv(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     {
         Reg.Set64(Op.Operand(0).Reg, (int64_t)Reg.Get64(Op.Operand(1).Reg) / (int64_t)Reg.Get64(Op.Operand(2).Reg));
     }
+    else if (Op.Operands() == 3 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::Is32bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg))
+    {
+        Reg.Set32(Op.Operand(0).Reg, (int32_t)Reg.Get32(Op.Operand(1).Reg) / (int32_t)Reg.Get32(Op.Operand(2).Reg));
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -2778,10 +2783,11 @@ void Arm64Op::Sdiv(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 
 void Arm64Op::Smaddl(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
 {
+    IRegisters& Reg = Cpu.Reg();
+
     if (Op.Operands() == 4 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(2).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(3).type == Arm64Opcode::ARM64_OP_REG &&
         Arm64Opcode::Is64bitReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(2).Reg) && Arm64Opcode::Is64bitReg(Op.Operand(3).Reg))
     {
-        IRegisters & Reg = Cpu.Reg();
         Reg.Set64(Op.Operand(0).Reg, (uint64_t)((int32_t)Reg.Get32(Op.Operand(1).Reg) * (int32_t)Reg.Get32(Op.Operand(2).Reg)) + Reg.Get64(Op.Operand(3).Reg));
     }
     else
