@@ -895,6 +895,11 @@ void Arm64Op::Dup(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
     {
         Reg.Set64Vector(Op.Operand(0).Reg, Op.Operand(0).VectorIndex, Op.Operand(0).Vess, Op.Operand(0).Vas, Reg.Get64(Op.Operand(1).Reg));
     }
+    else if (Op.Operands() == 2 && Op.Operand(0).type == Arm64Opcode::ARM64_OP_REG && Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG &&
+        Arm64Opcode::IsVectorReg(Op.Operand(0).Reg) && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
+    {
+        Reg.Set32Vector(Op.Operand(0).Reg, Op.Operand(0).VectorIndex, Op.Operand(0).Vess, Op.Operand(0).Vas, Reg.Get32(Op.Operand(1).Reg));
+    }
     else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
