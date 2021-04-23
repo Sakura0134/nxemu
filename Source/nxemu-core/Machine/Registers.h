@@ -48,6 +48,7 @@ __interface IRegisters
     void Set64(Arm64Opcode::arm64_reg reg, uint64_t value) = 0;
     void Set64Float(Arm64Opcode::arm64_reg reg, float64_t value) = 0;
     void Set128(Arm64Opcode::arm64_reg reg, uint64_t hiValue, uint64_t loValue) = 0;
+    void Set32Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Arm64Opcode::arm64_vess Vess, Arm64Opcode::arm64_vas Vas, uint32_t value) = 0;
     void Set64Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Arm64Opcode::arm64_vess Vess, Arm64Opcode::arm64_vas Vas, uint64_t value) = 0;
     void Set16Simd(Arm64Opcode::arm64_reg reg, uint16_t value) = 0;
     void SetFPCR(uint32_t value) = 0;
@@ -82,6 +83,7 @@ public:
     void Set64(Arm64Opcode::arm64_reg reg, uint64_t value);
     void Set64Float(Arm64Opcode::arm64_reg reg, float64_t value);
     void Set128(Arm64Opcode::arm64_reg reg, uint64_t hiValue, uint64_t loValue);
+    void Set32Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Arm64Opcode::arm64_vess Vess, Arm64Opcode::arm64_vas Vas, uint32_t value);
     void Set64Vector(Arm64Opcode::arm64_reg reg, int64_t VectorIndex, Arm64Opcode::arm64_vess Vess, Arm64Opcode::arm64_vas Vas, uint64_t value);
     void Set16Simd(Arm64Opcode::arm64_reg reg, uint16_t value);
     void SetFPCR(uint32_t value);
