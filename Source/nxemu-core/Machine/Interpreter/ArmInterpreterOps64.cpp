@@ -670,6 +670,11 @@ void Arm64Op::Cmn(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             a = Reg.Get32(Op.Operand(0).Reg);
             b = (uint32_t)Op.Operand(1).ImmVal;
         }
+        else if (Op.Operand(1).type == Arm64Opcode::ARM64_OP_REG && Arm64Opcode::Is32bitReg(Op.Operand(1).Reg))
+        {
+            a = Reg.Get32(Op.Operand(0).Reg);
+            b = Reg.Get32(Op.Operand(1).Reg);
+        }
         else
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
