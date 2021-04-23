@@ -91,6 +91,7 @@ void CInterpreterCPU::Execute()
         case Arm64Opcode::ARM64_INS_FCVTZU: Arm64Op::Fcvtzu(*this, op); break;
         case Arm64Opcode::ARM64_INS_FDIV: Arm64Op::Fdiv(*this, op); break;
         case Arm64Opcode::ARM64_INS_FMAXNM: Arm64Op::Fmaxnm(*this, op); break;
+        case Arm64Opcode::ARM64_INS_FMIN: Arm64Op::Fmin(*this, op); break;
         case Arm64Opcode::ARM64_INS_FMINNM: Arm64Op::Fminnm(*this, op); break;
         case Arm64Opcode::ARM64_INS_FMOV: Arm64Op::Fmov(*this, op); break;
         case Arm64Opcode::ARM64_INS_FMUL: Arm64Op::Fmul(*this, op); break;
