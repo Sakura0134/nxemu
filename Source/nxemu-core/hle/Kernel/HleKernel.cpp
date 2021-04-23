@@ -6,6 +6,7 @@
 #include <Common\StdString.h>
 #include <Common\align.h>
 #include <Common\Random.h>
+#include <Common\Util.h>
 #include <ctime>
 #include <algorithm>
 
@@ -54,6 +55,28 @@ ResultCode CHleKernel::CreateThread(uint32_t & ThreadHandle, uint64_t EntryPoint
     m_KernelObjects.insert(KernelObjectMap::value_type(Handle, thread));
     ThreadHandle = Handle;
     return RESULT_SUCCESS;
+}
+
+void CHleKernel::SleepThread(int64_t Nanoseconds)
+{
+    if (Nanoseconds <= 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    CSystemThread * CurrentThread = m_System.SystemThread()->GetSystemThreadPtr();
+    if (CurrentThread == nullptr)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    CurrentThread->SetState(CSystemThread::ThreadState_WaitSleep);
+    int32_t Milliseconds = (int32_t)(Nanoseconds / 1000000);
+    if (Milliseconds > 0)
+    {
+        nxutil::Sleep(Milliseconds);
+    }
+    CurrentThread->SetState(CSystemThread::ThreadState_Running);
 }
 
 ResultCode CHleKernel::StartThread(uint32_t ThreadHandle)

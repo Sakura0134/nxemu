@@ -97,6 +97,10 @@ void CSystemThread::ServiceCall(uint32_t index)
     case SvcCall_StartThread:
         Result = HleKernel.StartThread(Reg.Get32(Arm64Opcode::ARM64_REG_W0));
         break;
+    case SvcCall_SleepThread:
+        HleKernel.SleepThread(Arm64Opcode::ARM64_REG_X0);
+        VoidRes = true;
+        break;
     case SvcCall_GetThreadPriority:
         {
             uint32_t Priority = Reg.Get32(Arm64Opcode::ARM64_REG_W1);

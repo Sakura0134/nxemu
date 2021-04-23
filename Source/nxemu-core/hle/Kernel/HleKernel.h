@@ -128,6 +128,7 @@ public:
     ResultCode SetHeapSize(uint64_t & HeapAddress, uint64_t size);
     ResultCode SetMemoryAttribute(uint64_t Addr, uint64_t Size, uint32_t Mask, uint32_t Attribute);
     ResultCode SignalProcessWideKey(uint64_t ptr, uint32_t value);
+    void SleepThread(int64_t Nanoseconds);
     ResultCode StartThread(uint32_t ThreadHandle);
     ResultCode WaitProcessWideKeyAtomic(uint64_t ptr0, uint64_t ptr1, uint32_t ThreadHandle, uint64_t timeout);
     ResultCode WaitSynchronization(CSystemThreadMemory & ThreadMemory, uint32_t & HandleIndex, uint64_t HandlesPtr, uint32_t HandlesNum, uint64_t Timeout);

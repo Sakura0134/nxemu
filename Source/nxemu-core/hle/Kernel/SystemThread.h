@@ -27,6 +27,7 @@ public:
         ThreadState_WaitCondVar,
         ThreadState_WaitMutex,
         ThreadState_WaitEvent,
+        ThreadState_WaitSleep,
     };
 
     CSystemThread(CSwitchSystem & System, CProcessMemory &ProcessMemory, const char * Name, uint64_t EntryPoint, uint32_t ThreadHandle, uint32_t ThreadId, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
