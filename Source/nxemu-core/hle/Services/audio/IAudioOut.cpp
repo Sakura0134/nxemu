@@ -27,6 +27,7 @@ ResultCode IAudioOut::CallMethod(CIPCRequest & Request)
     switch (Request.RequestHeader().Command)
     {
     case Method_Start: ProcessStart(Request); break;
+    case Method_AppendAudioOutBuffer: ProcessAppendAudioOutBuffer(Request); break;
     case Method_RegisterBufferEvent: ProcessRegisterBufferEvent(Request); break;
     case Method_GetReleasedAudioOutBuffers: ProcessGetReleasedAudioOutBuffers(Request); break;
     default:
@@ -34,6 +35,11 @@ ResultCode IAudioOut::CallMethod(CIPCRequest & Request)
         break;
     }
     return RESULT_SUCCESS;
+}
+
+void IAudioOut::ProcessAppendAudioOutBuffer(CIPCRequest & /*Request*/)
+{
+    //Stub
 }
 
 void IAudioOut::ProcessGetReleasedAudioOutBuffers(CIPCRequest & Request)
