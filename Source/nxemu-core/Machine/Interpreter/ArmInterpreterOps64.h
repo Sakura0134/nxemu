@@ -113,6 +113,7 @@ public:
     static void Stxr(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Sub(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Svc(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
+    static void Sxth(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Sxtw(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Tbnz(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
     static void Tbz(CInterpreterCPU & Cpu, const Arm64Opcode & Op);
