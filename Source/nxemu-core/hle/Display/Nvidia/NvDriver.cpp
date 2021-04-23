@@ -6,9 +6,11 @@ CNvDriver::CNvDriver(CSwitchSystem& System) :
     m_System(System),
     m_NextFD(1),
     m_NvHostAsGpu(*this),
-    m_NvHostGpu(*this)
+    m_NvHostGpu(*this),
+    m_NvHostCtrl(*this)
 {
     m_Devices.insert(DeviceList::value_type("/dev/nvhost-as-gpu", m_NvHostAsGpu));
+    m_Devices.insert(DeviceList::value_type("/dev/nvhost-ctrl", m_NvHostCtrl));
     m_Devices.insert(DeviceList::value_type("/dev/nvhost-ctrl-gpu", m_NvHostCtrlGpu));
     m_Devices.insert(DeviceList::value_type("/dev/nvhost-gpu", m_NvHostGpu));
     m_Devices.insert(DeviceList::value_type("/dev/nvmap", m_NvMap));

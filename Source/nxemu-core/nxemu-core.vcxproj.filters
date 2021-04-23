@@ -527,6 +527,9 @@
     <ClInclude Include="hle\Services\audio\IAudioOut.h">
       <Filter>Header Files\hle\Services\audio</Filter>
     </ClInclude>
+    <ClInclude Include="hle\Display\Nvidia\NvHostCtrl.h">
+      <Filter>Header Files\hle\Display\Nvidia</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -834,6 +837,9 @@
     </ClCompile>
     <ClCompile Include="hle\Services\audio\IAudioOut.cpp">
       <Filter>Source Files\hle\Services\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="hle\Display\Nvidia\NvHostCtrl.cpp">
+      <Filter>Source Files\hle\Display\Nvidia</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

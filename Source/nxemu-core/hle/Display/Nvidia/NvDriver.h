@@ -1,5 +1,6 @@
 #pragma once
 #include <nxemu-core\hle\Display\Nvidia\NvDevice.h>
+#include <nxemu-core\hle\Display\Nvidia\NvHostCtrl.h>
 #include <nxemu-core\hle\Display\Nvidia\NvHostCtrlGpu.h>
 #include <nxemu-core\hle\Display\Nvidia\NvHostAsGpu.h>
 #include <nxemu-core\hle\Display\Nvidia\NvHostGpu.h>
@@ -39,6 +40,7 @@ private:
 
     CNvHostAsGpu m_NvHostAsGpu;
     CNvHostGpu m_NvHostGpu;
+    CNvHostCtrl m_NvHostCtrl;
     CNvHostCtrlGpu m_NvHostCtrlGpu;
     CNvMap m_NvMap;
     CNvEvents m_Events;
