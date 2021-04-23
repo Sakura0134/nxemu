@@ -3231,6 +3231,10 @@ void Arm64Op::Sub(CInterpreterCPU & Cpu, const Arm64Opcode & Op)
             {
                 b = (uint8_t)Reg.Get32(Op.Operand(2).Reg);
             }
+            else if (Op.Operand(2).shift.type == Arm64Opcode::ARM64_SFT_INVALID && Op.Operand(2).Extend == Arm64Opcode::ARM64_EXT_SXTH)
+            {
+                b = (uint32_t)((int32_t)((int16_t)Reg.Get32(Op.Operand(2).Reg)));
+            }
             else
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
