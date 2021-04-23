@@ -8,10 +8,10 @@
 #include <Common\StdString.h>
 #include <algorithm>
 
-CSystemThread::CSystemThread(CSwitchSystem & System, CProcessMemory &ProcessMemory, const char * Name, uint64_t EntryPoint, uint32_t /*ThreadHandle*/, uint32_t ThreadId, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t /*ProcessorId*/) :
+CSystemThread::CSystemThread(CSwitchSystem & System, CProcessMemory & ProcessMemory, const char * Name, uint64_t EntryPoint, uint32_t /*ThreadHandle*/, uint32_t ThreadId, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t /*ProcessorId*/) :
     CThread(stEmulationThread),
     m_System(System),
-    m_ThreadMemory(ProcessMemory),
+    m_ThreadMemory(ProcessMemory,System.Video()),
     m_State(ThreadState_Created),
     m_ThreadId(ThreadId),
     m_Priority(Priority),

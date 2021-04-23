@@ -62,6 +62,7 @@ enum MemoryState
     MemoryState_AllocatedMemory,
     MemoryState_UnmanagedMemory,
     MemoryState_BackingMemory,
+    MemoryState_RasterizerMemory,
 };
 
 typedef struct

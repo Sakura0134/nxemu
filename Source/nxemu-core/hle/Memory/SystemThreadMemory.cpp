@@ -1,8 +1,9 @@
 #include <nxemu-core\hle\Memory\SystemThreadMemory.h>
 #include <nxemu-core\SystemGlobals.h>
 
-CSystemThreadMemory::CSystemThreadMemory(CProcessMemory &ProcessMemory) :
+CSystemThreadMemory::CSystemThreadMemory(CProcessMemory &ProcessMemory, IVideo & Video) :
     m_ProcessMemory(ProcessMemory),
+    m_Video(Video),
     m_stackmem(nullptr),
     m_StackAddress(0),
     m_StackSize(0),
@@ -77,9 +78,14 @@ bool CSystemThreadMemory::Read64(uint64_t Addr, uint64_t & value)
 bool CSystemThreadMemory::ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len)
 {
     void * ReadBuffer = nullptr;
-    if (!FindAddressMemory(Addr, len, ReadBuffer))
+    MemoryState State = MemoryState_None;
+    if (!FindAddressMemory(Addr, len, ReadBuffer, State))
     {
         return false;
+    }
+    if (State == MemoryState_RasterizerMemory)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     memcpy(buffer, ReadBuffer, len);
     return true;
@@ -131,25 +137,32 @@ bool CSystemThreadMemory::Write64(uint64_t Addr, uint64_t value)
 bool CSystemThreadMemory::WriteBytes(uint64_t Addr, const uint8_t * buffer, uint32_t len)
 {
     void * WriteBuffer = nullptr;
-    if (!FindAddressMemory(Addr, len, WriteBuffer))
+    MemoryState State = MemoryState_None;
+    if (!FindAddressMemory(Addr, len, WriteBuffer, State))
     {
         return false;
+    }
+    if (State == MemoryState_RasterizerMemory)
+    {
+        m_Video.InvalidateRegion(Addr, len);
     }
     memcpy(WriteBuffer, buffer, len);
     return true;
 }
 
-bool CSystemThreadMemory::FindAddressMemory(uint64_t Addr, uint32_t len, void *& buffer)
+bool CSystemThreadMemory::FindAddressMemory(uint64_t Addr, uint32_t len, void *& buffer, MemoryState& State)
 {
     if (Addr >= m_StackAddress && (Addr + len) <= (m_StackAddress + m_StackSize))
     {
         buffer = (void *)&m_stackmem[Addr - m_StackAddress];
+        State = MemoryState_UnmanagedMemory;
         return true;
     }
 
     if (Addr >= m_tlsAddress && (Addr + len) <= (m_tlsAddress + m_tlsSize))
     {
         buffer = (void *)&m_tls[Addr - m_tlsAddress];
+        State = MemoryState_UnmanagedMemory;
         return true;
     }
 
@@ -168,6 +181,11 @@ bool CSystemThreadMemory::FindAddressMemory(uint64_t Addr, uint32_t len, void *&
         {
         case MemoryState_AllocatedMemory:
         case MemoryState_UnmanagedMemory:
+        case MemoryState_RasterizerMemory:
+            if (region.Memory() == nullptr)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
             buffer = (void *)&region.Memory()[Addr - itr->second.Address()];
             break;
         case MemoryState_BackingMemory:
@@ -179,6 +197,7 @@ bool CSystemThreadMemory::FindAddressMemory(uint64_t Addr, uint32_t len, void *&
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return false;
         }
+        State = region.State();
         return true;
     }
     return false;

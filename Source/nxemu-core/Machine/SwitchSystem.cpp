@@ -12,6 +12,7 @@
 #include <Common\FileClass.h>
 
 CSwitchSystem::CSwitchSystem() :
+    m_ProcessMemory(*this),
     m_NvDriver(*this),
     m_Kernel(*this,m_ProcessMemory),
     m_EndEmulation(false),
@@ -70,9 +71,9 @@ bool CSwitchSystem::WriteCPUMemory(uint64_t CpuAddr, const void * SrcBuffer, uin
     return m_ProcessMemory.WriteBytes(CpuAddr, (const uint8_t *)SrcBuffer, (uint32_t)Size, true);
 }
 
-void CSwitchSystem::MarkRasterizerMemory(uint64_t /*CpuAddr*/, uint64_t /*Size*/, bool /*cached*/)
+void CSwitchSystem::MarkRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool /*cached*/)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return m_ProcessMemory.MarkRasterizerMemory(CpuAddr, Size);
 }
 
 uint64_t CSwitchSystem::TitleID(void)

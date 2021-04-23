@@ -1,4 +1,5 @@
 #include <nxemu-core\hle\Memory\ProcessMemory.h>
+#include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\SystemGlobals.h>
 #include <nxemu-core\Trace.h>
 #include <Common\MemoryManagement.h>
@@ -7,7 +8,8 @@ const uint64_t CProcessMemory::PageBits = 12;
 const uint64_t CProcessMemory::PageSize = 1 << PageBits;
 const uint64_t CProcessMemory::PageMask = PageSize - 1;
 
-CProcessMemory::CProcessMemory(void) :
+CProcessMemory::CProcessMemory(CSwitchSystem & System) :
+    m_System(System),
     m_heap(nullptr),
     m_AddressSpaceWidth(0),
     m_AddressSpaceBase(0),
@@ -314,6 +316,11 @@ bool CProcessMemory::ReadBytes(uint64_t Address, uint8_t * buffer, uint32_t len,
         }
         len = (uint32_t)Regionlen;
     }
+
+    if (!external && Region.State() == MemoryState_RasterizerMemory)
+    {
+        m_System.Video().FlushRegion(Address, len);
+    }
     if (Region.Memory() == nullptr)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -339,6 +346,10 @@ bool CProcessMemory::ReadCString(uint64_t Addr, std::string & value) const
             if (Memory[index] != 0)
             {
                 continue;
+            }
+            if (Region.State() == MemoryState_RasterizerMemory)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
             }
             value = std::string((const char *)&Memory[StartIndex], index - StartIndex);
             return true;
@@ -368,6 +379,11 @@ bool CProcessMemory::WriteBytes(uint64_t Address, const uint8_t* buffer, uint32_
         }
         len = (uint32_t)Regionlen;
     }
+
+    if (!external && Region.State() == MemoryState_RasterizerMemory)
+    {
+        m_System.Video().InvalidateRegion(Address, len);
+    }
     if (Region.Memory() == nullptr)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -376,6 +392,27 @@ bool CProcessMemory::WriteBytes(uint64_t Address, const uint8_t* buffer, uint32_
     void * WriteBuffer = (void*)&(Region.Memory()[Address - Region.Address()]);
     memcpy(WriteBuffer, buffer, len);
     return true;
+}
+
+void CProcessMemory::MarkRasterizerMemory(uint64_t Addr, uint64_t Size)
+{
+    CGuard Guard(m_CS);
+
+    MemoryRegionMapIter RegionItr;
+    if (!CreateMemoryRegion(Addr, Size, RegionItr))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+
+    CMemoryRegion & Region = RegionItr->second;
+    if (Region.m_Type != MemoryType_Heap && Region.m_State != MemoryState_UnmanagedMemory)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    Region.m_State = MemoryState_RasterizerMemory;
+    Region.m_Attribute = MemoryAttr_None;
 }
 
 uint8_t* CProcessMemory::GetPointer(uint64_t Address)
@@ -414,6 +451,8 @@ const uint8_t * CProcessMemory::GetPointer(uint64_t Address) const
 
 bool CProcessMemory::CreateMemoryRegion(uint64_t Address, uint64_t Size, MemoryRegionMapIter & Region)
 {
+    CGuard Guard(m_CS);
+
     WriteTrace(TraceMemory, TraceVerbose, "Start (Address: 0x%I64X Size: 0x%X)", Address, Size);
 
     if ((Size & PageMask) != 0)

@@ -1,12 +1,13 @@
 #pragma once
 #include <nxemu-core\Machine\CPU\MemoryManagement.h>
 #include <nxemu-core\hle\Memory\ProcessMemory.h>
+#include <nxemu-core\Plugins\VideoPlugin.h>
 
 class CSystemThreadMemory :
     public MemoryManagement
 {
 public:
-    CSystemThreadMemory(CProcessMemory &ProcessMemory);
+    CSystemThreadMemory(CProcessMemory &ProcessMemory, IVideo & Video);
     ~CSystemThreadMemory();
 
     bool Initialize(uint64_t StackTop, uint32_t StackSize, uint64_t TlsAddress, uint32_t TlsSize);
@@ -29,9 +30,10 @@ private:
     CSystemThreadMemory(const CSystemThreadMemory&);            // Disable copy constructor
     CSystemThreadMemory& operator=(const CSystemThreadMemory&); // Disable assignment
 
-	bool FindAddressMemory(uint64_t Addr, uint32_t len, void *& buffer);
+	bool FindAddressMemory(uint64_t Addr, uint32_t len, void *& buffer, MemoryState & State);
 
     CProcessMemory & m_ProcessMemory;
+    IVideo & m_Video;
     uint8_t * m_stackmem;
     uint64_t m_StackAddress;
     uint32_t m_StackSize;

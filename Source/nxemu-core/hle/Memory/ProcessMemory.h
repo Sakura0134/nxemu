@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <map>
 
+class CSwitchSystem;
 class CSystemThreadMemory;
 
 class CProcessMemory
@@ -12,7 +13,7 @@ class CProcessMemory
     friend CSystemThreadMemory;
 
 public:
-    CProcessMemory();
+    CProcessMemory(CSwitchSystem & System);
     ~CProcessMemory();
 
     uint64_t GetAddressSpaceBaseAddr(void) const { return m_AddressSpaceBase; }
@@ -37,10 +38,12 @@ public:
     bool ReadBytes(uint64_t Addr, uint8_t * buffer, uint32_t len, bool external) const;
     bool ReadCString(uint64_t Addr, std::string & value) const;
     bool WriteBytes(uint64_t Addr, const uint8_t * Buffer, uint32_t Len, bool External);
+    void MarkRasterizerMemory(uint64_t Addr, uint64_t Size);
     uint8_t* GetPointer(uint64_t Address);
     const uint8_t* GetPointer(uint64_t Address) const;
 
 private:
+    CProcessMemory();
     CProcessMemory(const CProcessMemory&);
     CProcessMemory& operator=(const CProcessMemory&);
 
@@ -59,6 +62,7 @@ private:
     uint64_t m_NewMapRegionBase, m_NewMapRegionSize;
     uint64_t m_TlsIoRegionBase, m_TlsIoRegionSize;
 
+    CSwitchSystem & m_System;
     mutable CriticalSection m_CS;
     MemoryRegionMap m_MemoryMap;
     uint8_t * m_heap;
