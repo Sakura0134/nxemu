@@ -17,7 +17,8 @@ CHleKernel::CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory) :
     m_SM(System),
     m_InterfaceDevice(*this),
     m_NextHandle(0x8002),
-    m_NextThreadId(1)
+    m_NextThreadId(1),
+    m_IdleThread(stIdleThread)
 {
     CRandom EntropyRandomize(g_Settings->LoadBool(HleKernel_RandomizeEntropy) ? (uint32_t)time(nullptr) : g_Settings->LoadDword(HleKernel_RandomizeSeed));
     for (uint32_t i = 0, n = sizeof(m_RandomEntropy) / sizeof(m_RandomEntropy[0]); i < n; i++)
@@ -26,6 +27,7 @@ CHleKernel::CHleKernel(CSwitchSystem & System, CProcessMemory & ProcessMemory) :
     }
 
     m_NamedPorts.insert(NamedPortList::value_type("sm:", &m_SM));
+    m_IdleThread.Start(this);
 }
 
 CHleKernel::~CHleKernel()
@@ -45,7 +47,7 @@ ResultCode CHleKernel::CreateThread(uint32_t & ThreadHandle, uint64_t EntryPoint
 
     uint32_t Handle = GetNewHandle();
     std::string name = stdstr_f("Thread[%X-%X]", EntryPoint, Handle);
-    CSystemThread * thread = new CSystemThread(m_System, m_ProcessMemory, name.c_str(), EntryPoint, Handle, CreateNewThreadID(), ThreadContext, StackTop, StackSize, Priority, ProcessorId);
+    CSystemThread * thread = new CSystemThread(m_System, m_ProcessMemory, name.c_str(), EntryPoint, Handle, CreateNewThreadID(), ThreadContext, StackTop, StackSize, Priority, ProcessorId, false);
     if (thread == nullptr)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -730,7 +732,7 @@ bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uin
     CGuard Guard(m_CS);
 
     ThreadHandle = GetNewHandle();
-    CKernelObjectPtr ThreadObject(new CSystemThread(m_System, m_ProcessMemory, name, entry_point, ThreadHandle, CreateNewThreadID(), ThreadContext, StackTop, StackSize, Priority, ProcessorId));
+    CKernelObjectPtr ThreadObject(new CSystemThread(m_System, m_ProcessMemory, name, entry_point, ThreadHandle, CreateNewThreadID(), ThreadContext, StackTop, StackSize, Priority, ProcessorId, true));
     if (ThreadObject.get() == nullptr)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -844,6 +846,60 @@ ResultCode CHleKernel::WaitSynchronization(CSystemThreadMemory & ThreadMemory, u
         return RESULT_SUCCESS;
     }
     return RESULT_TIMEOUT;
+}
+
+void CHleKernel::ElectThreadProcessor(void)
+{
+    std::vector<CSystemThread*> RunningThreads;
+    CSystemThread * IntialThread = nullptr;
+
+    for (KernelObjectMap::const_iterator itr = m_KernelObjects.begin(); itr != m_KernelObjects.end(); itr++)
+    {
+        if (itr->second->GetHandleType() != KernelObjectHandleType_Thread)
+        {
+            continue;
+        }
+        CSystemThread * Thread = itr->second->GetSystemThreadPtr();
+        Thread->SetProcessEvents(false);
+        if (Thread->GetState() != CSystemThread::ThreadState_Running &&
+            Thread->GetState() != CSystemThread::ThreadState_Ready)
+        {
+            continue;
+        }
+        if (Thread->InitialThread())
+        {
+            IntialThread = Thread;
+        }
+        RunningThreads.push_back(Thread);
+    }
+
+    if (IntialThread != nullptr)
+    {
+        IntialThread->SetProcessEvents(true);
+    }
+    else if (RunningThreads.size() > 0)
+    {
+        RunningThreads[0]->SetProcessEvents(true);
+    }
+    else
+    {
+        m_IdleEvent.Trigger();
+    }
+}
+
+void CHleKernel::IdleThread(void)
+{
+    const bool & Done = m_System.EndEmulation();
+    CSystemEvents & SystemEvents = m_System.SystemEvents();
+    int32_t & NextTimer = SystemEvents.m_NextTimer;
+
+    while (!Done)
+    {
+        m_IdleEvent.Reset();
+        m_IdleEvent.IsTriggered(SyncEvent::INFINITE_TIMEOUT);
+        NextTimer = -1;
+        SystemEvents.TimerDone();
+    }
 }
 
 uint32_t CHleKernel::GetNewHandle()

@@ -8,7 +8,7 @@
 #include <Common\StdString.h>
 #include <algorithm>
 
-CSystemThread::CSystemThread(CSwitchSystem & System, CProcessMemory & ProcessMemory, const char * Name, uint64_t EntryPoint, uint32_t /*ThreadHandle*/, uint32_t ThreadId, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t /*ProcessorId*/) :
+CSystemThread::CSystemThread(CSwitchSystem & System, CProcessMemory & ProcessMemory, const char * Name, uint64_t EntryPoint, uint32_t /*ThreadHandle*/, uint32_t ThreadId, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t /*ProcessorId*/, bool InitialThread) :
     CThread(stEmulationThread),
     m_System(System),
     m_ThreadMemory(ProcessMemory,System.Video()),
@@ -22,7 +22,8 @@ CSystemThread::CSystemThread(CSwitchSystem & System, CProcessMemory & ProcessMem
     m_CpuTicks(0),
     m_LockOwner(nullptr),
     m_ProcessEvents(false),
-    m_Name(Name != nullptr ? Name : "")
+    m_Name(Name != nullptr ? Name : ""),
+    m_InitialThread(InitialThread)
 {
     if (!m_ThreadMemory.Initialize(StackTop, StackSize, m_TlsAddress, 0x1000))
     {
@@ -320,7 +321,7 @@ void CSystemThread::SetState(ThreadState state)
     if ((m_State != ThreadState_Running && m_ProcessEvents) ||
         m_State == ThreadState_Running)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        m_System.HleKernel().ElectThreadProcessor();
     }
 }
 

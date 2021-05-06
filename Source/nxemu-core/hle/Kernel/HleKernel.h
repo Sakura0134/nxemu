@@ -132,6 +132,7 @@ public:
     ResultCode StartThread(uint32_t ThreadHandle);
     ResultCode WaitProcessWideKeyAtomic(uint64_t ptr0, uint64_t ptr1, uint32_t ThreadHandle, uint64_t timeout);
     ResultCode WaitSynchronization(CSystemThreadMemory & ThreadMemory, uint32_t & HandleIndex, uint64_t HandlesPtr, uint32_t HandlesNum, uint64_t Timeout);
+    void ElectThreadProcessor(void);
     inline CDisplay & GetDisplay(void) { return m_Display; }
 
     static const char * GetSvcCallStr(SvcCall Call);
@@ -141,8 +142,11 @@ private:
     CHleKernel(const CHleKernel&);             // Disable copy constructor
     CHleKernel& operator=(const CHleKernel&);  // Disable assignment
 
+    static uint32_t stIdleThread (void* lpThreadParameter) { ((CHleKernel*)lpThreadParameter)->IdleThread(); return 0; }
+
     ResultCode ProcessSyncRequest(CService * Service, CIPCRequest & Request);
     ResultCode ProcessSyncControl(CService * Service, CIPCRequest & Request);
+    void IdleThread(void);
     uint32_t GetNewHandle();
     uint32_t CreateNewThreadID();
     static const char * GetInfoTypeName(GetInfoType Id);
@@ -159,4 +163,6 @@ private:
     uint32_t m_NextHandle;
     uint32_t m_NextThreadId;
     uint64_t m_RandomEntropy[4];
+    CThread m_IdleThread;
+    SyncEvent m_IdleEvent;
 };

@@ -4,9 +4,13 @@
 #include <vector>
 
 class CInterpreterCPU;
+class CHleKernel;
+
 class CSystemEvents
 {
     friend CInterpreterCPU;
+    friend CHleKernel;
+
 public:
     typedef size_t ScheduleParam;
     typedef void(*ScheduleCallback)(int64_t lpParam);

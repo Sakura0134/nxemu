@@ -30,7 +30,7 @@ public:
         ThreadState_WaitSleep,
     };
 
-    CSystemThread(CSwitchSystem & System, CProcessMemory &ProcessMemory, const char * Name, uint64_t EntryPoint, uint32_t ThreadHandle, uint32_t ThreadId, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId);
+    CSystemThread(CSwitchSystem & System, CProcessMemory &ProcessMemory, const char * Name, uint64_t EntryPoint, uint32_t ThreadHandle, uint32_t ThreadId, uint64_t ThreadContext, uint64_t StackTop, uint32_t StackSize, uint32_t Priority, uint32_t ProcessorId, bool InitialThread);
     ~CSystemThread();
 
     inline uint32_t SystemThreadId() const { return m_ThreadId; }
@@ -44,6 +44,7 @@ public:
     inline CSystemThread * GetLockOwner() const { return m_LockOwner; }
     inline uint32_t GetWaitHandle() const { return m_WaitHandle; }
     inline uint64_t TlsAddress() const { return m_TlsAddress; }
+    inline bool InitialThread() const { return m_InitialThread; }
     inline uint64_t & CpuTicks() { return m_CpuTicks; }
     inline const bool & ProcessEvents() const { return m_ProcessEvents; }
 
@@ -92,4 +93,5 @@ private:
     CSystemThread * m_LockOwner;
     bool m_ProcessEvents;
 	std::string m_Name;
+    bool m_InitialThread;
 };
