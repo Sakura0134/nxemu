@@ -26,6 +26,30 @@ void CSystemEvents::Schedule(int64_t Cycles, ScheduleCallback CallBack, Schedule
     CalcNextTimer();
 }
 
+void CSystemEvents::TimerDone(void)
+{
+    EventInfoList ExecuteEvents;
+    {
+        CGuard Guard(m_CS);
+        for (EventInfoList::iterator itr = m_Events.begin(); itr != m_Events.end();)
+        {
+            if (itr->Cycles <= 0)
+            {
+                ExecuteEvents.push_back(*itr);
+                itr = m_Events.erase(itr);
+            }
+            else
+            {
+                itr++;
+            }
+        }
+    }
+    for (EventInfoList::iterator itr = ExecuteEvents.begin(); itr != ExecuteEvents.end(); itr++)
+    {
+        itr->CallBack(itr->param);
+    }
+}
+
 void CSystemEvents::CalcNextTimer(void)
 {
     CGuard Guard(m_CS);

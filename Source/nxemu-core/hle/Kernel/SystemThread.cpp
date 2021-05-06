@@ -21,6 +21,7 @@ CSystemThread::CSystemThread(CSwitchSystem & System, CProcessMemory & ProcessMem
     m_TlsAddress(ProcessMemory.GetTlsIoRegionBase()),
     m_CpuTicks(0),
     m_LockOwner(nullptr),
+    m_ProcessEvents(false),
     m_Name(Name != nullptr ? Name : "")
 {
     if (!m_ThreadMemory.Initialize(StackTop, StackSize, m_TlsAddress, 0x1000))
@@ -316,11 +317,21 @@ void CSystemThread::SetWaitHandle(uint32_t WaitHandle)
 void CSystemThread::SetState(ThreadState state)
 {
     m_State = state;
+    if ((m_State != ThreadState_Running && m_ProcessEvents) ||
+        m_State == ThreadState_Running)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
 }
 
 void CSystemThread::SetLockOwner(CSystemThread * LockThread)
 {
     m_LockOwner = LockThread;
+}
+
+void CSystemThread::SetProcessEvents(bool ProcessEvents)
+{
+    m_ProcessEvents = ProcessEvents;
 }
 
 void CSystemThread::Start(void)

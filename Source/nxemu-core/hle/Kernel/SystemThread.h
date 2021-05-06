@@ -45,6 +45,7 @@ public:
     inline uint32_t GetWaitHandle() const { return m_WaitHandle; }
     inline uint64_t TlsAddress() const { return m_TlsAddress; }
     inline uint64_t & CpuTicks() { return m_CpuTicks; }
+    inline const bool & ProcessEvents() const { return m_ProcessEvents; }
 
     int32_t WaitEvent(const KernelObjectList & EventObjects, int64_t Timeout);
 
@@ -57,6 +58,7 @@ public:
     void SetWaitHandle(uint32_t WaitHandle);
     void SetState(ThreadState state);
     void SetLockOwner(CSystemThread * LockThread);
+    void SetProcessEvents(bool ProcessEvents);
     void Start(void);
     void ServiceCall(uint32_t index);
     void ResetSyncEvent(void);
@@ -88,5 +90,6 @@ private:
     uint64_t m_TlsAddress;
     uint64_t m_CpuTicks;
     CSystemThread * m_LockOwner;
+    bool m_ProcessEvents;
 	std::string m_Name;
 };

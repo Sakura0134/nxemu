@@ -3,8 +3,10 @@
 #include <stdint.h>
 #include <vector>
 
+class CInterpreterCPU;
 class CSystemEvents
 {
+    friend CInterpreterCPU;
 public:
     typedef size_t ScheduleParam;
     typedef void(*ScheduleCallback)(int64_t lpParam);
@@ -13,6 +15,7 @@ public:
     ~CSystemEvents();
     
     void Schedule(int64_t Cycles, ScheduleCallback CallBack, ScheduleParam param);
+    void TimerDone(void);
 
 private:
     CSystemEvents(const CSystemEvents&);

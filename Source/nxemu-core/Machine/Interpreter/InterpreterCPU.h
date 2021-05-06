@@ -5,6 +5,7 @@
 class CSwitchSystem;
 class CSystemThreadMemory;
 class CSystemThread;
+class CSystemEvents;
 
 class CInterpreterCPU :
     public CPUExecutor,
@@ -30,6 +31,7 @@ private:
 
     CSwitchSystem & m_System;
     CSystemThreadMemory & m_ThreadMemory;
+    CSystemEvents & m_SystemEvent;
     CSystemThread & m_Thread;
     Arm64OpcodeCache m_OpcodeCache;
     CRegisters m_Reg;

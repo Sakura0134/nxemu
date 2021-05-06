@@ -739,6 +739,7 @@ bool CHleKernel::AddSystemThread(uint32_t & ThreadHandle, const char * name, uin
     CSystemThread * Thread = ThreadObject->GetSystemThreadPtr();
     Thread->SetState(CSystemThread::ThreadState_Ready);
     Thread->Reg().Set64(Arm64Opcode::ARM64_REG_X1, ThreadHandle);
+    Thread->SetProcessEvents(true);
     m_KernelObjects.insert(KernelObjectMap::value_type(ThreadHandle, ThreadObject));
     return true;
 }

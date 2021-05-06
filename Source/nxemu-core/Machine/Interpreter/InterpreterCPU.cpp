@@ -10,6 +10,7 @@
 CInterpreterCPU::CInterpreterCPU(CSwitchSystem & System, CSystemThread & Thread) :
     m_System(System),
     m_ThreadMemory(Thread.ThreadMemory()),
+    m_SystemEvent(System.SystemEvents()),
     m_Thread(Thread),
     m_JumpPC(0),
     m_Jump(false)
@@ -25,6 +26,9 @@ void CInterpreterCPU::Execute()
     const bool & Stepping = isStepping();
     Arm64OpcodeCache & OpcodeCache = m_OpcodeCache;
     uint64_t & CpuTicks = m_Thread.CpuTicks();
+    const bool & ProcessEvents = m_Thread.ProcessEvents();
+    int32_t & NextTimer = m_SystemEvent.m_NextTimer;
+    uint32_t TimerTicks = 0;
 
     while (!Done)
     {
@@ -40,6 +44,7 @@ void CInterpreterCPU::Execute()
 
         Arm64Opcode op(OpcodeCache, PROGRAM_COUNTER, insn);
         CpuTicks += 1;
+        TimerTicks += 1;
 
         if (!ShouldExecuteOp(op))
         {
@@ -180,8 +185,21 @@ void CInterpreterCPU::Execute()
         }
         if (Jump)
         {
+            bool CheckTimer = JumpPC < PROGRAM_COUNTER;
             Jump = false;
             PROGRAM_COUNTER = JumpPC;
+            if (CheckTimer)
+            {
+                if (ProcessEvents)
+                {
+                    NextTimer -= TimerTicks;
+                    if (NextTimer < 0)
+                    {
+                        m_SystemEvent.TimerDone();
+                    }
+                }
+                TimerTicks = 0;
+            }
         }
         else
         {
