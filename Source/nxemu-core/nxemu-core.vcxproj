@@ -125,6 +125,7 @@
     <ClInclude Include="Machine\SwitchKeys.h" />
     <ClInclude Include="Machine\SwitchRom.h" />
     <ClInclude Include="Machine\SwitchSystem.h" />
+    <ClInclude Include="Machine\SystemEvents.h" />
     <ClInclude Include="Machine\SystemTiming.h" />
     <ClInclude Include="Notification.h" />
     <ClInclude Include="Plugins\PluginBase.h" />
@@ -235,6 +236,7 @@
     <ClCompile Include="Machine\SwitchKeys.cpp" />
     <ClCompile Include="Machine\SwitchRom.cpp" />
     <ClCompile Include="Machine\SwitchSystem.cpp" />
+    <ClCompile Include="Machine\SystemEvents.cpp" />
     <ClCompile Include="Machine\SystemTiming.cpp" />
     <ClCompile Include="Plugins\PluginBase.cpp" />
     <ClCompile Include="Plugins\Plugins.cpp" />

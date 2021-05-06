@@ -1,12 +1,19 @@
+#include <nxemu-core\Machine\SystemTiming.h>
+#include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\hle\Display\Display.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CDisplay::CDisplay(CSwitchSystem & System) :
     m_System(System),
+    m_NvDriver(System.NvDriver()), 
+    m_SystemEvents(System.SystemEvents()),
     m_NextLayerId(1),
-    m_NextBufferQueueId(1)
+    m_NextBufferQueueId(1),
+    m_VsyncEvent(new KEvent),
+    m_SwapInterval(1)
 {
     m_DisplayList.push_back(std::make_shared<CDisplayDevice>(0, "Default"));
+    m_SystemEvents.Schedule(GetNextTicks(), (CSystemEvents::ScheduleCallback)stVSyncEvent, (CSystemEvents::ScheduleParam)this);
 }
 
 CDisplay::~CDisplay()
@@ -73,6 +80,30 @@ CBufferQueue * CDisplay::FindBufferQueue(uint32_t QueueId)
         }
     }
     return nullptr;
+}
+
+void CDisplay::VSyncEvent(void)
+{
+    for (size_t i = 0, n = m_DisplayList.size(); i < n; i++)
+    {
+        CDisplayDevice& Device = *m_DisplayList[i];
+        if (Device.Layers() == 0)
+        {
+            continue;
+        }
+        if (Device.Layers() > 1)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    m_SystemEvents.Schedule(GetNextTicks(), (CSystemEvents::ScheduleCallback)stVSyncEvent, (CSystemEvents::ScheduleParam)this);
+}
+
+int64_t CDisplay::GetNextTicks(void) const
+{
+    int64_t max_hertz = 120LL;
+    return (CSystemTiming::BASE_CLOCK_RATE * (1LL << m_SwapInterval)) / max_hertz;
 }
 
 CDisplayDevice * CDisplay::FindDisplay(uint32_t DisplayId)

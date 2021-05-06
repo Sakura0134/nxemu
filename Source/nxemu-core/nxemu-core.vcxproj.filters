@@ -530,6 +530,9 @@
     <ClInclude Include="hle\Display\Nvidia\NvHostCtrl.h">
       <Filter>Header Files\hle\Display\Nvidia</Filter>
     </ClInclude>
+    <ClInclude Include="Machine\SystemEvents.h">
+      <Filter>Header Files\Machine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppInit.cpp">
@@ -840,6 +843,9 @@
     </ClCompile>
     <ClCompile Include="hle\Display\Nvidia\NvHostCtrl.cpp">
       <Filter>Source Files\hle\Display\Nvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="Machine\SystemEvents.cpp">
+      <Filter>Source Files\Machine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

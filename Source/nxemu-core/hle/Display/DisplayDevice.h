@@ -18,6 +18,8 @@ public:
 
     inline uint32_t Id(void) const { return m_Id; }
     inline const char * Name(void) const { return m_Name.c_str(); }
+    inline size_t Layers(void) const { return m_layers.size(); }
+    inline CLayer & Layer(size_t index) const { return *m_layers[index]; }
 
 private:
     std::vector<std::shared_ptr<CLayer>> m_layers;

@@ -18,10 +18,10 @@ struct IGBPBuffer
     PADDING_WORDS(1);
     uint32_t Index;
     PADDING_WORDS(3);
-    uint32_t gpu_buffer_id;
+    uint32_t GPUBufferId;
     PADDING_WORDS(17);
-    uint32_t nvmap_handle;
-    uint32_t offset;
+    uint32_t NVMapHandle;
+    uint32_t Offset;
     PADDING_WORDS(60);
 };
 
