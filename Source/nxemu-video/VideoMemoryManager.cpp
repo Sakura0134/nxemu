@@ -59,6 +59,18 @@ void CVideoMemory::UpdateRange(uint64_t GpuAddr, PageEntry PageEntry, uint64_t S
     }
 }
 
+uint64_t CVideoMemory::MapAllocate(uint64_t CpuAddr, uint64_t Size, uint64_t Align) 
+{
+    uint64_t GpuAddr = 0;
+    if (!FindFreeRange(GpuAddr, Size, Align))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return 0;
+    }
+    UpdateRange(GpuAddr, CpuAddr, Size);
+    return GpuAddr;
+}
+
 bool CVideoMemory::AllocateFixed(uint64_t GpuAddr, uint64_t Size) 
 {
     for (uint64_t Offset = 0; Offset < Size; Offset += PageSize) 
