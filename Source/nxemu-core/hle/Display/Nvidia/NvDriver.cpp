@@ -5,6 +5,7 @@
 CNvDriver::CNvDriver(CSwitchSystem& System) :
     m_System(System),
     m_NextFD(1),
+    m_NvDisp0(*this),
     m_NvHostAsGpu(*this),
     m_NvHostGpu(*this),
     m_NvHostCtrl(*this)

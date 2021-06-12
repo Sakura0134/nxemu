@@ -1,6 +1,7 @@
 #include <nxemu-core\Machine\SystemTiming.h>
 #include <nxemu-core\Machine\SwitchSystem.h>
 #include <nxemu-core\hle\Display\Display.h>
+#include <nxemu-core\hle\Display\Nvidia\NvDisp0.h>
 #include <nxemu-core\SystemGlobals.h>
 
 CDisplay::CDisplay(CSwitchSystem & System) :
@@ -95,7 +96,24 @@ void CDisplay::VSyncEvent(void)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        CLayer & Layer = Device.Layer(0);
+        CBufferQueue & BufferQueue = *(Layer.BufferQueue());
+        CBufferQueue::BufferInfo * Buffer;
+        if (!BufferQueue.AcquireBuffer(Buffer))
+        {
+            continue;
+        }
+        IGBPBuffer & IgbpBuffer = Buffer->IgbpBuffer;
+        NvMultiFence & MultiFence = Buffer->MultiFence;
+        for (uint32_t FenceIndx = 0; FenceIndx < MultiFence.NumFences; FenceIndx++) 
+        {
+            NvFence & Fence = MultiFence.fences[FenceIndx];
+            m_System.Video().WaitFence(Fence.id, Fence.value);
+        }
+        CNvDisp0 & NvDisp0 = m_NvDriver.NvDisp0();
+        NvDisp0.flip(IgbpBuffer.GPUBufferId, IgbpBuffer.Offset, IgbpBuffer.Format, IgbpBuffer.Width, IgbpBuffer.Height, IgbpBuffer.Stride, Buffer->Transform, Buffer->CropRect);
+        m_SwapInterval = Buffer->SwapInterval;
+        BufferQueue.ReleaseBuffer(Buffer->Slot);
     }
     m_SystemEvents.Schedule(GetNextTicks(), (CSystemEvents::ScheduleCallback)stVSyncEvent, (CSystemEvents::ScheduleParam)this);
 }

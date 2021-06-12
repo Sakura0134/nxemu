@@ -61,7 +61,7 @@ public:
         int32_t Bottom;
     };
 
-    struct Buffer
+    struct BufferInfo
     {
         uint32_t Slot;
         BufferQueueStatus Status;
@@ -78,6 +78,8 @@ public:
     void SetPreallocatedBuffer(uint32_t slot, const IGBPBuffer& igbp_buffer);
     const IGBPBuffer & RequestBuffer(uint32_t slot);
     void QueueBuffer(uint32_t Slot, BufferTransformFlags Transform, const Rectangle & CropRect, uint32_t SwapInterval, const NvMultiFence & MultiFence);
+    bool AcquireBuffer(BufferInfo *& Buffer);
+    void ReleaseBuffer(uint32_t Slot);
 
     inline uint32_t Id(void) const { return m_Id; }
     inline CKernelObjectPtr WaitEvent(void) { return m_WaitEvent; }
@@ -87,7 +89,7 @@ private:
     CBufferQueue(const CBufferQueue&);
     CBufferQueue& operator=(const CBufferQueue&);
 
-    typedef std::vector<Buffer> BufferList;
+    typedef std::vector<BufferInfo> BufferList;
 
     CriticalSection m_CS;
     uint32_t m_Id;

@@ -75,12 +75,12 @@ void CBufferQueue::SetPreallocatedBuffer(uint32_t slot, const IGBPBuffer& igbp_b
 {
     CGuard Guard(m_CS);
 
-    Buffer buffer = {0};
-    buffer.Slot = slot;
-    buffer.IgbpBuffer = igbp_buffer;
-    buffer.Status = BufferQueueStatus_Free;
+    BufferInfo Buffer = {0};
+    Buffer.Slot = slot;
+    Buffer.IgbpBuffer = igbp_buffer;
+    Buffer.Status = BufferQueueStatus_Free;
 
-    m_Queue.emplace_back(buffer);
+    m_Queue.emplace_back(Buffer);
     m_WaitEvent->GetKEventPtr()->Signal();
 }
 
@@ -115,19 +115,70 @@ void CBufferQueue::QueueBuffer(uint32_t Slot, BufferTransformFlags Transform, co
         {
             continue;
         }
-        Buffer& buffer = m_Queue[i];
-        if (buffer.Status != BufferQueueStatus_Dequeued)
+        BufferInfo & Buffer = m_Queue[i];
+        if (Buffer.Status != BufferQueueStatus_Dequeued)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
         }
-        buffer.Status = BufferQueueStatus_Queued;
-        buffer.Transform = Transform;
-        buffer.CropRect = CropRect;
-        buffer.SwapInterval = SwapInterval;
-        buffer.MultiFence = MultiFence;
+        Buffer.Status = BufferQueueStatus_Queued;
+        Buffer.Transform = Transform;
+        Buffer.CropRect = CropRect;
+        Buffer.SwapInterval = SwapInterval;
+        Buffer.MultiFence = MultiFence;
         m_QueueSequence.push_back(Slot);
         return;
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
+}
+
+bool CBufferQueue::AcquireBuffer(BufferInfo *& Buffer)
+{
+    CGuard Guard(m_CS);
+
+    Buffer = nullptr;
+    if (m_QueueSequence.size() != 0)
+    {
+        uint32_t Slot = m_QueueSequence.front();
+        m_QueueSequence.pop_front();
+
+        for (size_t i = 0, n = m_Queue.size(); i < n; i++)
+        {
+            BufferInfo & QueueBuffer = m_Queue[i];
+            if (QueueBuffer.Status == BufferQueueStatus_Queued && QueueBuffer.Slot == Slot)
+            {
+                QueueBuffer.Status = BufferQueueStatus_Acquired;
+                Buffer = &QueueBuffer;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void CBufferQueue::ReleaseBuffer(uint32_t Slot)
+{
+    CGuard Guard(m_CS);
+
+    bool Found = false;
+    for (size_t i = 0, n = m_Queue.size(); i < n; i++)
+    {
+        BufferInfo & QueueBuffer = m_Queue[i];
+        if (QueueBuffer.Slot != Slot)
+        {
+            continue;
+        }
+        if (QueueBuffer.Status != BufferQueueStatus_Acquired)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        QueueBuffer.Status = BufferQueueStatus_Free;
+        Found = true;
+        break;
+    }
+    if (!Found)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    m_WaitEvent->GetKEventPtr()->Signal();
 }

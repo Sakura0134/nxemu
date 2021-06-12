@@ -1,5 +1,6 @@
 #pragma once
 #include <nxemu-core\hle\Display\Nvidia\NvDevice.h>
+#include <nxemu-core\hle\Display\Nvidia\NvDisp0.h>
 #include <nxemu-core\hle\Display\Nvidia\NvHostCtrl.h>
 #include <nxemu-core\hle\Display\Nvidia\NvHostCtrlGpu.h>
 #include <nxemu-core\hle\Display\Nvidia\NvHostAsGpu.h>
@@ -24,6 +25,7 @@ public:
     uint32_t Open(const std::string& Name);
     nvResult Ioctl(uint32_t Fd, nvIoctl Ioctl, const CIPCRequest::RequestBuffer& InData, CIPCRequest::RequestBuffer & OutData);
 
+    inline CNvDisp0 & NvDisp0(void) { return m_NvDisp0; }
     inline CNvMap & NvMap(void) { return m_NvMap; }
     inline CNvEvents & Events(void) { return m_Events; }
 
@@ -38,6 +40,7 @@ private:
     OpenDeviceList m_Open;
     uint32_t m_NextFD;
 
+    CNvDisp0 m_NvDisp0;
     CNvHostAsGpu m_NvHostAsGpu;
     CNvHostGpu m_NvHostGpu;
     CNvHostCtrl m_NvHostCtrl;

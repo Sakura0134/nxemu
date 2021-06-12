@@ -163,6 +163,7 @@
     <ClCompile Include="hle\Display\DisplayDevice.cpp" />
     <ClCompile Include="hle\Display\Layer.cpp" />
     <ClCompile Include="hle\Display\Nvidia\BufferQueue.cpp" />
+    <ClCompile Include="hle\Display\Nvidia\NvDisp0.cpp" />
     <ClCompile Include="hle\Display\Nvidia\NvDriver.cpp" />
     <ClCompile Include="hle\Display\Nvidia\NvEvents.cpp" />
     <ClCompile Include="hle\Display\Nvidia\NvHostAsGpu.cpp" />

@@ -847,6 +847,9 @@
     <ClCompile Include="Machine\SystemEvents.cpp">
       <Filter>Source Files\Machine</Filter>
     </ClCompile>
+    <ClCompile Include="hle\Display\Nvidia\NvDisp0.cpp">
+      <Filter>Source Files\hle\Display\Nvidia</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Version.h.in">
