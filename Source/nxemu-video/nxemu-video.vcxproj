@@ -42,6 +42,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GpuThread.cpp" />
     <ClCompile Include="NXEmu-video.cpp" />
     <ClCompile Include="Video.cpp" />
     <ClCompile Include="VideoMemoryManager.cpp" />

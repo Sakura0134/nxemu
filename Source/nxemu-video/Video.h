@@ -1,5 +1,6 @@
 #pragma once
 #include "VideoMemoryManager.h"
+#include "GpuThread.h"
 #include <nxemu-plugin-spec\Video.h>
 #include <Common\CriticalSection.h>
 
@@ -37,4 +38,5 @@ private:
     CVideoMemory m_Memory;
     uint32_t m_SyncPoints[MaxSyncPoints];
     mutable CriticalSection m_CS;
+    CGpuThread m_GpuThread;
 };

@@ -5,7 +5,8 @@
 CVideo::CVideo(IRenderWindow & RenderWindow, ISwitchSystem & SwitchSystem) :
     m_RenderWindow(RenderWindow),
     m_SwitchSystem(SwitchSystem),
-    m_Memory(SwitchSystem)
+    m_Memory(SwitchSystem),
+    m_GpuThread(SwitchSystem, *this)
 {
     memset(m_SyncPoints, 0, sizeof(m_SyncPoints));
 }
