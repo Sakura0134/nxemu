@@ -17,6 +17,11 @@ CVideo::~CVideo()
 
 bool CVideo::Initialize(void)
 {
+    if (!m_GpuThread.StartThread())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
     return true;
 }
 

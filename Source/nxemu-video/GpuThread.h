@@ -11,6 +11,7 @@ public:
     CGpuThread(ISwitchSystem & SwitchSystem, CVideo & Video);
     ~CGpuThread();
 
+    bool StartThread(void);
 private:
     CGpuThread();
     CGpuThread(const CGpuThread&);
