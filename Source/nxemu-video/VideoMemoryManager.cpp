@@ -59,6 +59,11 @@ void CVideoMemory::UpdateRange(uint64_t GpuAddr, PageEntry PageEntry, uint64_t S
     }
 }
 
+void CVideoMemory::Map(uint64_t CpuAddr, uint64_t GpuAddr, uint64_t Size)
+{
+    UpdateRange(GpuAddr, CpuAddr, Size);
+}
+
 uint64_t CVideoMemory::MapAllocate(uint64_t CpuAddr, uint64_t Size, uint64_t Align) 
 {
     uint64_t GpuAddr = 0;

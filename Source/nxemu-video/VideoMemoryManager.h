@@ -46,6 +46,7 @@ public:
     CVideoMemory(ISwitchSystem & System);
     ~CVideoMemory();
 
+    void Map(uint64_t CpuAddr, uint64_t GpuAddr, uint64_t Size);
     uint64_t MapAllocate(uint64_t CpuAddr, uint64_t Size, uint64_t Align);
     bool AllocateFixed(uint64_t GpuAddr, uint64_t Size);
     uint64_t Allocate(uint64_t Size, uint64_t Align);

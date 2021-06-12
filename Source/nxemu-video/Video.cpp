@@ -61,9 +61,10 @@ uint64_t CVideo::VideoMemoryAllocateFixed(uint64_t /*GpuAddr*/, uint64_t /*Size*
     return 0;
 }
 
-void CVideo::VideoMemoryMap(uint64_t /*CpuAddr*/, uint64_t /*GpuAddr*/, uint64_t /*Size*/ )
+void CVideo::VideoMemoryMap(uint64_t CpuAddr, uint64_t GpuAddr, uint64_t size)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    CGuard Guard(m_CS);
+    m_Memory.Map(CpuAddr, GpuAddr, size);
 }
 
 uint64_t CVideo::VideoMemoryMapAllocate(uint64_t CpuAddr, uint64_t Size, uint64_t Align)
