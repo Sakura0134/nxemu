@@ -7,6 +7,7 @@ CVideo::CVideo(IRenderWindow & RenderWindow, ISwitchSystem & SwitchSystem) :
     m_SwitchSystem(SwitchSystem),
     m_Memory(SwitchSystem)
 {
+    memset(m_SyncPoints, 0, sizeof(m_SyncPoints));
 }
 
 CVideo::~CVideo()
@@ -28,10 +29,19 @@ void CVideo::SwapBuffers(uint64_t /*Address*/, uint32_t /*Offset*/, uint32_t /*F
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
-uint32_t CVideo::GetSyncPointValue(uint32_t /*SyncPointId*/) const
+uint32_t CVideo::GetSyncPointValue(uint32_t SyncPointId) const
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
-    return 0;
+    if (SyncPointId >= MaxSyncPoints)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return 0;
+    }
+    uint32_t SyncPointValue;
+    {
+        CGuard Guard(m_CS);
+        SyncPointValue = m_SyncPoints[SyncPointId];
+    }
+    return SyncPointValue;
 }
 
 void CVideo::WaitFence(uint32_t /*SyncPointId*/, uint32_t /*value*/)

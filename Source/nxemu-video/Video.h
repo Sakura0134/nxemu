@@ -6,6 +6,11 @@
 class CVideo :
     public IVideo
 {
+    enum 
+    {
+        MaxSyncPoints = 192,
+    };
+
 public:
     CVideo(IRenderWindow& RenderWindow, ISwitchSystem& SwitchSystem);
     ~CVideo();
@@ -30,5 +35,6 @@ private:
     IRenderWindow & m_RenderWindow;
     ISwitchSystem & m_SwitchSystem;
     CVideoMemory m_Memory;
+    uint32_t m_SyncPoints[MaxSyncPoints];
     mutable CriticalSection m_CS;
 };
