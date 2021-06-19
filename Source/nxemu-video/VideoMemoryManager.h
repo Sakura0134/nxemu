@@ -10,6 +10,7 @@ class CVideoMemory
         AddressSpaceStart = 1ULL << 32,
         PageBits = 16,
         PageSize = 1 << PageBits,
+        PageMask = PageSize - 1,
         PageTableBits = 24,
         PageTableSize = 1 << PageTableBits,
         PageTableMask = PageTableSize - 1,
@@ -36,6 +37,16 @@ class CVideoMemory
         bool IsUnmapped() const;
         bool IsAllocated() const;
         bool IsValid() const;
+
+        uint64_t Address() const 
+        {
+            if (!IsValid()) 
+            {
+                return 0;
+            }
+            return ((uint64_t)m_State) << ShiftBits;
+        }
+
         PageEntry operator+(uint64_t offset) const;
 
     private:
@@ -45,6 +56,9 @@ class CVideoMemory
 public:
     CVideoMemory(ISwitchSystem & System);
     ~CVideoMemory();
+
+    bool GpuToCpuAddress(uint64_t GpuAddr, uint64_t & CpuAddress) const;
+    void ReadBuffer(uint64_t GpuAddr, void * Buffer, uint64_t Size) const;
 
     void Map(uint64_t CpuAddr, uint64_t GpuAddr, uint64_t Size);
     uint64_t MapAllocate(uint64_t CpuAddr, uint64_t Size, uint64_t Align);

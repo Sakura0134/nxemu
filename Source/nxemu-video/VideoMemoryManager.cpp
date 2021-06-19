@@ -153,3 +153,48 @@ uint64_t CVideoMemory::PageEntryIndex(uint64_t gpu_addr)
     return (gpu_addr >> PageBits) & PageTableMask;
 }
 
+bool CVideoMemory::GpuToCpuAddress(uint64_t GpuAddr, uint64_t& CpuAddress) const
+{
+    const PageEntry & Entry = m_PageTable[PageEntryIndex(GpuAddr)];
+    if (!Entry.IsValid()) 
+    {
+        return false;
+    }
+    CpuAddress = Entry.Address() + (GpuAddr & PageMask);
+    return true;
+}
+
+void CVideoMemory::ReadBuffer(uint64_t GpuAddr, void * Buffer, uint64_t Size) const 
+{
+    uint64_t RemainingSize = Size;
+    uint64_t PageIndex = GpuAddr >> PageBits;
+    uint64_t PageOffset = GpuAddr & PageMask;
+
+    while (RemainingSize > 0) 
+    {
+        uint64_t CopyAmount = PageSize - PageOffset;
+        if (RemainingSize < CopyAmount) 
+        {
+            CopyAmount = RemainingSize;
+        }
+
+        uint64_t CpuAddr;
+        if (GpuToCpuAddress(PageIndex << PageBits, CpuAddr))
+        {
+            if (!m_System.ReadCPUMemory(CpuAddr + PageOffset, Buffer, CopyAmount)) 
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        } 
+        else 
+        {
+            std::memset(Buffer, 0, CopyAmount);
+        }
+
+        PageIndex += 1;
+        PageOffset = 0;
+        Buffer = ((uint8_t *)Buffer) + CopyAmount;
+        RemainingSize -= CopyAmount;
+    }
+}
+

@@ -28,6 +28,8 @@ public:
     uint64_t VideoMemoryAllocateFixed(uint64_t GpuAddr, uint64_t Size);
     void VideoMemoryMap(uint64_t CpuAddr, uint64_t GpuAddr, uint64_t size);
     uint64_t VideoMemoryMapAllocate(uint64_t CpuAddr, uint64_t size, uint64_t align);
+
+    CVideoMemory & VideoMemory() { return m_Memory; }
 private:
     CVideo();
     CVideo(const CVideo&);
