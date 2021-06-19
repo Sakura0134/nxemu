@@ -6,6 +6,7 @@ CVideo::CVideo(IRenderWindow & RenderWindow, ISwitchSystem & SwitchSystem) :
     m_RenderWindow(RenderWindow),
     m_SwitchSystem(SwitchSystem),
     m_Memory(SwitchSystem),
+    m_Maxwell3D(SwitchSystem, m_Memory),
     m_GpuThread(SwitchSystem, *this)
 {
     memset(m_BoundEngines, 0, sizeof(m_BoundEngines));
@@ -95,7 +96,21 @@ void CVideo::CallMethod(BufferMethods Method, uint32_t Argument, uint32_t SubCha
 {
     if (Method >= BufferMethods_NonPuller) 
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        bool LastCall = MethodCount <= 1;
+
+        if (SubChannel >= sizeof(m_BoundEngines)/sizeof(m_BoundEngines[0]))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+
+        switch (m_BoundEngines[SubChannel])
+        {
+        case EngineID_MAXWELL_B:
+            m_Maxwell3D.CallMethod((CMaxwell3D::Method)Method, Argument, LastCall);
+            break;
+        default:
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
     }
     else 
     {

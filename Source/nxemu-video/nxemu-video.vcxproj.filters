@@ -31,6 +31,12 @@
     <Filter Include="Source Files\Task">
       <UniqueIdentifier>{0e1a628b-54fd-4855-b015-4e1a7d2f6de6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{e5f4f32b-f4e5-4dbc-826a-c5d9a182a4b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{a2ba48cb-d373-4e2e-9c28-63a19d7a07fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NXEmu-video.cpp">
@@ -51,6 +57,9 @@
     <ClCompile Include="Task\CommandList.cpp">
       <Filter>Source Files\Task</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Maxwell3D.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Video.h">
@@ -70,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="Task\CommandList.h">
       <Filter>Header Files\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Maxwell3D.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

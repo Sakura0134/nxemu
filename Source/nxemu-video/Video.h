@@ -2,6 +2,7 @@
 #include "VideoMemoryManager.h"
 #include "GpuThread.h"
 #include "GpuTypes.h"
+#include "Engine\Maxwell3D.h"
 #include <nxemu-plugin-spec\Video.h>
 #include <Common\CriticalSection.h>
 #include <Common\Padding.h>
@@ -57,6 +58,7 @@ private:
     ISwitchSystem & m_SwitchSystem;
     CVideoMemory m_Memory;
     EngineID m_BoundEngines[8];
+    CMaxwell3D m_Maxwell3D;
     Registers m_Regs;
     uint32_t m_SyncPoints[MaxSyncPoints];
     mutable CriticalSection m_CS;
