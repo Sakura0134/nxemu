@@ -1,8 +1,10 @@
 #pragma once
 #include "VideoMemoryManager.h"
 #include "GpuThread.h"
+#include "GpuTypes.h"
 #include <nxemu-plugin-spec\Video.h>
 #include <Common\CriticalSection.h>
+#include <Common\Padding.h>
 
 class CVideo :
     public IVideo
@@ -11,9 +13,21 @@ class CVideo :
     {
         MaxSyncPoints = 192,
     };
+#pragma warning(push)
+#pragma warning(disable : 4201) // warning C4201: nonstandard extension used : nameless struct/union
+    union Registers 
+    {
+        enum { NUM_REGS = 0x40 };
+        struct 
+        {
+            PADDING_WORDS(0x40);
+        };
+        uint32_t Value[NUM_REGS];
+    };
+#pragma warning(pop)
 
 public:
-    CVideo(IRenderWindow& RenderWindow, ISwitchSystem& SwitchSystem);
+    CVideo(IRenderWindow & RenderWindow, ISwitchSystem & SwitchSystem);
     ~CVideo();
 
     //IVideo
@@ -29,15 +43,21 @@ public:
     void VideoMemoryMap(uint64_t CpuAddr, uint64_t GpuAddr, uint64_t size);
     uint64_t VideoMemoryMapAllocate(uint64_t CpuAddr, uint64_t size, uint64_t align);
 
+    void CallMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel, uint32_t MethodCount);
+
     CVideoMemory & VideoMemory() { return m_Memory; }
 private:
     CVideo();
     CVideo(const CVideo&);
     CVideo& operator=(const CVideo&);
 
+    void CallPullerMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel);
+
     IRenderWindow & m_RenderWindow;
     ISwitchSystem & m_SwitchSystem;
     CVideoMemory m_Memory;
+    EngineID m_BoundEngines[8];
+    Registers m_Regs;
     uint32_t m_SyncPoints[MaxSyncPoints];
     mutable CriticalSection m_CS;
     CGpuThread m_GpuThread;

@@ -8,6 +8,8 @@ CVideo::CVideo(IRenderWindow & RenderWindow, ISwitchSystem & SwitchSystem) :
     m_Memory(SwitchSystem),
     m_GpuThread(SwitchSystem, *this)
 {
+    memset(m_BoundEngines, 0, sizeof(m_BoundEngines));
+    memset(m_Regs.Value, 0, sizeof(m_Regs.Value));
     memset(m_SyncPoints, 0, sizeof(m_SyncPoints));
 }
 
@@ -88,3 +90,41 @@ uint64_t CVideo::VideoMemoryMapAllocate(uint64_t CpuAddr, uint64_t Size, uint64_
     CGuard Guard(m_CS);
     return m_Memory.MapAllocate(CpuAddr, Size, Align);
 }
+
+void CVideo::CallMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel, uint32_t MethodCount) 
+{
+    if (Method >= BufferMethods_NonPuller) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    else 
+    {
+        CallPullerMethod(Method, Argument, SubChannel);
+    }
+}
+
+void CVideo::CallPullerMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel) 
+{
+    if (Method >= Registers::NUM_REGS)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    m_Regs.Value[Method] = Argument;
+
+    switch (Method) 
+    {
+    case BufferMethods_BindObject: 
+        if (SubChannel >= (sizeof(m_BoundEngines) / sizeof(m_BoundEngines[0])))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        m_BoundEngines[SubChannel] = (EngineID)Argument;
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    }
+}
+

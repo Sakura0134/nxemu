@@ -36,14 +36,13 @@ bool CommandListTask::Step(void)
 
         if (m_DmaMethodCount)
         {
-            g_Notify->BreakPoint(__FILE__,__LINE__);
             if (m_DmaNonIncrementing)
             {
                 g_Notify->BreakPoint(__FILE__,__LINE__);
             }
             else 
             {
-                g_Notify->BreakPoint(__FILE__,__LINE__);
+                m_Video.CallMethod(m_DmaMethod, Cmd.Value, m_DmaSubchannel, m_DmaMethodCount);
             }
             if (!m_DmaNonIncrementing)
             {

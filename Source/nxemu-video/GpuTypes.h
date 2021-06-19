@@ -22,3 +22,12 @@ enum BufferMethods : unsigned
     BufferMethods_Yield = 0x20,
     BufferMethods_NonPuller = 0x40,
 };
+
+enum EngineID 
+{
+    EngineID_FERMI_TWOD_A = 0x902D,
+    EngineID_MAXWELL_B = 0xB197,
+    EngineID_KEPLER_COMPUTE_B = 0xB1C0,
+    EngineID_KEPLER_INLINE_TO_MEMORY_B = 0xA140,
+    EngineID_MAXWELL_DMA_COPY_A = 0xB0B5,
+};
