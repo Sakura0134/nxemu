@@ -66,4 +66,9 @@ private:
     CVideo & m_Video;
     CommandLists m_CommandLists;
     uint32_t m_CommandIndex;
+    BufferMethods m_DmaMethod;
+    uint32_t m_DmaMethodCount;
+    uint32_t m_DmaSubchannel;
+    bool m_DmaNonIncrementing;
+    bool m_DmaIncrementOnce;
 };
