@@ -51,6 +51,7 @@
   <ItemGroup>
     <ClInclude Include="Renderer\OpenGL\RendererOpenGL.h" />
     <ClInclude Include="Renderer\Renderer.h" />
+    <ClInclude Include="Task\GpuTask.h" />
     <ClInclude Include="Video.h" />
     <ClInclude Include="VideoMemoryManager.h" />
   </ItemGroup>
