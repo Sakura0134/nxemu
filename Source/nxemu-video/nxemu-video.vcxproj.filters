@@ -28,6 +28,9 @@
     <Filter Include="Header Files\Task">
       <UniqueIdentifier>{8700a849-3052-4a79-a26d-17f0110ba2c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Task">
+      <UniqueIdentifier>{0e1a628b-54fd-4855-b015-4e1a7d2f6de6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NXEmu-video.cpp">
@@ -45,6 +48,9 @@
     <ClCompile Include="Renderer\OpenGL\RendererOpenGL.cpp">
       <Filter>Source Files\Renderer\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="Task\CommandList.cpp">
+      <Filter>Source Files\Task</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Video.h">
@@ -60,6 +66,9 @@
       <Filter>Header Files\Renderer\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="Task\GpuTask.h">
+      <Filter>Header Files\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="Task\CommandList.h">
       <Filter>Header Files\Task</Filter>
     </ClInclude>
   </ItemGroup>

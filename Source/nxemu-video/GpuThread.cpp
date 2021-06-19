@@ -1,6 +1,7 @@
 #include "GpuThread.h"
 #include "Renderer\OpenGL\RendererOpenGL.h"
 #include "VideoNotification.h"
+#include "Task/CommandList.h"
 #include <Common/Util.h>
 
 CGpuThread::CGpuThread(ISwitchSystem & SwitchSystem, CVideo & Video) : 
@@ -38,6 +39,18 @@ bool CGpuThread::StartThread()
         nxutil::Sleep(10);
     }
     return m_RenderInit;
+}
+
+void CGpuThread::PushCommands(const uint64_t* Entries, uint32_t NoOfEntries)
+{
+    PushCommand(std::move(std::make_shared<CommandListTask>(m_SwitchSystem, m_Video, *m_Renderer, Entries, NoOfEntries)));
+}
+
+void CGpuThread::PushCommand(GpuTask && Task) 
+{
+    CGuard Guard(m_cs);
+    m_Tasks.push_back(std::move(Task));
+    m_TaskEvent.Trigger();
 }
 
 void CGpuThread::GpuThread(void)

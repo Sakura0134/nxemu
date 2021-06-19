@@ -21,6 +21,8 @@ public:
     ~CGpuThread();
 
     bool StartThread(void);
+    void PushCommands(const uint64_t * Entries, uint32_t NoOfEntries);
+
 private:
     CGpuThread();
     CGpuThread(const CGpuThread&);
@@ -28,6 +30,8 @@ private:
 
     void GpuThread(void);
     static uint32_t stGpuThread(void* _this) { ((CGpuThread*)_this)->GpuThread(); return 0; }
+
+    void PushCommand(GpuTask && Task);
 
     std::unique_ptr<IRenderer> m_Renderer;
     CriticalSection m_cs;

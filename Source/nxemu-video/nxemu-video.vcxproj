@@ -45,12 +45,14 @@
     <ClCompile Include="GpuThread.cpp" />
     <ClCompile Include="NXEmu-video.cpp" />
     <ClCompile Include="Renderer\OpenGL\RendererOpenGL.cpp" />
+    <ClCompile Include="Task\CommandList.cpp" />
     <ClCompile Include="Video.cpp" />
     <ClCompile Include="VideoMemoryManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer\OpenGL\RendererOpenGL.h" />
     <ClInclude Include="Renderer\Renderer.h" />
+    <ClInclude Include="Task\CommandList.h" />
     <ClInclude Include="Task\GpuTask.h" />
     <ClInclude Include="Video.h" />
     <ClInclude Include="VideoMemoryManager.h" />

@@ -25,9 +25,9 @@ bool CVideo::Initialize(void)
     return true;
 }
 
-void CVideo::PushGPUEntries(const uint64_t * /*Entries*/, uint32_t /*NoOfEntries*/)
+void CVideo::PushGPUEntries(const uint64_t * Entries, uint32_t NoOfEntries)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    m_GpuThread.PushCommands(Entries, NoOfEntries);
 }
 
 void CVideo::SwapBuffers(uint64_t /*Address*/, uint32_t /*Offset*/, uint32_t /*Format*/, uint32_t /*Width*/, uint32_t /*Height*/, uint32_t /*Stride*/, uint32_t /*Transform*/, int32_t /*CropLeft*/, int32_t /*CropTop*/, int32_t /*CropRight*/, int32_t /*CropBottom*/)
