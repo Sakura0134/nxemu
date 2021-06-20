@@ -332,10 +332,12 @@ private:
     void InitializeRegisterDefaults();
     uint32_t ProcessShadowRam(uint32_t Method, uint32_t Argument);
     void ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint32_t Argument, bool Last);
+    void ProcessMacroBind(uint32_t data);
 
     ISwitchSystem & m_SwitchSystem;
     CVideoMemory & m_VideoMemory;
     Registers m_Regs, m_ShadowRegs;
+    uint32_t m_MacroPositions[0x80];
 
     static_assert(sizeof(Registers) == NumRegisters * sizeof(uint32_t), "Maxwell3D Registers has wrong size");
 };

@@ -5,6 +5,7 @@ CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory)
     m_SwitchSystem(SwitchSystem),
     m_VideoMemory(VideoMemory)
 {
+    memset(m_MacroPositions, 0, sizeof(m_MacroPositions));
     InitializeRegisterDefaults();
 }
 
@@ -32,7 +33,7 @@ uint32_t CMaxwell3D::ProcessShadowRam(uint32_t Method, uint32_t Argument)
     return Argument;
 }
 
-void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t /*ShadowArgument*/, uint32_t /*Argument*/, bool /*Last*/)
+void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint32_t /*Argument*/, bool /*Last*/)
 {
     switch (Method)
     {
@@ -65,7 +66,11 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t /*ShadowArgument*/, u
     case Method_ExecUpload:
     case Method_Firmware4:
     case Method_FragmentBarrier:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
     case Method_MacrosBind:
+        ProcessMacroBind(ShadowArgument);
+        break;
     case Method_MacrosData:
     case Method_QueryGet:
     case Method_ShadowRamControl:
@@ -92,5 +97,10 @@ void CMaxwell3D::CallMethod(Method Method, uint32_t Argument, bool Last)
         }
         ProcessMethodCall(Method, ShadowArgument, Argument, Last);
     }
+}
 
+void CMaxwell3D::ProcessMacroBind(uint32_t Data)
+{
+    m_MacroPositions[m_Regs.Macros.Entry] = Data;
+    m_Regs.Macros.Entry += 1;
 }
