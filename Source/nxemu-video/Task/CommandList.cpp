@@ -2,7 +2,7 @@
 #include "Video.h"
 #include "VideoNotification.h"
 
-CommandListTask::CommandListTask(ISwitchSystem & SwitchSystem, CVideo & Video, IRenderer & Renderer, const uint64_t * Commands, uint32_t NoOfCommands) :
+CommandListTask::CommandListTask(ISwitchSystem & /*SwitchSystem*/, CVideo & Video, IRenderer & /*Renderer*/, const uint64_t * Commands, uint32_t NoOfCommands) :
     m_Video(Video),
     m_CommandIndex(0),
     m_DmaMethod(BufferMethods_BindObject),
