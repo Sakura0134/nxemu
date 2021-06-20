@@ -118,6 +118,23 @@ void CVideo::CallMethod(BufferMethods Method, uint32_t Argument, uint32_t SubCha
     }
 }
 
+void CVideo::CallMultiMethod(uint32_t Method, uint32_t SubChannel, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending)
+{
+    if (SubChannel >= sizeof(m_BoundEngines) / sizeof(m_BoundEngines[0]))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    if (Method >= BufferMethods_NonPuller) 
+    {
+        CallEngineMultiMethod(Method, SubChannel, BaseStart, Amount, MethodsPending);
+    } 
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void CVideo::CallPullerMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel) 
 {
     if (Method >= Registers::NUM_REGS)
@@ -140,6 +157,18 @@ void CVideo::CallPullerMethod(BufferMethods Method, uint32_t Argument, uint32_t 
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
+    }
+}
+
+void CVideo::CallEngineMultiMethod(uint32_t Method, uint32_t SubChannel, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending)
+{
+    switch (m_BoundEngines[SubChannel]) 
+    {
+    case EngineID_MAXWELL_B:
+        m_Maxwell3D.CallMultiMethod((CMaxwell3D::Method)Method, BaseStart, Amount, MethodsPending);
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 }
 

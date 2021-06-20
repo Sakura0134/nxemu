@@ -1,6 +1,7 @@
 #include "CommandList.h"
 #include "Video.h"
 #include "VideoNotification.h"
+#include <algorithm>
 
 CommandListTask::CommandListTask(ISwitchSystem & /*SwitchSystem*/, CVideo & Video, IRenderer & /*Renderer*/, const uint64_t * Commands, uint32_t NoOfCommands) :
     m_Video(Video),
@@ -38,7 +39,11 @@ bool CommandListTask::Step(void)
         {
             if (m_DmaNonIncrementing)
             {
-                g_Notify->BreakPoint(__FILE__,__LINE__);
+                uint32_t MaxWrite = std::min<uint32_t>(i + m_DmaMethodCount, Cmds.size()) - i;
+                m_Video.CallMultiMethod((uint32_t)m_DmaMethod, m_DmaSubchannel, &Cmd.Value, MaxWrite, m_DmaMethodCount);
+                m_DmaMethodCount -= MaxWrite;
+                i += MaxWrite;
+                continue;
             }
             else 
             {

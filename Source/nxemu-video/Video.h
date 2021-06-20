@@ -45,6 +45,7 @@ public:
     uint64_t VideoMemoryMapAllocate(uint64_t CpuAddr, uint64_t size, uint64_t align);
 
     void CallMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel, uint32_t MethodCount);
+    void CallMultiMethod(uint32_t Method, uint32_t SubChannel, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending);
 
     CVideoMemory & VideoMemory() { return m_Memory; }
 private:
@@ -52,6 +53,7 @@ private:
     CVideo(const CVideo&);
     CVideo& operator=(const CVideo&);
 
+    void CallEngineMultiMethod(uint32_t Method, uint32_t SubChannel, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending);
     void CallPullerMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel);
 
     IRenderWindow & m_RenderWindow;

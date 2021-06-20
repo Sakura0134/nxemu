@@ -323,6 +323,7 @@ public:
     CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory);
     ~CMaxwell3D();
 
+    void CallMultiMethod(Method Method, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending);
     void CallMethod(Method Method, uint32_t Argument, bool Last);
 private:
     CMaxwell3D();
