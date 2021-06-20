@@ -37,6 +37,12 @@
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{a2ba48cb-d373-4e2e-9c28-63a19d7a07fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Util">
+      <UniqueIdentifier>{1d532a4d-d559-40e9-a4e1-0b01892746aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Util">
+      <UniqueIdentifier>{c8e8534e-05bf-4b9f-9259-360d7137e907}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NXEmu-video.cpp">
@@ -60,6 +66,9 @@
     <ClCompile Include="Engine\Maxwell3D.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Util\StateTracker.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Video.h">
@@ -82,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Maxwell3D.h">
       <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\StateTracker.h">
+      <Filter>Header Files\Util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

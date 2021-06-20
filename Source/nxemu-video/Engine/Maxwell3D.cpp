@@ -3,7 +3,8 @@
 
 CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory) :
     m_SwitchSystem(SwitchSystem),
-    m_VideoMemory(VideoMemory)
+    m_VideoMemory(VideoMemory),
+    m_StateTracker(CMaxwell3D::NumRegisters, 0)
 {
     memset(m_MacroPositions, 0, sizeof(m_MacroPositions));
     InitializeRegisterDefaults();
@@ -93,7 +94,7 @@ void CMaxwell3D::CallMethod(Method Method, uint32_t Argument, bool Last)
         if (m_Regs.Value[Method] != ShadowArgument)
         {
             m_Regs.Value[Method] = ShadowArgument;
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            m_StateTracker.RegisterChanged(Method);
         }
         ProcessMethodCall(Method, ShadowArgument, Argument, Last);
     }
