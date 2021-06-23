@@ -4,6 +4,7 @@
 CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory) :
     m_SwitchSystem(SwitchSystem),
     m_VideoMemory(VideoMemory),
+    m_MacroEngine(GetMacroEngine(*this)),
     m_StateTracker(CMaxwell3D::NumRegisters, 0)
 {
     memset(m_MacroPositions, 0, sizeof(m_MacroPositions));
@@ -73,6 +74,8 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint3
         ProcessMacroBind(ShadowArgument);
         break;
     case Method_MacrosData:
+        m_MacroEngine->AddCode(m_Regs.Macros.UploadAddress, ShadowArgument);
+        break;
     case Method_QueryGet:
     case Method_ShadowRamControl:
     case Method_SyncInfo:

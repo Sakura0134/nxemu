@@ -1,4 +1,5 @@
 #pragma once
+#include "Macro\MacroEngine.h"
 #include "Util\StateTracker.h"
 #include <Common\padding.h>
 #include <stdint.h>
@@ -340,6 +341,7 @@ private:
     CVideoMemory & m_VideoMemory;
     Registers m_Regs, m_ShadowRegs;
     uint32_t m_MacroPositions[0x80];
+    std::unique_ptr<MacroEngine> m_MacroEngine;
     CStateTracker m_StateTracker;
 
     static_assert(sizeof(Registers) == NumRegisters * sizeof(uint32_t), "Maxwell3D Registers has wrong size");

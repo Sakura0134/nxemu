@@ -23,6 +23,10 @@ void CStateTracker::FlagSet(uint32_t Index)
 {
     if (Index >= m_Flags.size())
     {
+        if (m_Flags.size() == 0)
+        {
+            return;
+        }
         g_Notify->BreakPoint(__FILE__,__LINE__);
     }
     m_Flags[Index] = true;

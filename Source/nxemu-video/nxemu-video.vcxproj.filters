@@ -43,6 +43,12 @@
     <Filter Include="Source Files\Util">
       <UniqueIdentifier>{c8e8534e-05bf-4b9f-9259-360d7137e907}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Macro">
+      <UniqueIdentifier>{2a41c8ea-0e32-4934-b530-937078807036}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Macro">
+      <UniqueIdentifier>{42bc6a76-9a1f-4f07-84f5-9c4699d10401}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NXEmu-video.cpp">
@@ -69,6 +75,12 @@
     <ClCompile Include="Util\StateTracker.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
+    <ClCompile Include="Macro\MacroEngine.cpp">
+      <Filter>Source Files\Macro</Filter>
+    </ClCompile>
+    <ClCompile Include="Macro\MacroInterpreter.cpp">
+      <Filter>Source Files\Macro</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Video.h">
@@ -94,6 +106,12 @@
     </ClInclude>
     <ClInclude Include="Util\StateTracker.h">
       <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Macro\MacroEngine.h">
+      <Filter>Header Files\Macro</Filter>
+    </ClInclude>
+    <ClInclude Include="Macro\MacroInterpreter.h">
+      <Filter>Header Files\Macro</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
