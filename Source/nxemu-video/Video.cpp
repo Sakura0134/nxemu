@@ -4,7 +4,6 @@
 
 CVideo::CVideo(IRenderWindow & RenderWindow, ISwitchSystem & SwitchSystem) :
     m_RenderWindow(RenderWindow),
-    m_SwitchSystem(SwitchSystem),
     m_Memory(SwitchSystem),
     m_Maxwell3D(SwitchSystem, m_Memory),
     m_GpuThread(SwitchSystem, *this)
@@ -105,6 +104,9 @@ void CVideo::CallMethod(BufferMethods Method, uint32_t Argument, uint32_t SubCha
 
         switch (m_BoundEngines[SubChannel])
         {
+        case EngineID_FERMI_TWOD_A:
+            m_Fermi2D.CallMethod(Method, Argument, LastCall);
+            break;
         case EngineID_MAXWELL_B:
             m_Maxwell3D.CallMethod((CMaxwell3D::Method)Method, Argument, LastCall);
             break;

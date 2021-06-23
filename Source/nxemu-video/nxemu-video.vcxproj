@@ -43,6 +43,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Fermi2D.cpp" />
     <ClCompile Include="Engine\Maxwell3D.cpp" />
     <ClCompile Include="GpuThread.cpp" />
     <ClCompile Include="Macro\MacroEngine.cpp" />
@@ -55,6 +56,7 @@
     <ClCompile Include="VideoMemoryManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Fermi2D.h" />
     <ClInclude Include="Engine\Maxwell3D.h" />
     <ClInclude Include="Macro\MacroEngine.h" />
     <ClInclude Include="Macro\MacroInterpreter.h" />

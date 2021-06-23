@@ -81,6 +81,9 @@
     <ClCompile Include="Macro\MacroInterpreter.cpp">
       <Filter>Source Files\Macro</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Fermi2D.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Video.h">
@@ -112,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="Macro\MacroInterpreter.h">
       <Filter>Header Files\Macro</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Fermi2D.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

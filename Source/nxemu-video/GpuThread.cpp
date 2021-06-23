@@ -43,7 +43,7 @@ bool CGpuThread::StartThread()
 
 void CGpuThread::PushCommands(const uint64_t* Entries, uint32_t NoOfEntries)
 {
-    PushCommand(std::move(std::make_shared<CommandListTask>(m_SwitchSystem, m_Video, *m_Renderer, Entries, NoOfEntries)));
+    PushCommand(std::move(std::make_shared<CommandListTask>(m_Video, *m_Renderer, Entries, NoOfEntries)));
 }
 
 void CGpuThread::PushCommand(GpuTask && Task) 

@@ -3,8 +3,9 @@
 #include "VideoNotification.h"
 #include <algorithm>
 
-CommandListTask::CommandListTask(ISwitchSystem & /*SwitchSystem*/, CVideo & Video, IRenderer & /*Renderer*/, const uint64_t * Commands, uint32_t NoOfCommands) :
+CommandListTask::CommandListTask(CVideo & Video, IRenderer & Renderer, const uint64_t * Commands, uint32_t NoOfCommands) :
     m_Video(Video),
+    m_Renderer(Renderer),
     m_CommandIndex(0),
     m_DmaMethod(BufferMethods_BindObject),
     m_DmaMethodCount(0),
@@ -39,7 +40,7 @@ bool CommandListTask::Step(void)
         {
             if (m_DmaNonIncrementing)
             {
-                uint32_t MaxWrite = std::min<uint32_t>(i + m_DmaMethodCount, Cmds.size()) - i;
+                uint32_t MaxWrite = std::min<uint32_t>(i + m_DmaMethodCount, (uint32_t)Cmds.size()) - i;
                 m_Video.CallMultiMethod((uint32_t)m_DmaMethod, m_DmaSubchannel, &Cmd.Value, MaxWrite, m_DmaMethodCount);
                 m_DmaMethodCount -= MaxWrite;
                 i += MaxWrite;
@@ -68,6 +69,13 @@ bool CommandListTask::Step(void)
                 m_DmaSubchannel = Cmd.SubChannel;
                 m_DmaMethodCount = Cmd.ArgCount;
                 m_DmaNonIncrementing = false;
+                m_DmaIncrementOnce = false;
+                break;
+            case SubmissionMode_Inline:
+                m_DmaMethod = Cmd.Method;
+                m_DmaSubchannel = Cmd.SubChannel;
+                m_Video.CallMethod(m_DmaMethod, Cmd.ArgCount, m_DmaSubchannel, m_DmaMethodCount);
+                m_DmaNonIncrementing = true;
                 m_DmaIncrementOnce = false;
                 break;
             case SubmissionMode_IncreaseOnce:

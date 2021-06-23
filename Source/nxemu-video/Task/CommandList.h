@@ -53,7 +53,7 @@ class CommandListTask :
     typedef std::vector<Command> Commands;
 
 public:
-    CommandListTask(ISwitchSystem & SwitchSystem, CVideo & Video, IRenderer & Renderer, const uint64_t* Commands, uint32_t NoOfCommands);
+    CommandListTask(CVideo & Video, IRenderer & Renderer, const uint64_t* Commands, uint32_t NoOfCommands);
     void Execute(void);
 
 private:
@@ -64,6 +64,7 @@ private:
     bool Step(void);
 
     CVideo & m_Video;
+    IRenderer & m_Renderer; 
     CommandLists m_CommandLists;
     uint32_t m_CommandIndex;
     BufferMethods m_DmaMethod;

@@ -3,6 +3,7 @@
 #include "GpuThread.h"
 #include "GpuTypes.h"
 #include "Engine\Maxwell3D.h"
+#include "Engine\Fermi2D.h"
 #include <nxemu-plugin-spec\Video.h>
 #include <Common\CriticalSection.h>
 #include <Common\Padding.h>
@@ -57,10 +58,10 @@ private:
     void CallPullerMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel);
 
     IRenderWindow & m_RenderWindow;
-    ISwitchSystem & m_SwitchSystem;
     CVideoMemory m_Memory;
     EngineID m_BoundEngines[8];
     CMaxwell3D m_Maxwell3D;
+    CFermi2D m_Fermi2D;
     Registers m_Regs;
     uint32_t m_SyncPoints[MaxSyncPoints];
     mutable CriticalSection m_CS;
