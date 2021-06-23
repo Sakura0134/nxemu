@@ -7,9 +7,9 @@ CMacroInterpreter::CMacroInterpreter(CMaxwell3D & Maxwell3d) :
 {
 }
 
-void CMacroInterpreter::AddCode(uint32_t /*Method*/, uint32_t /*Data*/)
+void CMacroInterpreter::AddCode(uint32_t Method, uint32_t Data)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    m_MacroCode[Method].push_back(Data);
 }
 
 void CMacroInterpreter::Execute(uint32_t /*Method*/, const MacroParams & /*Params*/)

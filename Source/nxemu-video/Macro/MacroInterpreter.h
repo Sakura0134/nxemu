@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MacroEngine.h"
+#include <unordered_map>
 
 class CMaxwell3D;
 
@@ -20,4 +21,5 @@ private:
     
     
     CMaxwell3D & m_Maxwell3d;
+    std::unordered_map<uint32_t, std::vector<uint32_t>> m_MacroCode;
 };
