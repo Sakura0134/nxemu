@@ -5,6 +5,7 @@ CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory)
     m_SwitchSystem(SwitchSystem),
     m_VideoMemory(VideoMemory),
     m_MacroEngine(GetMacroEngine(*this)),
+    m_ExecutingMacro(0),
     m_StateTracker(CMaxwell3D::NumRegisters, 0)
 {
     memset(m_MacroPositions, 0, sizeof(m_MacroPositions));
@@ -19,6 +20,25 @@ void CMaxwell3D::InitializeRegisterDefaults()
 {
     memset(&m_Regs, 0, sizeof(m_Regs));
     m_ShadowRegs = m_Regs;
+}
+
+void CMaxwell3D::ProcessMacro(uint32_t Method, const uint32_t * BaseStart, uint32_t Amount, bool Last)
+{
+    if (m_ExecutingMacro == 0)
+    {
+        if ((Method % 2) != 0)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        m_ExecutingMacro = Method;
+    }
+    m_MacroParams.insert(m_MacroParams.end(), BaseStart, BaseStart + Amount);
+    if (Last)
+    {
+        CallMacroMethod(m_ExecutingMacro, m_MacroParams);
+        m_MacroParams.clear();
+    }
 }
 
 uint32_t CMaxwell3D::ProcessShadowRam(uint32_t Method, uint32_t Argument)
@@ -85,11 +105,23 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint3
     }
 }
 
+void CMaxwell3D::CallMacroMethod(uint32_t Method, const MacroParams & Parameters)
+{
+    uint32_t Entry = ((Method - NumRegisters) >> 1) % (uint32_t)(sizeof(m_MacroPositions) / sizeof(m_MacroPositions[0]));
+    m_ExecutingMacro = 0;
+    m_MacroEngine->Execute(m_MacroPositions[Entry], Parameters);
+}
+
 void CMaxwell3D::CallMethod(Method Method, uint32_t Argument, bool Last)
 {
-    if (Method >= NumRegisters)
+    if (m_ExecutingMacro != 0)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    if (Method >= NumRegisters)
+    {
+        ProcessMacro(Method, &Argument, 1, Last);
     }
     else
     {

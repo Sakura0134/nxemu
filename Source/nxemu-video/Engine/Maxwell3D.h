@@ -333,8 +333,10 @@ private:
     CMaxwell3D& operator=(const CMaxwell3D&);
 
     void InitializeRegisterDefaults();
+    void ProcessMacro(uint32_t Method, const uint32_t * BaseStart, uint32_t Amount, bool Last);
     uint32_t ProcessShadowRam(uint32_t Method, uint32_t Argument);
     void ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint32_t Argument, bool Last);
+    void CallMacroMethod(uint32_t Method, const MacroParams & Parameters);
     void ProcessMacroBind(uint32_t data);
 
     ISwitchSystem & m_SwitchSystem;
@@ -342,6 +344,8 @@ private:
     Registers m_Regs, m_ShadowRegs;
     uint32_t m_MacroPositions[0x80];
     std::unique_ptr<MacroEngine> m_MacroEngine;
+    uint32_t m_ExecutingMacro;
+    MacroParams m_MacroParams;
     CStateTracker m_StateTracker;
 
     static_assert(sizeof(Registers) == NumRegisters * sizeof(uint32_t), "Maxwell3D Registers has wrong size");

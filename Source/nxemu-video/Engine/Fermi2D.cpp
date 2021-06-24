@@ -1,8 +1,10 @@
 #include "Fermi2D.h"
 #include "VideoNotification.h"
+#include <string.h>
 
 CFermi2D::CFermi2D()
 {
+    memset(&m_Regs, 0, sizeof(m_Regs));
 }
 
 CFermi2D::~CFermi2D()
