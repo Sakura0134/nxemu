@@ -139,7 +139,7 @@ void CMaxwell3D::CallMultiMethod(Method Method, const uint32_t * BaseStart, uint
 {
     if (Method >= NumRegisters)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        ProcessMacro(Method, BaseStart, Amount, Amount == MethodsPending);
     }
     else if (Method >= Method_ConstBufferData0 && Method <= Method_ConstBufferData15) 
     {
@@ -152,6 +152,11 @@ void CMaxwell3D::CallMultiMethod(Method Method, const uint32_t * BaseStart, uint
             CallMethod(Method, BaseStart[i], (int32_t)(MethodsPending - i) <= 1);
         }
     }
+}
+
+void CMaxwell3D::CallMethodFromMME(Method Method, uint32_t Argument)
+{
+    g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
 void CMaxwell3D::ProcessMacroBind(uint32_t Data)
