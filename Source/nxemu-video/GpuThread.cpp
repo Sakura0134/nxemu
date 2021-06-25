@@ -1,5 +1,6 @@
 #include "GpuThread.h"
 #include "Renderer\OpenGL\RendererOpenGL.h"
+#include "Video.h"
 #include "VideoNotification.h"
 #include "Task/CommandList.h"
 #include <Common/Util.h>
@@ -61,6 +62,7 @@ void CGpuThread::GpuThread(void)
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return;
     }
+    m_Video.BindRenderer(m_Renderer.get());
     m_RenderInit = true;
 
     while (m_Running)
@@ -90,4 +92,5 @@ void CGpuThread::GpuThread(void)
         }
         Task->Execute();
     }
+    m_Video.BindRenderer(nullptr);
 }

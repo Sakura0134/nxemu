@@ -1,4 +1,5 @@
 #include "Engine/Maxwell3D.h"
+#include "Renderer/Renderer.h"
 #include "VideoNotification.h"
 
 CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory) :
@@ -6,6 +7,7 @@ CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory)
     m_VideoMemory(VideoMemory),
     m_MacroEngine(GetMacroEngine(*this)),
     m_ExecutingMacro(0),
+    m_Renderer(nullptr),
     m_StateTracker(CMaxwell3D::NumRegisters, 0)
 {
     memset(m_MacroPositions, 0, sizeof(m_MacroPositions));
@@ -14,6 +16,15 @@ CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory)
 
 CMaxwell3D::~CMaxwell3D()
 {
+}
+
+void CMaxwell3D::BindRenderer(IRenderer * Renderer)
+{
+    if (Renderer != nullptr && m_Renderer != nullptr) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    m_Renderer = Renderer;
 }
 
 void CMaxwell3D::InitializeRegisterDefaults()
@@ -100,8 +111,11 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint3
     case Method_ShadowRamControl:
     case Method_SyncInfo:
     case Method_TiledCacheBarrier:
-    case Method_WaitForIdle:
         g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    case Method_WaitForIdle:
+        m_Renderer->WaitForIdle();
+        break;
     }
 }
 
@@ -156,7 +170,22 @@ void CMaxwell3D::CallMultiMethod(Method Method, const uint32_t * BaseStart, uint
 
 void CMaxwell3D::CallMethodFromMME(Method Method, uint32_t Argument)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    if (Method == Method_DrawVertexEndGL)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    else if (Method == Method_DrawVertexBeginGL)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    else if (Method == Method_VertexBufferCount || Method == Method_IndexArrayCount)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    else
+    {
+        CallMethod(Method, Argument, true);
+    }
 }
 
 void CMaxwell3D::ProcessMacroBind(uint32_t Data)

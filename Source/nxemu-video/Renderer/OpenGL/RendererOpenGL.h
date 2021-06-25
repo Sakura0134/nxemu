@@ -13,6 +13,7 @@ public:
 
     //IRenderer
     bool Init();
+    void WaitForIdle(void);
 
 private:
     RendererOpenGL();

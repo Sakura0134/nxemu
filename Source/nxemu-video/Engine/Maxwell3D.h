@@ -7,6 +7,7 @@
 #include <memory>
 
 __interface ISwitchSystem;
+__interface IRenderer;
 class CVideoMemory;
 
 class CMaxwell3D
@@ -111,6 +112,13 @@ public:
         PrimitiveTopology_TrianglesAdjacency = 0xC,
         PrimitiveTopology_TriangleStripAdjacency = 0xD,
         PrimitiveTopology_Patches = 0xE,
+    };
+
+    enum IndexFormat : unsigned
+    {
+        IndexFormat_UnsignedByte = 0x0,
+        IndexFormat_UnsignedShort = 0x1,
+        IndexFormat_UnsignedInt = 0x2,
     };
 
 #pragma warning(push)
@@ -245,6 +253,17 @@ public:
         };
     } tySyncInfo;
 
+    typedef struct _tyIndexArray
+    {
+        uint32_t StartAddrHigh;
+        uint32_t StartAddrLow;
+        uint32_t EndAddrHigh;
+        uint32_t EndAddrLow;
+        IndexFormat Format;
+        uint32_t First;
+        uint32_t Count;
+    } tyIndexArray;
+
     union Registers
     {
         struct
@@ -258,7 +277,9 @@ public:
             uint32_t DataUpload;
             PADDING_WORDS(0x44);
             tySyncInfo SyncInfo;
-            PADDING_WORDS(0x2C5);
+            PADDING_WORDS(0x2AB);
+            uint32_t VertexBufferCount;
+            PADDING_WORDS(0x19);
             uint32_t FragmentBarrier;
             PADDING_WORDS(0x66);
             uint32_t TiledCacheBarrier;
@@ -268,7 +289,9 @@ public:
             tyCondition Condition;
             PADDING_WORDS(0x2E);
             tyDraw Draw;
-            PADDING_WORDS(0xED);
+            PADDING_WORDS(0x6B);
+            tyIndexArray IndexArray;
+            PADDING_WORDS(0x7B);
             tyClearBuffers ClearBuffers;
             PADDING_WORDS(0x4B);
             tyQuery Query;
@@ -309,22 +332,26 @@ public:
         Method_ConditionMode = offsetof(Registers, Condition.Mode) / sizeof(uint32_t),
         Method_CounterReset = offsetof(Registers, CounterReset) / sizeof(uint32_t),
         Method_DataUpload = offsetof(Registers, DataUpload) / sizeof(uint32_t),
+        Method_DrawVertexBeginGL = offsetof(Registers, Draw.VertexBeginGL) / sizeof(uint32_t),
         Method_DrawVertexEndGL = offsetof(Registers, Draw.VertexEndGL) / sizeof(uint32_t),
         Method_ExecUpload = offsetof(Registers, ExecUpload) / sizeof(uint32_t),
         Method_Firmware4 = (offsetof(Registers, Firmware) + (sizeof(Registers::Firmware[0]) * 4)) / sizeof(uint32_t),
         Method_FragmentBarrier = offsetof(Registers, FragmentBarrier) / sizeof(uint32_t),
+        Method_IndexArrayCount = offsetof(Registers, IndexArray.Count) / sizeof(uint32_t),
         Method_QueryGet = offsetof(Registers, Query.QueryGet) / sizeof(uint32_t),
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
         Method_ShadowRamControl = offsetof(Registers, ShadowRamControl) / sizeof(uint32_t),
         Method_SyncInfo = offsetof(Registers, SyncInfo) / sizeof(uint32_t),
         Method_TiledCacheBarrier = offsetof(Registers, TiledCacheBarrier) / sizeof(uint32_t),
+        Method_VertexBufferCount = offsetof(Registers, VertexBufferCount) / sizeof(uint32_t),
         Method_WaitForIdle = offsetof(Registers, WaitForIdle) / sizeof(uint32_t),
     };
 
     CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory);
     ~CMaxwell3D();
 
+    void BindRenderer(IRenderer * Renderer);
     void CallMultiMethod(Method Method, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending);
     void CallMethodFromMME(Method Method, uint32_t Argument);
     void CallMethod(Method Method, uint32_t Argument, bool Last);
@@ -342,6 +369,7 @@ private:
 
     ISwitchSystem & m_SwitchSystem;
     CVideoMemory & m_VideoMemory;
+    IRenderer * m_Renderer;
     Registers m_Regs, m_ShadowRegs;
     uint32_t m_MacroPositions[0x80];
     std::unique_ptr<MacroEngine> m_MacroEngine;
@@ -360,11 +388,13 @@ ASSERT_REG_POSITION(ShadowRamControl, 0x49);
 ASSERT_REG_POSITION(ExecUpload, 0x6C);
 ASSERT_REG_POSITION(DataUpload, 0x6D);
 ASSERT_REG_POSITION(SyncInfo, 0xB2);
+ASSERT_REG_POSITION(VertexBufferCount, 0x35E);
 ASSERT_REG_POSITION(FragmentBarrier, 0x378);
 ASSERT_REG_POSITION(TiledCacheBarrier, 0x3DF);
 ASSERT_REG_POSITION(CounterReset, 0x54C);
 ASSERT_REG_POSITION(Condition, 0x554);
 ASSERT_REG_POSITION(Draw, 0x585);
+ASSERT_REG_POSITION(IndexArray, 0x5F2);
 ASSERT_REG_POSITION(ClearBuffers, 0x674);
 ASSERT_REG_POSITION(Query, 0x6C0);
 ASSERT_REG_POSITION(Firmware, 0x8C0);

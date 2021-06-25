@@ -91,6 +91,11 @@ uint64_t CVideo::VideoMemoryMapAllocate(uint64_t CpuAddr, uint64_t Size, uint64_
     return m_Memory.MapAllocate(CpuAddr, Size, Align);
 }
 
+void CVideo::BindRenderer(IRenderer * Renderer) 
+{
+    m_Maxwell3D.BindRenderer(Renderer);
+}
+
 void CVideo::CallMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel, uint32_t MethodCount) 
 {
     if (Method >= BufferMethods_NonPuller) 
