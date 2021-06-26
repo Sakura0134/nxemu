@@ -4,6 +4,7 @@
 #include "GpuTypes.h"
 #include "Engine\Maxwell3D.h"
 #include "Engine\Fermi2D.h"
+#include "EmulatorWindow.h"
 #include <nxemu-plugin-spec\Video.h>
 #include <Common\CriticalSection.h>
 #include <Common\Padding.h>
@@ -50,6 +51,8 @@ public:
     void CallMultiMethod(uint32_t Method, uint32_t SubChannel, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending);
 
     CVideoMemory & VideoMemory() { return m_Memory; }
+    EmulatorWindow & Window() { return m_EmulatorWindow; }
+
 private:
     CVideo();
     CVideo(const CVideo&);
@@ -58,7 +61,6 @@ private:
     void CallEngineMultiMethod(uint32_t Method, uint32_t SubChannel, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending);
     void CallPullerMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel);
 
-    IRenderWindow & m_RenderWindow;
     CVideoMemory m_Memory;
     EngineID m_BoundEngines[8];
     CMaxwell3D m_Maxwell3D;
@@ -67,4 +69,5 @@ private:
     uint32_t m_SyncPoints[MaxSyncPoints];
     mutable CriticalSection m_CS;
     CGpuThread m_GpuThread;
+    EmulatorWindow m_EmulatorWindow;
 };

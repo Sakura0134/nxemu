@@ -3,10 +3,10 @@
 #include <stdio.h>
 
 CVideo::CVideo(IRenderWindow & RenderWindow, ISwitchSystem & SwitchSystem) :
-    m_RenderWindow(RenderWindow),
     m_Memory(SwitchSystem),
     m_Maxwell3D(SwitchSystem, m_Memory),
-    m_GpuThread(SwitchSystem, *this)
+    m_GpuThread(SwitchSystem, *this),
+    m_EmulatorWindow(RenderWindow)
 {
     memset(m_BoundEngines, 0, sizeof(m_BoundEngines));
     memset(m_Regs.Value, 0, sizeof(m_Regs.Value));

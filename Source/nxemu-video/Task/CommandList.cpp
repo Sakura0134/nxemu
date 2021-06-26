@@ -32,7 +32,7 @@ bool CommandListTask::Step(void)
     Commands Cmds;
     Cmds.resize(CmdList.Size);
     m_Video.VideoMemory().ReadBuffer(CmdList.Addr(), Cmds.data(), CmdList.Size * sizeof(uint32_t));
-    for (size_t i = 0, n = Cmds.size(); i < n;)
+    for (uint32_t i = 0, n = (uint32_t)Cmds.size(); i < n;)
     {
         const Command & Cmd = Cmds[i];
 
@@ -40,7 +40,7 @@ bool CommandListTask::Step(void)
         {
             if (m_DmaNonIncrementing)
             {
-                uint32_t MaxWrite = std::min<uint32_t>(i + m_DmaMethodCount, (uint32_t)Cmds.size()) - i;
+                uint32_t MaxWrite = std::min<uint32_t>(i + m_DmaMethodCount, n) - i;
                 m_Video.CallMultiMethod((uint32_t)m_DmaMethod, m_DmaSubchannel, &Cmd.Value, MaxWrite, m_DmaMethodCount);
                 m_DmaMethodCount -= MaxWrite;
                 i += MaxWrite;

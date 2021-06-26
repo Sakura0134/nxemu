@@ -31,18 +31,24 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\3rdParty\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <PreBuildEvent>
       <Command>"$(SolutionDir)Source\Script\UpdateVersion.cmd" "Debug64" "$(SolutionDir)Source\nxemu-video\Version.h.in" "$(SolutionDir)Source\nxemu-video\Version.h"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\3rdParty\glad\glad.vcxproj">
+      <Project>{38b397d3-0155-4871-a65c-30f3f9f7dd7a}</Project>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.vcxproj">
       <Project>{8b2a12db-47ee-4eed-80c4-53ea04f13d57}</Project>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="EmulatorWindow.cpp" />
     <ClCompile Include="Engine\Fermi2D.cpp" />
     <ClCompile Include="Engine\Maxwell3D.cpp" />
     <ClCompile Include="GpuThread.cpp" />
@@ -50,17 +56,20 @@
     <ClCompile Include="Macro\MacroInterpreter.cpp" />
     <ClCompile Include="NXEmu-video.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLRenderer.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLWindow.cpp" />
     <ClCompile Include="Task\CommandList.cpp" />
     <ClCompile Include="Util\StateTracker.cpp" />
     <ClCompile Include="Video.cpp" />
     <ClCompile Include="VideoMemoryManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EmulatorWindow.h" />
     <ClInclude Include="Engine\Fermi2D.h" />
     <ClInclude Include="Engine\Maxwell3D.h" />
     <ClInclude Include="Macro\MacroEngine.h" />
     <ClInclude Include="Macro\MacroInterpreter.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLRenderer.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLWindow.h" />
     <ClInclude Include="Renderer\Renderer.h" />
     <ClInclude Include="Task\CommandList.h" />
     <ClInclude Include="Task\GpuTask.h" />

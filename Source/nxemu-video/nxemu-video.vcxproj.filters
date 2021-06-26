@@ -84,6 +84,12 @@
     <ClCompile Include="Renderer\OpenGL\OpenGLRenderer.cpp">
       <Filter>Source Files\Renderer\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="EmulatorWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\OpenGL\OpenGLWindow.cpp">
+      <Filter>Source Files\Renderer\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Video.h">
@@ -117,6 +123,12 @@
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\OpenGL\OpenGLRenderer.h">
+      <Filter>Header Files\Renderer\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="EmulatorWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\OpenGL\OpenGLWindow.h">
       <Filter>Header Files\Renderer\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
