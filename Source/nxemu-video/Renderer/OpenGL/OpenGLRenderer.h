@@ -4,21 +4,21 @@
 __interface ISwitchSystem;
 class CVideo;
 
-class RendererOpenGL : 
+class OpenGLRenderer : 
     public IRenderer
 {
 public:
-    RendererOpenGL(ISwitchSystem& SwitchSystem, CVideo& Video);
-    ~RendererOpenGL();
+    OpenGLRenderer(ISwitchSystem& SwitchSystem, CVideo& Video);
+    ~OpenGLRenderer();
 
     //IRenderer
     bool Init();
     void WaitForIdle(void);
 
 private:
-    RendererOpenGL();
-    RendererOpenGL(const RendererOpenGL&);
-    RendererOpenGL& operator=(const RendererOpenGL&);
+    OpenGLRenderer();
+    OpenGLRenderer(const OpenGLRenderer&);
+    OpenGLRenderer& operator=(const OpenGLRenderer&);
 
     ISwitchSystem & m_SwitchSystem;
     CVideo & m_Video;

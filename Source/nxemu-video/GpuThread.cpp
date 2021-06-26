@@ -1,5 +1,5 @@
 #include "GpuThread.h"
-#include "Renderer\OpenGL\RendererOpenGL.h"
+#include "Renderer\OpenGL\OpenGLRenderer.h"
 #include "Video.h"
 #include "VideoNotification.h"
 #include "Task/CommandList.h"
@@ -56,7 +56,7 @@ void CGpuThread::PushCommand(GpuTask && Task)
 
 void CGpuThread::GpuThread(void)
 {
-    m_Renderer.reset(new RendererOpenGL(m_SwitchSystem, m_Video));
+    m_Renderer.reset(new OpenGLRenderer(m_SwitchSystem, m_Video));
     if (!m_Renderer->Init()) 
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);

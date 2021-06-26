@@ -49,7 +49,7 @@
     <ClCompile Include="Macro\MacroEngine.cpp" />
     <ClCompile Include="Macro\MacroInterpreter.cpp" />
     <ClCompile Include="NXEmu-video.cpp" />
-    <ClCompile Include="Renderer\OpenGL\RendererOpenGL.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLRenderer.cpp" />
     <ClCompile Include="Task\CommandList.cpp" />
     <ClCompile Include="Util\StateTracker.cpp" />
     <ClCompile Include="Video.cpp" />
@@ -60,7 +60,7 @@
     <ClInclude Include="Engine\Maxwell3D.h" />
     <ClInclude Include="Macro\MacroEngine.h" />
     <ClInclude Include="Macro\MacroInterpreter.h" />
-    <ClInclude Include="Renderer\OpenGL\RendererOpenGL.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLRenderer.h" />
     <ClInclude Include="Renderer\Renderer.h" />
     <ClInclude Include="Task\CommandList.h" />
     <ClInclude Include="Task\GpuTask.h" />
