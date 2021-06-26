@@ -3,7 +3,8 @@
 #include "VideoNotification.h"
 
 CMacroInterpreter::CMacroInterpreter(CMaxwell3D & Maxwell3d) :
-    m_Maxwell3d(Maxwell3d)
+    m_Maxwell3d(Maxwell3d),
+    m_NextParam(0)
 {
     m_MethodAddress.Value = 0;
     memset(m_Registers, 0, sizeof(m_Registers));
@@ -28,6 +29,7 @@ void CMacroInterpreter::Execute(uint32_t Method, const MacroParams & Params)
     const CodeList & Code = m_MacroCode[Method];
     memset(m_Registers, 0, sizeof(m_Registers));
     m_MethodAddress.Value = 0;
+    m_NextParam = 1;
     uint32_t PC = 0;
     STEP_TYPE NextInstruction = STEP_TYPE_NORMAL;
     bool Done = false;
@@ -57,6 +59,9 @@ void CMacroInterpreter::Execute(uint32_t Method, const MacroParams & Params)
 
         switch (NextInstruction)
         {
+        case STEP_TYPE_NORMAL:
+            PC += 4;
+            break;
         default:
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -67,13 +72,40 @@ void CMacroInterpreter::Execute(uint32_t Method, const MacroParams & Params)
         }
     }
 
+    if (m_NextParam != Params.size())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
-void CMacroInterpreter::ProcessResult(const MacroParams & /*Params*/, MacroResultOperation Operation, uint32_t Reg,  uint32_t Result)
+void CMacroInterpreter::ProcessResult(const MacroParams & Params, MacroResultOperation Operation, uint32_t Reg,  uint32_t Result)
 {
     switch (Operation)
     {
+    case MacroResultOperation_IgnoreAndFetch:
+        if (m_NextParam >= Params.size())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        SetRegister(Reg, Params[m_NextParam++]);
+    case MacroResultOperation_MoveAndSetMethod:
+        SetRegister(Reg, Result);
+        m_MethodAddress.Value = Result;
+        break;
+        break;
+    case MacroResultOperation_MoveAndSend:
+        SetRegister(Reg, Result);
+        Send(Result);
+        break;
+    case MacroResultOperation_FetchAndSetMethod:
+        if (m_NextParam >= Params.size())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        SetRegister(Reg, Params[m_NextParam++]);
+        m_MethodAddress.Value = Result;
+        break;
     case MacroResultOperation_MoveAndSetMethodSend:
         SetRegister(Reg, Result);
         m_MethodAddress.Value = Result;

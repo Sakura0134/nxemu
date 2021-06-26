@@ -30,5 +30,6 @@ private:
     CMaxwell3D & m_Maxwell3d;
     uint32_t m_Registers[8];
     MacroMethodAddress m_MethodAddress;
+    uint32_t m_NextParam;
     std::unordered_map<uint32_t, CodeList> m_MacroCode;
 };
