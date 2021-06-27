@@ -72,7 +72,7 @@ uint32_t CMaxwell3D::ProcessShadowRam(uint32_t Method, uint32_t Argument)
     return Argument;
 }
 
-void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint32_t /*Argument*/, bool Last)
+void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint32_t Argument, bool Last)
 {
     switch (Method)
     {
@@ -142,7 +142,11 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint3
         m_MacroEngine->AddCode(m_Regs.Macros.UploadAddress, ShadowArgument);
         break;
     case Method_QueryGet:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
     case Method_ShadowRamControl:
+        m_ShadowRegs.ShadowRamControl = (ShadowRamControl)Argument;
+        break;
     case Method_SyncInfo:
     case Method_TiledCacheBarrier:
         g_Notify->BreakPoint(__FILE__, __LINE__);
