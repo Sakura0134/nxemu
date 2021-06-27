@@ -3,6 +3,7 @@
 #include "GpuThread.h"
 #include "GpuTypes.h"
 #include "Engine\Maxwell3D.h"
+#include "Engine\KeplerCompute.h"
 #include "Engine\Fermi2D.h"
 #include "EmulatorWindow.h"
 #include <nxemu-plugin-spec\Video.h>
@@ -65,6 +66,7 @@ private:
     EngineID m_BoundEngines[8];
     CMaxwell3D m_Maxwell3D;
     CFermi2D m_Fermi2D;
+    CKeplerCompute m_KeplerCompute;
     Registers m_Regs;
     uint32_t m_SyncPoints[MaxSyncPoints];
     mutable CriticalSection m_CS;

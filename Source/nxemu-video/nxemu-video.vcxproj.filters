@@ -93,6 +93,9 @@
     <ClCompile Include="Engine\UploadState.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\KeplerCompute.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Video.h">
@@ -135,6 +138,9 @@
       <Filter>Header Files\Renderer\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="Engine\UploadState.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\KeplerCompute.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>

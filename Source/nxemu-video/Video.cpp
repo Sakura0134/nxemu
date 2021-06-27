@@ -116,6 +116,9 @@ void CVideo::CallMethod(BufferMethods Method, uint32_t Argument, uint32_t SubCha
         case EngineID_MAXWELL_B:
             m_Maxwell3D.CallMethod((CMaxwell3D::Method)Method, Argument, LastCall);
             break;
+        case EngineID_KEPLER_COMPUTE_B:
+            m_KeplerCompute.CallMethod(Method, Argument, LastCall);
+            break;
         default:
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -161,6 +164,23 @@ void CVideo::CallPullerMethod(BufferMethods Method, uint32_t Argument, uint32_t 
             return;
         }
         m_BoundEngines[SubChannel] = (EngineID)Argument;
+        break;
+    case BufferMethods_Nop:
+    case BufferMethods_SemaphoreAddressHigh:
+    case BufferMethods_SemaphoreAddressLow:
+    case BufferMethods_SemaphoreSequence:
+    case BufferMethods_RefCnt:
+    case BufferMethods_UnkCacheFlush:
+    case BufferMethods_WrcacheFlush:
+    case BufferMethods_FenceValue:
+        break;
+    case BufferMethods_FenceAction:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    case BufferMethods_Yield:
+    case BufferMethods_WaitForInterrupt:
+    case BufferMethods_NotifyIntr:
+    case BufferMethods_Unk28:
         break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
