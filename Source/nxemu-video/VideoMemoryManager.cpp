@@ -198,3 +198,8 @@ void CVideoMemory::ReadBuffer(uint64_t GpuAddr, void * Buffer, uint64_t Size) co
     }
 }
 
+void CVideoMemory::WriteBuffer(uint64_t /*GpuAddr*/, const void * /*Buffer*/, uint64_t /*Size*/, bool /*InvalidateRegion*/)
+{
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+}
+

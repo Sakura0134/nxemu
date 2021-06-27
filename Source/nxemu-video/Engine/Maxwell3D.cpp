@@ -1,5 +1,6 @@
 #include "Engine/Maxwell3D.h"
 #include "Renderer/Renderer.h"
+#include "VideoMemoryManager.h"
 #include "VideoNotification.h"
 
 CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory) :
@@ -11,6 +12,9 @@ CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory)
     m_StateTracker(CMaxwell3D::NumRegisters, 0)
 {
     memset(m_MacroPositions, 0, sizeof(m_MacroPositions));
+    memset(&m_CBDataState, 0, sizeof(m_CBDataState));
+    m_CBDataState.Current = 0xFFFFFFFF;
+    m_CBDataState.Id = 0xFFFFFFFF;
     InitializeRegisterDefaults();
 }
 
@@ -77,6 +81,8 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint3
     case Method_CBBind4:
     case Method_ClearBuffers:
     case Method_ConditionMode:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
     case Method_ConstBufferData0:
     case Method_ConstBufferData1:
     case Method_ConstBufferData2:
@@ -93,10 +99,14 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint3
     case Method_ConstBufferData13:
     case Method_ConstBufferData14:
     case Method_ConstBufferData15:
+        StartCBData(Method);
+        break;
     case Method_CounterReset:
     case Method_DataUpload:
     case Method_DrawVertexEndGL:
     case Method_ExecUpload:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
     case Method_Firmware4:
         ProcessFirmwareCall4();
         break;
@@ -130,6 +140,17 @@ void CMaxwell3D::CallMacroMethod(uint32_t Method, const MacroParams & Parameters
 
 void CMaxwell3D::CallMethod(Method Method, uint32_t Argument, bool Last)
 {
+    if (Method == m_CBDataState.Current)
+    {
+        m_Regs.Value[Method] = Argument;
+        ProcessCBData(Argument);
+        return;
+    }
+    else if (m_CBDataState.Current != 0xFFFFFFFF)
+    {
+        FinishCBData();
+    }
+
     if (m_ExecutingMacro != 0)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -159,7 +180,7 @@ void CMaxwell3D::CallMultiMethod(Method Method, const uint32_t * BaseStart, uint
     }
     else if (Method >= Method_ConstBufferData0 && Method <= Method_ConstBufferData15) 
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        ProcessCBMultiData(Method, BaseStart, Amount);
     }
     else 
     {
@@ -201,3 +222,59 @@ void CMaxwell3D::ProcessFirmwareCall4()
     // stubbed by setting 0xd00 to 1.
     m_Regs.Value[0xd00] = 1;
 }
+
+void CMaxwell3D::ProcessCBData(uint32_t Value)
+{
+    m_CBDataState.Buffer[m_CBDataState.Id][m_CBDataState.Counter] = Value;
+    m_CBDataState.Counter += 1;
+    m_Regs.ConstBuffer.Pos = m_Regs.ConstBuffer.Pos + 4;
+}
+
+void CMaxwell3D::StartCBData(uint32_t Method)
+{
+    m_CBDataState.StartPos = m_Regs.ConstBuffer.Pos;
+    m_CBDataState.Id = Method - Method_ConstBufferData0;
+    m_CBDataState.Current = Method;
+    m_CBDataState.Counter = 0;
+    ProcessCBData(m_Regs.ConstBuffer.Data[m_CBDataState.Id]);
+}
+
+void CMaxwell3D::ProcessCBMultiData(uint32_t Method, const uint32_t * BaseStart, uint32_t Amount)
+{
+    if (m_CBDataState.Current != Method)
+    {
+        if (m_CBDataState.Current != 0xFFFFFFFF)
+        {
+            FinishCBData();
+        }
+        m_CBDataState.StartPos = m_Regs.ConstBuffer.Pos;
+        m_CBDataState.Id = Method - Method_ConstBufferData0;
+        m_CBDataState.Current = Method;
+        m_CBDataState.Counter = 0;
+    }
+    uint32_t Id = m_CBDataState.Id;
+    for (uint32_t i = 0, n = Amount; i < n; i++)
+    {
+        m_CBDataState.Buffer[Id][m_CBDataState.Counter] = BaseStart[i];
+        m_CBDataState.Counter++;
+    }
+    m_Regs.ConstBuffer.Pos = m_Regs.ConstBuffer.Pos + 4 * Amount;
+}
+
+void CMaxwell3D::FinishCBData()
+{
+    if (m_Regs.ConstBuffer.Address() == 0 || m_Regs.ConstBuffer.Pos > m_Regs.ConstBuffer.Size)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    uint64_t Address = m_Regs.ConstBuffer.Address() + m_CBDataState.StartPos;
+    uint32_t Size = m_Regs.ConstBuffer.Pos - m_CBDataState.StartPos;
+
+    m_VideoMemory.WriteBuffer(Address, m_CBDataState.Buffer[m_CBDataState.Id], Size, true);
+    m_StateTracker.OnMemoryWrite();
+
+    m_CBDataState.Id = 0xFFFFFFFF;
+    m_CBDataState.Current = 0xFFFFFFFF;
+}
+

@@ -19,6 +19,18 @@ CStateTracker::CStateTracker(uint32_t NumRegisters, uint32_t MaxFlag)
     }
 }
 
+void CStateTracker::OnMemoryWrite(void) 
+{
+    for (size_t i = 0, n = m_Flags.size(); i < n; i++)
+    {
+        if (!m_MemoryWriteFlag[i]) 
+        {
+            continue;
+        }
+        m_Flags[i] = true;
+    }
+}
+
 void CStateTracker::FlagSet(uint32_t Index)
 {
     if (Index >= m_Flags.size())

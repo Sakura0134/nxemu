@@ -6,6 +6,8 @@ class CStateTracker {
 public:
     CStateTracker(uint32_t NumRegisters, uint32_t MaxFlag);
 
+    void OnMemoryWrite(void);
+
     void FlagSet(uint32_t Index);
     
     void RegisterChanged(uint32_t Method);

@@ -363,6 +363,15 @@ private:
     CMaxwell3D(const CMaxwell3D&);
     CMaxwell3D& operator=(const CMaxwell3D&);
 
+    struct CBDataState
+    {
+        uint32_t Buffer[0x4000][16];
+        uint32_t Current;
+        uint32_t Id;
+        uint32_t StartPos;
+        uint32_t Counter;
+    };
+
     void InitializeRegisterDefaults();
     void ProcessMacro(uint32_t Method, const uint32_t * BaseStart, uint32_t Amount, bool Last);
     uint32_t ProcessShadowRam(uint32_t Method, uint32_t Argument);
@@ -370,6 +379,10 @@ private:
     void CallMacroMethod(uint32_t Method, const MacroParams & Parameters);
     void ProcessMacroBind(uint32_t data);
     void ProcessFirmwareCall4();
+    void StartCBData(uint32_t Method);
+    void ProcessCBData(uint32_t Value);
+    void ProcessCBMultiData(uint32_t Method, const uint32_t * BaseStart, uint32_t Amount);
+    void FinishCBData();
 
     ISwitchSystem & m_SwitchSystem;
     CVideoMemory & m_VideoMemory;
@@ -377,6 +390,7 @@ private:
     Registers m_Regs, m_ShadowRegs;
     uint32_t m_MacroPositions[0x80];
     std::unique_ptr<MacroEngine> m_MacroEngine;
+    CBDataState m_CBDataState;
     uint32_t m_ExecutingMacro;
     MacroParams m_MacroParams;
     CStateTracker m_StateTracker;
