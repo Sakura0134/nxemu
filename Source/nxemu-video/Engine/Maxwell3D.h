@@ -366,6 +366,7 @@ private:
     void ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint32_t Argument, bool Last);
     void CallMacroMethod(uint32_t Method, const MacroParams & Parameters);
     void ProcessMacroBind(uint32_t data);
+    void ProcessFirmwareCall4();
 
     ISwitchSystem & m_SwitchSystem;
     CVideoMemory & m_VideoMemory;

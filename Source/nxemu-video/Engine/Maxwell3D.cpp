@@ -98,6 +98,8 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint3
     case Method_DrawVertexEndGL:
     case Method_ExecUpload:
     case Method_Firmware4:
+        ProcessFirmwareCall4();
+        break;
     case Method_FragmentBarrier:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
@@ -192,4 +194,10 @@ void CMaxwell3D::ProcessMacroBind(uint32_t Data)
 {
     m_MacroPositions[m_Regs.Macros.Entry] = Data;
     m_Regs.Macros.Entry += 1;
+}
+
+void CMaxwell3D::ProcessFirmwareCall4()
+{
+    // stubbed by setting 0xd00 to 1.
+    m_Regs.Value[0xd00] = 1;
 }
