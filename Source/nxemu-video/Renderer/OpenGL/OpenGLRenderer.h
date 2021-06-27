@@ -15,6 +15,7 @@ public:
 
     //IRenderer
     bool Init();
+    void InvalidateRegion(uint64_t Addr, uint64_t Size);
     void WaitForIdle(void);
 
 private:

@@ -43,12 +43,18 @@ CVideoMemory::PageEntry CVideoMemory::PageEntry::operator+(uint64_t offset) cons
 
 CVideoMemory::CVideoMemory(ISwitchSystem & System) : 
     m_System(System), 
-    m_PageTable(PageTableSize) 
+    m_PageTable(PageTableSize),
+    m_Renderer(nullptr) 
 {
 }
 
 CVideoMemory::~CVideoMemory()
 {
+}
+
+void CVideoMemory::BindRenderer(IRenderer * Renderer) 
+{
+    m_Renderer = Renderer;
 }
 
 void CVideoMemory::UpdateRange(uint64_t GpuAddr, PageEntry PageEntry, uint64_t Size)
@@ -198,8 +204,41 @@ void CVideoMemory::ReadBuffer(uint64_t GpuAddr, void * Buffer, uint64_t Size) co
     }
 }
 
-void CVideoMemory::WriteBuffer(uint64_t /*GpuAddr*/, const void * /*Buffer*/, uint64_t /*Size*/, bool /*InvalidateRegion*/)
+void CVideoMemory::WriteBuffer(uint64_t GpuAddr, const void* Buffer, uint64_t Size, bool InvalidateRegion)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    uint64_t RemainingSize = Size;
+    uint64_t PageIndex = GpuAddr >> PageBits;
+    uint64_t PageOffset = GpuAddr & PageMask;
+
+    while (RemainingSize > 0) 
+    {
+        uint64_t CopyAmount = PageSize - PageOffset;
+        if (RemainingSize < CopyAmount) 
+        {
+            CopyAmount = RemainingSize;
+        }
+
+        uint64_t CpuAddr;
+        if (GpuToCpuAddress(PageIndex << PageBits, CpuAddr))
+        {
+            uint64_t DestAddr = CpuAddr + PageOffset;
+            if (InvalidateRegion)
+            {
+                m_Renderer->InvalidateRegion(DestAddr, CopyAmount);            
+            }
+            if (!m_System.WriteCPUMemory(DestAddr, Buffer, CopyAmount))
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+        } 
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        PageIndex += 1;
+        PageOffset = 0;
+        Buffer = ((uint8_t*)Buffer) + CopyAmount;
+        RemainingSize -= CopyAmount;
+    }
 }
 

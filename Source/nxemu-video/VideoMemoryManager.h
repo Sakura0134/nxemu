@@ -1,4 +1,5 @@
 #pragma once
+#include "Renderer\Renderer.h"
 #include <nxemu-plugin-spec\Video.h>
 #include <vector>
 
@@ -57,6 +58,7 @@ public:
     CVideoMemory(ISwitchSystem & System);
     ~CVideoMemory();
 
+    void BindRenderer(IRenderer* Renderer);
     bool GpuToCpuAddress(uint64_t GpuAddr, uint64_t & CpuAddress) const;
     void ReadBuffer(uint64_t GpuAddr, void * Buffer, uint64_t Size) const;
     void WriteBuffer(uint64_t GpuAddr, const void * Buffer, uint64_t Size, bool InvalidateRegion);
@@ -79,4 +81,5 @@ private:
 
     ISwitchSystem & m_System;
     std::vector<PageEntry> m_PageTable;
+    IRenderer * m_Renderer;
 };

@@ -93,6 +93,7 @@ uint64_t CVideo::VideoMemoryMapAllocate(uint64_t CpuAddr, uint64_t Size, uint64_
 
 void CVideo::BindRenderer(IRenderer * Renderer) 
 {
+    m_Memory.BindRenderer(Renderer);
     m_Maxwell3D.BindRenderer(Renderer);
 }
 

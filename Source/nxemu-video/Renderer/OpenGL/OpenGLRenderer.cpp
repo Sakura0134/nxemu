@@ -31,6 +31,14 @@ bool OpenGLRenderer::Init()
     return true;
 }
 
+void OpenGLRenderer::InvalidateRegion(uint64_t Addr, uint64_t Size)
+{
+    if (Addr == 0 || Size == 0) 
+    {
+        return;
+    }
+}
+
 void OpenGLRenderer::WaitForIdle(void) 
 {
     glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT | GL_ELEMENT_ARRAY_BARRIER_BIT |

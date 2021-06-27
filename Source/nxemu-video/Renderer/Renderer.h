@@ -4,5 +4,6 @@
 __interface IRenderer
 {
     virtual bool Init(void) = 0;
+    virtual void InvalidateRegion(uint64_t Addr, uint64_t Size) = 0;
     virtual void WaitForIdle(void) = 0;
 };
