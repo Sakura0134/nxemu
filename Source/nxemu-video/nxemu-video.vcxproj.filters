@@ -90,6 +90,9 @@
     <ClCompile Include="Renderer\OpenGL\OpenGLWindow.cpp">
       <Filter>Source Files\Renderer\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\UploadState.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Video.h">
@@ -130,6 +133,9 @@
     </ClInclude>
     <ClInclude Include="Renderer\OpenGL\OpenGLWindow.h">
       <Filter>Header Files\Renderer\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\UploadState.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

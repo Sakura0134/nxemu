@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine\UploadState.h"
 #include "Macro\MacroEngine.h"
 #include "Util\StateTracker.h"
 #include <Common\padding.h>
@@ -272,7 +273,8 @@ public:
             uint32_t WaitForIdle;
             tyMacros Macros;
             ShadowRamControl ShadowRamControl;
-            PADDING_WORDS(0x22);
+            PADDING_WORDS(0x16);
+            CUploadState::Registers Upload;
             tyExecUpload ExecUpload;
             uint32_t DataUpload;
             PADDING_WORDS(0x44);
@@ -393,6 +395,7 @@ private:
     CBDataState m_CBDataState;
     uint32_t m_ExecutingMacro;
     MacroParams m_MacroParams;
+    CUploadState m_UploadState;
     CStateTracker m_StateTracker;
 
     static_assert(sizeof(Registers) == NumRegisters * sizeof(uint32_t), "Maxwell3D Registers has wrong size");
@@ -403,6 +406,7 @@ private:
 ASSERT_REG_POSITION(WaitForIdle, 0x44);
 ASSERT_REG_POSITION(Macros, 0x45);
 ASSERT_REG_POSITION(ShadowRamControl, 0x49);
+ASSERT_REG_POSITION(Upload, 0x60);
 ASSERT_REG_POSITION(ExecUpload, 0x6C);
 ASSERT_REG_POSITION(DataUpload, 0x6D);
 ASSERT_REG_POSITION(SyncInfo, 0xB2);

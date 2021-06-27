@@ -7,6 +7,7 @@ CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory)
     m_SwitchSystem(SwitchSystem),
     m_VideoMemory(VideoMemory),
     m_MacroEngine(GetMacroEngine(*this)),
+    m_UploadState(VideoMemory, m_Regs.Upload),
     m_ExecutingMacro(0),
     m_Renderer(nullptr),
     m_StateTracker(CMaxwell3D::NumRegisters, 0)
@@ -70,7 +71,7 @@ uint32_t CMaxwell3D::ProcessShadowRam(uint32_t Method, uint32_t Argument)
     return Argument;
 }
 
-void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint32_t /*Argument*/, bool /*Last*/)
+void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint32_t /*Argument*/, bool Last)
 {
     switch (Method)
     {
@@ -102,10 +103,20 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint3
         StartCBData(Method);
         break;
     case Method_CounterReset:
-    case Method_DataUpload:
-    case Method_DrawVertexEndGL:
-    case Method_ExecUpload:
         g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    case Method_DataUpload:
+        m_UploadState.ProcessData(ShadowArgument, Last);
+        if (Last)
+        {
+            m_StateTracker.OnMemoryWrite();
+        }
+        break;
+    case Method_DrawVertexEndGL:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    case Method_ExecUpload:
+        m_UploadState.ProcessExec(m_Regs.ExecUpload.Linear != 0);
         break;
     case Method_Firmware4:
         ProcessFirmwareCall4();

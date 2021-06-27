@@ -51,6 +51,7 @@
     <ClCompile Include="EmulatorWindow.cpp" />
     <ClCompile Include="Engine\Fermi2D.cpp" />
     <ClCompile Include="Engine\Maxwell3D.cpp" />
+    <ClCompile Include="Engine\UploadState.cpp" />
     <ClCompile Include="GpuThread.cpp" />
     <ClCompile Include="Macro\MacroEngine.cpp" />
     <ClCompile Include="Macro\MacroInterpreter.cpp" />
@@ -66,6 +67,7 @@
     <ClInclude Include="EmulatorWindow.h" />
     <ClInclude Include="Engine\Fermi2D.h" />
     <ClInclude Include="Engine\Maxwell3D.h" />
+    <ClInclude Include="Engine\UploadState.h" />
     <ClInclude Include="Macro\MacroEngine.h" />
     <ClInclude Include="Macro\MacroInterpreter.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLRenderer.h" />
