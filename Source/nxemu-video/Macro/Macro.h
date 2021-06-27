@@ -77,6 +77,10 @@ union MacroOpcode
         unsigned BfDstBit : 5;
     };
 
+    uint32_t GetBitfieldMask() const 
+    {
+        return (1 << BfSize) - 1;
+    }
 };
 
 union MacroMethodAddress 

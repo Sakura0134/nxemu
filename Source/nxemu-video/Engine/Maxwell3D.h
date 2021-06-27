@@ -355,6 +355,9 @@ public:
     void CallMultiMethod(Method Method, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending);
     void CallMethodFromMME(Method Method, uint32_t Argument);
     void CallMethod(Method Method, uint32_t Argument, bool Last);
+
+    inline const Registers & Regs (void) const { return m_Regs; }
+
 private:
     CMaxwell3D();
     CMaxwell3D(const CMaxwell3D&);

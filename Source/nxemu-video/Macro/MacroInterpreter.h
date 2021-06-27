@@ -23,6 +23,7 @@ private:
     CMacroInterpreter(const CMacroInterpreter&);
     CMacroInterpreter& operator=(const CMacroInterpreter&);
     
+    uint32_t GetALUResult(MacroALUOperation Operation, uint32_t SrcA, uint32_t SrcB);
     void ProcessResult(const MacroParams & Params, MacroResultOperation Operation, uint32_t Reg, uint32_t Result);
     void SetRegister(uint32_t Reg, uint32_t Value);
     void Send(uint32_t Value); 
@@ -32,4 +33,5 @@ private:
     MacroMethodAddress m_MethodAddress;
     uint32_t m_NextParam;
     std::unordered_map<uint32_t, CodeList> m_MacroCode;
+    bool m_Carry;
 };
