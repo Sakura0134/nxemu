@@ -19,6 +19,7 @@ public:
         NumRegisters = 0xE00,
         NumCBData = 16,
         MaxShaderStage = 5,
+        MaxConstBuffers = 18,
     };
 
     enum QueryOperation : unsigned
@@ -125,6 +126,13 @@ public:
 #pragma warning(push)
 #pragma warning(disable : 4201) // warning C4201: nonstandard extension used : nameless struct/union
 #pragma warning(disable : 5208) // warning C5208: unnamed class used in typedef name cannot declare members other than non-static
+    typedef struct
+    {
+        uint64_t Address;
+        uint32_t Size;
+        bool Enabled;
+    } ConstBuffer;
+
     typedef struct
     {
         union
@@ -385,6 +393,7 @@ private:
     void ProcessCBData(uint32_t Value);
     void ProcessCBMultiData(uint32_t Method, const uint32_t * BaseStart, uint32_t Amount);
     void FinishCBData();
+    void ProcessCBBind(uint32_t StageIndex);
 
     ISwitchSystem & m_SwitchSystem;
     CVideoMemory & m_VideoMemory;
@@ -397,6 +406,7 @@ private:
     MacroParams m_MacroParams;
     CUploadState m_UploadState;
     CStateTracker m_StateTracker;
+    ConstBuffer m_ShaderStage[MaxShaderStage][MaxConstBuffers];
 
     static_assert(sizeof(Registers) == NumRegisters * sizeof(uint32_t), "Maxwell3D Registers has wrong size");
 };

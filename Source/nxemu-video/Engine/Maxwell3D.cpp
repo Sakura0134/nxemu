@@ -14,6 +14,7 @@ CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory)
 {
     memset(m_MacroPositions, 0, sizeof(m_MacroPositions));
     memset(&m_CBDataState, 0, sizeof(m_CBDataState));
+    memset(&m_ShaderStage, 0, sizeof(m_ShaderStage));
     m_CBDataState.Current = 0xFFFFFFFF;
     m_CBDataState.Id = 0xFFFFFFFF;
     InitializeRegisterDefaults();
@@ -76,10 +77,20 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint3
     switch (Method)
     {
     case Method_CBBind0:
+        ProcessCBBind(0);
+        break;
     case Method_CBBind1:
+        ProcessCBBind(1);
+        break;
     case Method_CBBind2:
+        ProcessCBBind(2);
+        break;
     case Method_CBBind3:
+        ProcessCBBind(3);
+        break;
     case Method_CBBind4:
+        ProcessCBBind(4);
+        break;
     case Method_ClearBuffers:
     case Method_ConditionMode:
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -232,6 +243,20 @@ void CMaxwell3D::ProcessFirmwareCall4()
 {
     // stubbed by setting 0xd00 to 1.
     m_Regs.Value[0xd00] = 1;
+}
+
+void CMaxwell3D::ProcessCBBind(uint32_t StageIndex)
+{
+    tyCBBind & BindData = m_Regs.CBBind[StageIndex];
+    if (BindData.Index >= MaxConstBuffers)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    ConstBuffer & Buffer = m_ShaderStage[StageIndex][BindData.Index];
+    Buffer.Enabled = BindData.Valid != 0;
+    Buffer.Address = m_Regs.ConstBuffer.Address();
+    Buffer.Size = m_Regs.ConstBuffer.Size;
 }
 
 void CMaxwell3D::ProcessCBData(uint32_t Value)
