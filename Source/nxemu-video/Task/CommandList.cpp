@@ -20,6 +20,7 @@ CommandListTask::CommandListTask(CVideo & Video, IRenderer & Renderer, const uin
 void CommandListTask::Execute(void)
 {
     while (Step());
+    m_Video.OnCommandListEnd();
 }
 
 bool CommandListTask::Step(void)

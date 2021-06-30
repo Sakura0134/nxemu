@@ -212,3 +212,7 @@ void CVideo::CallEngineMultiMethod(uint32_t Method, uint32_t SubChannel, const u
     }
 }
 
+void CVideo::OnCommandListEnd() 
+{
+    m_GpuThread.OnCommandListEnd();
+}

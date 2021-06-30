@@ -3,6 +3,7 @@
 #include "Video.h"
 #include "VideoNotification.h"
 #include "Task/CommandList.h"
+#include "Task/CommandListEnd.h"
 #include <Common/Util.h>
 
 CGpuThread::CGpuThread(ISwitchSystem & SwitchSystem, CVideo & Video) : 
@@ -45,6 +46,11 @@ bool CGpuThread::StartThread()
 void CGpuThread::PushCommands(const uint64_t* Entries, uint32_t NoOfEntries)
 {
     PushCommand(std::move(std::make_shared<CommandListTask>(m_Video, *m_Renderer, Entries, NoOfEntries)));
+}
+
+void CGpuThread::OnCommandListEnd()
+{
+    PushCommand(std::move(std::make_shared<CommandListEndTask>(*m_Renderer)));
 }
 
 void CGpuThread::PushCommand(GpuTask && Task) 

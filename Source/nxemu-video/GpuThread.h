@@ -22,6 +22,7 @@ public:
 
     bool StartThread(void);
     void PushCommands(const uint64_t * Entries, uint32_t NoOfEntries);
+    void OnCommandListEnd();
 
 private:
     CGpuThread();

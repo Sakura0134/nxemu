@@ -19,6 +19,7 @@ public:
     ~OpenGLFence();
 
     void Queue();
+    uint64_t GetAddress() const;
     uint32_t GetPayload() const;
     bool IsSemaphore() const;
 
@@ -41,6 +42,7 @@ public:
 
     void SignalSemaphore(uint64_t Addr, uint32_t Value);
     void SignalSyncPoint(uint32_t Value);
+    void WaitPendingFences();
 
 private:
     OpenGLFenceManager();
@@ -60,6 +62,7 @@ private:
 
     OpenGLRenderer & m_Renderer;
     CVideo & m_Video;
+    CVideoMemory & m_VideoMemory;
     std::queue<OpenGLFencePtr> m_Fences;
     std::vector<OpenGLFencePtr> m_DelayedDestoyFence[6];
     uint32_t m_DelayedDestoyIndex;

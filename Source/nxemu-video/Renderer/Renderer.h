@@ -9,4 +9,5 @@ __interface IRenderer
     virtual void WaitForIdle(void) = 0;
     virtual void SignalSyncPoint(uint32_t Value) = 0;
     virtual void SignalSemaphore(uint64_t Addr, uint32_t Value) = 0;
+    virtual void ReleaseFences() = 0;
 };

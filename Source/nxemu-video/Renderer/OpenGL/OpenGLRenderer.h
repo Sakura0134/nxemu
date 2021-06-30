@@ -21,6 +21,7 @@ public:
     void WaitForIdle(void);
     void SignalSyncPoint(uint32_t Value);
     void SignalSemaphore(uint64_t Addr, uint32_t Value);
+    void ReleaseFences(void);
 
 private:
     OpenGLRenderer();

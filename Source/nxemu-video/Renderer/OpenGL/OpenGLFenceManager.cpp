@@ -33,6 +33,11 @@ void OpenGLFence::Queue()
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
+uint64_t OpenGLFence::GetAddress() const
+{
+    return m_Address;
+}
+
 uint32_t OpenGLFence::GetPayload() const
 {
     return m_Payload;
@@ -46,6 +51,7 @@ bool OpenGLFence::IsSemaphore() const
 OpenGLFenceManager::OpenGLFenceManager(OpenGLRenderer & Renderer, CVideo & Video) :
     m_Renderer(Renderer),
     m_Video(Video),
+    m_VideoMemory(Video.VideoMemory()),
     m_DelayedDestoyIndex(0)
 {
 }
@@ -91,6 +97,30 @@ void OpenGLFenceManager::SignalSyncPoint(uint32_t Value)
     QueueFence(Fence);
 }
 
+void OpenGLFenceManager::WaitPendingFences()
+{
+    while (!m_Fences.empty())
+    {
+        OpenGLFencePtr & Fence = m_Fences.front();
+        if (ShouldWait())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            //WaitFence(Fence);
+        }
+        PopAsyncFlushes();
+        if (Fence->IsSemaphore())
+        {
+            uint32_t Payload = Fence->GetPayload();
+            m_VideoMemory.WriteBuffer(Fence->GetAddress(), &Payload, sizeof(Payload), false);
+        }
+        else
+        {
+            m_Video.IncrementSyncPoint(Fence->GetPayload());
+        }
+        PopFence();
+    }
+}
+
 void OpenGLFenceManager::ReleasePendingFences()
 {
     while (!m_Fences.empty())
@@ -103,7 +133,8 @@ void OpenGLFenceManager::ReleasePendingFences()
         PopAsyncFlushes();
         if (Fence->IsSemaphore())
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            uint32_t Payload = Fence->GetPayload();
+            m_VideoMemory.WriteBuffer(Fence->GetAddress(), &Payload, sizeof(Payload), false);
         }
         else
         {

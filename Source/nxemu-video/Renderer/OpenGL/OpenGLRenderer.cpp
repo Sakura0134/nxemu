@@ -64,3 +64,8 @@ void OpenGLRenderer::SignalSemaphore(uint64_t Addr, uint32_t Value)
     m_FenceManager.SignalSemaphore(Addr, Value);
 }
 
+void OpenGLRenderer::ReleaseFences(void) 
+{
+    m_FenceManager.WaitPendingFences();
+}
+
