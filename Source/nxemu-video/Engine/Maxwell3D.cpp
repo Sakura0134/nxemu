@@ -148,6 +148,8 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint3
         m_ShadowRegs.ShadowRamControl = (ShadowRamControl)Argument;
         break;
     case Method_SyncInfo:
+        ProcessSyncPoint();
+        break;
     case Method_TiledCacheBarrier:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
@@ -247,6 +249,14 @@ void CMaxwell3D::ProcessFirmwareCall4()
 {
     // stubbed by setting 0xd00 to 1.
     m_Regs.Value[0xd00] = 1;
+}
+
+void CMaxwell3D::ProcessSyncPoint()
+{
+    if (m_Regs.SyncInfo.Increment)
+    {
+        m_Renderer->SignalSyncPoint(m_Regs.SyncInfo.SyncPoint);
+    }
 }
 
 void CMaxwell3D::ProcessCBBind(uint32_t StageIndex)

@@ -57,6 +57,7 @@
     <ClCompile Include="Macro\MacroEngine.cpp" />
     <ClCompile Include="Macro\MacroInterpreter.cpp" />
     <ClCompile Include="NXEmu-video.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLFenceManager.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLRenderer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLWindow.cpp" />
     <ClCompile Include="Task\CommandList.cpp" />
@@ -72,6 +73,8 @@
     <ClInclude Include="Engine\UploadState.h" />
     <ClInclude Include="Macro\MacroEngine.h" />
     <ClInclude Include="Macro\MacroInterpreter.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLFenceManager.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLItemPtr.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLRenderer.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLWindow.h" />
     <ClInclude Include="Renderer\Renderer.h" />

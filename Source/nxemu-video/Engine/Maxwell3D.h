@@ -389,6 +389,7 @@ private:
     void CallMacroMethod(uint32_t Method, const MacroParams & Parameters);
     void ProcessMacroBind(uint32_t data);
     void ProcessFirmwareCall4();
+    void ProcessSyncPoint();
     void StartCBData(uint32_t Method);
     void ProcessCBData(uint32_t Value);
     void ProcessCBMultiData(uint32_t Method, const uint32_t * BaseStart, uint32_t Amount);

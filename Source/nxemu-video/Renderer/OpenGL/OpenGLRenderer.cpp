@@ -9,7 +9,8 @@
 OpenGLRenderer::OpenGLRenderer(ISwitchSystem & SwitchSystem, CVideo & Video) : 
     m_EmulatorWindow(Video.Window()),
     m_SwitchSystem(SwitchSystem), 
-    m_Video(Video)
+    m_Video(Video),
+    m_FenceManager(*this, Video)
 {
 }
 
@@ -39,6 +40,10 @@ void OpenGLRenderer::InvalidateRegion(uint64_t Addr, uint64_t Size)
     }
 }
 
+void OpenGLRenderer::FlushCommands(void)
+{
+}
+
 void OpenGLRenderer::WaitForIdle(void) 
 {
     glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT | GL_ELEMENT_ARRAY_BARRIER_BIT |
@@ -47,5 +52,10 @@ void OpenGLRenderer::WaitForIdle(void)
                     GL_PIXEL_BUFFER_BARRIER_BIT | GL_TEXTURE_UPDATE_BARRIER_BIT |
                     GL_BUFFER_UPDATE_BARRIER_BIT | GL_TRANSFORM_FEEDBACK_BARRIER_BIT |
                     GL_SHADER_STORAGE_BARRIER_BIT | GL_QUERY_BUFFER_BARRIER_BIT);
+}
+
+void OpenGLRenderer::SignalSyncPoint(uint32_t Value)
+{
+    m_FenceManager.SignalSyncPoint(Value);
 }
 
