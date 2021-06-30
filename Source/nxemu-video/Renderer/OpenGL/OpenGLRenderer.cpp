@@ -59,3 +59,8 @@ void OpenGLRenderer::SignalSyncPoint(uint32_t Value)
     m_FenceManager.SignalSyncPoint(Value);
 }
 
+void OpenGLRenderer::SignalSemaphore(uint64_t Addr, uint32_t Value) 
+{
+    m_FenceManager.SignalSemaphore(Addr, Value);
+}
+

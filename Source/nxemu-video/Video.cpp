@@ -6,7 +6,8 @@ CVideo::CVideo(IRenderWindow & RenderWindow, ISwitchSystem & SwitchSystem) :
     m_Memory(SwitchSystem),
     m_Maxwell3D(SwitchSystem, m_Memory),
     m_GpuThread(SwitchSystem, *this),
-    m_EmulatorWindow(RenderWindow)
+    m_EmulatorWindow(RenderWindow),
+    m_SyncPointEvent(true)
 {
     memset(m_BoundEngines, 0, sizeof(m_BoundEngines));
     memset(m_Regs.Value, 0, sizeof(m_Regs.Value));
@@ -95,6 +96,17 @@ void CVideo::BindRenderer(IRenderer * Renderer)
 {
     m_Memory.BindRenderer(Renderer);
     m_Maxwell3D.BindRenderer(Renderer);
+}
+
+void CVideo::IncrementSyncPoint(const uint32_t SyncPointId) 
+{
+    uint32_t SyncPointValue;
+    {
+        CGuard Guard(m_CS);
+        m_SyncPoints[SyncPointId] += 1;
+        SyncPointValue = m_SyncPoints[SyncPointId];
+        m_SyncPointEvent.Trigger();
+    }
 }
 
 void CVideo::CallMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel, uint32_t MethodCount) 

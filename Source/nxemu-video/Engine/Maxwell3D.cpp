@@ -142,7 +142,7 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint3
         m_MacroEngine->AddCode(m_Regs.Macros.UploadAddress, ShadowArgument);
         break;
     case Method_QueryGet:
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        ProcessQueryGet();
         break;
     case Method_ShadowRamControl:
         m_ShadowRegs.ShadowRamControl = (ShadowRamControl)Argument;
@@ -249,6 +249,31 @@ void CMaxwell3D::ProcessFirmwareCall4()
 {
     // stubbed by setting 0xd00 to 1.
     m_Regs.Value[0xd00] = 1;
+}
+
+void CMaxwell3D::ProcessQueryGet()
+{
+    if (m_Regs.Query.QueryGet.Unit != QueryUnit_Crop)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    switch (m_Regs.Query.QueryGet.Operation)
+    {
+    case QueryOperation_Release:
+        if (m_Regs.Query.QueryGet.Fence == 1)
+        {
+            m_Renderer->SignalSemaphore(m_Regs.Query.Address(), m_Regs.Query.QuerySequence);
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    }
 }
 
 void CMaxwell3D::ProcessSyncPoint()

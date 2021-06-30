@@ -50,6 +50,7 @@ public:
     void BindRenderer(IRenderer * Renderer);
     void CallMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel, uint32_t MethodCount);
     void CallMultiMethod(uint32_t Method, uint32_t SubChannel, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending);
+    void IncrementSyncPoint(uint32_t SyncPointId);
 
     CVideoMemory & VideoMemory() { return m_Memory; }
     EmulatorWindow & Window() { return m_EmulatorWindow; }
@@ -69,6 +70,7 @@ private:
     CKeplerCompute m_KeplerCompute;
     Registers m_Regs;
     uint32_t m_SyncPoints[MaxSyncPoints];
+    SyncEvent m_SyncPointEvent;
     mutable CriticalSection m_CS;
     CGpuThread m_GpuThread;
     EmulatorWindow m_EmulatorWindow;
