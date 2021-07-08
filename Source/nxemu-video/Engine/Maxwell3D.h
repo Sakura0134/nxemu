@@ -1,4 +1,5 @@
 #pragma once
+#include "GpuTypes.h"
 #include "Engine\UploadState.h"
 #include "Macro\MacroEngine.h"
 #include "Util\StateTracker.h"
@@ -273,6 +274,18 @@ public:
         uint32_t Count;
     } tyIndexArray;
 
+    union tyColorMask
+    {
+        uint32_t Value;
+        struct 
+        {
+            unsigned R : 4;
+            unsigned G : 4;
+            unsigned B : 4;
+            unsigned A : 4;
+        };
+    };
+
     union Registers
     {
         struct
@@ -293,7 +306,9 @@ public:
             uint32_t FragmentBarrier;
             PADDING_WORDS(0x66);
             uint32_t TiledCacheBarrier;
-            PADDING_WORDS(0x16C);
+            PADDING_WORDS(0x4);
+            uint32_t ColorMaskCommon;
+            PADDING_WORDS(0x167);
             CounterReset CounterReset;
             PADDING_WORDS(0x7);
             tyCondition Condition;
@@ -303,7 +318,9 @@ public:
             tyIndexArray IndexArray;
             PADDING_WORDS(0x7B);
             tyClearBuffers ClearBuffers;
-            PADDING_WORDS(0x4B);
+            PADDING_WORDS(0xB);
+            tyColorMask ColorMask[NumRenderTargets];
+            PADDING_WORDS(0x38);
             tyQuery Query;
             PADDING_WORDS(0x1FC);
             uint32_t Firmware[0x20];
@@ -323,6 +340,8 @@ public:
         Method_CBBind3 = (offsetof(Registers, CBBind) + (sizeof(Registers::CBBind[0]) * 3)) / sizeof(uint32_t),
         Method_CBBind4 = (offsetof(Registers, CBBind) + (sizeof(Registers::CBBind[0]) * 4)) / sizeof(uint32_t),
         Method_ClearBuffers = offsetof(Registers, ClearBuffers) / sizeof(uint32_t),
+        Method_ColorMask = offsetof(Registers, ColorMask) / sizeof(uint32_t),
+        Method_ColorMaskCommon = offsetof(Registers, ColorMaskCommon) / sizeof(uint32_t),
         Method_ConstBufferData0 = (offsetof(Registers, ConstBuffer.Data) + (sizeof(Registers::ConstBuffer.Data[0]) * 0)) / sizeof(uint32_t),
         Method_ConstBufferData1 = (offsetof(Registers, ConstBuffer.Data) + (sizeof(Registers::ConstBuffer.Data[0]) * 1)) / sizeof(uint32_t),
         Method_ConstBufferData2 = (offsetof(Registers, ConstBuffer.Data) + (sizeof(Registers::ConstBuffer.Data[0]) * 2)) / sizeof(uint32_t),
@@ -367,6 +386,7 @@ public:
     void CallMethod(Method Method, uint32_t Argument, bool Last);
 
     inline const Registers & Regs (void) const { return m_Regs; }
+    inline CStateTracker & StateTracker (void) { return m_StateTracker; }
 
 private:
     CMaxwell3D();
@@ -426,11 +446,13 @@ ASSERT_REG_POSITION(SyncInfo, 0xB2);
 ASSERT_REG_POSITION(VertexBufferCount, 0x35E);
 ASSERT_REG_POSITION(FragmentBarrier, 0x378);
 ASSERT_REG_POSITION(TiledCacheBarrier, 0x3DF);
+ASSERT_REG_POSITION(ColorMaskCommon, 0x3E4);
 ASSERT_REG_POSITION(CounterReset, 0x54C);
 ASSERT_REG_POSITION(Condition, 0x554);
 ASSERT_REG_POSITION(Draw, 0x585);
 ASSERT_REG_POSITION(IndexArray, 0x5F2);
 ASSERT_REG_POSITION(ClearBuffers, 0x674);
+ASSERT_REG_POSITION(ColorMask, 0x680);
 ASSERT_REG_POSITION(Query, 0x6C0);
 ASSERT_REG_POSITION(Firmware, 0x8C0);
 ASSERT_REG_POSITION(ConstBuffer, 0x8E0);

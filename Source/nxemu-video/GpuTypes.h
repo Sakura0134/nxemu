@@ -1,5 +1,10 @@
 #pragma once
 
+enum 
+{
+    NumRenderTargets = 8,
+};
+
 enum BufferMethods : unsigned 
 {
     BufferMethods_BindObject = 0x0,

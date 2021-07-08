@@ -10,6 +10,7 @@ OpenGLRenderer::OpenGLRenderer(ISwitchSystem & SwitchSystem, CVideo & Video) :
     m_EmulatorWindow(Video.Window()),
     m_SwitchSystem(SwitchSystem), 
     m_Video(Video),
+    m_StateTracker(Video),
     m_FenceManager(*this, Video)
 {
 }
@@ -75,6 +76,12 @@ void OpenGLRenderer::Clear()
     bool UseColor = false, UseDepth = false, UseStencil = false;
     if (Regs.ClearBuffers.R != 0 || Regs.ClearBuffers.G != 0 || Regs.ClearBuffers.B != 0 || Regs.ClearBuffers.A != 0)
     {
+        UseColor = true;
+
+        GLuint Index = Regs.ClearBuffers.RT;
+        m_StateTracker.NotifyColorMask((uint8_t)Index);
+        glColorMaski(Index, Regs.ClearBuffers.R != 0, Regs.ClearBuffers.G != 0, Regs.ClearBuffers.B != 0, Regs.ClearBuffers.A != 0);
+
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
     if (Regs.ClearBuffers.Z != 0)

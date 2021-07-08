@@ -19,6 +19,23 @@ CStateTracker::CStateTracker(uint32_t NumRegisters, uint32_t MaxFlag)
     }
 }
 
+void CStateTracker::IncreaseMaxFlag(uint32_t MaxFlag) 
+{
+    size_t CurrentSize = m_Flags.size();
+    if (MaxFlag < CurrentSize)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    m_Flags.resize(MaxFlag);
+    m_MemoryWriteFlag.resize(MaxFlag);
+    for (size_t i = CurrentSize, n = MaxFlag; i < n; i++) 
+    {
+        m_Flags[i] = false;
+        m_MemoryWriteFlag[i] = false;
+    }
+}
+
 void CStateTracker::OnMemoryWrite(void) 
 {
     for (size_t i = 0, n = m_Flags.size(); i < n; i++)
@@ -27,6 +44,14 @@ void CStateTracker::OnMemoryWrite(void)
         {
             continue;
         }
+        m_Flags[i] = true;
+    }
+}
+
+void CStateTracker::FlagSetAll(void) 
+{
+    for (size_t i = 0, n = m_Flags.size(); i < n; i++) 
+    {
         m_Flags[i] = true;
     }
 }
@@ -42,6 +67,30 @@ void CStateTracker::FlagSet(uint32_t Index)
         g_Notify->BreakPoint(__FILE__,__LINE__);
     }
     m_Flags[Index] = true;
+}
+
+void CStateTracker::SetRegisterFlag(uint32_t Method, uint32_t Length, uint32_t Index) 
+{
+    if (Method + Length >= m_RegisterFlag[0].size()) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    for (uint32_t i = 0; i < Length; i++)
+    {
+        if (m_RegisterFlag[0][Method + i] == 0 || m_RegisterFlag[0][Method + i] == Index) 
+        {
+            m_RegisterFlag[0][Method + i] = Index;
+        }
+        else if (m_RegisterFlag[1][Method + i] == 0 || m_RegisterFlag[1][Method + i] == Index) 
+        {
+            m_RegisterFlag[1][Method + i] = Index;
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
 }
 
 void CStateTracker::RegisterChanged(uint32_t Method) 

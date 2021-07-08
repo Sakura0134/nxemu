@@ -1,4 +1,5 @@
 #pragma once
+#include "OpenGLStateTracker.h"
 #include "OpenGLWindow.h"
 #include "OpenGLFenceManager.h"
 #include "Renderer\Renderer.h"
@@ -29,6 +30,7 @@ private:
     OpenGLRenderer(const OpenGLRenderer&);
     OpenGLRenderer& operator=(const OpenGLRenderer&);
 
+    OpenGLStateTracker m_StateTracker;
     OpenGLFenceManager m_FenceManager;
     OpenGLWindow m_OpenGLWindow;
     EmulatorWindow & m_EmulatorWindow;
