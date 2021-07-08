@@ -8,6 +8,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     m_StateTracker.FlagSetAll();
 
     SetupColorMasks();
+    SetupFramebufferSRGB();
     SetupFragmentClampColor();
 }
 
@@ -26,6 +27,11 @@ void OpenGLStateTracker::SetupColorMasks(void)
         m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask + (i * ColorMaskSize), ColorMaskSize, OpenGLDirtyFlag_ColorMask0 + i);
     }
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask, sizeof(CMaxwell3D::Registers::ColorMask) / (sizeof(uint32_t)), OpenGLDirtyFlag_ColorMasks);
+}
+
+void OpenGLStateTracker::SetupFramebufferSRGB(void)
+{
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_FramebufferSRGB, 1, OpenGLDirtyFlag_FramebufferSRGB);
 }
 
 void OpenGLStateTracker::SetupFragmentClampColor(void)

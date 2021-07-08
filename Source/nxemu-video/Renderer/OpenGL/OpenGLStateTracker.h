@@ -8,6 +8,7 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_ColorMasks,
     OpenGLDirtyFlag_ColorMask0,
     OpenGLDirtyFlag_ColorMask7 = OpenGLDirtyFlag_ColorMask0 + 7,
+    OpenGLDirtyFlag_FramebufferSRGB,
     OpenGLDirtyFlag_FragmentClampColor,
     OpenGLDirtyFlag_Last
 };
@@ -27,6 +28,7 @@ private:
     OpenGLStateTracker& operator=(const OpenGLStateTracker&);
 
     void SetupColorMasks(void);
+    void SetupFramebufferSRGB(void);
     void SetupFragmentClampColor(void);
     CStateTracker & m_StateTracker;
 };

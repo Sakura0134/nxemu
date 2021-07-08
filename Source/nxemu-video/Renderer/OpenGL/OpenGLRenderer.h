@@ -31,6 +31,7 @@ private:
     OpenGLRenderer& operator=(const OpenGLRenderer&);
 
     void SyncFragmentColorClampState();
+    void SyncFramebufferSRGB();
     OpenGLStateTracker m_StateTracker;
     OpenGLFenceManager m_FenceManager;
     OpenGLWindow m_OpenGLWindow;

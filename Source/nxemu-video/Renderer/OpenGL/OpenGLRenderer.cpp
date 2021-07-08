@@ -83,7 +83,7 @@ void OpenGLRenderer::Clear()
         glColorMaski(Index, Regs.ClearBuffers.R != 0, Regs.ClearBuffers.G != 0, Regs.ClearBuffers.B != 0, Regs.ClearBuffers.A != 0);
 
         SyncFragmentColorClampState();
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        SyncFramebufferSRGB();
     }
     if (Regs.ClearBuffers.Z != 0)
     {
@@ -111,5 +111,16 @@ void OpenGLRenderer::SyncFragmentColorClampState()
     StateTracker.FlagClear(OpenGLDirtyFlag_FragmentClampColor);
 
     glClampColor(GL_CLAMP_FRAGMENT_COLOR, m_Video.Maxwell3D().Regs().FragmentColorClamp ? GL_TRUE : GL_FALSE);
+}
+
+void OpenGLRenderer::SyncFramebufferSRGB()
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_FramebufferSRGB))
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_FramebufferSRGB);
+    m_Video.Maxwell3D().Regs().FramebufferSRGB != 0 ? glEnable(GL_FRAMEBUFFER_SRGB) : glDisable(GL_FRAMEBUFFER_SRGB);
 }
 

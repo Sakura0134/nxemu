@@ -314,7 +314,9 @@ public:
             CounterReset CounterReset;
             PADDING_WORDS(0x7);
             tyCondition Condition;
-            PADDING_WORDS(0x2E);
+            PADDING_WORDS(0x17);
+            uint32_t FramebufferSRGB;
+            PADDING_WORDS(0x16);
             tyDraw Draw;
             PADDING_WORDS(0x6B);
             tyIndexArray IndexArray;
@@ -369,6 +371,7 @@ public:
         Method_Firmware4 = (offsetof(Registers, Firmware) + (sizeof(Registers::Firmware[0]) * 4)) / sizeof(uint32_t),
         Method_FragmentBarrier = offsetof(Registers, FragmentBarrier) / sizeof(uint32_t),
         Method_FragmentColorClamp = offsetof(Registers, FragmentColorClamp) / sizeof(uint32_t),
+        Method_FramebufferSRGB = offsetof(Registers, FramebufferSRGB) / sizeof(uint32_t),
         Method_IndexArrayCount = offsetof(Registers, IndexArray.Count) / sizeof(uint32_t),
         Method_QueryGet = offsetof(Registers, Query.QueryGet) / sizeof(uint32_t),
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
@@ -453,6 +456,7 @@ ASSERT_REG_POSITION(ColorMaskCommon, 0x3E4);
 ASSERT_REG_POSITION(FragmentColorClamp, 0x4EA);
 ASSERT_REG_POSITION(CounterReset, 0x54C);
 ASSERT_REG_POSITION(Condition, 0x554);
+ASSERT_REG_POSITION(FramebufferSRGB, 0x56E);
 ASSERT_REG_POSITION(Draw, 0x585);
 ASSERT_REG_POSITION(IndexArray, 0x5F2);
 ASSERT_REG_POSITION(ClearBuffers, 0x674);
