@@ -53,9 +53,27 @@ uint32_t CVideo::GetSyncPointValue(uint32_t SyncPointId) const
     return SyncPointValue;
 }
 
-void CVideo::WaitFence(uint32_t /*SyncPointId*/, uint32_t /*value*/)
+void CVideo::WaitFence(uint32_t SyncPointId, uint32_t Value)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    if (SyncPointId == UINT32_MAX)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    uint32_t SyncPointValue;
+    for (;;) 
+    {
+        {
+            CGuard Guard(m_CS);
+            SyncPointValue = m_SyncPoints[SyncPointId];
+            m_SyncPointEvent.Reset();
+        }
+        if (SyncPointValue >= Value)
+        {
+            break;
+        }
+        m_SyncPointEvent.IsTriggered(SyncEvent::INFINITE_TIMEOUT);
+    }
 }
 
 void CVideo::InvalidateRegion(uint64_t /*CpuAddr*/, uint64_t /*size*/)
