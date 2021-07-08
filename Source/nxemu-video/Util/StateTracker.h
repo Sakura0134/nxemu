@@ -13,6 +13,9 @@ public:
 
     void FlagSetAll(void);
     void FlagSet(uint32_t Index);
+    void FlagClear(uint32_t Index);
+
+    bool Flag(uint32_t Index) const;
     
     void SetRegisterFlag(uint32_t Method, uint32_t Length, uint32_t Index);
     void RegisterChanged(uint32_t Method);

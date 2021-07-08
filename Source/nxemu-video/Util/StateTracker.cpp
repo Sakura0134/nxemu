@@ -69,6 +69,24 @@ void CStateTracker::FlagSet(uint32_t Index)
     m_Flags[Index] = true;
 }
 
+void CStateTracker::FlagClear(uint32_t Index)
+{
+    if (Index >= m_Flags.size())
+    {
+        g_Notify->BreakPoint(__FILE__,__LINE__);
+    }
+    m_Flags[Index] = false;
+}
+
+bool CStateTracker::Flag(uint32_t Index) const
+{
+    if (Index >= m_Flags.size())
+    {
+        g_Notify->BreakPoint(__FILE__,__LINE__);
+    }
+    return m_Flags[Index];
+}
+
 void CStateTracker::SetRegisterFlag(uint32_t Method, uint32_t Length, uint32_t Index) 
 {
     if (Method + Length >= m_RegisterFlag[0].size()) 
