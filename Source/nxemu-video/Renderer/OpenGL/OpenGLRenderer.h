@@ -22,6 +22,7 @@ public:
     void SignalSyncPoint(uint32_t Value);
     void SignalSemaphore(uint64_t Addr, uint32_t Value);
     void ReleaseFences(void);
+    void Clear();
 
 private:
     OpenGLRenderer();

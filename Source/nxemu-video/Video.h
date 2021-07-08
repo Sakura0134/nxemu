@@ -55,6 +55,7 @@ public:
 
     CVideoMemory & VideoMemory() { return m_Memory; }
     EmulatorWindow & Window() { return m_EmulatorWindow; }
+    CMaxwell3D & Maxwell3D() { return m_Maxwell3D; }
 
 private:
     CVideo();

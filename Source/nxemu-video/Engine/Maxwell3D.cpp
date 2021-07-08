@@ -92,6 +92,8 @@ void CMaxwell3D::ProcessMethodCall(Method Method, uint32_t ShadowArgument, uint3
         ProcessCBBind(4);
         break;
     case Method_ClearBuffers:
+        ProcessClearBuffers();
+        break;
     case Method_ConditionMode:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
@@ -351,5 +353,10 @@ void CMaxwell3D::FinishCBData()
 
     m_CBDataState.Id = 0xFFFFFFFF;
     m_CBDataState.Current = 0xFFFFFFFF;
+}
+
+void CMaxwell3D::ProcessClearBuffers()
+{
+    m_Renderer->Clear();
 }
 

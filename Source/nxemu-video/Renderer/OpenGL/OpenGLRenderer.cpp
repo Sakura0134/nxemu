@@ -69,3 +69,27 @@ void OpenGLRenderer::ReleaseFences(void)
     m_FenceManager.WaitPendingFences();
 }
 
+void OpenGLRenderer::Clear() 
+{
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+    bool UseColor = false, UseDepth = false, UseStencil = false;
+    if (Regs.ClearBuffers.R != 0 || Regs.ClearBuffers.G != 0 || Regs.ClearBuffers.B != 0 || Regs.ClearBuffers.A != 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    if (Regs.ClearBuffers.Z != 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    if (Regs.ClearBuffers.S != 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    if (!UseColor && !UseDepth && !UseStencil)
+    {
+        return;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+}
+

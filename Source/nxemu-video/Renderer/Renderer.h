@@ -10,4 +10,5 @@ __interface IRenderer
     virtual void SignalSyncPoint(uint32_t Value) = 0;
     virtual void SignalSemaphore(uint64_t Addr, uint32_t Value) = 0;
     virtual void ReleaseFences() = 0;
+    virtual void Clear() = 0;
 };
