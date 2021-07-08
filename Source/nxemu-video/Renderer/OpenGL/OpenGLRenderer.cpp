@@ -98,6 +98,9 @@ void OpenGLRenderer::Clear()
     {
         return;
     }
+
+    SyncRasterizeEnable();
+
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -122,5 +125,16 @@ void OpenGLRenderer::SyncFramebufferSRGB()
     }
     StateTracker.FlagClear(OpenGLDirtyFlag_FramebufferSRGB);
     m_Video.Maxwell3D().Regs().FramebufferSRGB != 0 ? glEnable(GL_FRAMEBUFFER_SRGB) : glDisable(GL_FRAMEBUFFER_SRGB);
+}
+
+void OpenGLRenderer::SyncRasterizeEnable() 
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_RasterizeEnable)) 
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_RasterizeEnable);
+    m_Video.Maxwell3D().Regs().RasterizeEnable == 0 ? glEnable(GL_RASTERIZER_DISCARD) : glDisable(GL_RASTERIZER_DISCARD);
 }
 

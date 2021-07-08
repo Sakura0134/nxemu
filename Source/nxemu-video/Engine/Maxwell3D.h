@@ -300,7 +300,9 @@ public:
             uint32_t DataUpload;
             PADDING_WORDS(0x44);
             tySyncInfo SyncInfo;
-            PADDING_WORDS(0x2AB);
+            PADDING_WORDS(0x2C);
+            uint32_t RasterizeEnable;
+            PADDING_WORDS(0x27E);
             uint32_t VertexBufferCount;
             PADDING_WORDS(0x19);
             uint32_t FragmentBarrier;
@@ -376,6 +378,7 @@ public:
         Method_QueryGet = offsetof(Registers, Query.QueryGet) / sizeof(uint32_t),
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
+        Method_RasterizeEnable = offsetof(Registers, RasterizeEnable) / sizeof(uint32_t),
         Method_ShadowRamControl = offsetof(Registers, ShadowRamControl) / sizeof(uint32_t),
         Method_SyncInfo = offsetof(Registers, SyncInfo) / sizeof(uint32_t),
         Method_TiledCacheBarrier = offsetof(Registers, TiledCacheBarrier) / sizeof(uint32_t),
@@ -449,6 +452,7 @@ ASSERT_REG_POSITION(Upload, 0x60);
 ASSERT_REG_POSITION(ExecUpload, 0x6C);
 ASSERT_REG_POSITION(DataUpload, 0x6D);
 ASSERT_REG_POSITION(SyncInfo, 0xB2);
+ASSERT_REG_POSITION(RasterizeEnable, 0xDF);
 ASSERT_REG_POSITION(VertexBufferCount, 0x35E);
 ASSERT_REG_POSITION(FragmentBarrier, 0x378);
 ASSERT_REG_POSITION(TiledCacheBarrier, 0x3DF);

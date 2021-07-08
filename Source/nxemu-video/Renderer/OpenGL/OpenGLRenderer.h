@@ -32,6 +32,7 @@ private:
 
     void SyncFragmentColorClampState();
     void SyncFramebufferSRGB();
+    void SyncRasterizeEnable();
     OpenGLStateTracker m_StateTracker;
     OpenGLFenceManager m_FenceManager;
     OpenGLWindow m_OpenGLWindow;
