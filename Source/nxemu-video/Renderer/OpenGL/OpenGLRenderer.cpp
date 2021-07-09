@@ -100,6 +100,7 @@ void OpenGLRenderer::Clear()
     }
 
     SyncRasterizeEnable();
+    SyncStencilTestState();
 
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
@@ -136,5 +137,26 @@ void OpenGLRenderer::SyncRasterizeEnable()
     }
     StateTracker.FlagClear(OpenGLDirtyFlag_RasterizeEnable);
     m_Video.Maxwell3D().Regs().RasterizeEnable == 0 ? glEnable(GL_RASTERIZER_DISCARD) : glDisable(GL_RASTERIZER_DISCARD);
+}
+
+void OpenGLRenderer::SyncStencilTestState() 
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_StencilTest))
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_StencilTest);
+
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+    if (Regs.StencilEnable != 0)
+    {
+        glEnable(GL_STENCIL_TEST);
+    } 
+    else 
+    {
+        glDisable(GL_STENCIL_TEST);
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 

@@ -68,6 +68,47 @@ public:
         ConditionMode_NotEqual = 4,
     };
 
+    enum ComparisonOp : unsigned
+    {
+        ComparisonOp_Never = 0x200,
+        ComparisonOp_Less = 0x201,
+        ComparisonOp_Equal = 0x202,
+        ComparisonOp_LessEqual = 0x203,
+        ComparisonOp_Greater = 0x204,
+        ComparisonOp_NotEqual = 0x205,
+        ComparisonOp_GreaterEqual = 0x206,
+        ComparisonOp_Always = 0x207,
+
+        ComparisonOp_NeverOld = 1,
+        ComparisonOp_LessOld = 2,
+        ComparisonOp_EqualOld = 3,
+        ComparisonOp_LessEqualOld = 4,
+        ComparisonOp_GreaterOld = 5,
+        ComparisonOp_NotEqualOld = 6,
+        ComparisonOp_GreaterEqualOld = 7,
+        ComparisonOp_AlwaysOld = 8,
+    };
+
+    enum StencilOp : unsigned
+    {
+        StencilOp_Keep = 1,
+        StencilOp_Zero = 2,
+        StencilOp_Replace = 3,
+        StencilOp_Incr = 4,
+        StencilOp_Decr = 5,
+        StencilOp_Invert = 6,
+        StencilOp_IncrWrap = 7,
+        StencilOp_DecrWrap = 8,
+        StencilOp_KeepOGL = 0x1E00,
+        StencilOp_ZeroOGL = 0,
+        StencilOp_ReplaceOGL = 0x1E01,
+        StencilOp_IncrOGL = 0x1E02,
+        StencilOp_DecrOGL = 0x1E03,
+        StencilOp_InvertOGL = 0x150A,
+        StencilOp_IncrWrapOGL = 0x8507,
+        StencilOp_DecrWrapOGL = 0x8508,
+    };
+
     enum CounterReset : unsigned
     {
         CounterReset_SampleCnt = 0x01,
@@ -306,17 +347,36 @@ public:
             uint32_t VertexBufferCount;
             PADDING_WORDS(0x19);
             uint32_t FragmentBarrier;
-            PADDING_WORDS(0x66);
+            PADDING_WORDS(0x5C);
+            int32_t StencilBackFuncRef;
+            uint32_t StencilBackMask;
+            uint32_t StencilBackFuncMask;
+            PADDING_WORDS(0x7);
             uint32_t TiledCacheBarrier;
             PADDING_WORDS(0x4);
             uint32_t ColorMaskCommon;
-            PADDING_WORDS(0x105);
+            PADDING_WORDS(0xFB);
+            uint32_t StencilEnable;
+            StencilOp StencilFrontOpFail;
+            StencilOp StencilFrontOpZFail;
+            StencilOp StencilFrontOpZPass;
+            ComparisonOp StencilFrontFuncFunc;
+            int32_t StencilFrontFuncRef;
+            uint32_t StencilFrontFuncMask;
+            uint32_t StencilFrontMask;
+            PADDING_WORDS(0x2);
             uint32_t FragmentColorClamp;
             PADDING_WORDS(0x61);
             CounterReset CounterReset;
             PADDING_WORDS(0x7);
             tyCondition Condition;
-            PADDING_WORDS(0x17);
+            PADDING_WORDS(0xE);
+            uint32_t StencilTwoSideEnable;
+            StencilOp StencilBackOpFail;
+            StencilOp StencilBackOpZFail;
+            StencilOp StencilBackOpZPass;
+            ComparisonOp StencilBackFuncFunc;
+            PADDING_WORDS(0x4);
             uint32_t FramebufferSRGB;
             PADDING_WORDS(0x16);
             tyDraw Draw;
@@ -380,6 +440,22 @@ public:
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
         Method_RasterizeEnable = offsetof(Registers, RasterizeEnable) / sizeof(uint32_t),
         Method_ShadowRamControl = offsetof(Registers, ShadowRamControl) / sizeof(uint32_t),
+        Method_StencilBackFuncFunc = offsetof(Registers, StencilBackFuncFunc) / sizeof(uint32_t),
+        Method_StencilBackFuncMask = offsetof(Registers, StencilBackFuncMask) / sizeof(uint32_t),
+        Method_StencilBackFuncRef = offsetof(Registers, StencilBackFuncRef) / sizeof(uint32_t),
+        Method_StencilBackMask = offsetof(Registers, StencilBackMask) / sizeof(uint32_t),
+        Method_StencilBackOpFail = offsetof(Registers, StencilBackOpFail) / sizeof(uint32_t),
+        Method_StencilBackOpZFail = offsetof(Registers, StencilBackOpZFail) / sizeof(uint32_t),
+        Method_StencilBackOpZPass = offsetof(Registers, StencilBackOpZPass) / sizeof(uint32_t),
+        Method_StencilEnable = offsetof(Registers, StencilEnable) / sizeof(uint32_t),
+        Method_StencilFrontFuncFunc = offsetof(Registers, StencilFrontFuncFunc) / sizeof(uint32_t),
+        Method_StencilFrontFuncMask = offsetof(Registers, StencilFrontFuncMask) / sizeof(uint32_t),
+        Method_StencilFrontFuncRef = offsetof(Registers, StencilFrontFuncRef) / sizeof(uint32_t),
+        Method_StencilFrontMask = offsetof(Registers, StencilFrontMask) / sizeof(uint32_t),
+        Method_StencilFrontOpFail = offsetof(Registers, StencilFrontOpFail) / sizeof(uint32_t),
+        Method_StencilFrontOpZFail = offsetof(Registers, StencilFrontOpZFail) / sizeof(uint32_t),
+        Method_StencilFrontOpZPass = offsetof(Registers, StencilFrontOpZPass) / sizeof(uint32_t),
+        Method_StencilTwoSideEnable = offsetof(Registers, StencilTwoSideEnable) / sizeof(uint32_t),
         Method_SyncInfo = offsetof(Registers, SyncInfo) / sizeof(uint32_t),
         Method_TiledCacheBarrier = offsetof(Registers, TiledCacheBarrier) / sizeof(uint32_t),
         Method_VertexBufferCount = offsetof(Registers, VertexBufferCount) / sizeof(uint32_t),
@@ -455,11 +531,27 @@ ASSERT_REG_POSITION(SyncInfo, 0xB2);
 ASSERT_REG_POSITION(RasterizeEnable, 0xDF);
 ASSERT_REG_POSITION(VertexBufferCount, 0x35E);
 ASSERT_REG_POSITION(FragmentBarrier, 0x378);
+ASSERT_REG_POSITION(StencilBackFuncRef, 0x3D5);
+ASSERT_REG_POSITION(StencilBackMask, 0x3D6);
+ASSERT_REG_POSITION(StencilBackFuncMask, 0x3D7);
 ASSERT_REG_POSITION(TiledCacheBarrier, 0x3DF);
 ASSERT_REG_POSITION(ColorMaskCommon, 0x3E4);
+ASSERT_REG_POSITION(StencilEnable, 0x4E0);
+ASSERT_REG_POSITION(StencilFrontOpFail, 0x4E1);
+ASSERT_REG_POSITION(StencilFrontOpZFail, 0x4E2);
+ASSERT_REG_POSITION(StencilFrontOpZPass, 0x4E3);
+ASSERT_REG_POSITION(StencilFrontFuncFunc, 0x4E4);
+ASSERT_REG_POSITION(StencilFrontFuncRef, 0x4E5);
+ASSERT_REG_POSITION(StencilFrontFuncMask, 0x4E6);
+ASSERT_REG_POSITION(StencilFrontMask, 0x4E7);
 ASSERT_REG_POSITION(FragmentColorClamp, 0x4EA);
 ASSERT_REG_POSITION(CounterReset, 0x54C);
 ASSERT_REG_POSITION(Condition, 0x554);
+ASSERT_REG_POSITION(StencilTwoSideEnable, 0x565);
+ASSERT_REG_POSITION(StencilBackOpFail, 0x566);
+ASSERT_REG_POSITION(StencilBackOpZFail, 0x567);
+ASSERT_REG_POSITION(StencilBackOpZPass, 0x568);
+ASSERT_REG_POSITION(StencilBackFuncFunc, 0x569);
 ASSERT_REG_POSITION(FramebufferSRGB, 0x56E);
 ASSERT_REG_POSITION(Draw, 0x585);
 ASSERT_REG_POSITION(IndexArray, 0x5F2);

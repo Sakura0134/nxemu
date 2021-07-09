@@ -30,6 +30,25 @@ void OpenGLStateTracker::SetupColorMasks(void)
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask, sizeof(CMaxwell3D::Registers::ColorMask) / (sizeof(uint32_t)), OpenGLDirtyFlag_ColorMasks);
 }
 
+void OpenGLStateTracker::SetupStencilTest(void) 
+{
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilEnable, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilFrontFuncFunc, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilFrontFuncRef, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilFrontFuncMask, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilFrontOpFail, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilFrontOpZFail, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilFrontOpZPass, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilFrontMask, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilTwoSideEnable, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilBackFuncFunc, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilBackFuncRef, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilBackFuncMask, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilBackOpFail, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilBackOpZFail, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilBackOpZPass, 1, OpenGLDirtyFlag_StencilTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilBackMask, 1, OpenGLDirtyFlag_StencilTest);
+}
 void OpenGLStateTracker::SetupRasterizeEnable(void) 
 {
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_RasterizeEnable, 1, OpenGLDirtyFlag_RasterizeEnable);
