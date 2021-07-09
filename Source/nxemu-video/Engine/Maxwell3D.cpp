@@ -36,6 +36,32 @@ void CMaxwell3D::BindRenderer(IRenderer * Renderer)
 void CMaxwell3D::InitializeRegisterDefaults()
 {
     memset(&m_Regs, 0, sizeof(m_Regs));
+
+    m_Regs.StencilFrontOpFail = StencilOp_Keep;
+    m_Regs.StencilFrontOpZFail = StencilOp_Keep;
+    m_Regs.StencilFrontOpZPass = StencilOp_Keep;
+    m_Regs.StencilFrontFuncFunc = ComparisonOp_Always;
+    m_Regs.StencilFrontFuncMask = 0xFFFFFFFF;
+    m_Regs.StencilFrontMask = 0xFFFFFFFF;
+    m_Regs.StencilTwoSideEnable = 1;
+    m_Regs.StencilBackOpFail = StencilOp_Keep;
+    m_Regs.StencilBackOpZFail = StencilOp_Keep;
+    m_Regs.StencilBackOpZPass = StencilOp_Keep;
+    m_Regs.StencilBackFuncFunc = ComparisonOp_Always;
+    m_Regs.StencilBackFuncMask = 0xFFFFFFFF;
+    m_Regs.StencilBackMask = 0xFFFFFFFF;
+
+    for (uint32_t i = 0, n = sizeof(m_Regs.ColorMask) / sizeof(m_Regs.ColorMask[0]); i < n; i++)
+    {
+        tyColorMask & ColorMask = m_Regs.ColorMask[i];
+        ColorMask.R = 1;
+        ColorMask.G = 1;
+        ColorMask.B = 1;
+        ColorMask.A = 1;
+    }
+
+    m_Regs.RasterizeEnable = 1;
+
     m_ShadowRegs = m_Regs;
 }
 

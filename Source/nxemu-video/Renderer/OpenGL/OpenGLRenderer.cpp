@@ -1,4 +1,5 @@
 #include "OpenGLRenderer.h"
+#include "MaxwellToOpenGL.h"
 #include "EmulatorWindow.h"
 #include "VideoNotification.h"
 #include "Video.h"
@@ -157,6 +158,22 @@ void OpenGLRenderer::SyncStencilTestState()
     {
         glDisable(GL_STENCIL_TEST);
     }
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+
+    glStencilFuncSeparate(GL_FRONT, MaxwellToOpenGL_ComparisonOp(Regs.StencilFrontFuncFunc), Regs.StencilFrontFuncRef, Regs.StencilFrontFuncMask);
+    glStencilOpSeparate(GL_FRONT, MaxwellToOpenGL_StencilOp(Regs.StencilFrontOpFail), MaxwellToOpenGL_StencilOp(Regs.StencilFrontOpZFail), MaxwellToOpenGL_StencilOp(Regs.StencilFrontOpZPass));
+    glStencilMaskSeparate(GL_FRONT, Regs.StencilFrontMask);
+
+    if (Regs.StencilTwoSideEnable != 0)
+    {
+        glStencilFuncSeparate(GL_BACK, MaxwellToOpenGL_ComparisonOp(Regs.StencilBackFuncFunc), Regs.StencilBackFuncRef, Regs.StencilBackFuncMask);
+        glStencilOpSeparate(GL_BACK, MaxwellToOpenGL_StencilOp(Regs.StencilBackOpFail), MaxwellToOpenGL_StencilOp(Regs.StencilBackOpZFail), MaxwellToOpenGL_StencilOp(Regs.StencilBackOpZPass));
+        glStencilMaskSeparate(GL_BACK, Regs.StencilBackMask);
+    } 
+    else 
+    {
+        glStencilFuncSeparate(GL_BACK, GL_ALWAYS, 0, 0xFFFFFFFF);
+        glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
+        glStencilMaskSeparate(GL_BACK, 0xFFFFFFFF);
+    }
 }
 
