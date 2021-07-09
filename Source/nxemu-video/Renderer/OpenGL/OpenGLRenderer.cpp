@@ -103,6 +103,19 @@ void OpenGLRenderer::Clear()
     SyncRasterizeEnable();
     SyncStencilTestState();
 
+    if (Regs.ClearFlags.Scissor) 
+    {
+        SyncScissorTest();
+    } 
+    else 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    if (Regs.ClearFlags.Viewport != 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -177,3 +190,33 @@ void OpenGLRenderer::SyncStencilTestState()
     }
 }
 
+void OpenGLRenderer::SyncScissorTest()
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_Scissors))
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_Scissors);
+
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+    for (uint32_t i = 0; i < CMaxwell3D::NumViewports; i++) 
+    {
+        if (!StateTracker.Flag(OpenGLDirtyFlag_Scissor0 + i)) 
+        {
+            continue;
+        }
+        StateTracker.FlagClear(OpenGLDirtyFlag_Scissor0 + i);
+
+        const CMaxwell3D::tyScissorTest & ScissorTest = Regs.ScissorTest[i];
+        if (ScissorTest.Enable)
+        {
+            glEnablei(GL_SCISSOR_TEST, (GLuint)i);
+            glScissorIndexed((GLuint)i, ScissorTest.MinX, ScissorTest.MinY, ScissorTest.MaxX - ScissorTest.MinX, ScissorTest.MaxY - ScissorTest.MinY);
+        }
+        else 
+        {
+            glDisablei(GL_SCISSOR_TEST, (GLuint)i);
+        }
+    }
+}

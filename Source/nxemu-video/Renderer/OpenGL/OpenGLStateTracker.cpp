@@ -8,6 +8,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     m_StateTracker.FlagSetAll();
 
     SetupColorMasks();
+    SetupScissors();
     SetupRasterizeEnable();
     SetupFramebufferSRGB();
     SetupFragmentClampColor();
@@ -28,6 +29,16 @@ void OpenGLStateTracker::SetupColorMasks(void)
         m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask + (i * ColorMaskSize), ColorMaskSize, OpenGLDirtyFlag_ColorMask0 + i);
     }
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask, sizeof(CMaxwell3D::Registers::ColorMask) / (sizeof(uint32_t)), OpenGLDirtyFlag_ColorMasks);
+}
+
+void OpenGLStateTracker::SetupScissors(void)
+{
+    for (uint8_t i = 0; i < CMaxwell3D::NumViewports; i++) 
+    {
+        uint32_t Offset = CMaxwell3D::Method_ScissorTest + i * (sizeof(CMaxwell3D::Registers::ScissorTest[0]) / (sizeof(uint32_t)));
+        m_StateTracker.SetRegisterFlag(Offset, (sizeof(CMaxwell3D::Registers::ScissorTest[0]) / (sizeof(uint32_t))), OpenGLDirtyFlag_Scissor0 + i);
+    }
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ScissorTest, (sizeof(CMaxwell3D::Registers::ScissorTest) / (sizeof(uint32_t))), OpenGLDirtyFlag_Scissors);
 }
 
 void OpenGLStateTracker::SetupStencilTest(void) 

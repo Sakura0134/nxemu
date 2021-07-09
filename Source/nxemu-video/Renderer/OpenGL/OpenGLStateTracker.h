@@ -4,6 +4,10 @@
 
 enum OpenGLDirtyFlag
 {
+    OpenGLDirtyFlag_Scissors,
+    OpenGLDirtyFlag_Scissor0,
+    OpenGLDirtyFlag_Scissor15 = OpenGLDirtyFlag_Scissor0 + 15,
+
     OpenGLDirtyFlag_ColorMaskCommon,
     OpenGLDirtyFlag_ColorMasks,
     OpenGLDirtyFlag_ColorMask0,
@@ -32,6 +36,7 @@ private:
     OpenGLStateTracker& operator=(const OpenGLStateTracker&);
 
     void SetupColorMasks(void);
+    void SetupScissors(void);
     void SetupStencilTest(void);
     void SetupRasterizeEnable(void);
     void SetupFramebufferSRGB(void);

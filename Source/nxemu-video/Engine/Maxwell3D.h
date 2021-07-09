@@ -18,6 +18,7 @@ public:
     enum
     {
         NumRegisters = 0xE00,
+        NumViewports = 16,
         NumCBData = 16,
         MaxShaderStage = 5,
         MaxConstBuffers = 18,
@@ -327,6 +328,28 @@ public:
         };
     };
 
+    union tyClearFlags 
+    {
+        uint32_t Value;
+        struct 
+        {
+            unsigned Stencil : 4;
+            unsigned : 4;
+            unsigned Scissor : 4;
+            unsigned Viewport : 4;
+        };
+    };
+
+    struct tyScissorTest
+    {
+        uint32_t Enable;
+        unsigned MinX : 16;
+        unsigned MaxX : 16;
+        unsigned MinY : 16;
+        unsigned MaxY : 16;
+        uint32_t Fill;
+    };
+
     union Registers
     {
         struct
@@ -347,7 +370,9 @@ public:
             uint32_t VertexBufferCount;
             PADDING_WORDS(0x19);
             uint32_t FragmentBarrier;
-            PADDING_WORDS(0x5C);
+            PADDING_WORDS(0x7);
+            tyScissorTest ScissorTest[NumViewports];
+            PADDING_WORDS(0x15);
             int32_t StencilBackFuncRef;
             uint32_t StencilBackMask;
             uint32_t StencilBackFuncMask;
@@ -355,7 +380,9 @@ public:
             uint32_t TiledCacheBarrier;
             PADDING_WORDS(0x4);
             uint32_t ColorMaskCommon;
-            PADDING_WORDS(0xFB);
+            PADDING_WORDS(0x59);
+            tyClearFlags ClearFlags;
+            PADDING_WORDS(0xA1);
             uint32_t StencilEnable;
             StencilOp StencilFrontOpFail;
             StencilOp StencilFrontOpZFail;
@@ -439,6 +466,7 @@ public:
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
         Method_RasterizeEnable = offsetof(Registers, RasterizeEnable) / sizeof(uint32_t),
+        Method_ScissorTest = offsetof(Registers, ScissorTest) / sizeof(uint32_t),
         Method_ShadowRamControl = offsetof(Registers, ShadowRamControl) / sizeof(uint32_t),
         Method_StencilBackFuncFunc = offsetof(Registers, StencilBackFuncFunc) / sizeof(uint32_t),
         Method_StencilBackFuncMask = offsetof(Registers, StencilBackFuncMask) / sizeof(uint32_t),
@@ -531,11 +559,13 @@ ASSERT_REG_POSITION(SyncInfo, 0xB2);
 ASSERT_REG_POSITION(RasterizeEnable, 0xDF);
 ASSERT_REG_POSITION(VertexBufferCount, 0x35E);
 ASSERT_REG_POSITION(FragmentBarrier, 0x378);
+ASSERT_REG_POSITION(ScissorTest, 0x380);
 ASSERT_REG_POSITION(StencilBackFuncRef, 0x3D5);
 ASSERT_REG_POSITION(StencilBackMask, 0x3D6);
 ASSERT_REG_POSITION(StencilBackFuncMask, 0x3D7);
 ASSERT_REG_POSITION(TiledCacheBarrier, 0x3DF);
 ASSERT_REG_POSITION(ColorMaskCommon, 0x3E4);
+ASSERT_REG_POSITION(ClearFlags, 0x43E);
 ASSERT_REG_POSITION(StencilEnable, 0x4E0);
 ASSERT_REG_POSITION(StencilFrontOpFail, 0x4E1);
 ASSERT_REG_POSITION(StencilFrontOpZFail, 0x4E2);

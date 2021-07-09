@@ -34,6 +34,8 @@ private:
     void SyncFramebufferSRGB();
     void SyncRasterizeEnable();
     void SyncStencilTestState();
+    void SyncScissorTest();
+
     OpenGLStateTracker m_StateTracker;
     OpenGLFenceManager m_FenceManager;
     OpenGLWindow m_OpenGLWindow;
