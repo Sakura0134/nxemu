@@ -1,6 +1,7 @@
 #pragma once
 #include "OpenGLStateTracker.h"
 #include "OpenGLWindow.h"
+#include "OpenGLTextureCache.h"
 #include "OpenGLFenceManager.h"
 #include "Renderer\Renderer.h"
 
@@ -37,6 +38,7 @@ private:
     void SyncScissorTest();
 
     OpenGLStateTracker m_StateTracker;
+    OpenGLTextureCache m_TextureCache;
     OpenGLFenceManager m_FenceManager;
     OpenGLWindow m_OpenGLWindow;
     EmulatorWindow & m_EmulatorWindow;

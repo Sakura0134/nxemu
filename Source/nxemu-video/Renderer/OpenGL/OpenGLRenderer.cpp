@@ -12,6 +12,7 @@ OpenGLRenderer::OpenGLRenderer(ISwitchSystem & SwitchSystem, CVideo & Video) :
     m_SwitchSystem(SwitchSystem), 
     m_Video(Video),
     m_StateTracker(Video),
+    m_TextureCache(*this, Video),
     m_FenceManager(*this, Video)
 {
 }
@@ -30,6 +31,10 @@ bool OpenGLRenderer::Init()
     {
         return false;
     }
+    if (!m_TextureCache.Init())
+    {
+        return false;
+    }
     glClearColor(0.0f, 0.0f, 0.0, 0.0f);
     return true;
 }
@@ -40,6 +45,7 @@ void OpenGLRenderer::InvalidateRegion(uint64_t Addr, uint64_t Size)
     {
         return;
     }
+    m_TextureCache.WriteMemory(Addr, Size);
 }
 
 void OpenGLRenderer::FlushCommands(void)
@@ -116,6 +122,7 @@ void OpenGLRenderer::Clear()
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
 
+    m_TextureCache.UpdateRenderTargets(true);
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
