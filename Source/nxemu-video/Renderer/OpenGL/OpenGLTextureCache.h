@@ -3,6 +3,7 @@
 
 class OpenGLRenderer;
 class CVideo;
+class CMaxwell3D;
 
 class OpenGLTextureCache
 {
@@ -19,4 +20,5 @@ private:
     OpenGLTextureCache & operator=(const OpenGLTextureCache &);
 
     OpenGLRenderer & m_Renderer;
+    CMaxwell3D & m_Maxwell3D;
 };

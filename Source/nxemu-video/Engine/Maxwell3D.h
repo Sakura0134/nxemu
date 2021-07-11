@@ -328,6 +328,14 @@ public:
         };
     };
 
+    struct tyRenderArea
+    {
+        unsigned X : 16;
+        unsigned Width : 16;
+        unsigned Y : 16;
+        unsigned Height : 16;
+    };
+
     union tyClearFlags 
     {
         uint32_t Value;
@@ -340,6 +348,68 @@ public:
         };
     };
 
+    union tyTileMode
+    {
+        uint32_t Value;
+        struct 
+        {
+            unsigned BlockWidth : 4;
+            unsigned BlockHeight : 4;
+            unsigned BlockDepth : 4;
+            unsigned IsPitchLinear : 1;
+            unsigned : 3;
+            unsigned Is3D : 1;
+        };
+    };
+
+    struct tyRenderTarget
+    {
+        uint32_t AddressHigh;
+        uint32_t AddressLow;
+        uint32_t Width;
+        uint32_t Height;
+        RenderTargetFormat Format;
+        tyTileMode TileMode;
+        union 
+        {
+            uint32_t DepthRaw;
+            struct 
+            {
+                unsigned Depth : 16;
+                unsigned Volume : 1;
+            };
+        };
+        uint32_t LayerStride;
+        uint32_t BaseLayer;
+        PADDING_WORDS(7);
+    };
+
+    union tyRTControl
+    {
+        uint32_t Value;
+        struct 
+        {
+            unsigned Count : 4;
+            unsigned Map0 : 3;
+            unsigned Map1 : 3;
+            unsigned Map2 : 3;
+            unsigned Map3 : 3;
+            unsigned Map4 : 3;
+            unsigned Map5 : 3;
+            unsigned Map6 : 3;
+            unsigned Map7 : 3;
+        };
+    };
+
+    struct tyZeta 
+    {
+        uint32_t AddressHigh;
+        uint32_t AddressLow;
+        DepthFormat Format;
+        tyTileMode TileMode;
+        uint32_t LayerStride;
+    };
+
     struct tyScissorTest
     {
         uint32_t Enable;
@@ -348,6 +418,13 @@ public:
         unsigned MinY : 16;
         unsigned MaxY : 16;
         uint32_t Fill;
+    };
+
+    struct tyAdrressLimit
+    {
+        uint32_t AddressHigh;
+        uint32_t AddressLow;
+        uint32_t Limit;
     };
 
     union Registers
@@ -366,7 +443,9 @@ public:
             tySyncInfo SyncInfo;
             PADDING_WORDS(0x2C);
             uint32_t RasterizeEnable;
-            PADDING_WORDS(0x27E);
+            PADDING_WORDS(0x120);
+            tyRenderTarget RenderTarget[NumRenderTargets];
+            PADDING_WORDS(0xDE);
             uint32_t VertexBufferCount;
             PADDING_WORDS(0x19);
             uint32_t FragmentBarrier;
@@ -380,9 +459,17 @@ public:
             uint32_t TiledCacheBarrier;
             PADDING_WORDS(0x4);
             uint32_t ColorMaskCommon;
-            PADDING_WORDS(0x59);
+            PADDING_WORDS(0x13);
+            tyZeta Zeta;
+            tyRenderArea RenderArea;
+            PADDING_WORDS(0x3F);
             tyClearFlags ClearFlags;
-            PADDING_WORDS(0xA1);
+            PADDING_WORDS(0x48);
+            tyRTControl RTControl;
+            PADDING_WORDS(0x2);
+            uint32_t ZetaWidth;
+            uint32_t ZetaHeight;
+            PADDING_WORDS(0x54);
             uint32_t StencilEnable;
             StencilOp StencilFrontOpFail;
             StencilOp StencilFrontOpZFail;
@@ -395,9 +482,14 @@ public:
             uint32_t FragmentColorClamp;
             PADDING_WORDS(0x61);
             CounterReset CounterReset;
-            PADDING_WORDS(0x7);
+            PADDING_WORDS(0x1);
+            uint32_t ZetaEnable;
+            PADDING_WORDS(0x5);
             tyCondition Condition;
-            PADDING_WORDS(0xE);
+            tyAdrressLimit Tsc;
+            PADDING_WORDS(0x3);
+            tyAdrressLimit Tic;
+            PADDING_WORDS(0x5);
             uint32_t StencilTwoSideEnable;
             StencilOp StencilBackOpFail;
             StencilOp StencilBackOpZFail;
@@ -466,6 +558,9 @@ public:
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
         Method_RasterizeEnable = offsetof(Registers, RasterizeEnable) / sizeof(uint32_t),
+        Method_RenderArea = offsetof(Registers, RenderArea) / sizeof(uint32_t),
+        Method_RenderTarget = offsetof(Registers, RenderTarget) / sizeof(uint32_t),
+        Method_RTControl = offsetof(Registers, RTControl) / sizeof(uint32_t),
         Method_ScissorTest = offsetof(Registers, ScissorTest) / sizeof(uint32_t),
         Method_ShadowRamControl = offsetof(Registers, ShadowRamControl) / sizeof(uint32_t),
         Method_StencilBackFuncFunc = offsetof(Registers, StencilBackFuncFunc) / sizeof(uint32_t),
@@ -485,9 +580,16 @@ public:
         Method_StencilFrontOpZPass = offsetof(Registers, StencilFrontOpZPass) / sizeof(uint32_t),
         Method_StencilTwoSideEnable = offsetof(Registers, StencilTwoSideEnable) / sizeof(uint32_t),
         Method_SyncInfo = offsetof(Registers, SyncInfo) / sizeof(uint32_t),
+        Method_Tic = offsetof(Registers, Tic) / sizeof(uint32_t),
         Method_TiledCacheBarrier = offsetof(Registers, TiledCacheBarrier) / sizeof(uint32_t),
+        Method_Tsc = offsetof(Registers, Tsc) / sizeof(uint32_t),
         Method_VertexBufferCount = offsetof(Registers, VertexBufferCount) / sizeof(uint32_t),
         Method_WaitForIdle = offsetof(Registers, WaitForIdle) / sizeof(uint32_t),
+        Method_Zeta = offsetof(Registers, Zeta) / sizeof(uint32_t),
+        Method_ZetaEnable = offsetof(Registers, ZetaEnable) / sizeof(uint32_t),
+        Method_ZetaHeight = offsetof(Registers, ZetaHeight) / sizeof(uint32_t),
+        Method_ZetaWidth = offsetof(Registers, ZetaWidth) / sizeof(uint32_t),
+        Method_ClearFlags = offsetof(Registers, ClearFlags) / sizeof(uint32_t),
     };
 
     CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory);
@@ -557,6 +659,7 @@ ASSERT_REG_POSITION(ExecUpload, 0x6C);
 ASSERT_REG_POSITION(DataUpload, 0x6D);
 ASSERT_REG_POSITION(SyncInfo, 0xB2);
 ASSERT_REG_POSITION(RasterizeEnable, 0xDF);
+ASSERT_REG_POSITION(RenderTarget, 0x200);
 ASSERT_REG_POSITION(VertexBufferCount, 0x35E);
 ASSERT_REG_POSITION(FragmentBarrier, 0x378);
 ASSERT_REG_POSITION(ScissorTest, 0x380);
@@ -565,7 +668,12 @@ ASSERT_REG_POSITION(StencilBackMask, 0x3D6);
 ASSERT_REG_POSITION(StencilBackFuncMask, 0x3D7);
 ASSERT_REG_POSITION(TiledCacheBarrier, 0x3DF);
 ASSERT_REG_POSITION(ColorMaskCommon, 0x3E4);
+ASSERT_REG_POSITION(Zeta, 0x3F8);
+ASSERT_REG_POSITION(RenderArea, 0x3FD);
 ASSERT_REG_POSITION(ClearFlags, 0x43E);
+ASSERT_REG_POSITION(RTControl, 0x487);
+ASSERT_REG_POSITION(ZetaWidth, 0x48a);
+ASSERT_REG_POSITION(ZetaHeight, 0x48b);
 ASSERT_REG_POSITION(StencilEnable, 0x4E0);
 ASSERT_REG_POSITION(StencilFrontOpFail, 0x4E1);
 ASSERT_REG_POSITION(StencilFrontOpZFail, 0x4E2);
@@ -576,7 +684,10 @@ ASSERT_REG_POSITION(StencilFrontFuncMask, 0x4E6);
 ASSERT_REG_POSITION(StencilFrontMask, 0x4E7);
 ASSERT_REG_POSITION(FragmentColorClamp, 0x4EA);
 ASSERT_REG_POSITION(CounterReset, 0x54C);
+ASSERT_REG_POSITION(ZetaEnable, 0x54E);
 ASSERT_REG_POSITION(Condition, 0x554);
+ASSERT_REG_POSITION(Tsc, 0x557);
+ASSERT_REG_POSITION(Tic, 0x55D);
 ASSERT_REG_POSITION(StencilTwoSideEnable, 0x565);
 ASSERT_REG_POSITION(StencilBackOpFail, 0x566);
 ASSERT_REG_POSITION(StencilBackOpZFail, 0x567);

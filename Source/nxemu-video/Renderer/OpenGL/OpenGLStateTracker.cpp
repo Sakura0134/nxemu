@@ -7,6 +7,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     m_StateTracker.IncreaseMaxFlag(OpenGLDirtyFlag_Last);
     m_StateTracker.FlagSetAll();
 
+    SetupDirtyRenderTargets();
     SetupColorMasks();
     SetupScissors();
     SetupRasterizeEnable();
@@ -20,25 +21,67 @@ void OpenGLStateTracker::NotifyColorMask(uint8_t index)
     m_StateTracker.FlagSet(OpenGLDirtyFlag_ColorMask0 + index);
 }
 
+void OpenGLStateTracker::SetupDirtyRenderTargets(void)
+{
+    enum
+    {
+        TicSize = (sizeof(CMaxwell3D::Registers::Tic) / (sizeof(uint32_t))),
+        TscSize = (sizeof(CMaxwell3D::Registers::Tsc) / (sizeof(uint32_t))),
+        RenderAreaSize = (sizeof(CMaxwell3D::Registers::RenderArea) / (sizeof(uint32_t))),
+        RenderTargetItemSize = (sizeof(CMaxwell3D::Registers::RenderTarget[0]) / (sizeof(uint32_t))),
+        ZetaSize = (sizeof(CMaxwell3D::Registers::Zeta) / (sizeof(uint32_t))),
+    };
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_Tic, TicSize, OpenGLDirtyFlag_Descriptors);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_Tsc, TscSize, OpenGLDirtyFlag_Descriptors);
+
+    uint32_t Num = RenderTargetItemSize * NumRenderTargets;
+    for (uint32_t i = 0; i < NumRenderTargets; i++)
+    {
+        m_StateTracker.SetRegisterFlag((uint32_t)(CMaxwell3D::Method_RenderTarget + i * RenderTargetItemSize), (uint32_t)RenderTargetItemSize, OpenGLDirtyFlag_ColorBuffer0 + i);
+    }
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_RenderTarget, Num, OpenGLDirtyFlag_RenderTargets);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_RenderArea, RenderAreaSize, OpenGLDirtyFlag_RenderTargets);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_RTControl, 1, OpenGLDirtyFlag_RenderTargets);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_RTControl, 1, OpenGLDirtyFlag_RenderTargetControl);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ZetaEnable, 1, OpenGLDirtyFlag_ZetaBuffer);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ZetaWidth, 1, OpenGLDirtyFlag_ZetaBuffer);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ZetaHeight, 1, OpenGLDirtyFlag_ZetaBuffer);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_Zeta, ZetaSize, OpenGLDirtyFlag_ZetaBuffer);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ZetaEnable, 1, OpenGLDirtyFlag_RenderTargets);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ZetaWidth, 1, OpenGLDirtyFlag_RenderTargets);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ZetaHeight, 1, OpenGLDirtyFlag_RenderTargets);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_Zeta, ZetaSize, OpenGLDirtyFlag_RenderTargets);
+}
+
 void OpenGLStateTracker::SetupColorMasks(void) 
 {
-    uint32_t ColorMaskSize = sizeof(CMaxwell3D::Registers::ColorMask[0]) / (sizeof(uint32_t));
+    enum 
+    {
+        ColorMaskItemSize = (sizeof(CMaxwell3D::Registers::ColorMask[0]) / (sizeof(uint32_t))),
+        ColorMaskSize = (sizeof(CMaxwell3D::Registers::ColorMask) / (sizeof(uint32_t))),
+    };
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMaskCommon, 1, OpenGLDirtyFlag_ColorMaskCommon);
     for (uint32_t i = 0; i < NumRenderTargets; i++) 
     {
-        m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask + (i * ColorMaskSize), ColorMaskSize, OpenGLDirtyFlag_ColorMask0 + i);
+        m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask + (i * ColorMaskItemSize), ColorMaskItemSize, OpenGLDirtyFlag_ColorMask0 + i);
     }
-    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask, sizeof(CMaxwell3D::Registers::ColorMask) / (sizeof(uint32_t)), OpenGLDirtyFlag_ColorMasks);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask, ColorMaskSize, OpenGLDirtyFlag_ColorMasks);
 }
 
 void OpenGLStateTracker::SetupScissors(void)
 {
+    enum 
+    {
+        ScissorTestItemSize = (sizeof(CMaxwell3D::Registers::ScissorTest[0]) / (sizeof(uint32_t))),
+        ScissorTestSize = (sizeof(CMaxwell3D::Registers::ScissorTest) / (sizeof(uint32_t))),
+    };
+
     for (uint8_t i = 0; i < CMaxwell3D::NumViewports; i++) 
     {
-        uint32_t Offset = CMaxwell3D::Method_ScissorTest + i * (sizeof(CMaxwell3D::Registers::ScissorTest[0]) / (sizeof(uint32_t)));
-        m_StateTracker.SetRegisterFlag(Offset, (sizeof(CMaxwell3D::Registers::ScissorTest[0]) / (sizeof(uint32_t))), OpenGLDirtyFlag_Scissor0 + i);
+        uint32_t Offset = CMaxwell3D::Method_ScissorTest + i * ScissorTestItemSize;
+        m_StateTracker.SetRegisterFlag(Offset, ScissorTestItemSize, OpenGLDirtyFlag_Scissor0 + i);
     }
-    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ScissorTest, (sizeof(CMaxwell3D::Registers::ScissorTest) / (sizeof(uint32_t))), OpenGLDirtyFlag_Scissors);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ScissorTest, ScissorTestSize, OpenGLDirtyFlag_Scissors);
 }
 
 void OpenGLStateTracker::SetupStencilTest(void) 

@@ -4,6 +4,19 @@
 
 enum OpenGLDirtyFlag
 {
+    OpenGLDirtyFlag_Descriptors,
+    OpenGLDirtyFlag_RenderTargets,
+    OpenGLDirtyFlag_RenderTargetControl,
+    OpenGLDirtyFlag_ColorBuffer0,
+    OpenGLDirtyFlag_ColorBuffer1,
+    OpenGLDirtyFlag_ColorBuffer2,
+    OpenGLDirtyFlag_ColorBuffer3,
+    OpenGLDirtyFlag_ColorBuffer4,
+    OpenGLDirtyFlag_ColorBuffer5,
+    OpenGLDirtyFlag_ColorBuffer6,
+    OpenGLDirtyFlag_ColorBuffer7,
+    OpenGLDirtyFlag_ZetaBuffer,
+
     OpenGLDirtyFlag_Scissors,
     OpenGLDirtyFlag_Scissor0,
     OpenGLDirtyFlag_Scissor15 = OpenGLDirtyFlag_Scissor0 + 15,
@@ -35,6 +48,7 @@ private:
     OpenGLStateTracker(const OpenGLStateTracker&);
     OpenGLStateTracker& operator=(const OpenGLStateTracker&);
 
+    void SetupDirtyRenderTargets(void);
     void SetupColorMasks(void);
     void SetupScissors(void);
     void SetupStencilTest(void);
