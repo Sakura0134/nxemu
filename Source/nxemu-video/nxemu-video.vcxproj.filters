@@ -49,6 +49,12 @@
     <Filter Include="Source Files\Macro">
       <UniqueIdentifier>{42bc6a76-9a1f-4f07-84f5-9c4699d10401}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Textures">
+      <UniqueIdentifier>{1563d754-e784-40fa-bb4a-96214f297c71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Textures">
+      <UniqueIdentifier>{88355c26-c02e-4062-8979-1318519d3dce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NXEmu-video.cpp">
@@ -109,6 +115,12 @@
       <Filter>Source Files\Renderer\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\OpenGL\OpenGLTextureCache.cpp">
+      <Filter>Source Files\Renderer\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Textures\Texture.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\OpenGL\OpenGLImage.cpp">
       <Filter>Source Files\Renderer\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
@@ -175,6 +187,12 @@
     </ClInclude>
     <ClInclude Include="Renderer\OpenGL\OpenGLTextureCache.h">
       <Filter>Header Files\Renderer\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\OpenGL\OpenGLImageView.h">
+      <Filter>Header Files\Renderer\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Textures\Texture.h">
+      <Filter>Header Files\Textures</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

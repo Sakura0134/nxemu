@@ -2,6 +2,7 @@
 #include "GpuTypes.h"
 #include "Engine\UploadState.h"
 #include "Macro\MacroEngine.h"
+#include "Textures\Texture.h"
 #include "Util\StateTracker.h"
 #include <Common\padding.h>
 #include <stdint.h>
@@ -382,6 +383,11 @@ public:
         uint32_t LayerStride;
         uint32_t BaseLayer;
         PADDING_WORDS(7);
+
+        uint64_t Address() const 
+        {
+            return (((uint64_t)AddressHigh) << 32) | AddressLow;
+        }
     };
 
     union tyRTControl
@@ -497,7 +503,9 @@ public:
             ComparisonOp StencilBackFuncFunc;
             PADDING_WORDS(0x4);
             uint32_t FramebufferSRGB;
-            PADDING_WORDS(0x16);
+            PADDING_WORDS(0x5);
+            MsaaMode MultisampleMode;
+            PADDING_WORDS(0x10);
             tyDraw Draw;
             PADDING_WORDS(0x6B);
             tyIndexArray IndexArray;
@@ -694,6 +702,7 @@ ASSERT_REG_POSITION(StencilBackOpZFail, 0x567);
 ASSERT_REG_POSITION(StencilBackOpZPass, 0x568);
 ASSERT_REG_POSITION(StencilBackFuncFunc, 0x569);
 ASSERT_REG_POSITION(FramebufferSRGB, 0x56E);
+ASSERT_REG_POSITION(MultisampleMode, 0x574);
 ASSERT_REG_POSITION(Draw, 0x585);
 ASSERT_REG_POSITION(IndexArray, 0x5F2);
 ASSERT_REG_POSITION(ClearBuffers, 0x674);
