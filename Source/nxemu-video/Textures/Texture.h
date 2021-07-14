@@ -1,6 +1,18 @@
 #pragma once
 #include <stdint.h>
 
+enum 
+{
+    Texture_GOB_SizeX = 64,
+    Texture_GOB_SizeY = 8,
+    Texture_GOB_SizeZ = 1,
+
+    Texture_GOB_SizeXShift = 6,
+    Texture_GOB_SizeYShift = 3,
+    Texture_GOB_SizeZShift = 0,
+    Texture_GOB_SizeShift = Texture_GOB_SizeXShift + Texture_GOB_SizeYShift + Texture_GOB_SizeZShift,
+};
+
 enum MsaaMode
 {
     MsaaMode_1x1 = 0,

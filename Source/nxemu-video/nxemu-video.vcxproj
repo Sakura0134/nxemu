@@ -63,7 +63,9 @@
     <ClCompile Include="Renderer\OpenGL\OpenGLRenderer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStateTracker.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLTextureCache.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLTypes.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLWindow.cpp" />
+    <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Task\CommandList.cpp" />
     <ClCompile Include="Task\CommandListEnd.cpp" />
     <ClCompile Include="Textures\Texture.cpp" />
@@ -81,13 +83,16 @@
     <ClInclude Include="Macro\MacroInterpreter.h" />
     <ClInclude Include="Renderer\OpenGL\MaxwellToOpenGL.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLFenceManager.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLImage.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLImageView.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLItemPtr.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLRenderer.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLStateTracker.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLTextureCache.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLTypes.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLWindow.h" />
     <ClInclude Include="Renderer\Renderer.h" />
+    <ClInclude Include="Surface.h" />
     <ClInclude Include="Task\CommandList.h" />
     <ClInclude Include="Task\CommandListEnd.h" />
     <ClInclude Include="Task\GpuTask.h" />

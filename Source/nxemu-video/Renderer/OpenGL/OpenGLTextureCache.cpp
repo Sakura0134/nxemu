@@ -8,7 +8,8 @@
 
 OpenGLTextureCache::OpenGLTextureCache(OpenGLRenderer & Renderer, CVideo & Video) :
     m_Renderer(Renderer),
-    m_Maxwell3D(Video.Maxwell3D())
+    m_Maxwell3D(Video.Maxwell3D()),
+    m_VideoMemory(Video.VideoMemory())
 {
 }
 
@@ -49,8 +50,26 @@ void OpenGLTextureCache::UpdateRenderTargets(bool IsClear)
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
-OpenGLImage * OpenGLTextureCache::GetImage(const OpenGLImage & /*Info*/, uint64_t /*GpuAddr*/, uint32_t /*Options*/)
+OpenGLImage * OpenGLTextureCache::GetImage(const OpenGLImage & Info, uint64_t GpuAddr, uint32_t /*Options*/)
 {
+    uint64_t CpuAddr;
+    if (!m_VideoMemory.GpuToCpuAddress(GpuAddr, CpuAddr) || CpuAddr == 0)
+    {
+        g_Notify->BreakPoint(__FILE__,__LINE__);
+        return nullptr;
+    }
+    uint32_t Size = Info.GuestSizeBytes();
+    for (uint64_t Page = CpuAddr >> PAGE_BITS,  PageEnd = (CpuAddr + Size - 1) >> PAGE_BITS; Page <= PageEnd; Page++ )
+    {
+        PageTables::iterator itr = m_PageTable.find(Page);
+        if (itr == m_PageTable.end())
+        {
+            continue;
+        }
+
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return nullptr;
+    }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return nullptr;
 }

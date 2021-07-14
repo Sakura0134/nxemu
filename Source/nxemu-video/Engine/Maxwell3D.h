@@ -533,8 +533,10 @@ public:
         Method_CBBind3 = (offsetof(Registers, CBBind) + (sizeof(Registers::CBBind[0]) * 3)) / sizeof(uint32_t),
         Method_CBBind4 = (offsetof(Registers, CBBind) + (sizeof(Registers::CBBind[0]) * 4)) / sizeof(uint32_t),
         Method_ClearBuffers = offsetof(Registers, ClearBuffers) / sizeof(uint32_t),
+        Method_ClearFlags = offsetof(Registers, ClearFlags) / sizeof(uint32_t),
         Method_ColorMask = offsetof(Registers, ColorMask) / sizeof(uint32_t),
         Method_ColorMaskCommon = offsetof(Registers, ColorMaskCommon) / sizeof(uint32_t),
+        Method_ConditionMode = offsetof(Registers, Condition.Mode) / sizeof(uint32_t),
         Method_ConstBufferData0 = (offsetof(Registers, ConstBuffer.Data) + (sizeof(Registers::ConstBuffer.Data[0]) * 0)) / sizeof(uint32_t),
         Method_ConstBufferData1 = (offsetof(Registers, ConstBuffer.Data) + (sizeof(Registers::ConstBuffer.Data[0]) * 1)) / sizeof(uint32_t),
         Method_ConstBufferData2 = (offsetof(Registers, ConstBuffer.Data) + (sizeof(Registers::ConstBuffer.Data[0]) * 2)) / sizeof(uint32_t),
@@ -551,7 +553,6 @@ public:
         Method_ConstBufferData13 = (offsetof(Registers, ConstBuffer.Data) + (sizeof(Registers::ConstBuffer.Data[0]) * 13)) / sizeof(uint32_t),
         Method_ConstBufferData14 = (offsetof(Registers, ConstBuffer.Data) + (sizeof(Registers::ConstBuffer.Data[0]) * 14)) / sizeof(uint32_t),
         Method_ConstBufferData15 = (offsetof(Registers, ConstBuffer.Data) + (sizeof(Registers::ConstBuffer.Data[0]) * 15)) / sizeof(uint32_t),
-        Method_ConditionMode = offsetof(Registers, Condition.Mode) / sizeof(uint32_t),
         Method_CounterReset = offsetof(Registers, CounterReset) / sizeof(uint32_t),
         Method_DataUpload = offsetof(Registers, DataUpload) / sizeof(uint32_t),
         Method_DrawVertexBeginGL = offsetof(Registers, Draw.VertexBeginGL) / sizeof(uint32_t),
@@ -562,9 +563,9 @@ public:
         Method_FragmentColorClamp = offsetof(Registers, FragmentColorClamp) / sizeof(uint32_t),
         Method_FramebufferSRGB = offsetof(Registers, FramebufferSRGB) / sizeof(uint32_t),
         Method_IndexArrayCount = offsetof(Registers, IndexArray.Count) / sizeof(uint32_t),
-        Method_QueryGet = offsetof(Registers, Query.QueryGet) / sizeof(uint32_t),
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
+        Method_QueryGet = offsetof(Registers, Query.QueryGet) / sizeof(uint32_t),
         Method_RasterizeEnable = offsetof(Registers, RasterizeEnable) / sizeof(uint32_t),
         Method_RenderArea = offsetof(Registers, RenderArea) / sizeof(uint32_t),
         Method_RenderTarget = offsetof(Registers, RenderTarget) / sizeof(uint32_t),
@@ -597,7 +598,6 @@ public:
         Method_ZetaEnable = offsetof(Registers, ZetaEnable) / sizeof(uint32_t),
         Method_ZetaHeight = offsetof(Registers, ZetaHeight) / sizeof(uint32_t),
         Method_ZetaWidth = offsetof(Registers, ZetaWidth) / sizeof(uint32_t),
-        Method_ClearFlags = offsetof(Registers, ClearFlags) / sizeof(uint32_t),
     };
 
     CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory);

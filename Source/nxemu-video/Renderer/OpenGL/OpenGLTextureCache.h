@@ -3,6 +3,8 @@
 #include "OpenGLImageView.h"
 #include "GpuTypes.h"
 #include <stdint.h>
+#include <vector>
+#include <unordered_map>
 
 class OpenGLRenderer;
 class CVideo;
@@ -10,6 +12,23 @@ class CMaxwell3D;
 
 class OpenGLTextureCache
 {
+    enum 
+    {
+        PAGE_BITS = 20
+    };
+
+    template <typename T>
+    struct NoHash 
+    {
+        size_t operator()(T Value) const 
+        {
+            return (size_t)(Value);
+        }
+    };
+
+    typedef std::vector<OpenGLImagePtr> OpenGLImagePtrList;
+    typedef std::unordered_map<uint64_t, OpenGLImagePtrList, NoHash<uint64_t>> PageTables;
+
 public:
     OpenGLTextureCache(OpenGLRenderer & Renderer, CVideo & Video);
 
@@ -27,5 +46,7 @@ private:
 
     OpenGLRenderer & m_Renderer;
     CMaxwell3D & m_Maxwell3D;
+    CVideoMemory & m_VideoMemory;
     OpenGLImageViewPtr m_ColorBuffer[NumRenderTargets];
+    PageTables m_PageTable;
 };
