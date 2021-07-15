@@ -61,6 +61,7 @@
     <ClCompile Include="Renderer\OpenGL\OpenGLFenceManager.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLImage.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLRenderer.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLResource.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStateTracker.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLTextureCache.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLTypes.cpp" />
@@ -87,6 +88,7 @@
     <ClInclude Include="Renderer\OpenGL\OpenGLImageView.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLItemPtr.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLRenderer.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLResource.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLStateTracker.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLTextureCache.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLTypes.h" />

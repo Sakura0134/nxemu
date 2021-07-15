@@ -4,6 +4,46 @@
 #include <Common/Maths.h>
 #include <algorithm>
 
+OpenGLImage::OpenGLImage() :
+    m_Type(OpenGLImageType_e1D),
+    m_Format(SurfacePixelFormat_Invalid),
+    m_Size(1, 1, 1),
+    m_Block(0, 0, 0),
+    m_NumSamples(1),
+    m_TileWidthSpacing(0),
+    m_Renderer(nullptr),
+    m_GpuAddr(0),
+    m_CpuAddr(0),
+    m_CpuAddrEnd(0),
+    m_GLInternalFormat(GL_NONE),
+    m_GLFormat(GL_NONE),
+    m_GLType(GL_NONE),
+    m_Ref(0)
+{
+    memset(m_MipLevelOffsets, 0, sizeof(m_MipLevelOffsets));
+    SetOpenGLFormat();
+}
+
+OpenGLImage::OpenGLImage(const OpenGLImage & Image) :
+    m_Type(Image.m_Type),
+    m_Format(Image.m_Format),
+    m_Size(Image.m_Size),
+    m_Block(Image.m_Block),
+    m_NumSamples(Image.m_NumSamples),
+    m_TileWidthSpacing(Image.m_TileWidthSpacing),
+    m_Renderer(nullptr),
+    m_GpuAddr(0),
+    m_CpuAddr(0),
+    m_CpuAddrEnd(0),
+    m_GLInternalFormat(Image.m_GLInternalFormat),
+    m_GLFormat(Image.m_GLFormat),
+    m_GLType(Image.m_GLType),
+    m_Ref(0)
+{
+    memset(m_MipLevelOffsets, 0, sizeof(m_MipLevelOffsets));
+    SetOpenGLFormat();
+}
+
 OpenGLImage::OpenGLImage(const CMaxwell3D::tyRenderTarget & RenderTarget, uint32_t Samples) :
     m_Type(OpenGLImageType_e1D),
     m_Format(SurfacePixelFormatFromRenderTargetFormat(RenderTarget.Format)),
@@ -11,8 +51,16 @@ OpenGLImage::OpenGLImage(const CMaxwell3D::tyRenderTarget & RenderTarget, uint32
     m_Block(0, 0, 0),
     m_NumSamples(Samples),
     m_TileWidthSpacing(0),
+    m_Renderer(nullptr),
+    m_GpuAddr(0),
+    m_CpuAddr(0),
+    m_CpuAddrEnd(0),
+    m_GLInternalFormat(GL_NONE),
+    m_GLFormat(GL_NONE),
+    m_GLType(GL_NONE),
     m_Ref(0)
 {
+    memset(m_MipLevelOffsets, 0, sizeof(m_MipLevelOffsets));
     if (RenderTarget.TileMode.IsPitchLinear)
     {
         if (RenderTarget.TileMode.Is3D != 0)
@@ -37,6 +85,7 @@ OpenGLImage::OpenGLImage(const CMaxwell3D::tyRenderTarget & RenderTarget, uint32
         m_Type = OpenGLImageType_e2D;
         m_Resources.Layers(RenderTarget.Depth);
     }
+    SetOpenGLFormat();
 }
 
 OpenGLImage::~OpenGLImage()
@@ -56,6 +105,38 @@ uint32_t OpenGLImage::LayerSize(void) const
         Size += CalculateLevelSize(Info, i);
     }
     return Size;
+}
+
+void OpenGLImage::Create(uint64_t GpuAddr, uint64_t CpuAddr, OpenGLRenderer * Renderer)
+{
+    uint32_t GuestSize = GuestSizeBytes();
+    m_Renderer = Renderer,
+    m_GpuAddr = GpuAddr;
+    m_CpuAddr = CpuAddr;
+    m_CpuAddrEnd = CpuAddr + GuestSize;
+
+    LevelInfo Levels = MakeLevelInfo();
+    uint32_t Offset = 0;
+    for (int32_t i = 0; i < m_Resources.Levels(); i++)
+    {
+        m_MipLevelOffsets[i] = Offset;
+        Offset += CalculateLevelSize(Levels, i);
+    }
+    GLsizei NumLevels = std::min(m_Resources.Levels(), (int32_t)(32 - clz32(m_Size.Width())));
+    switch (m_Type)
+    {
+    case OpenGLImageType_e2D:
+        if (m_NumSamples > 1)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        m_Texture.Create(GL_TEXTURE_2D_ARRAY);
+        m_Texture.TextureStorage3D(NumLevels, m_GLInternalFormat, m_Size.Width(), m_Size.Height(), m_Resources.Layers());
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    }
 }
 
 uint32_t OpenGLImage::GuestSizeBytes(void) const
@@ -114,6 +195,25 @@ OpenGLImage::LevelInfo OpenGLImage::MakeLevelInfo(void) const
     Info.BytesPerBlockLog2 = BytesPerBlockLog2(SurfacePixelFormatBytesPerBlock(m_Format));
     Info.TileWidthSpacing = m_TileWidthSpacing;
     return Info;
+}
+
+void OpenGLImage::SetOpenGLFormat(void)
+{
+    if ((m_Format == SurfacePixelFormat_BC4_UNORM ||  m_Format == SurfacePixelFormat_BC5_UNORM) && m_Type == OpenGLImageType_e3D)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    switch (m_Format)
+    {
+    case SurfacePixelFormat_A8B8G8R8_UNORM:
+        m_GLInternalFormat = GL_RGBA8;
+        m_GLFormat = GL_RGBA;
+        m_GLType = GL_UNSIGNED_INT_8_8_8_8_REV;
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
 }
 
 uint32_t OpenGLImage::AdjustTileSize(uint32_t Shift, uint32_t UnitFactor, uint32_t Dimension)

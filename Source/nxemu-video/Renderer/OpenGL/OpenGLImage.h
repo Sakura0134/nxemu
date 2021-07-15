@@ -2,9 +2,12 @@
 #include "Surface.h"
 #include "OpenGLTypes.h"
 #include "OpenGLItemPtr.h"
+#include "OpenGLResource.h"
 #include "Engine\Maxwell3D.h"
+#include <glad/glad.h>
 #include <stdint.h>
 
+class OpenGLRenderer;
 class OpenGLImage;
 typedef OpenGLItemPtr<OpenGLImage> OpenGLImagePtr;
 
@@ -21,14 +24,22 @@ class OpenGLImage
 {
     friend OpenGLImagePtr;
 
+    enum
+    {
+        MAX_MIP_LEVELS = 14
+    };
+
 public:
     OpenGLImage();
     OpenGLImage(const OpenGLImage & Image);
     OpenGLImage(const CMaxwell3D::tyRenderTarget& RenderTarget, uint32_t Samples);
     ~OpenGLImage();
 
+    void Create(uint64_t GpuAddr, uint64_t CpuAddr, OpenGLRenderer * Renderer);
     uint32_t LayerSize(void) const;
     uint32_t GuestSizeBytes(void) const;
+
+    uint64_t GpuAddr(void) const { return m_GpuAddr; }
 
 private:
     OpenGLImage& operator=(const OpenGLImage&);
@@ -43,6 +54,7 @@ private:
     };
 
     LevelInfo MakeLevelInfo(void) const;
+    void SetOpenGLFormat(void);
 
     static uint32_t AdjustTileSize(uint32_t Shift, uint32_t UnitFactor, uint32_t Dimension);
     static OpenGLExtent3D LevelTiles(const LevelInfo & Info, uint32_t Level);
@@ -61,5 +73,14 @@ private:
     uint32_t m_NumSamples;
     uint32_t m_TileWidthSpacing;
     OpenGLSubresourceExtent m_Resources;
+    uint32_t m_MipLevelOffsets[MAX_MIP_LEVELS];
+    OpenGLRenderer * m_Renderer;
+    uint64_t m_GpuAddr;
+    uint64_t m_CpuAddr;
+    uint64_t m_CpuAddrEnd;
+    OpenGLTexture m_Texture;
+    GLenum m_GLInternalFormat;
+    GLenum m_GLFormat;
+    GLenum m_GLType;
     uint32_t m_Ref;
 };

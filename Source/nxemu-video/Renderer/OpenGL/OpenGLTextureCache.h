@@ -28,6 +28,7 @@ class OpenGLTextureCache
 
     typedef std::vector<OpenGLImagePtr> OpenGLImagePtrList;
     typedef std::unordered_map<uint64_t, OpenGLImagePtrList, NoHash<uint64_t>> PageTables;
+    typedef std::unordered_map<uint64_t, OpenGLImagePtr, NoHash<uint64_t>> OpenGLImageImages;
 
 public:
     OpenGLTextureCache(OpenGLRenderer & Renderer, CVideo & Video);
@@ -49,4 +50,5 @@ private:
     CVideoMemory & m_VideoMemory;
     OpenGLImageViewPtr m_ColorBuffer[NumRenderTargets];
     PageTables m_PageTable;
+    OpenGLImageImages m_Images;
 };

@@ -70,8 +70,12 @@ OpenGLImage * OpenGLTextureCache::GetImage(const OpenGLImage & Info, uint64_t Gp
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return nullptr;
     }
+
+    OpenGLImagePtr Image(new OpenGLImage(Info));
+    Image->Create(GpuAddr, CpuAddr, &m_Renderer);
+    m_Images.emplace(std::pair<uint64_t, OpenGLImagePtr>(Image->GpuAddr(), Image));
     g_Notify->BreakPoint(__FILE__, __LINE__);
-    return nullptr;
+    return Image.Get();
 }
 
 OpenGLImageViewPtr OpenGLTextureCache::FindColorBuffer(size_t Index, bool IsClear)
