@@ -126,6 +126,34 @@ void OpenGLRenderer::Clear()
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
+void OpenGLRenderer::TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool Track) 
+{
+    enum
+    {
+        PageBits = 12,
+        PagSize = 1ULL << PageBits,
+    };
+    CGuard Guard(m_PageCS);
+    TrackedPageMap::iterator itr = m_TrackedPages.find(CpuAddr);
+    if (itr != m_TrackedPages.end()) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    } 
+    else
+    {
+        if (!Track) 
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        TrackedPage Page;
+        Page.Start = CpuAddr >> PageBits;
+        Page.Size = (Size + PagSize - 1) >> PageBits;
+        m_TrackedPages.insert(TrackedPageMap::value_type(CpuAddr, Page));
+        m_SwitchSystem.MarkRasterizerMemory(Page.Start << PageBits, Page.Size << PageBits, true);
+    }
+}
+
 void OpenGLRenderer::SyncFragmentColorClampState() 
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();

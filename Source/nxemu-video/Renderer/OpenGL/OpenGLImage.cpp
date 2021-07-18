@@ -1,5 +1,7 @@
 #include "OpenGLImage.h"
 #include "Textures/Texture.h"
+#include "Textures/Decoder.h"
+#include "OpenGLRenderer.h"
 #include "VideoNotification.h"
 #include <Common/Maths.h>
 #include <algorithm>
@@ -11,6 +13,7 @@ OpenGLImage::OpenGLImage() :
     m_Block(0, 0, 0),
     m_NumSamples(1),
     m_TileWidthSpacing(0),
+    m_Flags(ImageFlag_CpuModified),
     m_Renderer(nullptr),
     m_GpuAddr(0),
     m_CpuAddr(0),
@@ -31,6 +34,7 @@ OpenGLImage::OpenGLImage(const OpenGLImage & Image) :
     m_Block(Image.m_Block),
     m_NumSamples(Image.m_NumSamples),
     m_TileWidthSpacing(Image.m_TileWidthSpacing),
+    m_Flags(Image.m_Flags),
     m_Renderer(nullptr),
     m_GpuAddr(0),
     m_CpuAddr(0),
@@ -51,6 +55,7 @@ OpenGLImage::OpenGLImage(const CMaxwell3D::tyRenderTarget & RenderTarget, uint32
     m_Block(0, 0, 0),
     m_NumSamples(Samples),
     m_TileWidthSpacing(0),
+    m_Flags(ImageFlag_CpuModified),
     m_Renderer(nullptr),
     m_GpuAddr(0),
     m_CpuAddr(0),
@@ -139,6 +144,135 @@ void OpenGLImage::Create(uint64_t GpuAddr, uint64_t CpuAddr, OpenGLRenderer * Re
     }
 }
 
+OpenGLBufferImageList OpenGLImage::UnswizzleImage(CVideoMemory & VideoMemory, uint64_t GpuAddr,  uint8_t * Output, size_t OutputSize) const
+{
+    uint32_t GuestSize = GuestSizeBytes();
+    uint32_t BPBLog2 = BytesPerBlockLog2(SurfacePixelFormatBytesPerBlock(m_Format));
+
+    if (m_Type == OpenGLImageType_Linear)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        OpenGLBufferImageList Images;
+        return Images;
+    }
+    std::unique_ptr<uint8_t> InputData(new uint8_t[GuestSize]);
+    VideoMemory.ReadBuffer(GpuAddr, InputData.get(), GuestSize);
+
+    LevelInfo Info = MakeLevelInfo();
+    int32_t NumLayers = m_Resources.Layers();
+    int32_t NumLevels = m_Resources.Levels();
+    OpenGLExtent2D TileSize(SurfaceDefaultBlockWidth(m_Format), SurfaceDefaultBlockHeight(m_Format));
+    OpenGLExtent2D Extent2D = GobSize(BPBLog2, m_Block.Height(), m_TileWidthSpacing);
+    if (NumLevels >= MAX_MIP_LEVELS)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        OpenGLBufferImageList list;
+        return list;
+    }
+    uint32_t LevelSizes[MAX_MIP_LEVELS];
+    uint32_t LayerSize = 0;
+    for (int32_t i = 0; i < NumLevels; i++)
+    {
+        LevelSizes[i] = CalculateLevelSize(Info, i);
+        LayerSize += LevelSizes[i];
+    }
+    uint32_t LayerStride = AlignLayerSize(LayerSize, m_Size, Info.Block, TileSize.Height(), m_TileWidthSpacing);
+    uint32_t GuestOffset = 0;
+    uint64_t HostOffset = 0;
+
+    OpenGLBufferImageList Images(NumLevels);
+    for (int32_t i = 0; i < NumLevels; i++)
+    {
+        OpenGLBufferImage & Image = Images[i];
+        OpenGLExtent3D LevelSize = AdjustMipSize(m_Size, i);
+        uint32_t NumBlocksPerLayer = NumBlocks(LevelSize, TileSize);
+        uint64_t HostBytesPerLayer = NumBlocksPerLayer << BPBLog2;
+
+        uint32_t RowLengthMod = LevelSize.Width() % TileSize.Width();
+        uint32_t RowLength = LevelSize.Width() - RowLengthMod;
+        if (RowLengthMod != 0) { RowLength = RowLength + TileSize.Width(); }
+
+        uint32_t ImageHeightMod = LevelSize.Height() % TileSize.Height();
+        uint32_t ImageHeight = LevelSize.Height() - ImageHeightMod;
+        if (ImageHeightMod != 0) { ImageHeight = ImageHeight + TileSize.Height(); }
+
+        Image.BufferOffset(HostOffset);
+        Image.BufferSize(HostBytesPerLayer * NumLayers);
+        Image.BufferRowLength(RowLength);
+        Image.BufferImageHeight(ImageHeight);
+        Image.ImageBaseLevel(i);
+        Image.ImageBaseLayer(0);
+        Image.ImageNumLayers(m_Resources.Layers());
+        Image.ImageExtent(LevelSize);
+        Image.ImageOffsetX(0);
+        Image.ImageOffsetY(0);
+        Image.ImageOffsetZ(0);
+
+        OpenGLExtent3D NumTiles = AdjustTileSize(LevelSize, TileSize);
+        OpenGLExtent3D Block = AdjustMipBlockSize(NumTiles, Info.Block, i);
+        uint32_t StrideAlignment = IsSmallerThanGobSize(NumTiles, Extent2D, Block.Depth()) ? Texture_GOB_SizeXShift - BPBLog2 : Extent2D.Width();
+        uint32_t GuestLayerOffset = 0;
+
+        for (int32_t Layer = 0; Layer < m_Resources.Layers(); Layer++)
+        {
+            uint32_t Offset = GuestOffset + GuestLayerOffset;
+            UnswizzleTexture(Output + HostOffset, OutputSize - HostOffset, InputData.get() + Offset, GuestSize - Offset, 1U << BPBLog2, NumTiles.Width(), NumTiles.Height(), NumTiles.Depth(), Block.Height(), Block.Depth(), StrideAlignment);
+            GuestLayerOffset += LayerStride;
+            HostOffset += HostBytesPerLayer;
+        }
+        GuestOffset += LevelSizes[i];
+    }
+    return Images;
+}
+
+void OpenGLImage::UploadMemory(OpenGLStagingBuffer & Buffer, uint32_t BufferOffset, const OpenGLBufferImage * Images, size_t NoOfImages)
+{
+    Buffer.Buffer()->BindBuffer(GL_PIXEL_UNPACK_BUFFER);
+    glFlushMappedBufferRange(GL_PIXEL_UNPACK_BUFFER, BufferOffset, UnswizzledSizeBytes());
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    uint32_t CurrentRowLength = 0xFFFFFFFF;
+    uint32_t CurrentImageHeight = 0xFFFFFFFF;
+    for (size_t i = 0; i < NoOfImages; i++)
+    {
+        const OpenGLBufferImage & Image = Images[i];
+        if (CurrentRowLength != Image.BufferRowLength())
+        {
+            CurrentRowLength = Image.BufferRowLength();
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, CurrentRowLength);
+        }
+        if (CurrentImageHeight != Image.BufferImageHeight())
+        {
+            CurrentImageHeight = Image.BufferImageHeight();
+            glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, CurrentImageHeight);
+        }
+        CopyBufferToImage(Image, BufferOffset);
+    }
+}
+
+void OpenGLImage::CopyBufferToImage(const OpenGLBufferImage & Image, uint32_t BufferOffset) 
+{
+    bool IsCompressed = m_GLFormat == GL_NONE;
+    const void * Offset = (const void*)(Image.BufferOffset() + BufferOffset);
+
+    switch (m_Type)
+    {
+    case OpenGLImageType_e2D:
+    case OpenGLImageType_Linear:
+        if (IsCompressed) 
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        } 
+        else
+        {
+            m_Texture.TextureSubImage3D(Image.ImageBaseLevel(), Image.ImageOffsetX(), Image.ImageOffsetY(), Image.ImageBaseLayer(), Image.ImageExtent().Width(), Image.ImageExtent().Height(), Image.ImageNumLayers(), m_GLFormat, m_GLType, Offset);
+        }
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 uint32_t OpenGLImage::GuestSizeBytes(void) const
 {
     if (m_Type == OpenGLImageType_Buffer)
@@ -197,6 +331,16 @@ OpenGLImage::LevelInfo OpenGLImage::MakeLevelInfo(void) const
     return Info;
 }
 
+uint32_t OpenGLImage::NumBlocksPerLayer(const OpenGLExtent2D & TileSize) const
+{
+    uint32_t Blocks = 0;
+    for (int32_t i = 0, n = m_Resources.Levels(); i < n; i++)
+    {
+        Blocks += NumBlocks(AdjustMipSize(m_Size, i), TileSize);
+    }
+    return Blocks;
+}
+
 void OpenGLImage::SetOpenGLFormat(void)
 {
     if ((m_Format == SurfacePixelFormat_BC4_UNORM ||  m_Format == SurfacePixelFormat_BC5_UNORM) && m_Type == OpenGLImageType_e3D)
@@ -235,6 +379,13 @@ uint32_t OpenGLImage::AdjustTileSize(uint32_t Shift, uint32_t UnitFactor, uint32
         }
     }
     return Shift;
+}
+
+OpenGLExtent3D OpenGLImage::AdjustTileSize(const OpenGLExtent3D & Size, const OpenGLExtent2D & TileSize)
+{
+    uint32_t Width = (Size.Width() + TileSize.Width() - 1) / TileSize.Width();
+    uint32_t Height = (Size.Height() + TileSize.Height() - 1) / TileSize.Height();
+    return OpenGLExtent3D(Width, Height, Size.Depth());
 }
 
 OpenGLExtent3D OpenGLImage::LevelTiles(const LevelInfo & Info, uint32_t Level)
@@ -282,6 +433,12 @@ uint32_t OpenGLImage::CalculateLevelSize(const LevelInfo & Info, uint32_t Level)
     return NumTiles << ShiftValue;
 }
 
+uint32_t OpenGLImage::NumBlocks(const OpenGLExtent3D & Size, const OpenGLExtent2D & TileSize)
+{
+    OpenGLExtent3D Block = AdjustTileSize(Size, TileSize);
+    return Block.Width() * Block.Height() * Block.Depth();
+}
+
 bool OpenGLImage::IsSmallerThanGobSize(const OpenGLExtent3D & NumTiles, const OpenGLExtent2D & Gob, uint32_t BlockDepth)
 {
     return NumTiles.Width() <= (1U << Gob.Width()) || NumTiles.Height() <= (1U << Gob.Height()) || NumTiles.Depth() < (1U << BlockDepth);
@@ -295,5 +452,138 @@ OpenGLExtent2D OpenGLImage::GobSize(uint32_t BytesPerBlockLog2, uint32_t Height,
 uint32_t OpenGLImage::BytesPerBlockLog2(uint32_t BytesPerBlock)
 {
     return clz32(BytesPerBlock) ^ 0x1F;
+}
+
+uint32_t OpenGLImage::AlignLayerSize(uint32_t SizeBytes, const OpenGLExtent3D & Size, OpenGLExtent3D Block, uint32_t TileSizeY, uint32_t TileWidthSpacing)
+{
+    if (TileWidthSpacing > 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return 0;
+    }
+    uint32_t AlignedHeightMod = Size.Height() % TileSizeY;
+    uint32_t AlignedHeight = Size.Height() - AlignedHeightMod;
+    if (AlignedHeightMod != 0) { AlignedHeight += TileSizeY; }
+
+    while (Block.Height() != 0 && AlignedHeight <= (1U << (Block.Height() - 1)) * Texture_GOB_SizeY)
+    {
+        Block.Height(Block.Height() - 1);
+    }
+    while (Block.Depth() != 0 && Size.Depth() <= (1U << (Block.Depth() - 1)))
+    {
+        Block.Depth(Block.Depth() - 1);
+    }
+    uint32_t BlockShift = Texture_GOB_SizeShift + Block.Height() + Block.Depth();
+    uint32_t NumBlocks = SizeBytes >> BlockShift;
+    if (SizeBytes != NumBlocks << BlockShift)
+    {
+        return (NumBlocks + 1) << BlockShift;
+    }
+    return SizeBytes;
+}
+
+uint32_t OpenGLImage::AdjustMipSize(uint32_t size, uint32_t level)
+{
+    return std::max<uint32_t>(size >> level, 1);
+}
+
+OpenGLExtent3D OpenGLImage::AdjustMipBlockSize(OpenGLExtent3D NumTiles, OpenGLExtent3D BlockSize, uint32_t Level)
+{
+    uint32_t Width = BlockSize.Width();
+    uint32_t Height = BlockSize.Height();
+    uint32_t Depth = BlockSize.Depth();
+    for (uint32_t i = 0, n = Level + 1; i < n; i++)
+    {
+        while (Width > 0 && NumTiles.Width() <= (1U << (Width - 1)) * Texture_GOB_SizeX) 
+        {
+            Width -= 1;
+        }
+    }
+
+    for (uint32_t i = 0, n = Level + 1; i < n; i++)
+    {
+        while (Height > 0 && NumTiles.Height() <= (1U << (Height - 1)) * Texture_GOB_SizeY) 
+        {
+            Height -= 1;
+        }
+    }
+
+    for (uint32_t i = 0, n = Level + 1; i < n; i++)
+    {
+        while (Depth > 0 && NumTiles.Depth() <= (1U << (Depth - 1)) * Texture_GOB_SizeZ) 
+        {
+            Depth -= 1;
+        }
+    }
+    return OpenGLExtent3D(Width, Height, Depth);
+}
+
+OpenGLExtent3D OpenGLImage::AdjustMipSize(OpenGLExtent3D size, int32_t level)
+{
+    return OpenGLExtent3D(AdjustMipSize(size.Width(), level), AdjustMipSize(size.Height(), level), AdjustMipSize(size.Depth(), level));
+}
+
+uint32_t OpenGLImage::MapSizeBytes(void) const
+{
+    if (IsFlagSet(ImageFlag_Converted))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    return UnswizzledSizeBytes();
+}
+
+uint32_t OpenGLImage::UnswizzledSizeBytes(void) const
+{
+    if (m_Type == OpenGLImageType_Buffer || m_Type == OpenGLImageType_Linear || m_NumSamples > 1)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return 0;
+    }
+    OpenGLExtent2D TileSize(SurfaceDefaultBlockWidth(m_Format), SurfaceDefaultBlockHeight(m_Format));
+    return NumBlocksPerLayer(TileSize) * m_Resources.Layers() * SurfacePixelFormatBytesPerBlock(m_Format);
+}
+
+bool OpenGLImage::IsFlagSet(ImageFlags Flag) const
+{
+    return (m_Flags & Flag) != 0;
+}
+
+void OpenGLImage::UpdateFlags(uint32_t Add, uint32_t Remove)
+{
+    m_Flags &= ~Remove;
+    m_Flags |= Add;
+}
+
+void OpenGLImage::Track(void)
+{
+    if (IsFlagSet(ImageFlag_Tracked))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    UpdateFlags(ImageFlag_Tracked, 0);
+    if (m_Renderer != nullptr)
+    {
+        m_Renderer->TrackRasterizerMemory(m_CpuAddr, GuestSizeBytes(), true);
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
+void OpenGLImage::UploadImageContents(CVideoMemory & VideoMemory, OpenGLStagingBuffer & Buffer, uint32_t BufferOffset) 
+{
+    uint8_t * Map = Buffer.Map() + BufferOffset;
+    uint32_t MapSize = Buffer.Size() - BufferOffset;
+
+    if (IsFlagSet(ImageFlag_Converted) || m_Type == OpenGLImageType_Buffer) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    } 
+    else 
+    {
+        OpenGLBufferImageList Images = UnswizzleImage(VideoMemory, m_GpuAddr, Map, MapSize);
+        UploadMemory(Buffer, BufferOffset, Images.data(), Images.size());
+    }
 }
 

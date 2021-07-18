@@ -9,7 +9,8 @@
 OpenGLTextureCache::OpenGLTextureCache(OpenGLRenderer & Renderer, CVideo & Video) :
     m_Renderer(Renderer),
     m_Maxwell3D(Video.Maxwell3D()),
-    m_VideoMemory(Video.VideoMemory())
+    m_VideoMemory(Video.VideoMemory()),
+    m_UploadBuffers(GL_MAP_WRITE_BIT, GL_MAP_WRITE_BIT | GL_MAP_FLUSH_EXPLICIT_BIT)
 {
 }
 
@@ -50,6 +51,24 @@ void OpenGLTextureCache::UpdateRenderTargets(bool IsClear)
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
+void OpenGLTextureCache::RefreshContents(OpenGLImage & Image)
+{
+    if (!Image.IsFlagSet(ImageFlag_CpuModified))
+    {
+        return;
+    }
+    Image.UpdateFlags(0, ImageFlag_CpuModified);
+    Image.Track();
+    if (Image.NumSamples() > 1)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    OpenGLStagingBuffer Buffer = m_UploadBuffers.RequestMap(Image.MapSizeBytes(), true);
+    Image.UploadImageContents(m_VideoMemory, Buffer, 0);
+    glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
 OpenGLImage * OpenGLTextureCache::GetImage(const OpenGLImage & Info, uint64_t GpuAddr, uint32_t /*Options*/)
 {
     uint64_t CpuAddr;
@@ -74,6 +93,7 @@ OpenGLImage * OpenGLTextureCache::GetImage(const OpenGLImage & Info, uint64_t Gp
     OpenGLImagePtr Image(new OpenGLImage(Info));
     Image->Create(GpuAddr, CpuAddr, &m_Renderer);
     m_Images.emplace(std::pair<uint64_t, OpenGLImagePtr>(Image->GpuAddr(), Image));
+    RefreshContents(Image);
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return Image.Get();
 }

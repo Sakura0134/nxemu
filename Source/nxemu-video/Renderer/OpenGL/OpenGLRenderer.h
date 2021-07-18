@@ -4,6 +4,7 @@
 #include "OpenGLTextureCache.h"
 #include "OpenGLFenceManager.h"
 #include "Renderer\Renderer.h"
+#include <map>
 
 __interface ISwitchSystem;
 class CVideo;
@@ -26,6 +27,8 @@ public:
     void ReleaseFences(void);
     void Clear();
 
+    void TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool Track);
+
 private:
     OpenGLRenderer();
     OpenGLRenderer(const OpenGLRenderer&);
@@ -37,6 +40,14 @@ private:
     void SyncStencilTestState();
     void SyncScissorTest();
 
+    typedef struct 
+    {
+        uint64_t Start;
+        uint64_t Size;
+    } TrackedPage;
+
+    typedef std::map<uint64_t, TrackedPage> TrackedPageMap;
+    
     OpenGLStateTracker m_StateTracker;
     OpenGLTextureCache m_TextureCache;
     OpenGLFenceManager m_FenceManager;
@@ -44,4 +55,6 @@ private:
     EmulatorWindow & m_EmulatorWindow;
     ISwitchSystem & m_SwitchSystem;
     CVideo & m_Video;
+    TrackedPageMap m_TrackedPages;
+    CriticalSection m_PageCS;
 };

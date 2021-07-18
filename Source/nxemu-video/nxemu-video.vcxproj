@@ -62,6 +62,8 @@
     <ClCompile Include="Renderer\OpenGL\OpenGLImage.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLRenderer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLResource.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLStagingBuffer.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLStagingBuffers.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStateTracker.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLTextureCache.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLTypes.cpp" />
@@ -69,6 +71,7 @@
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Task\CommandList.cpp" />
     <ClCompile Include="Task\CommandListEnd.cpp" />
+    <ClCompile Include="Textures\Decoder.cpp" />
     <ClCompile Include="Textures\Texture.cpp" />
     <ClCompile Include="Util\StateTracker.cpp" />
     <ClCompile Include="Video.cpp" />
@@ -89,6 +92,8 @@
     <ClInclude Include="Renderer\OpenGL\OpenGLItemPtr.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLRenderer.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLResource.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLStagingBuffer.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLStagingBuffers.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLStateTracker.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLTextureCache.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLTypes.h" />
@@ -98,6 +103,7 @@
     <ClInclude Include="Task\CommandList.h" />
     <ClInclude Include="Task\CommandListEnd.h" />
     <ClInclude Include="Task\GpuTask.h" />
+    <ClInclude Include="Textures\Decoder.h" />
     <ClInclude Include="Textures\Texture.h" />
     <ClInclude Include="Util\StateTracker.h" />
     <ClInclude Include="Video.h" />

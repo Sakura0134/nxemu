@@ -7,6 +7,7 @@
 #include <glad/glad.h>
 #include <stdint.h>
 
+class OpenGLStagingBuffer;
 class OpenGLRenderer;
 class OpenGLImage;
 typedef OpenGLItemPtr<OpenGLImage> OpenGLImagePtr;
@@ -18,6 +19,15 @@ enum OpenGLImageType
     OpenGLImageType_e3D,
     OpenGLImageType_Linear,
     OpenGLImageType_Buffer,
+};
+
+enum ImageFlags
+{
+    ImageFlag_Converted = 1 << 0,
+    ImageFlag_CpuModified = 1 << 1,
+    ImageFlag_GpuModified = 1 << 2,
+    ImageFlag_Tracked = 1 << 3,
+    ImageFlag_Registered = 1 << 4,
 };
 
 class OpenGLImage
@@ -36,9 +46,18 @@ public:
     ~OpenGLImage();
 
     void Create(uint64_t GpuAddr, uint64_t CpuAddr, OpenGLRenderer * Renderer);
+    OpenGLBufferImageList UnswizzleImage(CVideoMemory& VideoMemory, uint64_t gpu_addr, uint8_t * Output, size_t OutputSize) const;
+    void UploadMemory(OpenGLStagingBuffer & Buffer, uint32_t BufferOffset, const OpenGLBufferImage * Images, size_t NoOfImages);
     uint32_t LayerSize(void) const;
+    uint32_t MapSizeBytes(void) const;
     uint32_t GuestSizeBytes(void) const;
+    uint32_t UnswizzledSizeBytes(void) const;
+    bool IsFlagSet(ImageFlags Flag) const;
+    void UpdateFlags(uint32_t Add, uint32_t Remove);
+    void Track(void);
+    void UploadImageContents(CVideoMemory & VideoMemory, OpenGLStagingBuffer & Buffer, uint32_t BufferOffset);
 
+    uint32_t NumSamples(void) const { return m_NumSamples; }
     uint64_t GpuAddr(void) const { return m_GpuAddr; }
 
 private:
@@ -53,18 +72,26 @@ private:
         uint32_t TileWidthSpacing;
     };
 
+    void CopyBufferToImage(const OpenGLBufferImage & Image, uint32_t BufferOffset);
     LevelInfo MakeLevelInfo(void) const;
+    uint32_t NumBlocksPerLayer(const OpenGLExtent2D & TileSize) const;
     void SetOpenGLFormat(void);
 
     static uint32_t AdjustTileSize(uint32_t Shift, uint32_t UnitFactor, uint32_t Dimension);
+    static OpenGLExtent3D AdjustTileSize(const OpenGLExtent3D & Size, const OpenGLExtent2D & TileSize);
     static OpenGLExtent3D LevelTiles(const LevelInfo & Info, uint32_t Level);
     static OpenGLExtent3D NumLevelBlocks(const LevelInfo & Info, uint32_t Level);
     static OpenGLExtent3D TileShift(const LevelInfo & Info, uint32_t Level);
     static OpenGLExtent2D NumGobs(const LevelInfo & Info, uint32_t Level);
     static uint32_t CalculateLevelSize(const LevelInfo & Info, uint32_t Level);
+    static uint32_t NumBlocks(const OpenGLExtent3D & Size, const OpenGLExtent2D & TileSize);
     static bool IsSmallerThanGobSize(const OpenGLExtent3D & NumTiles, const OpenGLExtent2D & Gob, uint32_t BlockDepth);
     static OpenGLExtent2D GobSize(uint32_t BytesPerBlockLog2, uint32_t Height, uint32_t TileWidthSpacing);
     static uint32_t BytesPerBlockLog2(uint32_t BytesPerBlock);
+    static uint32_t AlignLayerSize(uint32_t SizeBytes, const OpenGLExtent3D & Size, OpenGLExtent3D Block, uint32_t TileSizeY, uint32_t TileWidthSpacing);
+    static uint32_t AdjustMipSize(uint32_t size, uint32_t level);
+    static OpenGLExtent3D AdjustMipSize(OpenGLExtent3D size, int32_t level);
+    static OpenGLExtent3D AdjustMipBlockSize(OpenGLExtent3D NumTiles, OpenGLExtent3D BlockSize, uint32_t Level);
 
     OpenGLImageType m_Type;
     SurfacePixelFormat m_Format;
@@ -73,6 +100,7 @@ private:
     uint32_t m_NumSamples;
     uint32_t m_TileWidthSpacing;
     OpenGLSubresourceExtent m_Resources;
+    uint32_t m_Flags;
     uint32_t m_MipLevelOffsets[MAX_MIP_LEVELS];
     OpenGLRenderer * m_Renderer;
     uint64_t m_GpuAddr;

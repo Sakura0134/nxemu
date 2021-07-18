@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <vector>
 
 enum OpenGLOptions
 {
@@ -68,3 +69,50 @@ private:
     int32_t m_Levels;
     int32_t m_Layers;
 };
+
+class OpenGLBufferImage
+{
+public:
+    OpenGLBufferImage();
+
+    uint64_t BufferOffset( void ) const { return m_BufferOffset; }
+    uint32_t BufferRowLength( void ) const { return m_BufferRowLength; }
+    uint32_t BufferImageHeight( void ) const { return m_BufferImageHeight; }
+    int32_t ImageBaseLevel( void ) const { return m_ImageBaseLevel; }
+    int32_t ImageBaseLayer( void ) const { return m_ImageBaseLayer; }
+    int32_t ImageNumLayers( void ) const { return m_ImageNumLayers; }
+    int32_t ImageOffsetX( void ) const { return m_ImageOffsetX; }
+    int32_t ImageOffsetY( void ) const { return m_ImageOffsetY; }
+    int32_t ImageOffsetZ( void ) const { return m_ImageOffsetZ; }
+    const OpenGLExtent3D & ImageExtent( void ) const { return m_ImageExtent; }
+
+    void BufferOffset(uint64_t BufferOffset) { m_BufferOffset = BufferOffset; }
+    void BufferSize(uint64_t BufferSize) { m_BufferSize = BufferSize; }
+    void BufferRowLength(uint32_t BufferRowLength) { m_BufferRowLength = BufferRowLength; }
+    void BufferImageHeight(uint32_t BufferImageHeight) { m_BufferImageHeight = BufferImageHeight; }
+    void ImageBaseLevel(int32_t ImageBaseLevel) { m_ImageBaseLevel = ImageBaseLevel; }
+    void ImageBaseLayer(int32_t ImageBaseLayer) { m_ImageBaseLayer = ImageBaseLayer; }
+    void ImageNumLayers(int32_t ImageNumLayers) { m_ImageNumLayers = ImageNumLayers; }
+    void ImageOffsetX(int32_t ImageOffsetX) { m_ImageOffsetX = ImageOffsetX; }
+    void ImageOffsetY(int32_t ImageOffsetY) { m_ImageOffsetY = ImageOffsetY; }
+    void ImageOffsetZ(int32_t ImageOffsetZ) { m_ImageOffsetZ = ImageOffsetZ; }
+    void ImageExtent(const OpenGLExtent3D & ImageExtent) { m_ImageExtent = ImageExtent; }
+
+private:
+    OpenGLBufferImage(const OpenGLBufferImage&);
+    OpenGLBufferImage& operator=(const OpenGLBufferImage&);
+
+    uint64_t m_BufferOffset;
+    uint64_t m_BufferSize;
+    uint32_t m_BufferRowLength;
+    uint32_t m_BufferImageHeight;
+    int32_t m_ImageBaseLevel;
+    int32_t m_ImageBaseLayer;
+    int32_t m_ImageNumLayers;
+    int32_t m_ImageOffsetX;
+    int32_t m_ImageOffsetY;
+    int32_t m_ImageOffsetZ;
+    OpenGLExtent3D m_ImageExtent;
+};
+
+typedef std::vector<OpenGLBufferImage> OpenGLBufferImageList;

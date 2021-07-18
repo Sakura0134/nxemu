@@ -1,5 +1,6 @@
 #include "Video.h"
 #include "VideoNotification.h"
+#include "Textures\Decoder.h"
 #include <stdio.h>
 
 CVideo::CVideo(IRenderWindow & RenderWindow, ISwitchSystem & SwitchSystem) :
@@ -20,6 +21,7 @@ CVideo::~CVideo()
 
 bool CVideo::Initialize(void)
 {
+    InitSwizzleTable();
     if (!m_GpuThread.StartThread())
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);

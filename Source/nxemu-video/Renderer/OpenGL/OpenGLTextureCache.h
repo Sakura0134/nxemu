@@ -1,6 +1,7 @@
 #pragma once
 #include "OpenGLImage.h"
 #include "OpenGLImageView.h"
+#include "OpenGLStagingBuffers.h"
 #include "GpuTypes.h"
 #include <stdint.h>
 #include <vector>
@@ -42,6 +43,7 @@ private:
     OpenGLTextureCache(const OpenGLTextureCache &);
     OpenGLTextureCache & operator=(const OpenGLTextureCache &);
 
+    void RefreshContents(OpenGLImage & Image);
     OpenGLImage * GetImage(const OpenGLImage & Info, uint64_t GpuAddr, uint32_t Options = 0);
     OpenGLImageViewPtr FindColorBuffer(size_t Index, bool IsClear);
 
@@ -51,4 +53,5 @@ private:
     OpenGLImageViewPtr m_ColorBuffer[NumRenderTargets];
     PageTables m_PageTable;
     OpenGLImageImages m_Images;
+    OpenGLStagingBuffers m_UploadBuffers;
 };

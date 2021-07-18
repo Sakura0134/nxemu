@@ -72,3 +72,17 @@ OpenGLSubresourceExtent::OpenGLSubresourceExtent(int32_t Levels, int32_t Layers)
     m_Layers(Layers) 
 {
 }
+
+OpenGLBufferImage::OpenGLBufferImage() : 
+    m_BufferOffset(0),
+    m_BufferSize(0),
+    m_BufferRowLength(0),
+    m_BufferImageHeight(0),
+    m_ImageBaseLevel(0),
+    m_ImageBaseLayer(0),
+    m_ImageNumLayers(1),
+    m_ImageOffsetX(0),
+    m_ImageOffsetY(0), 
+    m_ImageOffsetZ(0)
+{
+}
