@@ -94,7 +94,7 @@ OpenGLImage * OpenGLTextureCache::GetImage(const OpenGLImage & Info, uint64_t Gp
     Image->Create(GpuAddr, CpuAddr, &m_Renderer);
     m_Images.emplace(std::pair<uint64_t, OpenGLImagePtr>(Image->GpuAddr(), Image));
     RefreshContents(Image);
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    RegisterImage(Image);
     return Image.Get();
 }
 
@@ -119,6 +119,21 @@ OpenGLImageViewPtr OpenGLTextureCache::FindColorBuffer(size_t Index, bool IsClea
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return nullptr;
+}
+
+void OpenGLTextureCache::RegisterImage(OpenGLImagePtr & Image)
+{
+    if (Image->IsFlagSet(ImageFlag_Registered))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    Image->UpdateFlags(0, ImageFlag_Registered);
+
+    for (uint64_t Page = Image->CpuAddr() >> PAGE_BITS, PageEnd = (Image->CpuAddr() + Image->GuestSizeBytes() - 1) >> PAGE_BITS; Page <= PageEnd; Page++)
+    {
+        m_PageTable[Page].push_back(Image);
+    }
 }
 
 void OpenGLTextureCache::WriteMemory(uint64_t /*CpuAddr*/, uint64_t /*Size*/)

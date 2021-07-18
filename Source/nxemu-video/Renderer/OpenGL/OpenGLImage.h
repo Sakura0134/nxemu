@@ -58,6 +58,7 @@ public:
     void UploadImageContents(CVideoMemory & VideoMemory, OpenGLStagingBuffer & Buffer, uint32_t BufferOffset);
 
     uint32_t NumSamples(void) const { return m_NumSamples; }
+    uint64_t CpuAddr(void) const { return m_CpuAddr; }
     uint64_t GpuAddr(void) const { return m_GpuAddr; }
 
 private:
