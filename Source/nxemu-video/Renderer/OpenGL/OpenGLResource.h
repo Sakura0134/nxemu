@@ -3,23 +3,33 @@
 #include <glad/glad.h>
 #include <stdint.h>
 
+class OpenGLTexture;
+typedef OpenGLItemPtr<OpenGLTexture> OpenGLTexturePtr;
+
 class OpenGLTexture 
 {
+    friend OpenGLTexturePtr;
+
 public:
     OpenGLTexture();
     ~OpenGLTexture();
 
     void Create(GLenum target);
+    void Generate();
     void Release();
 
+    void TextureView(GLenum Target, const OpenGLTexture & OrigTexture, GLenum InternalFormat, GLuint MinLevel, GLuint NumLevels, GLuint MinLayer, GLuint NumLayers);
+    void TextureStorage2D(GLsizei Levels, GLenum InternalFormat, GLsizei Width, GLsizei Height);
     void TextureStorage3D(GLsizei Levels, GLenum InternalFormat, GLsizei Width, GLsizei Height, GLsizei Depth);
     void TextureSubImage3D(GLint Level, GLint XOffset, GLint YOffset, GLint ZOffset, GLsizei Width, GLsizei Height, GLsizei Depth, GLenum Format, GLenum Type, const void * Pixels);
+    void TextureParameteriv(GLenum PName, const GLint * Param);
 
 private:
     OpenGLTexture(const OpenGLTexture&);
     OpenGLTexture & operator=(const OpenGLTexture &);
         
     GLuint m_Handle;
+    int32_t m_Ref;
 };
 
 class OpenGLBuffer;

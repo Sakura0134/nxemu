@@ -2,6 +2,20 @@
 #include <stdint.h>
 #include <vector>
 
+enum OpenGLImageViewType
+{
+    OpenGLImageViewType_e1D,
+    OpenGLImageViewType_e2D,
+    OpenGLImageViewType_Cube,
+    OpenGLImageViewType_e3D,
+    OpenGLImageViewType_e1DArray,
+    OpenGLImageViewType_e2DArray,
+    OpenGLImageViewType_CubeArray,
+    OpenGLImageViewType_Rect,
+    OpenGLImageViewType_Buffer,
+    OpenGLImageViewType_Last
+};
+
 enum OpenGLOptions
 {
     OpenGLOptions_Size = 1 << 0,
@@ -68,6 +82,43 @@ private:
 
     int32_t m_Levels;
     int32_t m_Layers;
+};
+
+class OpenGLSubresourceBase
+{
+public:
+    OpenGLSubresourceBase();
+    OpenGLSubresourceBase(const OpenGLSubresourceBase&);
+    OpenGLSubresourceBase& operator=(const OpenGLSubresourceBase&);
+
+    int32_t Level(void) const { return m_Level; }
+    int32_t Layer(void) const { return m_Layer; }
+
+    void Level(int32_t Level) { m_Level = Level; }
+    void Layer(int32_t Layers) { m_Layer = Layers; }
+
+private:
+    int32_t m_Level;
+    int32_t m_Layer;
+};
+
+class OpenGLSubresourceRange
+{
+public:
+    OpenGLSubresourceRange();
+    OpenGLSubresourceRange(const OpenGLSubresourceRange & Range);
+    OpenGLSubresourceRange(const OpenGLSubresourceBase & Base, const OpenGLSubresourceExtent & Extent);
+
+    OpenGLSubresourceBase & Base(void) { return m_Base; }
+    const OpenGLSubresourceBase & Base(void) const { return m_Base; }
+    OpenGLSubresourceExtent & Extent(void) { return m_Extent; }
+    const OpenGLSubresourceExtent & Extent(void) const { return m_Extent; }
+
+private:
+    OpenGLSubresourceRange & operator=(const OpenGLSubresourceRange &);
+
+    OpenGLSubresourceBase m_Base;
+    OpenGLSubresourceExtent m_Extent;
 };
 
 class OpenGLBufferImage

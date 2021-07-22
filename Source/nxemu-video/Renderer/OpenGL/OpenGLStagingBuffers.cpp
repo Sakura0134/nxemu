@@ -32,11 +32,8 @@ size_t OpenGLStagingBuffers::RequestBuffer(uint32_t RequestedSize)
     return m_Buffers.size() - 1;
 }
 
-bool OpenGLStagingBuffers::FindBuffer(uint32_t RequestedSize, size_t & BufferIndex)
+bool OpenGLStagingBuffers::FindBuffer(uint32_t /*RequestedSize*/, size_t & /*BufferIndex*/)
 {
-    if (m_Buffers.size() > 0)
-    {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
     return false;
 }

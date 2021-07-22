@@ -16,6 +16,54 @@ OpenGLTextureCache::OpenGLTextureCache(OpenGLRenderer & Renderer, CVideo & Video
 
 bool OpenGLTextureCache::Init(void)
 {
+    GLint NULL_SWIZZLE[] = { GL_ZERO, GL_ZERO, GL_ZERO, GL_ZERO };
+    OpenGLTexturePtr & NullImage1DArray = m_NullImages[OpenGLImageViewType_e1DArray];
+    NullImage1DArray.Reset(new OpenGLTexture);
+    NullImage1DArray->Create(GL_TEXTURE_1D_ARRAY);
+    NullImage1DArray->TextureStorage2D(1, GL_R8, 1, 1);
+    NullImage1DArray->TextureParameteriv(GL_TEXTURE_SWIZZLE_RGBA, NULL_SWIZZLE);
+
+    OpenGLTexturePtr & NullImageCubeArray = m_NullImages[OpenGLImageViewType_CubeArray];
+    NullImageCubeArray.Reset(new OpenGLTexture);
+    NullImageCubeArray->Create(GL_TEXTURE_CUBE_MAP_ARRAY);
+    NullImageCubeArray->TextureStorage3D(1, GL_R8, 1, 1, 6);
+    NullImageCubeArray->TextureParameteriv(GL_TEXTURE_SWIZZLE_RGBA, NULL_SWIZZLE);
+
+    OpenGLTexturePtr & NullImage3D = m_NullImages[OpenGLImageViewType_e3D];    
+    NullImage3D.Reset(new OpenGLTexture);
+    NullImage3D->Create(GL_TEXTURE_3D);
+    NullImage3D->TextureStorage3D(1, GL_R8, 1, 1, 1);
+    NullImage3D->TextureParameteriv(GL_TEXTURE_SWIZZLE_RGBA, NULL_SWIZZLE);
+
+    OpenGLTexturePtr & NullImageRect = m_NullImages[OpenGLImageViewType_Rect];
+    NullImageRect.Reset(new OpenGLTexture);
+    NullImageRect->Create(GL_TEXTURE_RECTANGLE);
+    NullImageRect->TextureStorage2D(1, GL_R8, 1, 1);
+    NullImageRect->TextureParameteriv(GL_TEXTURE_SWIZZLE_RGBA, NULL_SWIZZLE);
+
+    OpenGLTexturePtr & NullImageView1D = m_NullImages[OpenGLImageViewType_e1D];
+    NullImageView1D.Reset(new OpenGLTexture);
+    NullImageView1D->Generate();
+    NullImageView1D->TextureView(GL_TEXTURE_1D, NullImage1DArray, GL_R8, 0, 1, 0, 1);
+    NullImageView1D->TextureParameteriv(GL_TEXTURE_SWIZZLE_RGBA, NULL_SWIZZLE);
+
+    OpenGLTexturePtr & NullImageView2D = m_NullImages[OpenGLImageViewType_e2D];
+    NullImageView2D.Reset(new OpenGLTexture);
+    NullImageView2D->Generate();
+    NullImageView2D->TextureView(GL_TEXTURE_2D, NullImageCubeArray, GL_R8, 0, 1, 0, 1);
+    NullImageView2D->TextureParameteriv(GL_TEXTURE_SWIZZLE_RGBA, NULL_SWIZZLE);
+
+    OpenGLTexturePtr & NullImageView2DArray = m_NullImages[OpenGLImageViewType_e2DArray];
+    NullImageView2DArray.Reset(new OpenGLTexture);
+    NullImageView2DArray->Generate();
+    NullImageView2DArray->TextureView(GL_TEXTURE_2D_ARRAY, NullImageCubeArray, GL_R8, 0, 1, 0, 1);
+    NullImageView2DArray->TextureParameteriv(GL_TEXTURE_SWIZZLE_RGBA, NULL_SWIZZLE);
+
+    OpenGLTexturePtr & NullImageViewCube = m_NullImages[OpenGLImageViewType_Cube];
+    NullImageViewCube.Reset(new OpenGLTexture);
+    NullImageViewCube->Generate();
+    NullImageViewCube->TextureView(GL_TEXTURE_CUBE_MAP, NullImageCubeArray, GL_R8, 0, 1, 0, 6);
+    NullImageViewCube->TextureParameteriv(GL_TEXTURE_SWIZZLE_RGBA, NULL_SWIZZLE);
     return true;
 }
 
@@ -117,8 +165,7 @@ OpenGLImageViewPtr OpenGLTextureCache::FindColorBuffer(size_t Index, bool IsClea
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return nullptr;
     }
-    g_Notify->BreakPoint(__FILE__, __LINE__);
-    return nullptr;
+    return Image->ImageView(m_NullImages, sizeof(m_NullImages) / sizeof(m_NullImages[0]), GPUAddr, IsClear);
 }
 
 void OpenGLTextureCache::RegisterImage(OpenGLImagePtr & Image)

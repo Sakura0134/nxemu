@@ -1,11 +1,13 @@
 #pragma once
 #include "Surface.h"
+#include "OpenGLImageView.h"
 #include "OpenGLTypes.h"
 #include "OpenGLItemPtr.h"
 #include "OpenGLResource.h"
 #include "Engine\Maxwell3D.h"
 #include <glad/glad.h>
 #include <stdint.h>
+#include <vector>
 
 class OpenGLStagingBuffer;
 class OpenGLRenderer;
@@ -46,8 +48,10 @@ public:
     ~OpenGLImage();
 
     void Create(uint64_t GpuAddr, uint64_t CpuAddr, OpenGLRenderer * Renderer);
+    OpenGLImageViewType ImageViewType(void) const;
     OpenGLBufferImageList UnswizzleImage(CVideoMemory& VideoMemory, uint64_t gpu_addr, uint8_t * Output, size_t OutputSize) const;
     void UploadMemory(OpenGLStagingBuffer & Buffer, uint32_t BufferOffset, const OpenGLBufferImage * Images, size_t NoOfImages);
+    OpenGLImageView * ImageView(OpenGLTexturePtr * NullTextures, uint32_t NumNullTextures, uint64_t GPUAddr, bool IsClear);
     uint32_t LayerSize(void) const;
     uint32_t MapSizeBytes(void) const;
     uint32_t GuestSizeBytes(void) const;
@@ -77,6 +81,7 @@ private:
     LevelInfo MakeLevelInfo(void) const;
     uint32_t NumBlocksPerLayer(const OpenGLExtent2D & TileSize) const;
     void SetOpenGLFormat(void);
+    bool FindBase(uint64_t Addr, OpenGLSubresourceBase & Subresource) const;
 
     static uint32_t AdjustTileSize(uint32_t Shift, uint32_t UnitFactor, uint32_t Dimension);
     static OpenGLExtent3D AdjustTileSize(const OpenGLExtent3D & Size, const OpenGLExtent2D & TileSize);
@@ -103,6 +108,7 @@ private:
     OpenGLSubresourceExtent m_Resources;
     uint32_t m_Flags;
     uint32_t m_MipLevelOffsets[MAX_MIP_LEVELS];
+    std::vector<OpenGLImageViewPtr> m_ImageViews;
     OpenGLRenderer * m_Renderer;
     uint64_t m_GpuAddr;
     uint64_t m_CpuAddr;

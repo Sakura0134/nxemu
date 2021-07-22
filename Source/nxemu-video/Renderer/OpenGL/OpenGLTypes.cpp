@@ -73,6 +73,28 @@ OpenGLSubresourceExtent::OpenGLSubresourceExtent(int32_t Levels, int32_t Layers)
 {
 }
 
+OpenGLSubresourceBase::OpenGLSubresourceBase() : 
+    m_Level(0),
+    m_Layer(0)
+{
+}
+
+OpenGLSubresourceBase::OpenGLSubresourceBase(const OpenGLSubresourceBase & Base) : 
+    m_Level(Base.m_Level),
+    m_Layer(Base.m_Layer)
+{
+}
+
+OpenGLSubresourceRange::OpenGLSubresourceRange()
+{
+}
+
+OpenGLSubresourceRange::OpenGLSubresourceRange(const OpenGLSubresourceBase & Base, const OpenGLSubresourceExtent & Extent) :
+    m_Base(Base),
+    m_Extent(Extent)
+{
+}
+
 OpenGLBufferImage::OpenGLBufferImage() : 
     m_BufferOffset(0),
     m_BufferSize(0),

@@ -112,6 +112,16 @@ uint32_t OpenGLImage::LayerSize(void) const
     return Size;
 }
 
+OpenGLImageViewType OpenGLImage::ImageViewType(void) const
+{
+    switch (m_Type)
+    {
+    case OpenGLImageType_e2D: return m_Resources.Layers() > 1 ? OpenGLImageViewType_e2DArray : OpenGLImageViewType_e2D;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return OpenGLImageViewType_e1D;
+}
+
 void OpenGLImage::Create(uint64_t GpuAddr, uint64_t CpuAddr, OpenGLRenderer * Renderer)
 {
     uint32_t GuestSize = GuestSizeBytes();
@@ -523,6 +533,35 @@ OpenGLExtent3D OpenGLImage::AdjustMipSize(OpenGLExtent3D size, int32_t level)
     return OpenGLExtent3D(AdjustMipSize(size.Width(), level), AdjustMipSize(size.Height(), level), AdjustMipSize(size.Depth(), level));
 }
 
+OpenGLImageView * OpenGLImage::ImageView(OpenGLTexturePtr * NullTextures, uint32_t NumNullTextures, uint64_t GPUAddr, bool /*IsClear*/)
+{
+    OpenGLSubresourceBase Base;
+    if (m_Type == OpenGLImageType_Linear)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return nullptr;
+    }
+    else if (!FindBase(GPUAddr, Base))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return nullptr;
+    }
+    int32_t Layers = m_Type == OpenGLImageType_e3D ? m_Size.Depth() : m_Resources.Layers();
+    OpenGLSubresourceRange Range(Base,OpenGLSubresourceExtent(1, Layers));
+    for (size_t i = 0, n = m_ImageViews.size(); i < n; i++)
+    {
+        OpenGLImageView * ImageView = m_ImageViews[i].Get();
+        if (ImageView->Type() == ImageViewType() && ImageView->Format() == m_Format)
+        {
+            return ImageView;
+        }
+    }
+    OpenGLImageViewPtr ImageViewPtr(new OpenGLImageView(ImageViewType(), m_Format, OpenGLSubresourceRange()));
+    ImageViewPtr->Create(NullTextures, NumNullTextures, this);
+    m_ImageViews.push_back(ImageViewPtr);
+    return ImageViewPtr.Get();
+}
+
 uint32_t OpenGLImage::MapSizeBytes(void) const
 {
     if (IsFlagSet(ImageFlag_Converted))
@@ -541,6 +580,12 @@ uint32_t OpenGLImage::UnswizzledSizeBytes(void) const
     }
     OpenGLExtent2D TileSize(SurfaceDefaultBlockWidth(m_Format), SurfaceDefaultBlockHeight(m_Format));
     return NumBlocksPerLayer(TileSize) * m_Resources.Layers() * SurfacePixelFormatBytesPerBlock(m_Format);
+}
+
+bool OpenGLImage::FindBase(uint64_t /*Addr*/, OpenGLSubresourceBase & /*Subresource*/) const
+{
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return false;
 }
 
 bool OpenGLImage::IsFlagSet(ImageFlags Flag) const

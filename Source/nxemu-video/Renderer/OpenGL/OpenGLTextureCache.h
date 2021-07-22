@@ -55,4 +55,5 @@ private:
     PageTables m_PageTable;
     OpenGLImageImages m_Images;
     OpenGLStagingBuffers m_UploadBuffers;
+    OpenGLTexturePtr m_NullImages[OpenGLImageViewType_Last];
 };

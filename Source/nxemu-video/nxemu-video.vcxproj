@@ -60,6 +60,7 @@
     <ClCompile Include="Renderer\OpenGL\MaxwellToOpenGL.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLFenceManager.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLImage.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLImageView.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLRenderer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLResource.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStagingBuffer.cpp" />
