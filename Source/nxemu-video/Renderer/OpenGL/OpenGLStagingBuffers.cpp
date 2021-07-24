@@ -32,8 +32,31 @@ size_t OpenGLStagingBuffers::RequestBuffer(uint32_t RequestedSize)
     return m_Buffers.size() - 1;
 }
 
-bool OpenGLStagingBuffers::FindBuffer(uint32_t /*RequestedSize*/, size_t & /*BufferIndex*/)
+bool OpenGLStagingBuffers::FindBuffer(uint32_t RequestedSize, size_t & BufferIndex)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
-    return false;
+    uint32_t SmallestBuffer = 0xFFFFFFFF;
+    bool Found = false;
+    for (size_t i = 0, n = m_Buffers.size(); i < n; i++)
+    {
+        uint32_t BufferSize = m_Buffers[i].Size();
+        if (BufferSize < RequestedSize || BufferSize >= SmallestBuffer)
+        {
+            continue;
+        }
+        OpenGLSyncPtr & Sync = m_Buffers[i].Sync();
+        if (Sync->Created()) 
+        {
+            GLint Status;
+            Sync->GetSynciv(GL_SYNC_STATUS, 1, nullptr, &Status);
+            if (Status != GL_SIGNALED) 
+            {
+                continue;
+            }
+            Sync->Release();
+        }
+        SmallestBuffer = BufferSize;
+        BufferIndex = i;
+        Found = true;
+    }
+    return Found;
 }

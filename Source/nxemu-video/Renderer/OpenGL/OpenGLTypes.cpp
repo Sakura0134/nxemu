@@ -95,6 +95,12 @@ OpenGLSubresourceRange::OpenGLSubresourceRange(const OpenGLSubresourceBase & Bas
 {
 }
 
+OpenGLSubresourceRange::OpenGLSubresourceRange(const OpenGLSubresourceRange & Range) :
+    m_Base(Range.m_Base),
+    m_Extent(Range.m_Extent)
+{
+}
+
 OpenGLBufferImage::OpenGLBufferImage() : 
     m_BufferOffset(0),
     m_BufferSize(0),

@@ -6,12 +6,15 @@
 #include <Common/Maths.h>
 #include <algorithm>
 
+uint64_t OpenGLImage::m_CompatibleViewTable[SurfacePixelFormat_MaxPixelFormat][2];
+
 OpenGLImage::OpenGLImage() :
     m_Type(OpenGLImageType_e1D),
     m_Format(SurfacePixelFormat_Invalid),
     m_Size(1, 1, 1),
     m_Block(0, 0, 0),
     m_NumSamples(1),
+    m_LayerStride(0),
     m_TileWidthSpacing(0),
     m_Flags(ImageFlag_CpuModified),
     m_Renderer(nullptr),
@@ -33,6 +36,7 @@ OpenGLImage::OpenGLImage(const OpenGLImage & Image) :
     m_Size(Image.m_Size),
     m_Block(Image.m_Block),
     m_NumSamples(Image.m_NumSamples),
+    m_LayerStride(Image.m_LayerStride),
     m_TileWidthSpacing(Image.m_TileWidthSpacing),
     m_Flags(Image.m_Flags),
     m_Renderer(nullptr),
@@ -54,6 +58,7 @@ OpenGLImage::OpenGLImage(const CMaxwell3D::tyRenderTarget & RenderTarget, uint32
     m_Size(1, 1, 1),
     m_Block(0, 0, 0),
     m_NumSamples(Samples),
+    m_LayerStride(0),
     m_TileWidthSpacing(0),
     m_Flags(ImageFlag_CpuModified),
     m_Renderer(nullptr),
@@ -79,6 +84,7 @@ OpenGLImage::OpenGLImage(const CMaxwell3D::tyRenderTarget & RenderTarget, uint32
     }
     m_Size.Width(RenderTarget.Width);
     m_Size.Height(RenderTarget.Height);
+    m_LayerStride = RenderTarget.LayerStride * 4;
     m_Block = OpenGLExtent3D(RenderTarget.TileMode.BlockWidth, RenderTarget.TileMode.BlockHeight, RenderTarget.TileMode.BlockDepth);
     if (RenderTarget.TileMode.Is3D)
     {
@@ -152,6 +158,15 @@ void OpenGLImage::Create(uint64_t GpuAddr, uint64_t CpuAddr, OpenGLRenderer * Re
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
     }
+}
+
+bool OpenGLImage::IsViewCompatible(SurfacePixelFormat Format, bool BrokenViews) const 
+{
+    if (BrokenViews)
+    {
+        return m_Format == Format;
+    }
+    return ((m_CompatibleViewTable[m_Format][Format / 64] >> (Format % 64)) & 1) != 0;
 }
 
 OpenGLBufferImageList OpenGLImage::UnswizzleImage(CVideoMemory & VideoMemory, uint64_t GpuAddr,  uint8_t * Output, size_t OutputSize) const
@@ -582,9 +597,35 @@ uint32_t OpenGLImage::UnswizzledSizeBytes(void) const
     return NumBlocksPerLayer(TileSize) * m_Resources.Layers() * SurfacePixelFormatBytesPerBlock(m_Format);
 }
 
-bool OpenGLImage::FindBase(uint64_t /*Addr*/, OpenGLSubresourceBase & /*Subresource*/) const
+bool OpenGLImage::FindBase(uint64_t Addr, OpenGLSubresourceBase & Subresource) const
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    if (Addr < m_GpuAddr)
+    {
+        return false;
+    }
+
+    uint32_t GuestSize = GuestSizeBytes();
+    uint32_t Diff = (uint32_t)(Addr - m_GpuAddr);
+    if (Diff > GuestSize)
+    {
+        return false;
+    }
+    if (m_Type == OpenGLImageType_e3D)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return false;
+    }
+    uint32_t MipOffset = m_LayerStride == 0 ? Diff : Diff % m_LayerStride;
+    for (uint32_t i = 0, n = m_Resources.Levels(); i < n; i++)
+    {
+        if (m_MipLevelOffsets[i] != MipOffset)
+        {
+            continue;
+        }
+        Subresource.Level((int32_t)i);
+        Subresource.Layer((int32_t)(m_LayerStride == 0 ? 0 : Diff / m_LayerStride));
+        return true;
+    }
     return false;
 }
 
@@ -632,3 +673,180 @@ void OpenGLImage::UploadImageContents(CVideoMemory & VideoMemory, OpenGLStagingB
     }
 }
 
+void OpenGLImage::EnableCompatibleView(SurfacePixelFormat FormatA, SurfacePixelFormat FormatB) 
+{
+    m_CompatibleViewTable[FormatA][FormatB / 64] |= 1ull << (FormatB % 64);
+    m_CompatibleViewTable[FormatB][FormatA / 64] |= 1ull << (FormatA % 64);
+}
+
+void OpenGLImage::EnableCompatibleRange(SurfacePixelFormat * Formats, uint32_t NoOfFormats)
+{
+    for (uint32_t a = 0; a < NoOfFormats; a++)
+    {
+        for (uint32_t b = a; b < NoOfFormats; b++) 
+        {
+            EnableCompatibleView(Formats[a], Formats[b]);
+        }
+    }
+}
+
+void OpenGLImage::InitCompatibleViewTable(void)
+{
+    SurfacePixelFormat VIEW_CLASS_128_BITS[] = 
+    {
+        SurfacePixelFormat_R32G32B32A32_FLOAT,
+        SurfacePixelFormat_R32G32B32A32_UINT,
+        SurfacePixelFormat_R32G32B32A32_SINT,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_96_BITS[] =
+    {
+        SurfacePixelFormat_R32G32B32_FLOAT,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_64_BITS[] =
+    {
+        SurfacePixelFormat_R32G32_FLOAT,       SurfacePixelFormat_R32G32_UINT,
+        SurfacePixelFormat_R32G32_SINT,        SurfacePixelFormat_R16G16B16A16_FLOAT,
+        SurfacePixelFormat_R16G16B16A16_UNORM, SurfacePixelFormat_R16G16B16A16_SNORM,
+        SurfacePixelFormat_R16G16B16A16_UINT,  SurfacePixelFormat_R16G16B16A16_SINT,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_32_BITS[] =
+    {
+        SurfacePixelFormat_R16G16_FLOAT,     SurfacePixelFormat_B10G11R11_FLOAT,
+        SurfacePixelFormat_R32_FLOAT,        SurfacePixelFormat_A2B10G10R10_UNORM,
+        SurfacePixelFormat_R16G16_UINT,      SurfacePixelFormat_R32_UINT,
+        SurfacePixelFormat_R16G16_SINT,      SurfacePixelFormat_R32_SINT,
+        SurfacePixelFormat_A8B8G8R8_UNORM,   SurfacePixelFormat_R16G16_UNORM,
+        SurfacePixelFormat_A8B8G8R8_SNORM,   SurfacePixelFormat_R16G16_SNORM,
+        SurfacePixelFormat_A8B8G8R8_SRGB,    SurfacePixelFormat_E5B9G9R9_FLOAT,
+        SurfacePixelFormat_B8G8R8A8_UNORM,   SurfacePixelFormat_B8G8R8A8_SRGB,
+        SurfacePixelFormat_A8B8G8R8_UINT,    SurfacePixelFormat_A8B8G8R8_SINT,
+        SurfacePixelFormat_A2B10G10R10_UINT,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_16_BITS[] = 
+    {
+        SurfacePixelFormat_R16_FLOAT,  SurfacePixelFormat_R8G8_UINT,  SurfacePixelFormat_R16_UINT,
+        SurfacePixelFormat_R16_SINT,   SurfacePixelFormat_R8G8_UNORM, SurfacePixelFormat_R16_UNORM,
+        SurfacePixelFormat_R8G8_SNORM, SurfacePixelFormat_R16_SNORM,  SurfacePixelFormat_R8G8_SINT,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_8_BITS[] = 
+    {
+        SurfacePixelFormat_R8_UINT,
+        SurfacePixelFormat_R8_UNORM,
+        SurfacePixelFormat_R8_SINT,
+        SurfacePixelFormat_R8_SNORM,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_RGTC1_RED[] = 
+    {
+        SurfacePixelFormat_BC4_UNORM,
+        SurfacePixelFormat_BC4_SNORM,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_RGTC2_RG[] = 
+    {
+        SurfacePixelFormat_BC5_UNORM,
+        SurfacePixelFormat_BC5_SNORM,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_BPTC_UNORM[] = 
+    {
+        SurfacePixelFormat_BC7_UNORM,
+        SurfacePixelFormat_BC7_SRGB,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_BPTC_FLOAT[] = 
+    {
+        SurfacePixelFormat_BC6H_SFLOAT,
+        SurfacePixelFormat_BC6H_UFLOAT,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_ASTC_4x4_RGBA[] = 
+    {
+        SurfacePixelFormat_ASTC_2D_4X4_UNORM,
+        SurfacePixelFormat_ASTC_2D_4X4_SRGB,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_ASTC_5x4_RGBA[] = 
+    {
+        SurfacePixelFormat_ASTC_2D_5X4_UNORM,
+        SurfacePixelFormat_ASTC_2D_5X4_SRGB,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_ASTC_5x5_RGBA[] = 
+    {
+        SurfacePixelFormat_ASTC_2D_5X5_UNORM,
+        SurfacePixelFormat_ASTC_2D_5X5_SRGB,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_ASTC_6x5_RGBA[] = 
+    {
+        SurfacePixelFormat_ASTC_2D_6X5_UNORM,
+        SurfacePixelFormat_ASTC_2D_6X5_SRGB,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_ASTC_6x6_RGBA[] = 
+    {
+        SurfacePixelFormat_ASTC_2D_6X6_UNORM,
+        SurfacePixelFormat_ASTC_2D_6X6_SRGB,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_ASTC_8x5_RGBA[] = 
+    {
+        SurfacePixelFormat_ASTC_2D_8X5_UNORM,
+        SurfacePixelFormat_ASTC_2D_8X5_SRGB,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_ASTC_8x8_RGBA[] =
+    {
+        SurfacePixelFormat_ASTC_2D_8X8_UNORM,
+        SurfacePixelFormat_ASTC_2D_8X8_SRGB,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_ASTC_10x8_RGBA[] = 
+    {
+        SurfacePixelFormat_ASTC_2D_10X8_UNORM,
+        SurfacePixelFormat_ASTC_2D_10X8_SRGB,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_ASTC_10x10_RGBA[] = 
+    {
+        SurfacePixelFormat_ASTC_2D_10X10_UNORM,
+        SurfacePixelFormat_ASTC_2D_10X10_SRGB,
+    };
+
+    SurfacePixelFormat VIEW_CLASS_ASTC_12x12_RGBA[] =
+    {
+        SurfacePixelFormat_ASTC_2D_12X12_UNORM,
+        SurfacePixelFormat_ASTC_2D_12X12_SRGB,
+    };
+
+    for (uint32_t i = 0; i < SurfacePixelFormat_MaxPixelFormat; i++) 
+    {
+        EnableCompatibleView((SurfacePixelFormat)i, (SurfacePixelFormat)i);
+    }
+    EnableCompatibleRange(VIEW_CLASS_128_BITS, sizeof(VIEW_CLASS_128_BITS) / sizeof(VIEW_CLASS_128_BITS[0]));
+    EnableCompatibleRange(VIEW_CLASS_96_BITS, sizeof(VIEW_CLASS_96_BITS) / sizeof(VIEW_CLASS_96_BITS[0]));
+    EnableCompatibleRange(VIEW_CLASS_64_BITS, sizeof(VIEW_CLASS_64_BITS) / sizeof(VIEW_CLASS_64_BITS[0]));
+    EnableCompatibleRange(VIEW_CLASS_32_BITS, sizeof(VIEW_CLASS_32_BITS) / sizeof(VIEW_CLASS_32_BITS[0]));
+    EnableCompatibleRange(VIEW_CLASS_16_BITS, sizeof(VIEW_CLASS_16_BITS) / sizeof(VIEW_CLASS_16_BITS[0]));
+    EnableCompatibleRange(VIEW_CLASS_8_BITS, sizeof(VIEW_CLASS_8_BITS) / sizeof(VIEW_CLASS_8_BITS[0]));
+    EnableCompatibleRange(VIEW_CLASS_RGTC1_RED, sizeof(VIEW_CLASS_RGTC1_RED) / sizeof(VIEW_CLASS_RGTC1_RED[0]));
+    EnableCompatibleRange(VIEW_CLASS_RGTC2_RG, sizeof(VIEW_CLASS_RGTC2_RG) / sizeof(VIEW_CLASS_RGTC2_RG[0]));
+    EnableCompatibleRange(VIEW_CLASS_BPTC_UNORM, sizeof(VIEW_CLASS_BPTC_UNORM) / sizeof(VIEW_CLASS_BPTC_UNORM[0]));
+    EnableCompatibleRange(VIEW_CLASS_BPTC_FLOAT, sizeof(VIEW_CLASS_BPTC_FLOAT) / sizeof(VIEW_CLASS_BPTC_FLOAT[0]));
+    EnableCompatibleRange(VIEW_CLASS_ASTC_4x4_RGBA, sizeof(VIEW_CLASS_ASTC_4x4_RGBA) / sizeof(VIEW_CLASS_ASTC_4x4_RGBA[0]));
+    EnableCompatibleRange(VIEW_CLASS_ASTC_5x4_RGBA, sizeof(VIEW_CLASS_ASTC_5x4_RGBA) / sizeof(VIEW_CLASS_ASTC_5x4_RGBA[0]));
+    EnableCompatibleRange(VIEW_CLASS_ASTC_5x5_RGBA, sizeof(VIEW_CLASS_ASTC_5x5_RGBA) / sizeof(VIEW_CLASS_ASTC_5x5_RGBA[0]));
+    EnableCompatibleRange(VIEW_CLASS_ASTC_6x5_RGBA, sizeof(VIEW_CLASS_ASTC_6x5_RGBA) / sizeof(VIEW_CLASS_ASTC_6x5_RGBA[0]));
+    EnableCompatibleRange(VIEW_CLASS_ASTC_6x6_RGBA, sizeof(VIEW_CLASS_ASTC_6x6_RGBA) / sizeof(VIEW_CLASS_ASTC_6x6_RGBA[0]));
+    EnableCompatibleRange(VIEW_CLASS_ASTC_8x5_RGBA, sizeof(VIEW_CLASS_ASTC_8x5_RGBA) / sizeof(VIEW_CLASS_ASTC_8x5_RGBA[0]));
+    EnableCompatibleRange(VIEW_CLASS_ASTC_8x8_RGBA, sizeof(VIEW_CLASS_ASTC_8x8_RGBA) / sizeof(VIEW_CLASS_ASTC_8x8_RGBA[0]));
+    EnableCompatibleRange(VIEW_CLASS_ASTC_10x8_RGBA, sizeof(VIEW_CLASS_ASTC_10x8_RGBA) / sizeof(VIEW_CLASS_ASTC_10x8_RGBA[0]));
+    EnableCompatibleRange(VIEW_CLASS_ASTC_10x10_RGBA, sizeof(VIEW_CLASS_ASTC_10x10_RGBA) / sizeof(VIEW_CLASS_ASTC_10x10_RGBA[0]));
+    EnableCompatibleRange(VIEW_CLASS_ASTC_12x12_RGBA, sizeof(VIEW_CLASS_ASTC_12x12_RGBA) / sizeof(VIEW_CLASS_ASTC_12x12_RGBA[0]));
+}

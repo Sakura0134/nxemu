@@ -70,6 +70,10 @@ public:
     ~OpenGLSync();
 
     void Release();
+
+    void GetSynciv(GLenum PName, GLsizei Count, GLsizei * Length, GLint * Values) const;
+    bool Created() const { return m_Handle != 0; }
+
 private:
     OpenGLSync(const OpenGLSync&);
     OpenGLSync& operator=(const OpenGLSync&);

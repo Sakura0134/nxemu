@@ -172,3 +172,12 @@ void OpenGLSync::Release()
     }
 }
 
+void OpenGLSync::GetSynciv(GLenum PName, GLsizei Count, GLsizei * Length, GLint * Values) const
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glGetSynciv(m_Handle, PName, Count, Length, Values);
+}

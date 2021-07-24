@@ -101,6 +101,32 @@ uint32_t SurfacePixelFormatBytesPerBlock(SurfacePixelFormat PixelFormat)
     return 0;
 }
 
+bool IsSurfacePixelFormatSRGB(SurfacePixelFormat Format)
+{
+    switch (Format) 
+    {
+    case SurfacePixelFormat_A8B8G8R8_SRGB:
+    case SurfacePixelFormat_B8G8R8A8_SRGB:
+    case SurfacePixelFormat_BC1_RGBA_SRGB:
+    case SurfacePixelFormat_BC2_SRGB:
+    case SurfacePixelFormat_BC3_SRGB:
+    case SurfacePixelFormat_BC7_SRGB:
+    case SurfacePixelFormat_ASTC_2D_4X4_SRGB:
+    case SurfacePixelFormat_ASTC_2D_8X8_SRGB:
+    case SurfacePixelFormat_ASTC_2D_8X5_SRGB:
+    case SurfacePixelFormat_ASTC_2D_5X4_SRGB:
+    case SurfacePixelFormat_ASTC_2D_5X5_SRGB:
+    case SurfacePixelFormat_ASTC_2D_10X8_SRGB:
+    case SurfacePixelFormat_ASTC_2D_6X6_SRGB:
+    case SurfacePixelFormat_ASTC_2D_10X10_SRGB:
+    case SurfacePixelFormat_ASTC_2D_12X12_SRGB:
+    case SurfacePixelFormat_ASTC_2D_8X6_SRGB:
+    case SurfacePixelFormat_ASTC_2D_6X5_SRGB:
+        return true;
+    }
+    return false;
+}
+
 SurfacePixelFormat SurfacePixelFormatFromRenderTargetFormat(RenderTargetFormat Format) 
 {
     switch (Format)

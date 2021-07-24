@@ -47,8 +47,12 @@ public:
     OpenGLImage(const CMaxwell3D::tyRenderTarget& RenderTarget, uint32_t Samples);
     ~OpenGLImage();
 
+    static void InitCompatibleViewTable(void);
+
     void Create(uint64_t GpuAddr, uint64_t CpuAddr, OpenGLRenderer * Renderer);
     OpenGLImageViewType ImageViewType(void) const;
+
+    bool IsViewCompatible(SurfacePixelFormat Format, bool BrokenViews) const;
     OpenGLBufferImageList UnswizzleImage(CVideoMemory& VideoMemory, uint64_t gpu_addr, uint8_t * Output, size_t OutputSize) const;
     void UploadMemory(OpenGLStagingBuffer & Buffer, uint32_t BufferOffset, const OpenGLBufferImage * Images, size_t NoOfImages);
     OpenGLImageView * ImageView(OpenGLTexturePtr * NullTextures, uint32_t NumNullTextures, uint64_t GPUAddr, bool IsClear);
@@ -61,9 +65,12 @@ public:
     void Track(void);
     void UploadImageContents(CVideoMemory & VideoMemory, OpenGLStagingBuffer & Buffer, uint32_t BufferOffset);
 
+    OpenGLImageType Type(void) const { return m_Type; }
+    const OpenGLExtent3D & Size(void) const { return m_Size; }
     uint32_t NumSamples(void) const { return m_NumSamples; }
     uint64_t CpuAddr(void) const { return m_CpuAddr; }
     uint64_t GpuAddr(void) const { return m_GpuAddr; }
+    const OpenGLTexture & Texture() const { return m_Texture; }
 
 private:
     OpenGLImage& operator=(const OpenGLImage&);
@@ -98,6 +105,10 @@ private:
     static uint32_t AdjustMipSize(uint32_t size, uint32_t level);
     static OpenGLExtent3D AdjustMipSize(OpenGLExtent3D size, int32_t level);
     static OpenGLExtent3D AdjustMipBlockSize(OpenGLExtent3D NumTiles, OpenGLExtent3D BlockSize, uint32_t Level);
+    static void EnableCompatibleView(SurfacePixelFormat FormatA, SurfacePixelFormat FormatB);
+    static void EnableCompatibleRange(SurfacePixelFormat * Formats, uint32_t NoOfFormats);
+
+    static uint64_t m_CompatibleViewTable[SurfacePixelFormat_MaxPixelFormat][2];
 
     OpenGLImageType m_Type;
     SurfacePixelFormat m_Format;
@@ -106,6 +117,7 @@ private:
     uint32_t m_NumSamples;
     uint32_t m_TileWidthSpacing;
     OpenGLSubresourceExtent m_Resources;
+    uint32_t m_LayerStride;
     uint32_t m_Flags;
     uint32_t m_MipLevelOffsets[MAX_MIP_LEVELS];
     std::vector<OpenGLImageViewPtr> m_ImageViews;
