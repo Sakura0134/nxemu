@@ -82,6 +82,11 @@ void OpenGLImageView::Create(OpenGLTexturePtr * NullTextures, uint32_t NumNullTe
     m_DefaultTexture = m_Texture[m_Type];
 }
 
+bool OpenGLImageView::IsFlagSet(ImageViewFlags Flag) const 
+{
+    return (m_Flags & Flag) != 0;
+}
+
 void OpenGLImageView::SetupView(OpenGLImageViewType ViewType, OpenGLTexturePtr & Texture, const OpenGLSubresourceRange & view_range) 
 {
     if (m_Type == OpenGLImageViewType_Buffer) 

@@ -12,7 +12,8 @@ typedef OpenGLItemPtr<OpenGLImageView> OpenGLImageViewPtr;
 
 enum ImageViewFlags 
 {
-    ImageViewFlag_Slice = 1 << 0,
+    ImageViewFlag_PreemtiveDownload = 1 << 0,
+    ImageViewFlag_Slice = 1 << 1,
 };
 
 class OpenGLImageView 
@@ -24,8 +25,12 @@ public:
 
     void Create(OpenGLTexturePtr * NullTextures, uint32_t NumNullTextures, OpenGLImage * Image);
 
+    bool IsFlagSet(ImageViewFlags Flag) const;
+
     OpenGLImageViewType Type() const { return m_Type; }
+    OpenGLImagePtr & Image() { return m_Image; }
     SurfacePixelFormat Format() const { return m_Format; }
+    const OpenGLExtent3D & Size() const { return m_Size; }
 
 private:
     OpenGLImageView();

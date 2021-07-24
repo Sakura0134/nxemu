@@ -68,6 +68,7 @@ public:
     OpenGLImageType Type(void) const { return m_Type; }
     const OpenGLExtent3D & Size(void) const { return m_Size; }
     uint32_t NumSamples(void) const { return m_NumSamples; }
+    const OpenGLSubresourceExtent & Resources(void) const { return m_Resources; }
     uint64_t CpuAddr(void) const { return m_CpuAddr; }
     uint64_t GpuAddr(void) const { return m_GpuAddr; }
     const OpenGLTexture & Texture() const { return m_Texture; }

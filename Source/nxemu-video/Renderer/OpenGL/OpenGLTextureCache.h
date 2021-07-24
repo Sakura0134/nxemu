@@ -47,6 +47,8 @@ private:
     OpenGLImage * GetImage(const OpenGLImage & Info, uint64_t GpuAddr, uint32_t Options = 0);
     OpenGLImageViewPtr FindColorBuffer(size_t Index, bool IsClear);
     void RegisterImage(OpenGLImagePtr & Image);
+    void PrepareImage(OpenGLImagePtr & Image, bool IsModification, bool Invalidate);
+    bool IsFullClear(OpenGLImageViewPtr & ImageView);
 
     OpenGLRenderer & m_Renderer;
     CMaxwell3D & m_Maxwell3D;

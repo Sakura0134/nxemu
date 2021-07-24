@@ -88,12 +88,16 @@ void OpenGLTextureCache::UpdateRenderTargets(bool IsClear)
             OpenGLImageViewPtr NewColorBuffer = FindColorBuffer(i, IsClear);
             if (ColorBuffer != NewColorBuffer)
             {
-                g_Notify->BreakPoint(__FILE__, __LINE__);
+                if (ColorBuffer.Get() != nullptr && ColorBuffer->IsFlagSet(ImageViewFlag_PreemtiveDownload))
+                {
+                    g_Notify->BreakPoint(__FILE__, __LINE__);
+                }
+                ColorBuffer = NewColorBuffer;
             }
         }
         if (ColorBuffer.Get() != nullptr)
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            PrepareImage(ColorBuffer->Image(), true, IsClear && IsFullClear(ColorBuffer));
         }
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -181,6 +185,47 @@ void OpenGLTextureCache::RegisterImage(OpenGLImagePtr & Image)
     {
         m_PageTable[Page].push_back(Image);
     }
+}
+
+void OpenGLTextureCache::PrepareImage(OpenGLImagePtr & Image, bool IsModification, bool Invalidate)
+{
+    if (Invalidate)
+    {
+        Image->UpdateFlags(0, ImageFlag_CpuModified | ImageFlag_GpuModified);
+        if (!Image->IsFlagSet(ImageFlag_Tracked))
+        {
+            Image->Track();
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    if (IsModification)
+    {
+        Image->UpdateFlags(ImageFlag_GpuModified, 0);
+    }
+}
+
+bool OpenGLTextureCache::IsFullClear(OpenGLImageViewPtr & ImageView)
+{
+    if (ImageView.Get() == nullptr)
+    {
+        return true;
+    }
+    OpenGLImagePtr Image = ImageView->Image();
+    const OpenGLExtent3D & Size = ImageView->Size();
+    const CMaxwell3D::Registers & Regs = m_Maxwell3D.Regs();
+    const CMaxwell3D::tyScissorTest & Scissor = Regs.ScissorTest[0];
+    if (Image->Resources().Levels() > 1 || Image->Resources().Layers() > 1)
+    {
+        return false;
+    }
+    if (Regs.ClearFlags.Scissor == 0)
+    {
+        return true;
+    }
+    return Scissor.MinX == 0 && Scissor.MinY == 0 && Scissor.MaxX >= Size.Width() && Scissor.MaxY >= Size.Height();
 }
 
 void OpenGLTextureCache::WriteMemory(uint64_t /*CpuAddr*/, uint64_t /*Size*/)
