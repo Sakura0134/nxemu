@@ -620,6 +620,7 @@ public:
     void BindRenderer(IRenderer * Renderer);
     void CallMultiMethod(Method Method, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending);
     void CallMethodFromMME(Method Method, uint32_t Argument);
+    void FlushMMEInlineDraw();
     void CallMethod(Method Method, uint32_t Argument, bool Last);
 
     inline const Registers & Regs (void) const { return m_Regs; }
@@ -654,6 +655,7 @@ private:
     void ProcessCBMultiData(uint32_t Method, const uint32_t * BaseStart, uint32_t Amount);
     void FinishCBData();
     void ProcessCBBind(uint32_t StageIndex);
+    void StepInstance(MMEDrawMode ExpectedMode, uint32_t Count);
 
     ISwitchSystem & m_SwitchSystem;
     CVideoMemory & m_VideoMemory;

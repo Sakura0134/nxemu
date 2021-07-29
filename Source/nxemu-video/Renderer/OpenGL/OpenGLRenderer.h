@@ -26,6 +26,7 @@ public:
     void SignalSemaphore(uint64_t Addr, uint32_t Value);
     void ReleaseFences(void);
     void Clear();
+    void Draw(bool IsIndexed, bool IsInstanced);
 
     void TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool Track);
 

@@ -195,7 +195,7 @@ void CMaxwell3D::CallMacroMethod(uint32_t Method, const MacroParams & Parameters
     m_MacroEngine->Execute(m_MacroPositions[Entry], Parameters);
     if (m_MMEDraw.CurrentMode != MMEDrawMode_Undefined)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        FlushMMEInlineDraw();
     }
 }
 
@@ -252,11 +252,36 @@ void CMaxwell3D::CallMultiMethod(Method Method, const uint32_t * BaseStart, uint
     }
 }
 
+void CMaxwell3D::StepInstance(const MMEDrawMode ExpectedMode, const uint32_t Count)
+{
+    if (m_MMEDraw.CurrentMode == MMEDrawMode_Undefined)
+    {
+        if (m_MMEDraw.BeginConsume)
+        {
+            m_MMEDraw.CurrentMode = ExpectedMode;
+            m_MMEDraw.CurrentCount = Count;
+            m_MMEDraw.InstanceCount = 1;
+            m_MMEDraw.BeginConsume = false;
+            m_MMEDraw.EndCount = 0;
+        }
+    }
+    else if (m_MMEDraw.CurrentMode == ExpectedMode && Count == m_MMEDraw.CurrentCount && m_MMEDraw.InstanceMode && m_MMEDraw.BeginConsume)
+    {
+        m_MMEDraw.InstanceCount++;
+        m_MMEDraw.BeginConsume = false;
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void CMaxwell3D::CallMethodFromMME(Method Method, uint32_t Argument)
 {
     if (Method == Method_DrawVertexEndGL)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        m_Regs.Value[Method] = Argument;
+        m_MMEDraw.EndCount++;
     }
     else if (Method == Method_DrawVertexBeginGL)
     {
@@ -266,7 +291,8 @@ void CMaxwell3D::CallMethodFromMME(Method Method, uint32_t Argument)
     }
     else if (Method == Method_VertexBufferCount || Method == Method_IndexArrayCount)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        m_Regs.Value[Method] = Argument;
+        StepInstance(Method == Method_VertexBufferCount ? MMEDrawMode_Array : MMEDrawMode_Indexed, Argument);
     }
     else
     {
@@ -276,6 +302,40 @@ void CMaxwell3D::CallMethodFromMME(Method Method, uint32_t Argument)
         }
         CallMethod(Method, Argument, true);
     }
+}
+
+void CMaxwell3D::FlushMMEInlineDraw()
+{
+    if (m_Regs.IndexArray.Count != 0 && m_Regs.VertexBufferCount != 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    if (m_MMEDraw.InstanceCount != m_MMEDraw.EndCount)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    if (m_Regs.Draw.InstanceNext && m_Regs.Draw.InstanceCont)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    bool Indexed = m_MMEDraw.CurrentMode == MMEDrawMode_Indexed;
+    m_Renderer->Draw(Indexed, true);
+
+    if (Indexed)
+    {
+        m_Regs.IndexArray.Count = 0;
+    }
+    else
+    {
+        m_Regs.VertexBufferCount = 0;
+    }
+    m_MMEDraw.CurrentMode = MMEDrawMode_Undefined;
+    m_MMEDraw.CurrentCount = 0;
+    m_MMEDraw.InstanceCount = 0;
+    m_MMEDraw.InstanceMode = false;
+    m_MMEDraw.BeginConsume = false;
+    m_MMEDraw.EndCount = 0;
 }
 
 void CMaxwell3D::ProcessMacroBind(uint32_t Data)

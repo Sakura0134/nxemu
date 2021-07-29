@@ -152,6 +152,11 @@ void OpenGLRenderer::Clear()
     m_QueuedCommands = true;
 }
 
+void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
+{
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+}
+
 void OpenGLRenderer::TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool Track) 
 {
     enum
