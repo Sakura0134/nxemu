@@ -19,55 +19,10 @@ public:
     enum
     {
         NumRegisters = 0xE00,
-        NumViewports = 16,
+        NumViewPorts = 16,
         NumCBData = 16,
         MaxShaderStage = 5,
         MaxConstBuffers = 18,
-    };
-
-    enum QueryOperation : unsigned
-    {
-        QueryOperation_Release = 0,
-        QueryOperation_Acquire = 1,
-        QueryOperation_Counter = 2,
-        QueryOperation_Trap = 3,
-    };
-
-    enum QueryUnit : unsigned
-    {
-        QueryUnit_VFetch = 1,
-        QueryUnit_VP = 2,
-        QueryUnit_Rast = 4,
-        QueryUnit_StrmOut = 5,
-        QueryUnit_GP = 6,
-        QueryUnit_ZCull = 7,
-        QueryUnit_Prop = 10,
-        QueryUnit_Crop = 15,
-    };
-
-    enum QuerySelect : unsigned
-    {
-        QuerySelect_Zero = 0,
-        QuerySelect_TimeElapsed = 2,
-        QuerySelect_TransformFeedbackPrimitivesGenerated = 11,
-        QuerySelect_PrimitivesGenerated = 18,
-        QuerySelect_SamplesPassed = 21,
-        QuerySelect_TransformFeedbackUnknown = 26,
-    };
-
-    enum QuerySyncCondition : unsigned
-    {
-        QuerySyncCondition_NotEqual = 0,
-        QuerySyncCondition_GreaterThan = 1,
-    };
-
-    enum ConditionMode : unsigned
-    {
-        ConditionMode_Never = 0,
-        ConditionMode_Always = 1,
-        ConditionMode_ResNonZero = 2,
-        ConditionMode_Equal = 3,
-        ConditionMode_NotEqual = 4,
     };
 
     enum ComparisonOp : unsigned
@@ -91,24 +46,13 @@ public:
         ComparisonOp_AlwaysOld = 8,
     };
 
-    enum StencilOp : unsigned
+    enum ConditionMode : unsigned
     {
-        StencilOp_Keep = 1,
-        StencilOp_Zero = 2,
-        StencilOp_Replace = 3,
-        StencilOp_Incr = 4,
-        StencilOp_Decr = 5,
-        StencilOp_Invert = 6,
-        StencilOp_IncrWrap = 7,
-        StencilOp_DecrWrap = 8,
-        StencilOp_KeepOGL = 0x1E00,
-        StencilOp_ZeroOGL = 0,
-        StencilOp_ReplaceOGL = 0x1E01,
-        StencilOp_IncrOGL = 0x1E02,
-        StencilOp_DecrOGL = 0x1E03,
-        StencilOp_InvertOGL = 0x150A,
-        StencilOp_IncrWrapOGL = 0x8507,
-        StencilOp_DecrWrapOGL = 0x8508,
+        ConditionMode_Never = 0,
+        ConditionMode_Always = 1,
+        ConditionMode_ResNonZero = 2,
+        ConditionMode_Equal = 3,
+        ConditionMode_NotEqual = 4,
     };
 
     enum CounterReset : unsigned
@@ -133,12 +77,11 @@ public:
         CounterReset_GeneratedPrimitives = 0x1F,
     };
 
-    enum ShadowRamControl : unsigned
+    enum IndexFormat : unsigned
     {
-        ShadowRamControl_Track = 0,
-        ShadowRamControl_TrackWithFilter = 1,
-        ShadowRamControl_Passthrough = 2,
-        ShadowRamControl_Replay = 3,
+        IndexFormat_UnsignedByte = 0x0,
+        IndexFormat_UnsignedShort = 0x1,
+        IndexFormat_UnsignedInt = 0x2,
     };
 
     enum PrimitiveTopology : unsigned
@@ -160,22 +103,80 @@ public:
         PrimitiveTopology_Patches = 0xE,
     };
 
-    enum IndexFormat : unsigned
+    enum QueryOperation : unsigned
     {
-        IndexFormat_UnsignedByte = 0x0,
-        IndexFormat_UnsignedShort = 0x1,
-        IndexFormat_UnsignedInt = 0x2,
+        QueryOperation_Release = 0,
+        QueryOperation_Acquire = 1,
+        QueryOperation_Counter = 2,
+        QueryOperation_Trap = 3,
+    };
+
+    enum QuerySelect : unsigned
+    {
+        QuerySelect_Zero = 0,
+        QuerySelect_TimeElapsed = 2,
+        QuerySelect_TransformFeedbackPrimitivesGenerated = 11,
+        QuerySelect_PrimitivesGenerated = 18,
+        QuerySelect_SamplesPassed = 21,
+        QuerySelect_TransformFeedbackUnknown = 26,
+    };
+
+    enum QuerySyncCondition : unsigned
+    {
+        QuerySyncCondition_NotEqual = 0,
+        QuerySyncCondition_GreaterThan = 1,
+    };
+
+    enum QueryUnit : unsigned
+    {
+        QueryUnit_VFetch = 1,
+        QueryUnit_VP = 2,
+        QueryUnit_Rast = 4,
+        QueryUnit_StrmOut = 5,
+        QueryUnit_GP = 6,
+        QueryUnit_ZCull = 7,
+        QueryUnit_Prop = 10,
+        QueryUnit_Crop = 15,
+    };
+
+    enum ShadowRamControl : unsigned
+    {
+        ShadowRamControl_Track = 0,
+        ShadowRamControl_TrackWithFilter = 1,
+        ShadowRamControl_Passthrough = 2,
+        ShadowRamControl_Replay = 3,
+    };
+
+    enum StencilOp : unsigned
+    {
+        StencilOp_Keep = 1,
+        StencilOp_Zero = 2,
+        StencilOp_Replace = 3,
+        StencilOp_Incr = 4,
+        StencilOp_Decr = 5,
+        StencilOp_Invert = 6,
+        StencilOp_IncrWrap = 7,
+        StencilOp_DecrWrap = 8,
+        StencilOp_KeepOGL = 0x1E00,
+        StencilOp_ZeroOGL = 0,
+        StencilOp_ReplaceOGL = 0x1E01,
+        StencilOp_IncrOGL = 0x1E02,
+        StencilOp_DecrOGL = 0x1E03,
+        StencilOp_InvertOGL = 0x150A,
+        StencilOp_IncrWrapOGL = 0x8507,
+        StencilOp_DecrWrapOGL = 0x8508,
     };
 
 #pragma warning(push)
 #pragma warning(disable : 4201) // warning C4201: nonstandard extension used : nameless struct/union
 #pragma warning(disable : 5208) // warning C5208: unnamed class used in typedef name cannot declare members other than non-static
-    typedef struct
+    typedef struct _tyAdrressLimit
     {
-        uint64_t Address;
-        uint32_t Size;
-        bool Enabled;
-    } ConstBuffer;
+        uint32_t AddressHigh;
+        uint32_t AddressLow;
+        uint32_t Limit;
+    } tyAdrressLimit;
+
 
     typedef struct
     {
@@ -208,16 +209,37 @@ public:
         };
     } tyClearBuffers;
 
+    typedef union
+    {
+        uint32_t Value;
+        struct
+        {
+            unsigned Stencil : 4;
+            unsigned : 4;
+            unsigned Scissor : 4;
+            unsigned Viewport : 4;
+        };
+    } tyClearFlags;
+
+    typedef union
+    {
+        uint32_t Value;
+        struct
+        {
+            unsigned R : 4;
+            unsigned G : 4;
+            unsigned B : 4;
+            unsigned A : 4;
+        };
+    } tyColorMask;
+
     typedef struct _tyCondition
     {
         uint32_t AddressHigh;
         uint32_t AddressLow;
         ConditionMode Mode;
 
-        uint64_t Address(void) const
-        {
-            return (((uint64_t)AddressHigh) << 32) | AddressLow;
-        }
+        uint64_t Address(void) const;
     } tyCondition;
 
     typedef struct _tyConstBuffer
@@ -228,10 +250,7 @@ public:
         uint32_t Pos;
         uint32_t Data[NumCBData];
 
-        uint64_t Address() const
-        {
-            return (((uint64_t)AddressHigh) << 32) | AddressLow;
-        }
+        uint64_t Address() const;
     } tyConstBuffer;
 
     typedef struct
@@ -258,6 +277,17 @@ public:
             unsigned Linear : 1;
         };
     } tyExecUpload;
+
+    typedef struct _tyIndexArray
+    {
+        uint32_t StartAddrHigh;
+        uint32_t StartAddrLow;
+        uint32_t EndAddrHigh;
+        uint32_t EndAddrLow;
+        IndexFormat Format;
+        uint32_t First;
+        uint32_t Count;
+    } tyIndexArray;
 
     typedef struct
     {
@@ -289,11 +319,89 @@ public:
             };
         } QueryGet;
 
-        uint64_t Address() const
-        {
-            return (((uint64_t)AddressHigh) << 32) | AddressLow;
-        }
+        uint64_t Address() const;
     } tyQuery;
+
+    typedef struct
+    {
+        unsigned X : 16;
+        unsigned Width : 16;
+        unsigned Y : 16;
+        unsigned Height : 16;
+    } tyRenderArea;
+
+    typedef union
+    {
+        uint32_t Value;
+        struct
+        {
+            unsigned BlockWidth : 4;
+            unsigned BlockHeight : 4;
+            unsigned BlockDepth : 4;
+            unsigned IsPitchLinear : 1;
+            unsigned : 3;
+            unsigned Is3D : 1;
+        };
+    } tyTileMode;
+
+    typedef struct _tyRenderTarget
+    {
+        uint32_t AddressHigh;
+        uint32_t AddressLow;
+        uint32_t Width;
+        uint32_t Height;
+        RenderTargetFormat Format;
+        tyTileMode TileMode;
+        union
+        {
+            uint32_t DepthRaw;
+            struct
+            {
+                unsigned Depth : 16;
+                unsigned Volume : 1;
+            };
+        };
+        uint32_t LayerStride;
+        uint32_t BaseLayer;
+        PADDING_WORDS(7);
+
+        uint64_t Address() const;
+    } tyRenderTarget;
+
+    typedef union _tyRTControl
+    {
+        uint32_t Value;
+        struct
+        {
+            unsigned Count : 4;
+            unsigned Map0 : 3;
+            unsigned Map1 : 3;
+            unsigned Map2 : 3;
+            unsigned Map3 : 3;
+            unsigned Map4 : 3;
+            unsigned Map5 : 3;
+            unsigned Map6 : 3;
+            unsigned Map7 : 3;
+        };
+        uint32_t Map(uint32_t Index) const;
+    } tyRTControl;
+
+    typedef struct
+    {
+        uint32_t Enable;
+        unsigned MinX : 16;
+        unsigned MaxX : 16;
+        unsigned MinY : 16;
+        unsigned MaxY : 16;
+        uint32_t Fill;
+    } tyScissorTest;
+
+    typedef struct
+    {
+        uint64_t Address;
+        uint32_t Size;
+        bool Enabled;
+    } tyShaderStage;
 
     typedef union
     {
@@ -306,132 +414,16 @@ public:
         };
     } tySyncInfo;
 
-    typedef struct _tyIndexArray
-    {
-        uint32_t StartAddrHigh;
-        uint32_t StartAddrLow;
-        uint32_t EndAddrHigh;
-        uint32_t EndAddrLow;
-        IndexFormat Format;
-        uint32_t First;
-        uint32_t Count;
-    } tyIndexArray;
-
-    union tyColorMask
-    {
-        uint32_t Value;
-        struct 
-        {
-            unsigned R : 4;
-            unsigned G : 4;
-            unsigned B : 4;
-            unsigned A : 4;
-        };
-    };
-
-    struct tyRenderArea
-    {
-        unsigned X : 16;
-        unsigned Width : 16;
-        unsigned Y : 16;
-        unsigned Height : 16;
-    };
-
-    union tyClearFlags 
-    {
-        uint32_t Value;
-        struct 
-        {
-            unsigned Stencil : 4;
-            unsigned : 4;
-            unsigned Scissor : 4;
-            unsigned Viewport : 4;
-        };
-    };
-
-    union tyTileMode
-    {
-        uint32_t Value;
-        struct 
-        {
-            unsigned BlockWidth : 4;
-            unsigned BlockHeight : 4;
-            unsigned BlockDepth : 4;
-            unsigned IsPitchLinear : 1;
-            unsigned : 3;
-            unsigned Is3D : 1;
-        };
-    };
-
-    struct tyRenderTarget
-    {
-        uint32_t AddressHigh;
-        uint32_t AddressLow;
-        uint32_t Width;
-        uint32_t Height;
-        RenderTargetFormat Format;
-        tyTileMode TileMode;
-        union 
-        {
-            uint32_t DepthRaw;
-            struct 
-            {
-                unsigned Depth : 16;
-                unsigned Volume : 1;
-            };
-        };
-        uint32_t LayerStride;
-        uint32_t BaseLayer;
-        PADDING_WORDS(7);
-
-        uint64_t Address() const 
-        {
-            return (((uint64_t)AddressHigh) << 32) | AddressLow;
-        }
-    };
-
-    union tyRTControl
-    {
-        uint32_t Value;
-        struct 
-        {
-            unsigned Count : 4;
-            unsigned Map0 : 3;
-            unsigned Map1 : 3;
-            unsigned Map2 : 3;
-            unsigned Map3 : 3;
-            unsigned Map4 : 3;
-            unsigned Map5 : 3;
-            unsigned Map6 : 3;
-            unsigned Map7 : 3;
-        };
-    };
-
-    struct tyZeta 
+    typedef struct _tyZeta
     {
         uint32_t AddressHigh;
         uint32_t AddressLow;
         DepthFormat Format;
         tyTileMode TileMode;
         uint32_t LayerStride;
-    };
 
-    struct tyScissorTest
-    {
-        uint32_t Enable;
-        unsigned MinX : 16;
-        unsigned MaxX : 16;
-        unsigned MinY : 16;
-        unsigned MaxY : 16;
-        uint32_t Fill;
-    };
-
-    struct tyAdrressLimit
-    {
-        uint32_t AddressHigh;
-        uint32_t AddressLow;
-        uint32_t Limit;
-    };
+        uint64_t Address() const;
+    } tyZeta;
 
     union Registers
     {
@@ -456,7 +448,7 @@ public:
             PADDING_WORDS(0x19);
             uint32_t FragmentBarrier;
             PADDING_WORDS(0x7);
-            tyScissorTest ScissorTest[NumViewports];
+            tyScissorTest ScissorTest[NumViewPorts];
             PADDING_WORDS(0x15);
             int32_t StencilBackFuncRef;
             uint32_t StencilBackMask;
@@ -652,7 +644,7 @@ private:
     MacroParams m_MacroParams;
     CUploadState m_UploadState;
     CStateTracker m_StateTracker;
-    ConstBuffer m_ShaderStage[MaxShaderStage][MaxConstBuffers];
+    tyShaderStage m_ShaderStage[MaxShaderStage][MaxConstBuffers];
 
     static_assert(sizeof(Registers) == NumRegisters * sizeof(uint32_t), "Maxwell3D Registers has wrong size");
 };

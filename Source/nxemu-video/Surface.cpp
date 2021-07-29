@@ -181,6 +181,26 @@ SurfacePixelFormat SurfacePixelFormatFromRenderTargetFormat(RenderTargetFormat F
     return SurfacePixelFormat_A8B8G8R8_UNORM;
 }
 
+SurfaceType SurfaceGetFormatType(SurfacePixelFormat PixelFormat) 
+{
+    if (PixelFormat < SurfacePixelFormat_MaxColorFormat)
+    {
+        return SurfaceType_ColorTexture;
+    }
+
+    if (PixelFormat < SurfacePixelFormat_MaxDepthFormat)
+    {
+        return SurfaceType_Depth;
+    }
+
+    if (PixelFormat < SurfacePixelFormat_MaxDepthStencilFormat)
+    {
+        return SurfaceType_DepthStencil;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return SurfaceType_Invalid;
+}
+
 uint32_t SurfaceDefaultBlockHeight(SurfacePixelFormat Format) 
 {
     switch (Format) 

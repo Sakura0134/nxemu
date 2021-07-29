@@ -28,9 +28,12 @@ public:
     bool IsFlagSet(ImageViewFlags Flag) const;
 
     OpenGLImageViewType Type() const { return m_Type; }
+    const OpenGLSubresourceRange & Range () const { return m_Range; }
+    const OpenGLTexturePtr & DefaultTexture() const { return m_DefaultTexture; }
     OpenGLImagePtr & Image() { return m_Image; }
     SurfacePixelFormat Format() const { return m_Format; }
     const OpenGLExtent3D & Size() const { return m_Size; }
+    const OpenGLTexturePtr & Texture(OpenGLImageViewType Type) const { return m_Texture[Type]; }
 
 private:
     OpenGLImageView();

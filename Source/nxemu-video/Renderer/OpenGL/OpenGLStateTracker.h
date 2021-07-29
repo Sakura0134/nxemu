@@ -1,4 +1,5 @@
 #pragma once
+#include "OpenGLFramebuffer.h"
 #include "Util\StateTracker.h"
 #include <stdint.h>
 
@@ -41,6 +42,7 @@ class OpenGLStateTracker
 public:
     OpenGLStateTracker(CVideo & Video);
 
+    void BindFramebuffer(OpenGLFramebufferPtr Framebuffer);
     void NotifyColorMask(uint8_t index);
 
 private:
@@ -55,5 +57,7 @@ private:
     void SetupRasterizeEnable(void);
     void SetupFramebufferSRGB(void);
     void SetupFragmentClampColor(void);
+
     CStateTracker & m_StateTracker;
+    OpenGLFramebufferPtr m_Framebuffer;
 };

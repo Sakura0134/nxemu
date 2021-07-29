@@ -59,6 +59,7 @@
     <ClCompile Include="NXEmu-video.cpp" />
     <ClCompile Include="Renderer\OpenGL\MaxwellToOpenGL.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLFenceManager.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLImage.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLImageView.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLRenderer.cpp" />

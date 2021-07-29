@@ -10,8 +10,11 @@ OpenGLTextureCache::OpenGLTextureCache(OpenGLRenderer & Renderer, CVideo & Video
     m_Renderer(Renderer),
     m_Maxwell3D(Video.Maxwell3D()),
     m_VideoMemory(Video.VideoMemory()),
-    m_UploadBuffers(GL_MAP_WRITE_BIT, GL_MAP_WRITE_BIT | GL_MAP_FLUSH_EXPLICIT_BIT)
+    m_UploadBuffers(GL_MAP_WRITE_BIT, GL_MAP_WRITE_BIT | GL_MAP_FLUSH_EXPLICIT_BIT),
+    m_RenderWidth(0),
+    m_RenderHeight(0)
 {
+    memset(m_DrawBuffers, 0, sizeof(m_DrawBuffers));
 }
 
 bool OpenGLTextureCache::Init(void)
@@ -100,7 +103,44 @@ void OpenGLTextureCache::UpdateRenderTargets(bool IsClear)
             PrepareImage(ColorBuffer->Image(), true, IsClear && IsFullClear(ColorBuffer));
         }
     }
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    if (StateTracker.Flag(OpenGLDirtyFlag_ZetaBuffer) || Force)
+    {
+        StateTracker.FlagClear(OpenGLDirtyFlag_ZetaBuffer);
+        m_DepthBuffer = FindDepthBuffer(IsClear);
+    }
+    if (m_DepthBuffer.Get() != nullptr)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    for (uint32_t index = 0; index < NumRenderTargets; ++index)
+    {
+        m_DrawBuffers[index] = (uint8_t)(m_Maxwell3D.Regs().RTControl.Map(index));
+    }
+    m_RenderWidth = m_Maxwell3D.Regs().RenderArea.Width;
+    m_RenderHeight = m_Maxwell3D.Regs().RenderArea.Height;
+}
+
+OpenGLFramebufferPtr OpenGLTextureCache::GetFramebuffer()
+{
+    uint64_t FramebufferID = (uint64_t)(m_DepthBuffer.Get());
+    for (uint32_t i = 0; i < NumRenderTargets; i++)
+    {
+        FramebufferID ^= (uint64_t)(m_ColorBuffer[i].Get());
+        FramebufferID ^= m_DrawBuffers[i];
+    }
+    FramebufferID ^= m_RenderWidth;
+    FramebufferID ^= m_RenderHeight;
+
+    OpenGLFramebuffers::iterator itr = m_Framebuffers.find(FramebufferID);
+    if (itr != m_Framebuffers.end())
+    {
+        return itr->second.Get();
+    }
+
+    OpenGLFramebufferPtr Framebuffer(new OpenGLFramebuffer(m_ColorBuffer, NumRenderTargets, m_DepthBuffer.Get(), m_DrawBuffers, NumRenderTargets, m_RenderWidth, m_RenderHeight));
+    m_Framebuffers.emplace(FramebufferID, Framebuffer);
+    return Framebuffer;
 }
 
 void OpenGLTextureCache::RefreshContents(OpenGLImage & Image)
@@ -170,6 +210,22 @@ OpenGLImageViewPtr OpenGLTextureCache::FindColorBuffer(size_t Index, bool IsClea
         return nullptr;
     }
     return Image->ImageView(m_NullImages, sizeof(m_NullImages) / sizeof(m_NullImages[0]), GPUAddr, IsClear);
+}
+
+OpenGLImageViewPtr OpenGLTextureCache::FindDepthBuffer(bool /*IsClear*/)
+{
+    const CMaxwell3D::Registers & Regs = m_Maxwell3D.Regs();
+    if (!Regs.ZetaEnable)
+    {
+        return nullptr;
+    }
+    const uint64_t GpuAddr = Regs.Zeta.Address();
+    if (GpuAddr == 0)
+    {
+        return nullptr;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return nullptr;
 }
 
 void OpenGLTextureCache::RegisterImage(OpenGLImagePtr & Image)

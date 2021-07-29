@@ -15,6 +15,23 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     SetupFragmentClampColor();
 }
 
+void OpenGLStateTracker::BindFramebuffer(OpenGLFramebufferPtr Framebuffer)
+{
+    if (m_Framebuffer == Framebuffer) 
+    {
+        return;
+    }
+    m_Framebuffer = Framebuffer;
+    if (m_Framebuffer.Get() != nullptr)
+    {
+        m_Framebuffer->BindFramebuffer(GL_DRAW_FRAMEBUFFER);
+    }
+    else 
+    {
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);    
+    }
+}
+
 void OpenGLStateTracker::NotifyColorMask(uint8_t index) 
 {
     m_StateTracker.FlagSet(OpenGLDirtyFlag_ColorMasks);
@@ -76,7 +93,7 @@ void OpenGLStateTracker::SetupScissors(void)
         ScissorTestSize = (sizeof(CMaxwell3D::Registers::ScissorTest) / (sizeof(uint32_t))),
     };
 
-    for (uint8_t i = 0; i < CMaxwell3D::NumViewports; i++) 
+    for (uint8_t i = 0; i < CMaxwell3D::NumViewPorts; i++) 
     {
         uint32_t Offset = CMaxwell3D::Method_ScissorTest + i * ScissorTestItemSize;
         m_StateTracker.SetRegisterFlag(Offset, ScissorTestItemSize, OpenGLDirtyFlag_Scissor0 + i);

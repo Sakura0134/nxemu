@@ -3,12 +3,15 @@
 #include <glad/glad.h>
 #include <stdint.h>
 
+class OpenGLFramebuffer;
+
 class OpenGLTexture;
 typedef OpenGLItemPtr<OpenGLTexture> OpenGLTexturePtr;
 
 class OpenGLTexture 
 {
     friend OpenGLTexturePtr;
+    friend OpenGLFramebuffer;
 
 public:
     OpenGLTexture();

@@ -2,6 +2,7 @@
 #include "OpenGLImage.h"
 #include "OpenGLImageView.h"
 #include "OpenGLStagingBuffers.h"
+#include "OpenGLFramebuffer.h"
 #include "GpuTypes.h"
 #include <stdint.h>
 #include <vector>
@@ -30,12 +31,14 @@ class OpenGLTextureCache
     typedef std::vector<OpenGLImagePtr> OpenGLImagePtrList;
     typedef std::unordered_map<uint64_t, OpenGLImagePtrList, NoHash<uint64_t>> PageTables;
     typedef std::unordered_map<uint64_t, OpenGLImagePtr, NoHash<uint64_t>> OpenGLImageImages;
+    typedef std::unordered_map<uint64_t, OpenGLFramebufferPtr, NoHash<uint64_t>> OpenGLFramebuffers;
 
 public:
     OpenGLTextureCache(OpenGLRenderer & Renderer, CVideo & Video);
 
     bool Init(void);
     void UpdateRenderTargets(bool is_clear);
+    OpenGLFramebufferPtr GetFramebuffer();
     void WriteMemory(uint64_t CpuAddr, uint64_t Size);
 
 private:
@@ -46,6 +49,7 @@ private:
     void RefreshContents(OpenGLImage & Image);
     OpenGLImage * GetImage(const OpenGLImage & Info, uint64_t GpuAddr, uint32_t Options = 0);
     OpenGLImageViewPtr FindColorBuffer(size_t Index, bool IsClear);
+    OpenGLImageViewPtr FindDepthBuffer(bool IsClear);
     void RegisterImage(OpenGLImagePtr & Image);
     void PrepareImage(OpenGLImagePtr & Image, bool IsModification, bool Invalidate);
     bool IsFullClear(OpenGLImageViewPtr & ImageView);
@@ -54,8 +58,13 @@ private:
     CMaxwell3D & m_Maxwell3D;
     CVideoMemory & m_VideoMemory;
     OpenGLImageViewPtr m_ColorBuffer[NumRenderTargets];
+    OpenGLImageViewPtr m_DepthBuffer;
+    uint8_t m_DrawBuffers[NumRenderTargets];
+    uint32_t m_RenderWidth;
+    uint32_t m_RenderHeight;
     PageTables m_PageTable;
     OpenGLImageImages m_Images;
+    OpenGLFramebuffers m_Framebuffers;
     OpenGLStagingBuffers m_UploadBuffers;
     OpenGLTexturePtr m_NullImages[OpenGLImageViewType_Last];
 };

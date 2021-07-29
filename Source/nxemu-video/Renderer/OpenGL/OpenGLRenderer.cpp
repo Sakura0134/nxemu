@@ -125,6 +125,8 @@ void OpenGLRenderer::Clear()
     }
 
     m_TextureCache.UpdateRenderTargets(true);
+    m_StateTracker.BindFramebuffer(m_TextureCache.GetFramebuffer());
+
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -237,7 +239,7 @@ void OpenGLRenderer::SyncScissorTest()
     StateTracker.FlagClear(OpenGLDirtyFlag_Scissors);
 
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
-    for (uint32_t i = 0; i < CMaxwell3D::NumViewports; i++) 
+    for (uint32_t i = 0; i < CMaxwell3D::NumViewPorts; i++) 
     {
         if (!StateTracker.Flag(OpenGLDirtyFlag_Scissor0 + i)) 
         {

@@ -144,6 +144,9 @@
     <ClCompile Include="Renderer\OpenGL\OpenGLImageView.cpp">
       <Filter>Source Files\Renderer\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\OpenGL\OpenGLFramebuffer.cpp">
+      <Filter>Source Files\Renderer\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Video.h">

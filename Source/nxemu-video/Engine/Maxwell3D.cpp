@@ -320,7 +320,7 @@ void CMaxwell3D::ProcessCBBind(uint32_t StageIndex)
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return;
     }
-    ConstBuffer & Buffer = m_ShaderStage[StageIndex][BindData.Index];
+    tyShaderStage & Buffer = m_ShaderStage[StageIndex][BindData.Index];
     Buffer.Enabled = BindData.Valid != 0;
     Buffer.Address = m_Regs.ConstBuffer.Address();
     Buffer.Size = m_Regs.ConstBuffer.Size;
@@ -386,3 +386,39 @@ void CMaxwell3D::ProcessClearBuffers()
     m_Renderer->Clear();
 }
 
+uint64_t CMaxwell3D::_tyConstBuffer::Address() const
+{
+    return (((uint64_t)AddressHigh) << 32) | AddressLow;
+}
+
+uint64_t CMaxwell3D::_tyQuery::Address() const
+{
+    return (((uint64_t)AddressHigh) << 32) | AddressLow;
+}
+
+uint64_t CMaxwell3D::_tyRenderTarget::Address() const 
+{
+    return (((uint64_t)AddressHigh) << 32) | AddressLow;
+}
+
+uint32_t CMaxwell3D::_tyRTControl::Map(uint32_t Index) const
+{
+    switch (Index)
+    {
+    case 0: return Map0;
+    case 1: return Map1;
+    case 2: return Map2;
+    case 3: return Map3;
+    case 4: return Map4;
+    case 5: return Map5;
+    case 6: return Map6;
+    case 7: return Map7;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return 0;
+}
+
+uint64_t CMaxwell3D::_tyZeta::Address() const
+{
+    return (((uint64_t)AddressHigh) << 32) | AddressLow;
+}

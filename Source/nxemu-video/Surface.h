@@ -102,8 +102,17 @@ enum SurfacePixelFormat
     SurfacePixelFormat_Invalid = 255,
 };
 
+enum SurfaceType
+{
+    SurfaceType_ColorTexture = 0,
+    SurfaceType_Depth = 1,
+    SurfaceType_DepthStencil = 2,
+    SurfaceType_Invalid = 3,
+};
+
 uint32_t SurfacePixelFormatBytesPerBlock(SurfacePixelFormat Format);
 bool IsSurfacePixelFormatSRGB(SurfacePixelFormat Format);
 SurfacePixelFormat SurfacePixelFormatFromRenderTargetFormat(RenderTargetFormat Format);
+SurfaceType SurfaceGetFormatType(SurfacePixelFormat PixelFormat);
 uint32_t SurfaceDefaultBlockHeight(SurfacePixelFormat Format);
 uint32_t SurfaceDefaultBlockWidth(SurfacePixelFormat Format);
