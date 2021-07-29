@@ -12,6 +12,7 @@ CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory)
     m_Renderer(nullptr),
     m_StateTracker(CMaxwell3D::NumRegisters, 0)
 {
+    memset(&m_MMEDraw, 0, sizeof(m_MMEDraw));
     memset(m_MacroPositions, 0, sizeof(m_MacroPositions));
     memset(&m_CBDataState, 0, sizeof(m_CBDataState));
     memset(&m_ShaderStage, 0, sizeof(m_ShaderStage));
@@ -192,6 +193,10 @@ void CMaxwell3D::CallMacroMethod(uint32_t Method, const MacroParams & Parameters
     uint32_t Entry = ((Method - NumRegisters) >> 1) % (uint32_t)(sizeof(m_MacroPositions) / sizeof(m_MacroPositions[0]));
     m_ExecutingMacro = 0;
     m_MacroEngine->Execute(m_MacroPositions[Entry], Parameters);
+    if (m_MMEDraw.CurrentMode != MMEDrawMode_Undefined)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
 }
 
 void CMaxwell3D::CallMethod(Method Method, uint32_t Argument, bool Last)
@@ -255,7 +260,9 @@ void CMaxwell3D::CallMethodFromMME(Method Method, uint32_t Argument)
     }
     else if (Method == Method_DrawVertexBeginGL)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        m_Regs.Value[Method] = Argument;
+        m_MMEDraw.InstanceMode = (m_Regs.Draw.InstanceNext != 0) || (m_Regs.Draw.InstanceCont != 0);
+        m_MMEDraw.BeginConsume = true;
     }
     else if (Method == Method_VertexBufferCount || Method == Method_IndexArrayCount)
     {
@@ -263,6 +270,10 @@ void CMaxwell3D::CallMethodFromMME(Method Method, uint32_t Argument)
     }
     else
     {
+        if (m_MMEDraw.CurrentMode != MMEDrawMode_Undefined)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
         CallMethod(Method, Argument, true);
     }
 }

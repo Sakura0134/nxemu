@@ -84,6 +84,13 @@ public:
         IndexFormat_UnsignedInt = 0x2,
     };
 
+    enum MMEDrawMode : unsigned
+    {
+        MMEDrawMode_Undefined,
+        MMEDrawMode_Array,
+        MMEDrawMode_Indexed,
+    };
+
     enum PrimitiveTopology : unsigned
     {
         PrimitiveTopology_Points = 0x0,
@@ -296,6 +303,16 @@ public:
         uint32_t Entry;
         uint32_t Bind;
     } tyMacros;
+
+    typedef struct
+    {
+        MMEDrawMode CurrentMode;
+        uint32_t CurrentCount;
+        uint32_t InstanceCount;
+        bool InstanceMode;
+        bool BeginConsume;
+        uint32_t EndCount;
+    } tyMMEDrawState;
 
     typedef struct _tyQuery
     {
@@ -645,6 +662,7 @@ private:
     uint32_t m_MacroPositions[0x80];
     std::unique_ptr<MacroEngine> m_MacroEngine;
     CBDataState m_CBDataState;
+    tyMMEDrawState m_MMEDraw;
     uint32_t m_ExecutingMacro;
     MacroParams m_MacroParams;
     CUploadState m_UploadState;
