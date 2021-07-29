@@ -13,7 +13,8 @@ OpenGLRenderer::OpenGLRenderer(ISwitchSystem & SwitchSystem, CVideo & Video) :
     m_Video(Video),
     m_StateTracker(Video),
     m_TextureCache(*this, Video),
-    m_FenceManager(*this, Video)
+    m_FenceManager(*this, Video),
+    m_QueuedCommands(false)
 {
 }
 
@@ -52,6 +53,11 @@ void OpenGLRenderer::InvalidateRegion(uint64_t Addr, uint64_t Size)
 
 void OpenGLRenderer::FlushCommands(void)
 {
+    if (m_QueuedCommands) 
+    {
+        m_QueuedCommands = false;
+        glFlush();
+    }
 }
 
 void OpenGLRenderer::WaitForIdle(void) 
@@ -127,7 +133,23 @@ void OpenGLRenderer::Clear()
     m_TextureCache.UpdateRenderTargets(true);
     m_StateTracker.BindFramebuffer(m_TextureCache.GetFramebuffer());
 
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    if (UseColor) 
+    {
+        glClearBufferfv(GL_COLOR, Regs.ClearBuffers.RT, Regs.ClearColor);
+    }
+    if (UseDepth && UseStencil)
+    {
+        glClearBufferfi(GL_DEPTH_STENCIL, 0, Regs.ClearDepth, Regs.ClearStencil);
+    } 
+    else if (UseDepth)
+    {
+        glClearBufferfv(GL_DEPTH, 0, &Regs.ClearDepth);
+    } 
+    else if (UseStencil) 
+    {
+        glClearBufferiv(GL_STENCIL, 0, &Regs.ClearStencil);
+    }
+    m_QueuedCommands = true;
 }
 
 void OpenGLRenderer::TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool Track) 

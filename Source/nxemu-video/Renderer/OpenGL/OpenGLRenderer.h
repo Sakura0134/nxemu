@@ -55,6 +55,7 @@ private:
     EmulatorWindow & m_EmulatorWindow;
     ISwitchSystem & m_SwitchSystem;
     CVideo & m_Video;
+    bool m_QueuedCommands;
     TrackedPageMap m_TrackedPages;
     CriticalSection m_PageCS;
 };
