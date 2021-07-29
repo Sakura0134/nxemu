@@ -205,6 +205,15 @@ void CMacroInterpreter::ProcessResult(const MacroParams & Params, MacroResultOpe
         SetRegister(Reg, Params[m_NextParam++]);
         m_MethodAddress.Value = Result;
         break;
+    case MacroResultOperation_MoveAndSetMethodFetchAndSend:
+        if (m_NextParam >= Params.size())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        SetRegister(Reg, Result);
+        m_MethodAddress.Value = Result;
+        Send(Params[m_NextParam++]);
+        break;
     case MacroResultOperation_MoveAndSetMethodSend:
         SetRegister(Reg, Result);
         m_MethodAddress.Value = Result;
