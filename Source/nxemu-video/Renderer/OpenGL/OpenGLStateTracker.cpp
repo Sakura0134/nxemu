@@ -9,10 +9,13 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
 
     SetupDirtyRenderTargets();
     SetupColorMasks();
+    SetupViewports();
     SetupScissors();
     SetupRasterizeEnable();
     SetupFramebufferSRGB();
     SetupFragmentClampColor();
+    SetupClipControl();
+    SetupMisc();
 }
 
 void OpenGLStateTracker::BindFramebuffer(OpenGLFramebufferPtr Framebuffer)
@@ -85,6 +88,31 @@ void OpenGLStateTracker::SetupColorMasks(void)
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask, ColorMaskSize, OpenGLDirtyFlag_ColorMasks);
 }
 
+void OpenGLStateTracker::SetupViewports(void) 
+{
+    enum 
+    {
+        ViewPortTransformItemSize = (sizeof(CMaxwell3D::Registers::ViewPortTransform[0]) / (sizeof(uint32_t))),
+        ViewPortTransformSize = (sizeof(CMaxwell3D::Registers::ViewPortTransform) / (sizeof(uint32_t))),
+        ViewPortsItemSize = (sizeof(CMaxwell3D::Registers::ViewPorts[0]) / (sizeof(uint32_t))),
+        ViewPortsSize = (sizeof(CMaxwell3D::Registers::ViewPorts) / (sizeof(uint32_t))),
+    };
+
+    for (uint8_t i = 0, n = sizeof(CMaxwell3D::Registers::ViewPorts) / sizeof(CMaxwell3D::Registers::ViewPorts[0]); i < n; i++)
+    {
+        uint32_t TransfOffset = CMaxwell3D::Method_ViewPortTransform + (i * ViewPortTransformItemSize);
+        uint32_t ViewportOffset = CMaxwell3D::Method_ViewPorts + (i * ViewPortsItemSize);
+
+        m_StateTracker.SetRegisterFlag(TransfOffset, ViewPortTransformItemSize, OpenGLDirtyFlag_Viewport0 + i);
+        m_StateTracker.SetRegisterFlag(ViewportOffset, ViewPortsItemSize, OpenGLDirtyFlag_Viewport0 + i);
+    }
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ViewPortTransform, ViewPortTransformSize, OpenGLDirtyFlag_Viewports);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ViewPorts, ViewPortsSize, OpenGLDirtyFlag_Viewports);
+
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ViewportTransformEnabled, 1, OpenGLDirtyFlag_ViewportTransform);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ViewportTransformEnabled, 1, OpenGLDirtyFlag_Viewports);
+}
+
 void OpenGLStateTracker::SetupScissors(void)
 {
     enum 
@@ -93,7 +121,7 @@ void OpenGLStateTracker::SetupScissors(void)
         ScissorTestSize = (sizeof(CMaxwell3D::Registers::ScissorTest) / (sizeof(uint32_t))),
     };
 
-    for (uint8_t i = 0; i < CMaxwell3D::NumViewPorts; i++) 
+    for (uint8_t i = 0, n = sizeof(CMaxwell3D::Registers::ScissorTest) / sizeof(CMaxwell3D::Registers::ScissorTest[0]); i < n; i++) 
     {
         uint32_t Offset = CMaxwell3D::Method_ScissorTest + i * ScissorTestItemSize;
         m_StateTracker.SetRegisterFlag(Offset, ScissorTestItemSize, OpenGLDirtyFlag_Scissor0 + i);
@@ -133,4 +161,14 @@ void OpenGLStateTracker::SetupFramebufferSRGB(void)
 void OpenGLStateTracker::SetupFragmentClampColor(void)
 {
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_FragmentColorClamp, 1, OpenGLDirtyFlag_FragmentClampColor);
+}
+
+void OpenGLStateTracker::SetupClipControl(void)
+{
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ScreenYControl, 1, OpenGLDirtyFlag_ClipControl);
+}
+
+void OpenGLStateTracker::SetupMisc(void)
+{
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_FrontFace, 1, OpenGLDirtyFlag_FrontFace);
 }

@@ -4,6 +4,7 @@
 #include "Macro\MacroEngine.h"
 #include "Textures\Texture.h"
 #include "Util\StateTracker.h"
+#include "Util\Rectangle.h"
 #include <Common\padding.h>
 #include <stdint.h>
 #include <cstddef>
@@ -75,6 +76,18 @@ public:
         CounterReset_Unk1D = 0x1D,
         CounterReset_Unk1E = 0x1E,
         CounterReset_GeneratedPrimitives = 0x1F,
+    };
+
+    enum DepthMode : unsigned
+    {
+        DepthMode_MinusOneToOne = 0,
+        DepthMode_ZeroToOne = 1,
+    };
+
+    enum FrontFace : unsigned
+    {
+        FrontFace_ClockWise = 0x0900,
+        FrontFace_CounterClockWise = 0x0901,
     };
 
     enum IndexFormat : unsigned
@@ -172,6 +185,18 @@ public:
         StencilOp_InvertOGL = 0x150A,
         StencilOp_IncrWrapOGL = 0x8507,
         StencilOp_DecrWrapOGL = 0x8508,
+    };
+
+    enum ViewportSwizzle : unsigned
+    {
+        ViewportSwizzle_PositiveX = 0,
+        ViewportSwizzle_NegativeX = 1,
+        ViewportSwizzle_PositiveY = 2,
+        ViewportSwizzle_NegativeY = 3,
+        ViewportSwizzle_PositiveZ = 4,
+        ViewportSwizzle_NegativeZ = 5,
+        ViewportSwizzle_PositiveW = 6,
+        ViewportSwizzle_NegativeW = 7,
     };
 
 #pragma warning(push)
@@ -413,6 +438,16 @@ public:
         uint32_t Fill;
     } tyScissorTest;
 
+    typedef union
+    {
+        uint32_t Value;
+        struct {
+            unsigned YNegate : 1;
+            unsigned : 3;
+            unsigned TriangleRastFlip : 1;
+        };
+    } tyScreenYControl;
+
     typedef struct
     {
         uint64_t Address;
@@ -430,6 +465,47 @@ public:
             unsigned Increment : 1;
         };
     } tySyncInfo;
+
+    typedef struct
+    {
+        unsigned X : 16;
+        unsigned Width : 16;
+        unsigned Y : 16;
+        unsigned Height : 16;
+        float DepthRangeNear;
+        float DepthRangeFar;
+    } tyViewPort;
+
+    typedef struct _tyViewPortTransform
+    {
+        float ScaleX;
+        float ScaleY;
+        float ScaleZ;
+        float TranslateX;
+        float TranslateY;
+        float TranslateZ;
+        union
+        {
+            uint32_t Value;
+            struct
+            {
+                ViewportSwizzle X : 3;
+                unsigned : 1;
+                ViewportSwizzle Y : 3;
+                unsigned : 1;
+                ViewportSwizzle Z : 3;
+                unsigned : 1;
+                ViewportSwizzle W : 3;
+            };
+        } Swizzle;
+        PADDING_WORDS(1);
+
+        CRectangle<float> GetRect() const;
+        float GetX() const;
+        float GetY() const;
+        float GetWidth() const;
+        float GetHeight() const;
+    } tyViewPortTransform;
 
     typedef struct _tyZeta
     {
@@ -460,9 +536,11 @@ public:
             uint32_t RasterizeEnable;
             PADDING_WORDS(0x120);
             tyRenderTarget RenderTarget[NumRenderTargets];
-            PADDING_WORDS(0xDE);
+            tyViewPortTransform ViewPortTransform[NumViewPorts];
+            tyViewPort ViewPorts[NumViewPorts];
+            PADDING_WORDS(0x1E);
             uint32_t VertexBufferCount;
-            PADDING_WORDS(0x1);
+            DepthMode DepthMode;
             float ClearColor[4];
             float ClearDepth;
             PADDING_WORDS(0x3);
@@ -500,7 +578,8 @@ public:
             uint32_t StencilFrontMask;
             PADDING_WORDS(0x2);
             uint32_t FragmentColorClamp;
-            PADDING_WORDS(0x61);
+            tyScreenYControl ScreenYControl;
+            PADDING_WORDS(0x60);
             CounterReset CounterReset;
             PADDING_WORDS(0x1);
             uint32_t ZetaEnable;
@@ -523,7 +602,11 @@ public:
             tyDraw Draw;
             PADDING_WORDS(0x6B);
             tyIndexArray IndexArray;
-            PADDING_WORDS(0x7B);
+            PADDING_WORDS(0x4E);
+            FrontFace FrontFace;
+            PADDING_WORDS(0x3);
+            uint32_t ViewportTransformEnabled;
+            PADDING_WORDS(0x28);
             tyClearBuffers ClearBuffers;
             PADDING_WORDS(0xB);
             tyColorMask ColorMask[NumRenderTargets];
@@ -569,6 +652,7 @@ public:
         Method_ConstBufferData15 = (offsetof(Registers, ConstBuffer.Data) + (sizeof(Registers::ConstBuffer.Data[0]) * 15)) / sizeof(uint32_t),
         Method_CounterReset = offsetof(Registers, CounterReset) / sizeof(uint32_t),
         Method_DataUpload = offsetof(Registers, DataUpload) / sizeof(uint32_t),
+        Method_DepthMode = offsetof(Registers, DepthMode) / sizeof(uint32_t),
         Method_DrawVertexBeginGL = offsetof(Registers, Draw.VertexBeginGL) / sizeof(uint32_t),
         Method_DrawVertexEndGL = offsetof(Registers, Draw.VertexEndGL) / sizeof(uint32_t),
         Method_ExecUpload = offsetof(Registers, ExecUpload) / sizeof(uint32_t),
@@ -576,6 +660,7 @@ public:
         Method_FragmentBarrier = offsetof(Registers, FragmentBarrier) / sizeof(uint32_t),
         Method_FragmentColorClamp = offsetof(Registers, FragmentColorClamp) / sizeof(uint32_t),
         Method_FramebufferSRGB = offsetof(Registers, FramebufferSRGB) / sizeof(uint32_t),
+        Method_FrontFace = offsetof(Registers, FrontFace) / sizeof(uint32_t),
         Method_IndexArrayCount = offsetof(Registers, IndexArray.Count) / sizeof(uint32_t),
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
@@ -585,6 +670,7 @@ public:
         Method_RenderTarget = offsetof(Registers, RenderTarget) / sizeof(uint32_t),
         Method_RTControl = offsetof(Registers, RTControl) / sizeof(uint32_t),
         Method_ScissorTest = offsetof(Registers, ScissorTest) / sizeof(uint32_t),
+        Method_ScreenYControl = offsetof(Registers, ScreenYControl) / sizeof(uint32_t),
         Method_ShadowRamControl = offsetof(Registers, ShadowRamControl) / sizeof(uint32_t),
         Method_StencilBackFuncFunc = offsetof(Registers, StencilBackFuncFunc) / sizeof(uint32_t),
         Method_StencilBackFuncMask = offsetof(Registers, StencilBackFuncMask) / sizeof(uint32_t),
@@ -607,6 +693,9 @@ public:
         Method_TiledCacheBarrier = offsetof(Registers, TiledCacheBarrier) / sizeof(uint32_t),
         Method_Tsc = offsetof(Registers, Tsc) / sizeof(uint32_t),
         Method_VertexBufferCount = offsetof(Registers, VertexBufferCount) / sizeof(uint32_t),
+        Method_ViewPorts = offsetof(Registers, ViewPorts) / sizeof(uint32_t),
+        Method_ViewPortTransform = offsetof(Registers, ViewPortTransform) / sizeof(uint32_t),
+        Method_ViewportTransformEnabled = offsetof(Registers, ViewportTransformEnabled) / sizeof(uint32_t),
         Method_WaitForIdle = offsetof(Registers, WaitForIdle) / sizeof(uint32_t),
         Method_Zeta = offsetof(Registers, Zeta) / sizeof(uint32_t),
         Method_ZetaEnable = offsetof(Registers, ZetaEnable) / sizeof(uint32_t),
@@ -685,7 +774,9 @@ ASSERT_REG_POSITION(DataUpload, 0x6D);
 ASSERT_REG_POSITION(SyncInfo, 0xB2);
 ASSERT_REG_POSITION(RasterizeEnable, 0xDF);
 ASSERT_REG_POSITION(RenderTarget, 0x200);
+ASSERT_REG_POSITION(ViewPorts, 0x300);
 ASSERT_REG_POSITION(VertexBufferCount, 0x35E);
+ASSERT_REG_POSITION(DepthMode, 0x35F);
 ASSERT_REG_POSITION(ClearColor, 0x360);
 ASSERT_REG_POSITION(ClearDepth, 0x364);
 ASSERT_REG_POSITION(ClearStencil, 0x368);
@@ -711,6 +802,7 @@ ASSERT_REG_POSITION(StencilFrontFuncRef, 0x4E5);
 ASSERT_REG_POSITION(StencilFrontFuncMask, 0x4E6);
 ASSERT_REG_POSITION(StencilFrontMask, 0x4E7);
 ASSERT_REG_POSITION(FragmentColorClamp, 0x4EA);
+ASSERT_REG_POSITION(ScreenYControl, 0x4EB);
 ASSERT_REG_POSITION(CounterReset, 0x54C);
 ASSERT_REG_POSITION(ZetaEnable, 0x54E);
 ASSERT_REG_POSITION(Condition, 0x554);
@@ -725,6 +817,8 @@ ASSERT_REG_POSITION(FramebufferSRGB, 0x56E);
 ASSERT_REG_POSITION(MultisampleMode, 0x574);
 ASSERT_REG_POSITION(Draw, 0x585);
 ASSERT_REG_POSITION(IndexArray, 0x5F2);
+ASSERT_REG_POSITION(FrontFace, 0x647);
+ASSERT_REG_POSITION(ViewportTransformEnabled, 0x64B);
 ASSERT_REG_POSITION(ClearBuffers, 0x674);
 ASSERT_REG_POSITION(ColorMask, 0x680);
 ASSERT_REG_POSITION(Query, 0x6C0);

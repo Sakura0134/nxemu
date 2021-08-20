@@ -37,7 +37,7 @@ public:
 
 private:
     CKernelObject(const CKernelObject&);
-    CKernelObject& operator=(const CKernelObject&);		// Disable assignment
+    CKernelObject& operator=(const CKernelObject&);
 
     uint32_t m_ref;
 };

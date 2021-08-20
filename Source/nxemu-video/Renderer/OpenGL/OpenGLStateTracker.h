@@ -18,6 +18,11 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_ColorBuffer7,
     OpenGLDirtyFlag_ZetaBuffer,
 
+    OpenGLDirtyFlag_ViewportTransform,
+    OpenGLDirtyFlag_Viewports,
+    OpenGLDirtyFlag_Viewport0,
+    OpenGLDirtyFlag_Viewport15 = OpenGLDirtyFlag_Viewport0 + 15,
+
     OpenGLDirtyFlag_Scissors,
     OpenGLDirtyFlag_Scissor0,
     OpenGLDirtyFlag_Scissor15 = OpenGLDirtyFlag_Scissor0 + 15,
@@ -27,10 +32,12 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_ColorMask0,
     OpenGLDirtyFlag_ColorMask7 = OpenGLDirtyFlag_ColorMask0 + 7,
 
+    OpenGLDirtyFlag_FrontFace,
     OpenGLDirtyFlag_StencilTest,
     OpenGLDirtyFlag_RasterizeEnable,
     OpenGLDirtyFlag_FramebufferSRGB,
     OpenGLDirtyFlag_FragmentClampColor,
+    OpenGLDirtyFlag_ClipControl,
 
     OpenGLDirtyFlag_Last
 };
@@ -52,11 +59,14 @@ private:
 
     void SetupDirtyRenderTargets(void);
     void SetupColorMasks(void);
+    void SetupViewports(void);
     void SetupScissors(void);
     void SetupStencilTest(void);
     void SetupRasterizeEnable(void);
     void SetupFramebufferSRGB(void);
     void SetupFragmentClampColor(void);
+    void SetupClipControl(void);
+    void SetupMisc(void);
 
     CStateTracker & m_StateTracker;
     OpenGLFramebufferPtr m_Framebuffer;

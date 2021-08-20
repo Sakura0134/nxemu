@@ -34,6 +34,17 @@ GLenum MaxwellToOpenGL_ComparisonOp(CMaxwell3D::ComparisonOp Comparison)
     return GL_ALWAYS;
 }
 
+GLenum MaxwellToOpenGL_FrontFace(CMaxwell3D::FrontFace FrontFace) 
+{
+    switch (FrontFace)
+    {
+    case CMaxwell3D::FrontFace_ClockWise: return GL_CW;
+    case CMaxwell3D::FrontFace_CounterClockWise: return GL_CCW;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return GL_CCW;
+}
+
 GLenum MaxwellToOpenGL_StencilOp(CMaxwell3D::StencilOp Stencil) 
 {
     switch (Stencil) 
@@ -65,4 +76,9 @@ GLenum MaxwellToOpenGL_StencilOp(CMaxwell3D::StencilOp Stencil)
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return GL_KEEP;
+}
+
+GLenum MaxwellToOpenGL_ViewportSwizzle(CMaxwell3D::ViewportSwizzle swizzle) 
+{
+    return GL_VIEWPORT_SWIZZLE_POSITIVE_X_NV + (GLenum)swizzle;
 }

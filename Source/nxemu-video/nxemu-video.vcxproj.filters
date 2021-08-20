@@ -239,5 +239,8 @@
     <ClInclude Include="Textures\Decoder.h">
       <Filter>Header Files\Textures</Filter>
     </ClInclude>
+    <ClInclude Include="Util\Rectangle.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

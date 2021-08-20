@@ -152,8 +152,9 @@ void OpenGLRenderer::Clear()
     m_QueuedCommands = true;
 }
 
-void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
+void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
 {
+    SyncViewport();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -283,6 +284,74 @@ void OpenGLRenderer::SyncScissorTest()
         else 
         {
             glDisablei(GL_SCISSOR_TEST, (GLuint)i);
+        }
+    }
+}
+
+void OpenGLRenderer::SyncViewport()
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+
+    bool ViewPortDirty = StateTracker.Flag(OpenGLDirtyFlag_Viewports);
+    bool ClipControlDirty = StateTracker.Flag(OpenGLDirtyFlag_ClipControl);
+
+    if (ClipControlDirty || StateTracker.Flag(OpenGLDirtyFlag_FrontFace)) 
+    {
+        StateTracker.FlagClear(OpenGLDirtyFlag_FrontFace);
+
+        GLenum Mode = MaxwellToOpenGL_FrontFace(Regs.FrontFace);
+        if (Regs.ScreenYControl.TriangleRastFlip != 0 && Regs.ViewPortTransform[0].ScaleY < 0.0f) 
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        glFrontFace(Mode);
+    }
+
+    if (ViewPortDirty || StateTracker.Flag(OpenGLDirtyFlag_ClipControl))
+    {
+        StateTracker.FlagClear(OpenGLDirtyFlag_ClipControl);
+
+        bool FlipY = false;
+        if (Regs.ViewPortTransform[0].ScaleY < 0.0f) 
+        {
+            FlipY = !FlipY;
+        }
+        if (Regs.ScreenYControl.YNegate != 0)
+        {
+            FlipY = !FlipY;
+        }
+        glClipControl(FlipY ? GL_UPPER_LEFT : GL_LOWER_LEFT, Regs.DepthMode == CMaxwell3D::DepthMode_ZeroToOne ? GL_ZERO_TO_ONE : GL_NEGATIVE_ONE_TO_ONE);
+    }
+
+    if (ViewPortDirty) 
+    {
+        bool ViewportTransformDirty = StateTracker.Flag(OpenGLDirtyFlag_ViewportTransform);
+        StateTracker.FlagClear(OpenGLDirtyFlag_Viewports);
+        StateTracker.FlagClear(OpenGLDirtyFlag_ViewportTransform);
+
+        for (uint8_t i = 0; i < CMaxwell3D::NumViewPorts; i++) 
+        {
+            if (!ViewportTransformDirty && !StateTracker.Flag(OpenGLDirtyFlag_Viewport0 + i))
+            {
+                continue;
+            }
+            StateTracker.FlagClear(OpenGLDirtyFlag_Viewport0 + i);
+
+            const CMaxwell3D::tyViewPortTransform & ViewPortTransform = Regs.ViewPortTransform[i];
+            CRectangle<float> Rect = ViewPortTransform.GetRect();
+            glViewportIndexedf(i, Rect.Left(), Rect.Bottom(), std::abs(Rect.Width()), std::abs(Rect.Height()));
+
+            GLdouble ReduceZ = Regs.DepthMode == CMaxwell3D::DepthMode_MinusOneToOne;
+            GLdouble NearDepth = ViewPortTransform.TranslateZ - ViewPortTransform.ScaleZ * ReduceZ;
+            GLdouble FarDepth = ViewPortTransform.TranslateZ + ViewPortTransform.ScaleZ;
+            glDepthRangeIndexed(i, NearDepth, FarDepth);
+
+            if (!GLAD_GL_NV_viewport_swizzle)
+            {
+                continue;
+            }
+            glViewportSwizzleNV(i, MaxwellToOpenGL_ViewportSwizzle(ViewPortTransform.Swizzle.X), MaxwellToOpenGL_ViewportSwizzle(ViewPortTransform.Swizzle.Y), MaxwellToOpenGL_ViewportSwizzle(ViewPortTransform.Swizzle.Z), MaxwellToOpenGL_ViewportSwizzle(ViewPortTransform.Swizzle.W));
         }
     }
 }

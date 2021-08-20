@@ -40,6 +40,7 @@ private:
     void SyncRasterizeEnable();
     void SyncStencilTestState();
     void SyncScissorTest();
+    void SyncViewport();
 
     typedef struct 
     {

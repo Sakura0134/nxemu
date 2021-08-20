@@ -107,6 +107,7 @@
     <ClInclude Include="Task\GpuTask.h" />
     <ClInclude Include="Textures\Decoder.h" />
     <ClInclude Include="Textures\Texture.h" />
+    <ClInclude Include="Util\Rectangle.h" />
     <ClInclude Include="Util\StateTracker.h" />
     <ClInclude Include="Video.h" />
     <ClInclude Include="VideoMemoryManager.h" />

@@ -2,6 +2,7 @@
 #include "Renderer/Renderer.h"
 #include "VideoMemoryManager.h"
 #include "VideoNotification.h"
+#include <algorithm>
 
 CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory) :
     m_SwitchSystem(SwitchSystem),
@@ -51,7 +52,8 @@ void CMaxwell3D::InitializeRegisterDefaults()
     m_Regs.StencilBackFuncFunc = ComparisonOp_Always;
     m_Regs.StencilBackFuncMask = 0xFFFFFFFF;
     m_Regs.StencilBackMask = 0xFFFFFFFF;
-
+    m_Regs.FrontFace = FrontFace_ClockWise;
+    m_Regs.RasterizeEnable = 1;
     for (uint32_t i = 0, n = sizeof(m_Regs.ColorMask) / sizeof(m_Regs.ColorMask[0]); i < n; i++)
     {
         tyColorMask & ColorMask = m_Regs.ColorMask[i];
@@ -60,9 +62,6 @@ void CMaxwell3D::InitializeRegisterDefaults()
         ColorMask.B = 1;
         ColorMask.A = 1;
     }
-
-    m_Regs.RasterizeEnable = 1;
-
     m_ShadowRegs = m_Regs;
 }
 
@@ -487,6 +486,31 @@ uint32_t CMaxwell3D::_tyRTControl::Map(uint32_t Index) const
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return 0;
+}
+
+CRectangle<float> CMaxwell3D::_tyViewPortTransform::GetRect() const 
+{ 
+    return CRectangle<float>(GetX(), GetY() + GetHeight(), GetX() + GetWidth(), GetY()); 
+}
+
+float CMaxwell3D::_tyViewPortTransform::GetX() const
+{
+    return std::max(0.0f, TranslateX - std::fabs(ScaleX));
+}
+
+float CMaxwell3D::_tyViewPortTransform::GetY() const 
+{
+    return std::max(0.0f, TranslateY - std::fabs(ScaleY));
+}
+
+float CMaxwell3D::_tyViewPortTransform::GetWidth() const
+{
+    return TranslateX + std::fabs(ScaleX) - GetX();
+}
+
+float CMaxwell3D::_tyViewPortTransform::GetHeight() const 
+{
+    return TranslateY + std::fabs(ScaleY) - GetY();
 }
 
 uint64_t CMaxwell3D::_tyZeta::Address() const
