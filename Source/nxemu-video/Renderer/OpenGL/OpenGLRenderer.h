@@ -46,6 +46,7 @@ private:
     void SyncMultiSampleState();
     void SyncDepthTestState();
     void SyncDepthClamp();
+    void SyncBlendState();
 
     static void OpenGLEnable(GLenum Cap, bool Enable);
 

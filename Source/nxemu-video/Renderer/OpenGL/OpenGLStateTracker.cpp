@@ -167,6 +167,29 @@ void OpenGLStateTracker::SetupStencilTest(void)
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilBackOpZPass, 1, OpenGLDirtyFlag_StencilTest);
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilBackMask, 1, OpenGLDirtyFlag_StencilTest);
 }
+
+void OpenGLStateTracker::SetupBlend(void) 
+{
+    enum 
+    {
+        BlendColorSize = (sizeof(CMaxwell3D::Registers::BlendColor) / (sizeof(uint32_t))),
+        IndependentBlendItemSize = (sizeof(CMaxwell3D::Registers::IndependentBlend[0]) / (sizeof(uint32_t))),
+        IndependentBlendSize = (sizeof(CMaxwell3D::Registers::IndependentBlend) / (sizeof(uint32_t))),
+        BlendSize = (sizeof(CMaxwell3D::Registers::Blend) / (sizeof(uint32_t))),
+    };
+
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_BlendColor, BlendColorSize, OpenGLDirtyFlag_BlendColor);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_IndependentBlendEnable, 1, OpenGLDirtyFlag_BlendIndependentEnabled);
+
+    for (uint8_t i = 0; i < NumRenderTargets; i++) 
+    {
+        const uint32_t offset = CMaxwell3D::Method_IndependentBlend + i * IndependentBlendItemSize;
+        m_StateTracker.SetRegisterFlag(offset, IndependentBlendItemSize, OpenGLDirtyFlag_BlendState0 + i);
+        m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_BlendEnable + i, 1, OpenGLDirtyFlag_BlendState0 + i);
+    }
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_IndependentBlend, IndependentBlendSize, OpenGLDirtyFlag_BlendStates);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_Blend, BlendSize, OpenGLDirtyFlag_BlendStates);
+}
 void OpenGLStateTracker::SetupMultisampleControl(void) 
 {
     enum 

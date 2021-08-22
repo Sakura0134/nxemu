@@ -162,6 +162,8 @@ void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
     SyncMultiSampleState();
     SyncDepthTestState();
     SyncDepthClamp();
+    SyncStencilTestState();
+    SyncBlendState();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -484,6 +486,48 @@ void OpenGLRenderer::SyncDepthClamp()
     StateTracker.FlagClear(OpenGLDirtyFlag_DepthClampEnabled);
 
     OpenGLEnable(GL_DEPTH_CLAMP, m_Video.Maxwell3D().Regs().ViewVolumeClipControl.DepthClampDisabled == 0);
+}
+
+void OpenGLRenderer::SyncBlendState() 
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+
+    if (StateTracker.Flag(OpenGLDirtyFlag_BlendColor))
+    {
+        StateTracker.FlagClear(OpenGLDirtyFlag_BlendColor);
+        glBlendColor(Regs.BlendColor.R, Regs.BlendColor.G, Regs.BlendColor.B, Regs.BlendColor.A);
+    }
+
+    if (!StateTracker.Flag(OpenGLDirtyFlag_BlendStates)) 
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_BlendStates);
+
+    if (Regs.IndependentBlendEnable != 0) 
+    {
+        OpenGLEnable(GL_BLEND, Regs.Blend.Enable[0] != 0);
+        if (Regs.Blend.Enable[0] != 0) 
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        return;
+    }
+
+    bool BlendIndependentEnabled = StateTracker.Flag(OpenGLDirtyFlag_BlendIndependentEnabled);
+    StateTracker.FlagClear(OpenGLDirtyFlag_BlendIndependentEnabled);
+
+    for (uint8_t i = 0; i < NumRenderTargets; i++) 
+    {
+        if (!BlendIndependentEnabled && !StateTracker.Flag(OpenGLDirtyFlag_BlendState0 + i)) 
+        {
+            continue;
+        }
+        StateTracker.FlagClear(OpenGLDirtyFlag_BlendState0 + i);
+
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
 }
 
 void OpenGLRenderer::OpenGLEnable(GLenum Cap, bool Enable) 

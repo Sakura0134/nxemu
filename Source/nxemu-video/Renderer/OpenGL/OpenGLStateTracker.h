@@ -32,6 +32,12 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_ColorMask0,
     OpenGLDirtyFlag_ColorMask7 = OpenGLDirtyFlag_ColorMask0 + 7,
 
+    OpenGLDirtyFlag_BlendColor,
+    OpenGLDirtyFlag_BlendIndependentEnabled,
+    OpenGLDirtyFlag_BlendStates,
+    OpenGLDirtyFlag_BlendState0,
+    OpenGLDirtyFlag_BlendState7 = OpenGLDirtyFlag_BlendState0 + 7,
+
     OpenGLDirtyFlag_PolygonModes,
     OpenGLDirtyFlag_PolygonModeFront,
     OpenGLDirtyFlag_PolygonModeBack,
@@ -72,6 +78,7 @@ private:
     void SetupPolygonModes(void);
     void SetupDepthTest(void);
     void SetupStencilTest(void);
+    void SetupBlend(void);
     void SetupMultisampleControl(void);
     void SetupRasterizeEnable(void);
     void SetupFramebufferSRGB(void);

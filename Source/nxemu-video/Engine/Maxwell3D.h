@@ -26,6 +26,62 @@ public:
         MaxConstBuffers = 18,
     };
 
+    enum BlendEquation : unsigned
+    {
+        BlendEquation_Add = 1,
+        BlendEquation_Subtract = 2,
+        BlendEquation_ReverseSubtract = 3,
+        BlendEquation_Min = 4,
+        BlendEquation_Max = 5,
+        BlendEquation_AddGL = 0x8006,
+        BlendEquation_SubtractGL = 0x8007,
+        BlendEquation_ReverseSubtractGL = 0x8008,
+        BlendEquation_MinGL = 0x800A,
+        BlendEquation_MaxGL = 0x800B
+    };
+
+    enum BlendFactor : unsigned
+    {
+        BlendFactor_Zero = 0x1,
+        BlendFactor_One = 0x2,
+        BlendFactor_SourceColor = 0x3,
+        BlendFactor_OneMinusSourceColor = 0x4,
+        BlendFactor_SourceAlpha = 0x5,
+        BlendFactor_OneMinusSourceAlpha = 0x6,
+        BlendFactor_DestAlpha = 0x7,
+        BlendFactor_OneMinusDestAlpha = 0x8,
+        BlendFactor_DestColor = 0x9,
+        BlendFactor_OneMinusDestColor = 0xa,
+        BlendFactor_SourceAlphaSaturate = 0xb,
+        BlendFactor_Source1Color = 0x10,
+        BlendFactor_OneMinusSource1Color = 0x11,
+        BlendFactor_Source1Alpha = 0x12,
+        BlendFactor_OneMinusSource1Alpha = 0x13,
+        BlendFactor_ConstantColor = 0x61,
+        BlendFactor_OneMinusConstantColor = 0x62,
+        BlendFactor_ConstantAlpha = 0x63,
+        BlendFactor_OneMinusConstantAlpha = 0x64,
+        BlendFactor_ZeroGL = 0x4000,
+        BlendFactor_OneGL = 0x4001,
+        BlendFactor_SourceColorGL = 0x4300,
+        BlendFactor_OneMinusSourceColorGL = 0x4301,
+        BlendFactor_SourceAlphaGL = 0x4302,
+        BlendFactor_OneMinusSourceAlphaGL = 0x4303,
+        BlendFactor_DestAlphaGL = 0x4304,
+        BlendFactor_OneMinusDestAlphaGL = 0x4305,
+        BlendFactor_DestColorGL = 0x4306,
+        BlendFactor_OneMinusDestColorGL = 0x4307,
+        BlendFactor_SourceAlphaSaturateGL = 0x4308,
+        BlendFactor_ConstantColorGL = 0xc001,
+        BlendFactor_OneMinusConstantColorGL = 0xc002,
+        BlendFactor_ConstantAlphaGL = 0xc003,
+        BlendFactor_OneMinusConstantAlphaGL = 0xc004,
+        BlendFactor_Source1ColorGL = 0xc900,
+        BlendFactor_OneMinusSource1ColorGL = 0xc901,
+        BlendFactor_Source1AlphaGL = 0xc902,
+        BlendFactor_OneMinusSource1AlphaGL = 0xc903,
+    };
+
     enum ComparisonOp : unsigned
     {
         ComparisonOp_Never = 0x200,
@@ -216,6 +272,27 @@ public:
         uint32_t Limit;
     } tyAdrressLimit;
 
+    typedef struct
+    {
+        uint32_t AeparateAlpha;
+        BlendEquation EquationRGB;
+        BlendFactor FactorSourceRGB;
+        BlendFactor FactorDestRGB;
+        BlendEquation EquationA;
+        BlendFactor FactorSourceA;
+        PADDING_WORDS(1);
+        BlendFactor FactorDestA;
+        uint32_t EnableCommon;
+        uint32_t Enable[NumRenderTargets];
+    } tyBlend;
+
+    typedef struct
+    {
+        float R;
+        float G;
+        float B;
+        float A;
+    } tyBlendColor;
 
     typedef struct
     {
@@ -316,6 +393,18 @@ public:
             unsigned Linear : 1;
         };
     } tyExecUpload;
+
+    typedef struct
+    {
+        uint32_t SeparateAlpha;
+        BlendEquation EquationRGB;
+        BlendFactor FactorSourceRGB;
+        BlendFactor FactorDestRGB;
+        BlendEquation EquationA;
+        BlendFactor FactorSourceA;
+        BlendFactor FactorDestA;
+        PADDING_WORDS(1);
+    } tyIndependentBlend;
 
     typedef struct _tyIndexArray
     {
@@ -606,11 +695,15 @@ public:
             uint32_t ZetaHeight;
             PADDING_WORDS(0x27);
             uint32_t DepthTestEnable;
-            PADDING_WORDS(0x6);
+            PADDING_WORDS(0x5);
+            uint32_t IndependentBlendEnable;
             uint32_t DepthWriteEnabled;
             PADDING_WORDS(0x8);
             ComparisonOp DepthTestFunc;
-            PADDING_WORDS(0x1C);
+            PADDING_WORDS(0x3);
+            tyBlendColor BlendColor;
+            PADDING_WORDS(0x4);
+            tyBlend Blend;
             uint32_t StencilEnable;
             StencilOp StencilFrontOpFail;
             StencilOp StencilFrontOpZFail;
@@ -658,7 +751,9 @@ public:
             tyColorMask ColorMask[NumRenderTargets];
             PADDING_WORDS(0x38);
             tyQuery Query;
-            PADDING_WORDS(0x1FC);
+            PADDING_WORDS(0xBC);
+            tyIndependentBlend IndependentBlend[NumRenderTargets];
+            PADDING_WORDS(0x100);
             uint32_t Firmware[0x20];
             tyConstBuffer ConstBuffer;
             PADDING_WORDS(0x10);
@@ -670,6 +765,9 @@ public:
 
     enum Method : uint32_t
     {
+        Method_Blend = offsetof(Registers, Blend) / sizeof(uint32_t),
+        Method_BlendColor = offsetof(Registers, BlendColor) / sizeof(uint32_t),
+        Method_BlendEnable = offsetof(Registers, Blend.Enable) / sizeof(uint32_t),
         Method_CBBind0 = (offsetof(Registers, CBBind) + (sizeof(Registers::CBBind[0]) * 0)) / sizeof(uint32_t),
         Method_CBBind1 = (offsetof(Registers, CBBind) + (sizeof(Registers::CBBind[0]) * 1)) / sizeof(uint32_t),
         Method_CBBind2 = (offsetof(Registers, CBBind) + (sizeof(Registers::CBBind[0]) * 2)) / sizeof(uint32_t),
@@ -711,6 +809,8 @@ public:
         Method_FragmentColorClamp = offsetof(Registers, FragmentColorClamp) / sizeof(uint32_t),
         Method_FramebufferSRGB = offsetof(Registers, FramebufferSRGB) / sizeof(uint32_t),
         Method_FrontFace = offsetof(Registers, FrontFace) / sizeof(uint32_t),
+        Method_IndependentBlend = offsetof(Registers, IndependentBlend) / sizeof(uint32_t),
+        Method_IndependentBlendEnable = offsetof(Registers, IndependentBlendEnable) / sizeof(uint32_t),
         Method_IndexArrayCount = offsetof(Registers, IndexArray.Count) / sizeof(uint32_t),
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
@@ -851,8 +951,11 @@ ASSERT_REG_POSITION(RTControl, 0x487);
 ASSERT_REG_POSITION(ZetaWidth, 0x48a);
 ASSERT_REG_POSITION(ZetaHeight, 0x48b);
 ASSERT_REG_POSITION(DepthTestEnable, 0x4B3);
+ASSERT_REG_POSITION(IndependentBlendEnable, 0x4B9);
 ASSERT_REG_POSITION(DepthWriteEnabled, 0x4BA);
 ASSERT_REG_POSITION(DepthTestFunc, 0x4C3);
+ASSERT_REG_POSITION(BlendColor, 0x4C7);
+ASSERT_REG_POSITION(Blend, 0x4CF);
 ASSERT_REG_POSITION(StencilEnable, 0x4E0);
 ASSERT_REG_POSITION(StencilFrontOpFail, 0x4E1);
 ASSERT_REG_POSITION(StencilFrontOpZFail, 0x4E2);
@@ -884,6 +987,7 @@ ASSERT_REG_POSITION(ViewVolumeClipControl, 0x64F);
 ASSERT_REG_POSITION(ClearBuffers, 0x674);
 ASSERT_REG_POSITION(ColorMask, 0x680);
 ASSERT_REG_POSITION(Query, 0x6C0);
+ASSERT_REG_POSITION(IndependentBlend, 0x780);
 ASSERT_REG_POSITION(Firmware, 0x8C0);
 ASSERT_REG_POSITION(ConstBuffer, 0x8E0);
 ASSERT_REG_POSITION(CBBind, 0x904);
