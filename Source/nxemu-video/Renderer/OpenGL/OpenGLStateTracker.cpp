@@ -11,6 +11,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     SetupColorMasks();
     SetupViewports();
     SetupScissors();
+    SetupPolygonModes();
     SetupRasterizeEnable();
     SetupFramebufferSRGB();
     SetupFragmentClampColor();
@@ -127,6 +128,15 @@ void OpenGLStateTracker::SetupScissors(void)
         m_StateTracker.SetRegisterFlag(Offset, ScissorTestItemSize, OpenGLDirtyFlag_Scissor0 + i);
     }
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ScissorTest, ScissorTestSize, OpenGLDirtyFlag_Scissors);
+}
+
+void OpenGLStateTracker::SetupPolygonModes(void) 
+{
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PolygonModeFront, 1, OpenGLDirtyFlag_PolygonModeFront);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PolygonModeFront, 1, OpenGLDirtyFlag_PolygonModes);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PolygonModeBack, 1, OpenGLDirtyFlag_PolygonModeBack);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PolygonModeBack, 1, OpenGLDirtyFlag_PolygonModes);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_FillRectangle, 1, OpenGLDirtyFlag_PolygonModes);
 }
 
 void OpenGLStateTracker::SetupStencilTest(void) 

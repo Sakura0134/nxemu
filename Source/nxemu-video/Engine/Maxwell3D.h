@@ -104,6 +104,13 @@ public:
         MMEDrawMode_Indexed,
     };
 
+    enum PolygonMode : unsigned
+    {
+        PolygonMode_Point = 0x1b00,
+        PolygonMode_Line = 0x1b01,
+        PolygonMode_Fill = 0x1b02,
+    };
+
     enum PrimitiveTopology : unsigned
     {
         PrimitiveTopology_Points = 0x0,
@@ -545,7 +552,10 @@ public:
             float ClearDepth;
             PADDING_WORDS(0x3);
             int32_t ClearStencil;
-            PADDING_WORDS(0xF);
+            PADDING_WORDS(0x2);
+            PolygonMode PolygonModeFront;
+            PolygonMode PolygonModeBack;
+            PADDING_WORDS(0xB);
             uint32_t FragmentBarrier;
             PADDING_WORDS(0x7);
             tyScissorTest ScissorTest[NumViewPorts];
@@ -562,7 +572,9 @@ public:
             tyRenderArea RenderArea;
             PADDING_WORDS(0x3F);
             tyClearFlags ClearFlags;
-            PADDING_WORDS(0x48);
+            PADDING_WORDS(0x10);
+            uint32_t FillRectangle;
+            PADDING_WORDS(0x37);
             tyRTControl RTControl;
             PADDING_WORDS(0x2);
             uint32_t ZetaWidth;
@@ -656,6 +668,7 @@ public:
         Method_DrawVertexBeginGL = offsetof(Registers, Draw.VertexBeginGL) / sizeof(uint32_t),
         Method_DrawVertexEndGL = offsetof(Registers, Draw.VertexEndGL) / sizeof(uint32_t),
         Method_ExecUpload = offsetof(Registers, ExecUpload) / sizeof(uint32_t),
+        Method_FillRectangle = offsetof(Registers, FillRectangle) / sizeof(uint32_t),
         Method_Firmware4 = (offsetof(Registers, Firmware) + (sizeof(Registers::Firmware[0]) * 4)) / sizeof(uint32_t),
         Method_FragmentBarrier = offsetof(Registers, FragmentBarrier) / sizeof(uint32_t),
         Method_FragmentColorClamp = offsetof(Registers, FragmentColorClamp) / sizeof(uint32_t),
@@ -664,6 +677,8 @@ public:
         Method_IndexArrayCount = offsetof(Registers, IndexArray.Count) / sizeof(uint32_t),
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
+        Method_PolygonModeBack = offsetof(Registers, PolygonModeBack) / sizeof(uint32_t),
+        Method_PolygonModeFront = offsetof(Registers, PolygonModeFront) / sizeof(uint32_t),
         Method_QueryGet = offsetof(Registers, Query.QueryGet) / sizeof(uint32_t),
         Method_RasterizeEnable = offsetof(Registers, RasterizeEnable) / sizeof(uint32_t),
         Method_RenderArea = offsetof(Registers, RenderArea) / sizeof(uint32_t),
@@ -780,6 +795,8 @@ ASSERT_REG_POSITION(DepthMode, 0x35F);
 ASSERT_REG_POSITION(ClearColor, 0x360);
 ASSERT_REG_POSITION(ClearDepth, 0x364);
 ASSERT_REG_POSITION(ClearStencil, 0x368);
+ASSERT_REG_POSITION(PolygonModeFront, 0x36B);
+ASSERT_REG_POSITION(PolygonModeBack, 0x36C);
 ASSERT_REG_POSITION(FragmentBarrier, 0x378);
 ASSERT_REG_POSITION(ScissorTest, 0x380);
 ASSERT_REG_POSITION(StencilBackFuncRef, 0x3D5);
@@ -790,6 +807,7 @@ ASSERT_REG_POSITION(ColorMaskCommon, 0x3E4);
 ASSERT_REG_POSITION(Zeta, 0x3F8);
 ASSERT_REG_POSITION(RenderArea, 0x3FD);
 ASSERT_REG_POSITION(ClearFlags, 0x43E);
+ASSERT_REG_POSITION(FillRectangle, 0x44F);
 ASSERT_REG_POSITION(RTControl, 0x487);
 ASSERT_REG_POSITION(ZetaWidth, 0x48a);
 ASSERT_REG_POSITION(ZetaHeight, 0x48b);

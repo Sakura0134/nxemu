@@ -54,6 +54,8 @@ void CMaxwell3D::InitializeRegisterDefaults()
     m_Regs.StencilBackMask = 0xFFFFFFFF;
     m_Regs.FrontFace = FrontFace_ClockWise;
     m_Regs.RasterizeEnable = 1;
+    m_Regs.PolygonModeBack = PolygonMode_Fill;
+    m_Regs.PolygonModeFront = PolygonMode_Fill;
     for (uint32_t i = 0, n = sizeof(m_Regs.ColorMask) / sizeof(m_Regs.ColorMask[0]); i < n; i++)
     {
         tyColorMask & ColorMask = m_Regs.ColorMask[i];

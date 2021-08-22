@@ -41,6 +41,7 @@ private:
     void SyncStencilTestState();
     void SyncScissorTest();
     void SyncViewport();
+    void SyncPolygonModes();
 
     typedef struct 
     {

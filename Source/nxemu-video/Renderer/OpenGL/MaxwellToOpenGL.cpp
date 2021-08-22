@@ -45,6 +45,18 @@ GLenum MaxwellToOpenGL_FrontFace(CMaxwell3D::FrontFace FrontFace)
     return GL_CCW;
 }
 
+GLenum MaxwellToOpenGL_PolygonMode(CMaxwell3D::PolygonMode PolygonMode) 
+{
+    switch (PolygonMode)
+    {
+    case CMaxwell3D::PolygonMode_Point: return GL_POINT;
+    case CMaxwell3D::PolygonMode_Line: return GL_LINE;
+    case CMaxwell3D::PolygonMode_Fill: return GL_FILL;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return GL_FILL;
+}
+
 GLenum MaxwellToOpenGL_StencilOp(CMaxwell3D::StencilOp Stencil) 
 {
     switch (Stencil) 

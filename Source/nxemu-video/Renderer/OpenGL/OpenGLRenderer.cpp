@@ -155,6 +155,8 @@ void OpenGLRenderer::Clear()
 void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
 {
     SyncViewport();
+    SyncRasterizeEnable();
+    SyncPolygonModes();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -353,5 +355,49 @@ void OpenGLRenderer::SyncViewport()
             }
             glViewportSwizzleNV(i, MaxwellToOpenGL_ViewportSwizzle(ViewPortTransform.Swizzle.X), MaxwellToOpenGL_ViewportSwizzle(ViewPortTransform.Swizzle.Y), MaxwellToOpenGL_ViewportSwizzle(ViewPortTransform.Swizzle.Z), MaxwellToOpenGL_ViewportSwizzle(ViewPortTransform.Swizzle.W));
         }
+    }
+}
+
+void OpenGLRenderer::SyncPolygonModes() 
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_PolygonModes)) 
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_PolygonModes);
+
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+    if (Regs.FillRectangle != 0) 
+    {
+        if (!GLAD_GL_NV_fill_rectangle) 
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            return;
+        }
+        StateTracker.FlagSet(OpenGLDirtyFlag_PolygonModeFront);
+        StateTracker.FlagSet(OpenGLDirtyFlag_PolygonModeBack);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL_RECTANGLE_NV);
+        return;
+    }
+
+    if (Regs.PolygonModeFront == Regs.PolygonModeBack) 
+    {
+        StateTracker.FlagClear(OpenGLDirtyFlag_PolygonModeFront);
+        StateTracker.FlagClear(OpenGLDirtyFlag_PolygonModeBack);
+        glPolygonMode(GL_FRONT_AND_BACK, MaxwellToOpenGL_PolygonMode(Regs.PolygonModeFront));
+        return;
+    }
+
+    if (StateTracker.Flag(OpenGLDirtyFlag_PolygonModeFront)) 
+    {
+        StateTracker.FlagClear(OpenGLDirtyFlag_PolygonModeFront);
+        glPolygonMode(GL_FRONT, MaxwellToOpenGL_PolygonMode(Regs.PolygonModeFront));
+    }
+
+    if (StateTracker.Flag(OpenGLDirtyFlag_PolygonModeBack)) 
+    {
+        StateTracker.FlagClear(OpenGLDirtyFlag_PolygonModeBack);
+        glPolygonMode(GL_BACK, MaxwellToOpenGL_PolygonMode(Regs.PolygonModeBack));
     }
 }
