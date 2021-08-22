@@ -45,6 +45,7 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_FramebufferSRGB,
     OpenGLDirtyFlag_FragmentClampColor,
     OpenGLDirtyFlag_ClipControl,
+    OpenGLDirtyFlag_DepthClampEnabled,
 
     OpenGLDirtyFlag_Last
 };
@@ -76,6 +77,7 @@ private:
     void SetupFramebufferSRGB(void);
     void SetupFragmentClampColor(void);
     void SetupClipControl(void);
+    void SetupDepthClampEnabled(void);
     void SetupMisc(void);
 
     CStateTracker & m_StateTracker;

@@ -161,6 +161,7 @@ void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
     SyncFragmentColorClampState();
     SyncMultiSampleState();
     SyncDepthTestState();
+    SyncDepthClamp();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -471,6 +472,18 @@ void OpenGLRenderer::SyncDepthTestState()
             glDepthFunc(MaxwellToOpenGL_ComparisonOp(Regs.DepthTestFunc));
         }
     }
+}
+
+void OpenGLRenderer::SyncDepthClamp() 
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_DepthClampEnabled)) 
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_DepthClampEnabled);
+
+    OpenGLEnable(GL_DEPTH_CLAMP, m_Video.Maxwell3D().Regs().ViewVolumeClipControl.DepthClampDisabled == 0);
 }
 
 void OpenGLRenderer::OpenGLEnable(GLenum Cap, bool Enable) 

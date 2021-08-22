@@ -17,6 +17,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     SetupFramebufferSRGB();
     SetupFragmentClampColor();
     SetupClipControl();
+    SetupDepthClampEnabled();
     SetupMisc();
 }
 
@@ -193,6 +194,11 @@ void OpenGLStateTracker::SetupFragmentClampColor(void)
 void OpenGLStateTracker::SetupClipControl(void)
 {
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ScreenYControl, 1, OpenGLDirtyFlag_ClipControl);
+}
+
+void OpenGLStateTracker::SetupDepthClampEnabled(void) 
+{
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ViewVolumeClipControl, 1, OpenGLDirtyFlag_DepthClampEnabled);
 }
 
 void OpenGLStateTracker::SetupMisc(void)

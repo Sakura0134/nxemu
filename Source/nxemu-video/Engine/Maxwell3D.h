@@ -525,6 +525,20 @@ public:
         float GetHeight() const;
     } tyViewPortTransform;
 
+    typedef union
+    {
+        uint32_t Value;
+        struct
+        {
+            unsigned DepthRange : 1;
+            unsigned : 2;
+            unsigned DepthClampNear : 1;
+            unsigned DepthClampFar : 1;
+            unsigned : 6;
+            unsigned DepthClampDisabled : 1;
+        };
+    } tyViewVolumeClipControl;
+
     typedef struct _tyZeta
     {
         uint32_t AddressHigh;
@@ -636,7 +650,9 @@ public:
             FrontFace FrontFace;
             PADDING_WORDS(0x3);
             uint32_t ViewportTransformEnabled;
-            PADDING_WORDS(0x28);
+            PADDING_WORDS(0x3);
+            tyViewVolumeClipControl ViewVolumeClipControl;
+            PADDING_WORDS(0x24);
             tyClearBuffers ClearBuffers;
             PADDING_WORDS(0xB);
             tyColorMask ColorMask[NumRenderTargets];
@@ -733,6 +749,7 @@ public:
         Method_ViewPorts = offsetof(Registers, ViewPorts) / sizeof(uint32_t),
         Method_ViewPortTransform = offsetof(Registers, ViewPortTransform) / sizeof(uint32_t),
         Method_ViewportTransformEnabled = offsetof(Registers, ViewportTransformEnabled) / sizeof(uint32_t),
+        Method_ViewVolumeClipControl = offsetof(Registers, ViewVolumeClipControl) / sizeof(uint32_t),
         Method_WaitForIdle = offsetof(Registers, WaitForIdle) / sizeof(uint32_t),
         Method_Zeta = offsetof(Registers, Zeta) / sizeof(uint32_t),
         Method_ZetaEnable = offsetof(Registers, ZetaEnable) / sizeof(uint32_t),
@@ -863,6 +880,7 @@ ASSERT_REG_POSITION(Draw, 0x585);
 ASSERT_REG_POSITION(IndexArray, 0x5F2);
 ASSERT_REG_POSITION(FrontFace, 0x647);
 ASSERT_REG_POSITION(ViewportTransformEnabled, 0x64B);
+ASSERT_REG_POSITION(ViewVolumeClipControl, 0x64F);
 ASSERT_REG_POSITION(ClearBuffers, 0x674);
 ASSERT_REG_POSITION(ColorMask, 0x680);
 ASSERT_REG_POSITION(Query, 0x6C0);
