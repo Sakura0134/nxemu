@@ -157,6 +157,7 @@ void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
     SyncViewport();
     SyncRasterizeEnable();
     SyncPolygonModes();
+    SyncColorMask();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -399,5 +400,44 @@ void OpenGLRenderer::SyncPolygonModes()
     {
         StateTracker.FlagClear(OpenGLDirtyFlag_PolygonModeBack);
         glPolygonMode(GL_BACK, MaxwellToOpenGL_PolygonMode(Regs.PolygonModeBack));
+    }
+}
+
+void OpenGLRenderer::SyncColorMask() 
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_ColorMasks)) 
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_ColorMasks);
+
+    bool Force = StateTracker.Flag(OpenGLDirtyFlag_ColorMaskCommon);
+    StateTracker.FlagClear(OpenGLDirtyFlag_ColorMaskCommon);
+
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+    if (Regs.ColorMaskCommon) 
+    {
+        if (!Force && !StateTracker.Flag(OpenGLDirtyFlag_ColorMask0)) 
+        {
+            return;
+        }
+        StateTracker.FlagClear(OpenGLDirtyFlag_ColorMask0);
+
+        const CMaxwell3D::tyColorMask & Mask = Regs.ColorMask[0];
+        glColorMask(Mask.R != 0, Mask.B != 0, Mask.G != 0, Mask.A != 0);
+        return;
+    }
+
+    for (uint8_t i = 0; i < NumRenderTargets; i++) 
+    {
+        if (!Force && !StateTracker.Flag(OpenGLDirtyFlag_ColorMask0 + i))
+        {
+            continue;
+        }
+        StateTracker.FlagClear(OpenGLDirtyFlag_ColorMask0 + i);
+
+        const CMaxwell3D::tyColorMask & Mask = Regs.ColorMask[i];
+        glColorMaski(i, Mask.R != 0, Mask.G != 0, Mask.B != 0, Mask.A != 0);
     }
 }

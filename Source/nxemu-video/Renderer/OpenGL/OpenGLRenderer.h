@@ -42,6 +42,7 @@ private:
     void SyncScissorTest();
     void SyncViewport();
     void SyncPolygonModes();
+    void SyncColorMask();
 
     typedef struct 
     {
