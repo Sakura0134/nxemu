@@ -43,6 +43,9 @@ private:
     void SyncViewport();
     void SyncPolygonModes();
     void SyncColorMask();
+    void SyncMultiSampleState();
+
+    static void OpenGLEnable(GLenum Cap, bool Enable);
 
     typedef struct 
     {

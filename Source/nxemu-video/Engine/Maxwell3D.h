@@ -346,6 +346,17 @@ public:
         uint32_t EndCount;
     } tyMMEDrawState;
 
+    typedef union
+    {
+        uint32_t Value;
+        struct
+        {
+            unsigned AlphaToCoverage : 1;
+            unsigned : 3;
+            unsigned AlphaToOne : 1;
+        };
+    } tyMultiSampleControl;
+
     typedef struct _tyQuery
     {
         uint32_t AddressHigh;
@@ -595,7 +606,8 @@ public:
             CounterReset CounterReset;
             PADDING_WORDS(0x1);
             uint32_t ZetaEnable;
-            PADDING_WORDS(0x5);
+            tyMultiSampleControl MultisampleControl;
+            PADDING_WORDS(0x4);
             tyCondition Condition;
             tyAdrressLimit Tsc;
             PADDING_WORDS(0x3);
@@ -677,6 +689,7 @@ public:
         Method_IndexArrayCount = offsetof(Registers, IndexArray.Count) / sizeof(uint32_t),
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
+        Method_MultisampleControl = offsetof(Registers, MultisampleControl) / sizeof(uint32_t),
         Method_PolygonModeBack = offsetof(Registers, PolygonModeBack) / sizeof(uint32_t),
         Method_PolygonModeFront = offsetof(Registers, PolygonModeFront) / sizeof(uint32_t),
         Method_QueryGet = offsetof(Registers, Query.QueryGet) / sizeof(uint32_t),
@@ -823,6 +836,7 @@ ASSERT_REG_POSITION(FragmentColorClamp, 0x4EA);
 ASSERT_REG_POSITION(ScreenYControl, 0x4EB);
 ASSERT_REG_POSITION(CounterReset, 0x54C);
 ASSERT_REG_POSITION(ZetaEnable, 0x54E);
+ASSERT_REG_POSITION(MultisampleControl, 0x54F);
 ASSERT_REG_POSITION(Condition, 0x554);
 ASSERT_REG_POSITION(Tsc, 0x557);
 ASSERT_REG_POSITION(Tic, 0x55D);

@@ -38,6 +38,7 @@ enum OpenGLDirtyFlag
 
     OpenGLDirtyFlag_FrontFace,
     OpenGLDirtyFlag_StencilTest,
+    OpenGLDirtyFlag_MultisampleControl,
     OpenGLDirtyFlag_RasterizeEnable,
     OpenGLDirtyFlag_FramebufferSRGB,
     OpenGLDirtyFlag_FragmentClampColor,
@@ -67,6 +68,7 @@ private:
     void SetupScissors(void);
     void SetupPolygonModes(void);
     void SetupStencilTest(void);
+    void SetupMultisampleControl(void);
     void SetupRasterizeEnable(void);
     void SetupFramebufferSRGB(void);
     void SetupFragmentClampColor(void);

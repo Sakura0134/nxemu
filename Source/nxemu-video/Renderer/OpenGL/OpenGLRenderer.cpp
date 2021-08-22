@@ -158,6 +158,8 @@ void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
     SyncRasterizeEnable();
     SyncPolygonModes();
     SyncColorMask();
+    SyncFragmentColorClampState();
+    SyncMultiSampleState();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -233,15 +235,7 @@ void OpenGLRenderer::SyncStencilTestState()
     StateTracker.FlagClear(OpenGLDirtyFlag_StencilTest);
 
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
-    if (Regs.StencilEnable != 0)
-    {
-        glEnable(GL_STENCIL_TEST);
-    } 
-    else 
-    {
-        glDisable(GL_STENCIL_TEST);
-    }
-
+    OpenGLEnable(GL_STENCIL_TEST, Regs.StencilEnable != 0);
     glStencilFuncSeparate(GL_FRONT, MaxwellToOpenGL_ComparisonOp(Regs.StencilFrontFuncFunc), Regs.StencilFrontFuncRef, Regs.StencilFrontFuncMask);
     glStencilOpSeparate(GL_FRONT, MaxwellToOpenGL_StencilOp(Regs.StencilFrontOpFail), MaxwellToOpenGL_StencilOp(Regs.StencilFrontOpZFail), MaxwellToOpenGL_StencilOp(Regs.StencilFrontOpZPass));
     glStencilMaskSeparate(GL_FRONT, Regs.StencilFrontMask);
@@ -439,5 +433,31 @@ void OpenGLRenderer::SyncColorMask()
 
         const CMaxwell3D::tyColorMask & Mask = Regs.ColorMask[i];
         glColorMaski(i, Mask.R != 0, Mask.G != 0, Mask.B != 0, Mask.A != 0);
+    }
+}
+
+void OpenGLRenderer::SyncMultiSampleState()
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_MultisampleControl))
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_MultisampleControl);
+
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+    OpenGLEnable(GL_SAMPLE_ALPHA_TO_COVERAGE, Regs.MultisampleControl.AlphaToCoverage);
+    OpenGLEnable(GL_SAMPLE_ALPHA_TO_ONE, Regs.MultisampleControl.AlphaToOne);
+}
+
+void OpenGLRenderer::OpenGLEnable(GLenum Cap, bool Enable) 
+{
+    if (Enable)
+    {
+        glEnable(Cap);
+    }
+    else
+    {
+        glDisable(Cap);
     }
 }

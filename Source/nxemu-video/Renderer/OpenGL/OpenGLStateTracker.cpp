@@ -12,6 +12,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     SetupViewports();
     SetupScissors();
     SetupPolygonModes();
+    SetupMultisampleControl();
     SetupRasterizeEnable();
     SetupFramebufferSRGB();
     SetupFragmentClampColor();
@@ -158,6 +159,15 @@ void OpenGLStateTracker::SetupStencilTest(void)
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilBackOpZPass, 1, OpenGLDirtyFlag_StencilTest);
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilBackMask, 1, OpenGLDirtyFlag_StencilTest);
 }
+void OpenGLStateTracker::SetupMultisampleControl(void) 
+{
+    enum 
+    {
+        MultisampleControlSize = (sizeof(CMaxwell3D::Registers::MultisampleControl) / (sizeof(uint32_t))),
+    };
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_MultisampleControl, MultisampleControlSize, OpenGLDirtyFlag_MultisampleControl);
+}
+
 void OpenGLStateTracker::SetupRasterizeEnable(void) 
 {
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_RasterizeEnable, 1, OpenGLDirtyFlag_RasterizeEnable);
