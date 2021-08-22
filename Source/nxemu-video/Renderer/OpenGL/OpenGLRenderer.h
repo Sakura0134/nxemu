@@ -44,6 +44,7 @@ private:
     void SyncPolygonModes();
     void SyncColorMask();
     void SyncMultiSampleState();
+    void SyncDepthTestState();
 
     static void OpenGLEnable(GLenum Cap, bool Enable);
 

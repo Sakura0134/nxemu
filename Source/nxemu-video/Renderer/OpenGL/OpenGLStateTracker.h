@@ -37,6 +37,8 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_PolygonModeBack,
 
     OpenGLDirtyFlag_FrontFace,
+    OpenGLDirtyFlag_DepthMask,
+    OpenGLDirtyFlag_DepthTest,
     OpenGLDirtyFlag_StencilTest,
     OpenGLDirtyFlag_MultisampleControl,
     OpenGLDirtyFlag_RasterizeEnable,
@@ -67,6 +69,7 @@ private:
     void SetupViewports(void);
     void SetupScissors(void);
     void SetupPolygonModes(void);
+    void SetupDepthTest(void);
     void SetupStencilTest(void);
     void SetupMultisampleControl(void);
     void SetupRasterizeEnable(void);

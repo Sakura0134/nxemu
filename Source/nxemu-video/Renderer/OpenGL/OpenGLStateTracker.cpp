@@ -140,6 +140,13 @@ void OpenGLStateTracker::SetupPolygonModes(void)
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_FillRectangle, 1, OpenGLDirtyFlag_PolygonModes);
 }
 
+void OpenGLStateTracker::SetupDepthTest(void)
+{
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_DepthTestEnable, 1, OpenGLDirtyFlag_DepthTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_DepthWriteEnabled, 1, OpenGLDirtyFlag_DepthMask);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_DepthTestFunc, 1, OpenGLDirtyFlag_DepthTest);
+}
+
 void OpenGLStateTracker::SetupStencilTest(void) 
 {
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilEnable, 1, OpenGLDirtyFlag_StencilTest);

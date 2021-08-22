@@ -160,6 +160,7 @@ void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
     SyncColorMask();
     SyncFragmentColorClampState();
     SyncMultiSampleState();
+    SyncDepthTestState();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -448,6 +449,28 @@ void OpenGLRenderer::SyncMultiSampleState()
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
     OpenGLEnable(GL_SAMPLE_ALPHA_TO_COVERAGE, Regs.MultisampleControl.AlphaToCoverage);
     OpenGLEnable(GL_SAMPLE_ALPHA_TO_ONE, Regs.MultisampleControl.AlphaToOne);
+}
+
+void OpenGLRenderer::SyncDepthTestState()
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+
+    if (StateTracker.Flag(OpenGLDirtyFlag_DepthMask)) 
+    {
+        StateTracker.FlagClear(OpenGLDirtyFlag_DepthMask);
+        glDepthMask(Regs.DepthWriteEnabled != 0 ? GL_TRUE : GL_FALSE);
+    }
+
+    if (StateTracker.Flag(OpenGLDirtyFlag_DepthTest))
+    {
+        StateTracker.FlagClear(OpenGLDirtyFlag_DepthTest);
+        OpenGLEnable(GL_DEPTH_TEST, Regs.DepthTestEnable != 0);
+        if (Regs.DepthTestEnable != 0) 
+        {
+            glDepthFunc(MaxwellToOpenGL_ComparisonOp(Regs.DepthTestFunc));
+        }
+    }
 }
 
 void OpenGLRenderer::OpenGLEnable(GLenum Cap, bool Enable) 

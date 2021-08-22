@@ -590,7 +590,13 @@ public:
             PADDING_WORDS(0x2);
             uint32_t ZetaWidth;
             uint32_t ZetaHeight;
-            PADDING_WORDS(0x54);
+            PADDING_WORDS(0x27);
+            uint32_t DepthTestEnable;
+            PADDING_WORDS(0x6);
+            uint32_t DepthWriteEnabled;
+            PADDING_WORDS(0x8);
+            ComparisonOp DepthTestFunc;
+            PADDING_WORDS(0x1C);
             uint32_t StencilEnable;
             StencilOp StencilFrontOpFail;
             StencilOp StencilFrontOpZFail;
@@ -677,6 +683,9 @@ public:
         Method_CounterReset = offsetof(Registers, CounterReset) / sizeof(uint32_t),
         Method_DataUpload = offsetof(Registers, DataUpload) / sizeof(uint32_t),
         Method_DepthMode = offsetof(Registers, DepthMode) / sizeof(uint32_t),
+        Method_DepthTestEnable = offsetof(Registers, DepthTestEnable) / sizeof(uint32_t),
+        Method_DepthTestFunc = offsetof(Registers, DepthTestFunc) / sizeof(uint32_t),
+        Method_DepthWriteEnabled = offsetof(Registers, DepthWriteEnabled) / sizeof(uint32_t),
         Method_DrawVertexBeginGL = offsetof(Registers, Draw.VertexBeginGL) / sizeof(uint32_t),
         Method_DrawVertexEndGL = offsetof(Registers, Draw.VertexEndGL) / sizeof(uint32_t),
         Method_ExecUpload = offsetof(Registers, ExecUpload) / sizeof(uint32_t),
@@ -824,6 +833,9 @@ ASSERT_REG_POSITION(FillRectangle, 0x44F);
 ASSERT_REG_POSITION(RTControl, 0x487);
 ASSERT_REG_POSITION(ZetaWidth, 0x48a);
 ASSERT_REG_POSITION(ZetaHeight, 0x48b);
+ASSERT_REG_POSITION(DepthTestEnable, 0x4B3);
+ASSERT_REG_POSITION(DepthWriteEnabled, 0x4BA);
+ASSERT_REG_POSITION(DepthTestFunc, 0x4C3);
 ASSERT_REG_POSITION(StencilEnable, 0x4E0);
 ASSERT_REG_POSITION(StencilFrontOpFail, 0x4E1);
 ASSERT_REG_POSITION(StencilFrontOpZFail, 0x4E2);
