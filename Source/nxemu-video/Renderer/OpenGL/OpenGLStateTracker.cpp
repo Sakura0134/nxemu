@@ -12,6 +12,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     SetupViewports();
     SetupScissors();
     SetupPolygonModes();
+    SetupPrimitiveRestart();
     SetupMultisampleControl();
     SetupRasterizeEnable();
     SetupFramebufferSRGB();
@@ -190,6 +191,15 @@ void OpenGLStateTracker::SetupBlend(void)
     }
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_IndependentBlend, IndependentBlendSize, OpenGLDirtyFlag_BlendStates);
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_Blend, BlendSize, OpenGLDirtyFlag_BlendStates);
+}
+
+void OpenGLStateTracker::SetupPrimitiveRestart(void)
+{
+    enum 
+    {
+        PrimitiveRestartSize = (sizeof(CMaxwell3D::Registers::PrimitiveRestart) / (sizeof(uint32_t))),
+    };
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PrimitiveRestart, PrimitiveRestartSize, OpenGLDirtyFlag_PrimitiveRestart);
 }
 void OpenGLStateTracker::SetupMultisampleControl(void) 
 {

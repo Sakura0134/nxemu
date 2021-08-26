@@ -479,6 +479,12 @@ public:
         };
     } tyMultiSampleControl;
 
+    typedef struct
+    {
+        uint32_t Enabled;
+        uint32_t Index;
+    } tyPrimitiveRestart;
+
     typedef struct _tyQuery
     {
         uint32_t AddressHigh;
@@ -770,7 +776,9 @@ public:
             MsaaMode MultisampleMode;
             PADDING_WORDS(0x10);
             tyDraw Draw;
-            PADDING_WORDS(0x6B);
+            PADDING_WORDS(0xA);
+            tyPrimitiveRestart PrimitiveRestart;
+            PADDING_WORDS(0x5F);
             tyIndexArray IndexArray;
             PADDING_WORDS(0x4D);
             uint32_t CullTestEnabled;
@@ -857,6 +865,7 @@ public:
         Method_MultisampleControl = offsetof(Registers, MultisampleControl) / sizeof(uint32_t),
         Method_PolygonModeBack = offsetof(Registers, PolygonModeBack) / sizeof(uint32_t),
         Method_PolygonModeFront = offsetof(Registers, PolygonModeFront) / sizeof(uint32_t),
+        Method_PrimitiveRestart = offsetof(Registers, PrimitiveRestart) / sizeof(uint32_t),
         Method_QueryGet = offsetof(Registers, Query.QueryGet) / sizeof(uint32_t),
         Method_RasterizeEnable = offsetof(Registers, RasterizeEnable) / sizeof(uint32_t),
         Method_RenderArea = offsetof(Registers, RenderArea) / sizeof(uint32_t),
@@ -1020,6 +1029,7 @@ ASSERT_REG_POSITION(StencilBackFuncFunc, 0x569);
 ASSERT_REG_POSITION(FramebufferSRGB, 0x56E);
 ASSERT_REG_POSITION(MultisampleMode, 0x574);
 ASSERT_REG_POSITION(Draw, 0x585);
+ASSERT_REG_POSITION(PrimitiveRestart, 0x591);
 ASSERT_REG_POSITION(IndexArray, 0x5F2);
 ASSERT_REG_POSITION(CullTestEnabled, 0x646);
 ASSERT_REG_POSITION(FrontFace, 0x647);

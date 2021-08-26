@@ -48,6 +48,7 @@ private:
     void SyncDepthClamp();
     void SyncLogicOpState();
     void SyncCullMode();
+    void SyncPrimitiveRestart();
     void SyncBlendState();
 
     static void OpenGLEnable(GLenum Cap, bool Enable);
