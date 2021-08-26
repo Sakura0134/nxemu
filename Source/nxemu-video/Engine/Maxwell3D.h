@@ -134,6 +134,13 @@ public:
         CounterReset_GeneratedPrimitives = 0x1F,
     };
 
+    enum CullFace : unsigned
+    {
+        CullFace_Front = 0x0404,
+        CullFace_Back = 0x0405,
+        CullFace_FrontAndBack = 0x0408,
+    };
+
     enum DepthMode : unsigned
     {
         DepthMode_MinusOneToOne = 0,
@@ -765,9 +772,11 @@ public:
             tyDraw Draw;
             PADDING_WORDS(0x6B);
             tyIndexArray IndexArray;
-            PADDING_WORDS(0x4E);
+            PADDING_WORDS(0x4D);
+            uint32_t CullTestEnabled;
             FrontFace FrontFace;
-            PADDING_WORDS(0x3);
+            CullFace CullFace;
+            PADDING_WORDS(0x2);
             uint32_t ViewportTransformEnabled;
             PADDING_WORDS(0x3);
             tyViewVolumeClipControl ViewVolumeClipControl;
@@ -823,6 +832,8 @@ public:
         Method_ConstBufferData14 = (offsetof(Registers, ConstBuffer.Data) + (sizeof(Registers::ConstBuffer.Data[0]) * 14)) / sizeof(uint32_t),
         Method_ConstBufferData15 = (offsetof(Registers, ConstBuffer.Data) + (sizeof(Registers::ConstBuffer.Data[0]) * 15)) / sizeof(uint32_t),
         Method_CounterReset = offsetof(Registers, CounterReset) / sizeof(uint32_t),
+        Method_CullFace = offsetof(Registers, CullFace) / sizeof(uint32_t),
+        Method_CullTestEnabled = offsetof(Registers, CullTestEnabled) / sizeof(uint32_t),
         Method_DataUpload = offsetof(Registers, DataUpload) / sizeof(uint32_t),
         Method_DepthMode = offsetof(Registers, DepthMode) / sizeof(uint32_t),
         Method_DepthTestEnable = offsetof(Registers, DepthTestEnable) / sizeof(uint32_t),
@@ -1010,7 +1021,9 @@ ASSERT_REG_POSITION(FramebufferSRGB, 0x56E);
 ASSERT_REG_POSITION(MultisampleMode, 0x574);
 ASSERT_REG_POSITION(Draw, 0x585);
 ASSERT_REG_POSITION(IndexArray, 0x5F2);
+ASSERT_REG_POSITION(CullTestEnabled, 0x646);
 ASSERT_REG_POSITION(FrontFace, 0x647);
+ASSERT_REG_POSITION(CullFace, 0x648);
 ASSERT_REG_POSITION(ViewportTransformEnabled, 0x64B);
 ASSERT_REG_POSITION(ViewVolumeClipControl, 0x64F);
 ASSERT_REG_POSITION(LogicOp, 0x671);

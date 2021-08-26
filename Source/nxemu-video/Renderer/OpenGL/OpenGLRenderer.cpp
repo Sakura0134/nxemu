@@ -165,6 +165,7 @@ void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
     SyncStencilTestState();
     SyncBlendState();
     SyncLogicOpState();
+    SyncCullMode();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -504,6 +505,23 @@ void OpenGLRenderer::SyncLogicOpState()
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
     } 
+}
+
+void OpenGLRenderer::SyncCullMode()
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+
+    if (StateTracker.Flag(OpenGLDirtyFlag_CullTest)) 
+    {
+        StateTracker.FlagSet(OpenGLDirtyFlag_CullTest);
+
+        OpenGLEnable(GL_CULL_FACE, Regs.CullTestEnabled != 0);
+        if (Regs.CullTestEnabled != 0) 
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
 }
 
 void OpenGLRenderer::SyncBlendState() 

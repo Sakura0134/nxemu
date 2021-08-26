@@ -43,6 +43,7 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_PolygonModeBack,
 
     OpenGLDirtyFlag_FrontFace,
+    OpenGLDirtyFlag_CullTest,
     OpenGLDirtyFlag_DepthMask,
     OpenGLDirtyFlag_DepthTest,
     OpenGLDirtyFlag_StencilTest,
