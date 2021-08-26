@@ -15,6 +15,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     SetupMultisampleControl();
     SetupRasterizeEnable();
     SetupFramebufferSRGB();
+    SetupLogicOp();
     SetupFragmentClampColor();
     SetupClipControl();
     SetupDepthClampEnabled();
@@ -207,6 +208,15 @@ void OpenGLStateTracker::SetupRasterizeEnable(void)
 void OpenGLStateTracker::SetupFramebufferSRGB(void)
 {
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_FramebufferSRGB, 1, OpenGLDirtyFlag_FramebufferSRGB);
+}
+
+void OpenGLStateTracker::SetupLogicOp(void) 
+{
+    enum 
+    {
+        LogicOpSize = (sizeof(CMaxwell3D::Registers::LogicOp) / (sizeof(uint32_t))),
+    };
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_LogicOp, LogicOpSize, OpenGLDirtyFlag_LogicOp);
 }
 
 void OpenGLStateTracker::SetupFragmentClampColor(void)

@@ -153,6 +153,26 @@ public:
         IndexFormat_UnsignedInt = 0x2,
     };
 
+    enum LogicOperation : unsigned
+    {
+        LogicOperation_Clear = 0x1500,
+        LogicOperation_And = 0x1501,
+        LogicOperation_AndReverse = 0x1502,
+        LogicOperation_Copy = 0x1503,
+        LogicOperation_AndInverted = 0x1504,
+        LogicOperation_NoOp = 0x1505,
+        LogicOperation_Xor = 0x1506,
+        LogicOperation_Or = 0x1507,
+        LogicOperation_Nor = 0x1508,
+        LogicOperation_Equiv = 0x1509,
+        LogicOperation_Invert = 0x150A,
+        LogicOperation_OrReverse = 0x150B,
+        LogicOperation_CopyInverted = 0x150C,
+        LogicOperation_OrInverted = 0x150D,
+        LogicOperation_Nand = 0x150E,
+        LogicOperation_Set = 0x150F,
+    };
+
     enum MMEDrawMode : unsigned
     {
         MMEDrawMode_Undefined,
@@ -416,6 +436,12 @@ public:
         uint32_t First;
         uint32_t Count;
     } tyIndexArray;
+
+    typedef struct
+    {
+        uint32_t Enable;
+        LogicOperation Operation;
+    } tyLogicOp;
 
     typedef struct
     {
@@ -745,7 +771,9 @@ public:
             uint32_t ViewportTransformEnabled;
             PADDING_WORDS(0x3);
             tyViewVolumeClipControl ViewVolumeClipControl;
-            PADDING_WORDS(0x24);
+            PADDING_WORDS(0x21);
+            tyLogicOp LogicOp;
+            PADDING_WORDS(0x1);
             tyClearBuffers ClearBuffers;
             PADDING_WORDS(0xB);
             tyColorMask ColorMask[NumRenderTargets];
@@ -812,6 +840,7 @@ public:
         Method_IndependentBlend = offsetof(Registers, IndependentBlend) / sizeof(uint32_t),
         Method_IndependentBlendEnable = offsetof(Registers, IndependentBlendEnable) / sizeof(uint32_t),
         Method_IndexArrayCount = offsetof(Registers, IndexArray.Count) / sizeof(uint32_t),
+        Method_LogicOp = offsetof(Registers, LogicOp) / sizeof(uint32_t),
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
         Method_MultisampleControl = offsetof(Registers, MultisampleControl) / sizeof(uint32_t),
@@ -984,6 +1013,7 @@ ASSERT_REG_POSITION(IndexArray, 0x5F2);
 ASSERT_REG_POSITION(FrontFace, 0x647);
 ASSERT_REG_POSITION(ViewportTransformEnabled, 0x64B);
 ASSERT_REG_POSITION(ViewVolumeClipControl, 0x64F);
+ASSERT_REG_POSITION(LogicOp, 0x671);
 ASSERT_REG_POSITION(ClearBuffers, 0x674);
 ASSERT_REG_POSITION(ColorMask, 0x680);
 ASSERT_REG_POSITION(Query, 0x6C0);

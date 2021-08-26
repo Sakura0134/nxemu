@@ -49,6 +49,7 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_MultisampleControl,
     OpenGLDirtyFlag_RasterizeEnable,
     OpenGLDirtyFlag_FramebufferSRGB,
+    OpenGLDirtyFlag_LogicOp,
     OpenGLDirtyFlag_FragmentClampColor,
     OpenGLDirtyFlag_ClipControl,
     OpenGLDirtyFlag_DepthClampEnabled,
@@ -82,6 +83,7 @@ private:
     void SetupMultisampleControl(void);
     void SetupRasterizeEnable(void);
     void SetupFramebufferSRGB(void);
+    void SetupLogicOp(void);
     void SetupFragmentClampColor(void);
     void SetupClipControl(void);
     void SetupDepthClampEnabled(void);

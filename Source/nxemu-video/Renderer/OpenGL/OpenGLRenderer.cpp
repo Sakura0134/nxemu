@@ -164,6 +164,7 @@ void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
     SyncDepthClamp();
     SyncStencilTestState();
     SyncBlendState();
+    SyncLogicOpState();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -486,6 +487,23 @@ void OpenGLRenderer::SyncDepthClamp()
     StateTracker.FlagClear(OpenGLDirtyFlag_DepthClampEnabled);
 
     OpenGLEnable(GL_DEPTH_CLAMP, m_Video.Maxwell3D().Regs().ViewVolumeClipControl.DepthClampDisabled == 0);
+}
+
+void OpenGLRenderer::SyncLogicOpState()
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_LogicOp)) 
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_LogicOp);
+
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+    OpenGLEnable(GL_COLOR_LOGIC_OP, Regs.LogicOp.Enable != 0);
+    if (Regs.LogicOp.Enable != 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    } 
 }
 
 void OpenGLRenderer::SyncBlendState() 
