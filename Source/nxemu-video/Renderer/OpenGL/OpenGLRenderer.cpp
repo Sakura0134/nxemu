@@ -170,6 +170,7 @@ void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
     SyncScissorTest();
     SyncPointState();
     SyncLineState();
+    SyncPolygonOffset();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -557,6 +558,26 @@ void OpenGLRenderer::SyncLineState()
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
     OpenGLEnable(GL_LINE_SMOOTH, Regs.LineSmoothEnable != 0);
     glLineWidth(Regs.LineSmoothEnable ? Regs.LineWidthSmooth : Regs.LineWidthAliased);
+}
+
+void OpenGLRenderer::SyncPolygonOffset() 
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_PolygonOffset)) 
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_PolygonOffset);
+
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+    OpenGLEnable(GL_POLYGON_OFFSET_FILL, Regs.PolygonOffsetFillEnable != 0);
+    OpenGLEnable(GL_POLYGON_OFFSET_LINE, Regs.PolygonOffsetLineEnable != 0);
+    OpenGLEnable(GL_POLYGON_OFFSET_POINT, Regs.PolygonOffsetPointEnable != 0);
+
+    if (Regs.PolygonOffsetFillEnable || Regs.PolygonOffsetLineEnable || Regs.PolygonOffsetPointEnable)
+    {
+        glPolygonOffsetClamp(Regs.PolygonOffsetFactor, Regs.PolygonOffsetUnits / 2.0f, Regs.PolygonOffsetClamp);
+    }
 }
 
 void OpenGLRenderer::SyncBlendState() 

@@ -48,6 +48,7 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_DepthTest,
     OpenGLDirtyFlag_StencilTest,
     OpenGLDirtyFlag_PrimitiveRestart,
+    OpenGLDirtyFlag_PolygonOffset,
     OpenGLDirtyFlag_MultisampleControl,
     OpenGLDirtyFlag_RasterizeEnable,
     OpenGLDirtyFlag_FramebufferSRGB,
@@ -85,6 +86,7 @@ private:
     void SetupStencilTest(void);
     void SetupBlend(void);
     void SetupPrimitiveRestart(void);
+    void SetupPolygonOffset(void);
     void SetupMultisampleControl(void);
     void SetupRasterizeEnable(void);
     void SetupFramebufferSRGB(void);

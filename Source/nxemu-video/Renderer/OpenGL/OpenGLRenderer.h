@@ -50,6 +50,7 @@ private:
     void SyncCullMode();
     void SyncPrimitiveRestart();
     void SyncLineState();
+    void SyncPolygonOffset();
     void SyncBlendState();
     void SyncPointState();
 

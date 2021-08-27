@@ -13,6 +13,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     SetupScissors();
     SetupPolygonModes();
     SetupPrimitiveRestart();
+    SetupPolygonOffset();
     SetupMultisampleControl();
     SetupRasterizeEnable();
     SetupFramebufferSRGB();
@@ -203,6 +204,17 @@ void OpenGLStateTracker::SetupPrimitiveRestart(void)
     };
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PrimitiveRestart, PrimitiveRestartSize, OpenGLDirtyFlag_PrimitiveRestart);
 }
+
+void OpenGLStateTracker::SetupPolygonOffset(void) 
+{
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PolygonOffsetFillEnable, 1, OpenGLDirtyFlag_PolygonOffset);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PolygonOffsetLineEnable, 1, OpenGLDirtyFlag_PolygonOffset);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PolygonOffsetPointEnable, 1, OpenGLDirtyFlag_PolygonOffset);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PolygonOffsetFactor, 1, OpenGLDirtyFlag_PolygonOffset);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PolygonOffsetUnits, 1, OpenGLDirtyFlag_PolygonOffset);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PolygonOffsetClamp, 1, OpenGLDirtyFlag_PolygonOffset);
+}
+
 void OpenGLStateTracker::SetupMultisampleControl(void) 
 {
     enum 

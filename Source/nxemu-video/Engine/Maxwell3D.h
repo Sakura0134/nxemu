@@ -717,7 +717,11 @@ public:
             PADDING_WORDS(0x2);
             PolygonMode PolygonModeFront;
             PolygonMode PolygonModeBack;
-            PADDING_WORDS(0xB);
+            PADDING_WORDS(0x3);
+            uint32_t PolygonOffsetPointEnable;
+            uint32_t PolygonOffsetLineEnable;
+            uint32_t PolygonOffsetFillEnable;
+            PADDING_WORDS(0x5);
             uint32_t FragmentBarrier;
             PADDING_WORDS(0x7);
             tyScissorTest ScissorTest[NumViewPorts];
@@ -777,7 +781,8 @@ public:
             PADDING_WORDS(0x4);
             tyCondition Condition;
             tyAdrressLimit Tsc;
-            PADDING_WORDS(0x2);
+            PADDING_WORDS(0x1);
+            float PolygonOffsetFactor;
             uint32_t LineSmoothEnable;
             tyAdrressLimit Tic;
             PADDING_WORDS(0x5);
@@ -788,7 +793,8 @@ public:
             ComparisonOp StencilBackFuncFunc;
             PADDING_WORDS(0x4);
             uint32_t FramebufferSRGB;
-            PADDING_WORDS(0x5);
+            float PolygonOffsetUnits;
+            PADDING_WORDS(0x4);
             MsaaMode MultisampleMode;
             PADDING_WORDS(0x10);
             tyDraw Draw;
@@ -796,7 +802,9 @@ public:
             tyPrimitiveRestart PrimitiveRestart;
             PADDING_WORDS(0x5F);
             tyIndexArray IndexArray;
-            PADDING_WORDS(0x4B);
+            PADDING_WORDS(0x26);
+            float PolygonOffsetClamp;
+            PADDING_WORDS(0x24);
             tyVPPointSize VPPointSize;
             PADDING_WORDS(1);
             uint32_t CullTestEnabled;
@@ -888,6 +896,12 @@ public:
         Method_PointSpriteEnable = offsetof(Registers, PointSpriteEnable) / sizeof(uint32_t),
         Method_PolygonModeBack = offsetof(Registers, PolygonModeBack) / sizeof(uint32_t),
         Method_PolygonModeFront = offsetof(Registers, PolygonModeFront) / sizeof(uint32_t),
+        Method_PolygonOffsetClamp = offsetof(Registers, PolygonOffsetClamp) / sizeof(uint32_t),
+        Method_PolygonOffsetFactor = offsetof(Registers, PolygonOffsetFactor) / sizeof(uint32_t),
+        Method_PolygonOffsetFillEnable = offsetof(Registers, PolygonOffsetFillEnable) / sizeof(uint32_t),
+        Method_PolygonOffsetLineEnable = offsetof(Registers, PolygonOffsetLineEnable) / sizeof(uint32_t),
+        Method_PolygonOffsetPointEnable = offsetof(Registers, PolygonOffsetPointEnable) / sizeof(uint32_t),
+        Method_PolygonOffsetUnits = offsetof(Registers, PolygonOffsetUnits) / sizeof(uint32_t),
         Method_PrimitiveRestart = offsetof(Registers, PrimitiveRestart) / sizeof(uint32_t),
         Method_QueryGet = offsetof(Registers, Query.QueryGet) / sizeof(uint32_t),
         Method_RasterizeEnable = offsetof(Registers, RasterizeEnable) / sizeof(uint32_t),
@@ -1009,6 +1023,9 @@ ASSERT_REG_POSITION(ClearDepth, 0x364);
 ASSERT_REG_POSITION(ClearStencil, 0x368);
 ASSERT_REG_POSITION(PolygonModeFront, 0x36B);
 ASSERT_REG_POSITION(PolygonModeBack, 0x36C);
+ASSERT_REG_POSITION(PolygonOffsetPointEnable, 0x370);
+ASSERT_REG_POSITION(PolygonOffsetLineEnable, 0x371);
+ASSERT_REG_POSITION(PolygonOffsetFillEnable, 0x372);
 ASSERT_REG_POSITION(FragmentBarrier, 0x378);
 ASSERT_REG_POSITION(ScissorTest, 0x380);
 ASSERT_REG_POSITION(StencilBackFuncRef, 0x3D5);
@@ -1048,6 +1065,7 @@ ASSERT_REG_POSITION(ZetaEnable, 0x54E);
 ASSERT_REG_POSITION(MultisampleControl, 0x54F);
 ASSERT_REG_POSITION(Condition, 0x554);
 ASSERT_REG_POSITION(Tsc, 0x557);
+ASSERT_REG_POSITION(PolygonOffsetFactor, 0x55B);
 ASSERT_REG_POSITION(LineSmoothEnable, 0x55C);
 ASSERT_REG_POSITION(Tic, 0x55D);
 ASSERT_REG_POSITION(StencilTwoSideEnable, 0x565);
@@ -1056,10 +1074,12 @@ ASSERT_REG_POSITION(StencilBackOpZFail, 0x567);
 ASSERT_REG_POSITION(StencilBackOpZPass, 0x568);
 ASSERT_REG_POSITION(StencilBackFuncFunc, 0x569);
 ASSERT_REG_POSITION(FramebufferSRGB, 0x56E);
+ASSERT_REG_POSITION(PolygonOffsetUnits, 0x56F);
 ASSERT_REG_POSITION(MultisampleMode, 0x574);
 ASSERT_REG_POSITION(Draw, 0x585);
 ASSERT_REG_POSITION(PrimitiveRestart, 0x591);
 ASSERT_REG_POSITION(IndexArray, 0x5F2);
+ASSERT_REG_POSITION(PolygonOffsetClamp, 0x61F);
 ASSERT_REG_POSITION(VPPointSize, 0x644);
 ASSERT_REG_POSITION(CullTestEnabled, 0x646);
 ASSERT_REG_POSITION(FrontFace, 0x647);
