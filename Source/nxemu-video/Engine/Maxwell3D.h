@@ -763,7 +763,9 @@ public:
             PADDING_WORDS(0x2);
             uint32_t FragmentColorClamp;
             tyScreenYControl ScreenYControl;
-            PADDING_WORDS(0x5A);
+            float LineWidthSmooth;
+            float LineWidthAliased;
+            PADDING_WORDS(0x58);
             float PointSize;
             PADDING_WORDS(0x1);
             uint32_t PointSpriteEnable;
@@ -775,7 +777,8 @@ public:
             PADDING_WORDS(0x4);
             tyCondition Condition;
             tyAdrressLimit Tsc;
-            PADDING_WORDS(0x3);
+            PADDING_WORDS(0x2);
+            uint32_t LineSmoothEnable;
             tyAdrressLimit Tic;
             PADDING_WORDS(0x5);
             uint32_t StencilTwoSideEnable;
@@ -874,6 +877,9 @@ public:
         Method_IndependentBlend = offsetof(Registers, IndependentBlend) / sizeof(uint32_t),
         Method_IndependentBlendEnable = offsetof(Registers, IndependentBlendEnable) / sizeof(uint32_t),
         Method_IndexArrayCount = offsetof(Registers, IndexArray.Count) / sizeof(uint32_t),
+        Method_LineSmoothEnable = offsetof(Registers, LineSmoothEnable) / sizeof(uint32_t),
+        Method_LineWidthAliased = offsetof(Registers, LineWidthAliased) / sizeof(uint32_t),
+        Method_LineWidthSmooth = offsetof(Registers, LineWidthSmooth) / sizeof(uint32_t),
         Method_LogicOp = offsetof(Registers, LogicOp) / sizeof(uint32_t),
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
@@ -1033,6 +1039,8 @@ ASSERT_REG_POSITION(StencilFrontFuncMask, 0x4E6);
 ASSERT_REG_POSITION(StencilFrontMask, 0x4E7);
 ASSERT_REG_POSITION(FragmentColorClamp, 0x4EA);
 ASSERT_REG_POSITION(ScreenYControl, 0x4EB);
+ASSERT_REG_POSITION(LineWidthSmooth, 0x4EC);
+ASSERT_REG_POSITION(LineWidthAliased, 0x4ED);
 ASSERT_REG_POSITION(PointSize, 0x546);
 ASSERT_REG_POSITION(PointSpriteEnable, 0x548);
 ASSERT_REG_POSITION(CounterReset, 0x54C);
@@ -1040,6 +1048,7 @@ ASSERT_REG_POSITION(ZetaEnable, 0x54E);
 ASSERT_REG_POSITION(MultisampleControl, 0x54F);
 ASSERT_REG_POSITION(Condition, 0x554);
 ASSERT_REG_POSITION(Tsc, 0x557);
+ASSERT_REG_POSITION(LineSmoothEnable, 0x55C);
 ASSERT_REG_POSITION(Tic, 0x55D);
 ASSERT_REG_POSITION(StencilTwoSideEnable, 0x565);
 ASSERT_REG_POSITION(StencilBackOpFail, 0x566);

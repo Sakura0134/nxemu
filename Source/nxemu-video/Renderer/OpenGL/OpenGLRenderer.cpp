@@ -169,6 +169,7 @@ void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
     SyncPrimitiveRestart();
     SyncScissorTest();
     SyncPointState();
+    SyncLineState();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -542,6 +543,20 @@ void OpenGLRenderer::SyncPrimitiveRestart()
     {
         glPrimitiveRestartIndex(Regs.PrimitiveRestart.Index);
     }
+}
+
+void OpenGLRenderer::SyncLineState() 
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_LineWidth))
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_LineWidth);
+
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+    OpenGLEnable(GL_LINE_SMOOTH, Regs.LineSmoothEnable != 0);
+    glLineWidth(Regs.LineSmoothEnable ? Regs.LineWidthSmooth : Regs.LineWidthAliased);
 }
 
 void OpenGLRenderer::SyncBlendState() 

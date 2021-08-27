@@ -49,6 +49,7 @@ private:
     void SyncLogicOpState();
     void SyncCullMode();
     void SyncPrimitiveRestart();
+    void SyncLineState();
     void SyncBlendState();
     void SyncPointState();
 
