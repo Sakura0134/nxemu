@@ -22,6 +22,14 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_VertexFormat0,
     OpenGLDirtyFlag_VertexFormat31 = OpenGLDirtyFlag_VertexFormat0 + 31,
 
+    OpenGLDirtyFlag_VertexBuffers,
+    OpenGLDirtyFlag_VertexBuffer0,
+    OpenGLDirtyFlag_VertexBuffer31 = OpenGLDirtyFlag_VertexBuffer0 + 31,
+
+    OpenGLDirtyFlag_VertexInstances,
+    OpenGLDirtyFlag_VertexInstance0,
+    OpenGLDirtyFlag_VertexInstance31 = OpenGLDirtyFlag_VertexInstance0 + 31,
+
     OpenGLDirtyFlag_ViewportTransform,
     OpenGLDirtyFlag_Viewports,
     OpenGLDirtyFlag_Viewport0,
@@ -84,6 +92,7 @@ private:
 
     void SetupDirtyRenderTargets(void);
     void SetupColorMasks(void);
+    void SetupVertexArrays(void);
     void SetupVertexFormat(void);
     void SetupViewports(void);
     void SetupScissors(void);

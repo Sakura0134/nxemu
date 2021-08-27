@@ -10,6 +10,7 @@ public:
     void IncreaseMaxFlag(uint32_t MaxFlag);
 
     void OnMemoryWrite(void);
+    void MemoryWriteFlagSet(uint32_t Index);
 
     void FlagSetAll(void);
     void FlagSet(uint32_t Index);

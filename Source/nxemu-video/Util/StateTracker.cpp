@@ -48,6 +48,11 @@ void CStateTracker::OnMemoryWrite(void)
     }
 }
 
+void CStateTracker::MemoryWriteFlagSet(uint32_t Index) 
+{
+    m_MemoryWriteFlag[Index] = true;
+}
+
 void CStateTracker::FlagSetAll(void) 
 {
     for (size_t i = 0, n = m_Flags.size(); i < n; i++) 

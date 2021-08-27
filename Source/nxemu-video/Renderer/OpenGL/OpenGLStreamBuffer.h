@@ -21,10 +21,15 @@ public:
 
     bool Init(const OpenGLDevice & Device);
     void Map(uint32_t MaxSize);
+    uint64_t UploadMemory(uint64_t GpuAddr, uint32_t Size, uint32_t Alignment);
+    OpenGLBufferPtr & Buffer() { return m_Buffer; }
+
 private:
     OpenGLStreamBuffer(void);
     OpenGLStreamBuffer(const OpenGLStreamBuffer&);
     OpenGLStreamBuffer& operator=(const OpenGLStreamBuffer&);
+
+    void AlignBuffer(uint32_t Alignment);
 
     ISwitchSystem & m_System;
     CVideoMemory & m_VideoMemory;

@@ -170,6 +170,22 @@ bool CVideoMemory::GpuToCpuAddress(uint64_t GpuAddr, uint64_t& CpuAddress) const
     return true;
 }
 
+uint8_t * CVideoMemory::GetPointer(uint64_t GpuAddr)
+{
+    if (!GetPageEntry(GpuAddr).IsValid()) 
+    {
+        return nullptr;
+    }
+
+    uint64_t CpuAddr;
+    if (!GpuToCpuAddress(GpuAddr, CpuAddr)) 
+    {
+        return nullptr;
+    }
+
+    return m_System.GetCPUMemoryPointer(CpuAddr);
+}
+
 void CVideoMemory::ReadBuffer(uint64_t GpuAddr, void * Buffer, uint64_t Size) const 
 {
     uint64_t RemainingSize = Size;
@@ -242,3 +258,13 @@ void CVideoMemory::WriteBuffer(uint64_t GpuAddr, const void* Buffer, uint64_t Si
     }
 }
 
+bool CVideoMemory::IsGranularRange(uint64_t GpuAddr, uint64_t Size) const
+{
+    uint64_t CpuAddr;
+    if (!GpuToCpuAddress(GpuAddr, CpuAddr))
+    {
+        return false;
+    }
+    uint64_t Page = (CpuAddr & CpuPageMask) + Size;
+    return Page <= CpuPageSize;
+}

@@ -50,6 +50,7 @@ public:
     void Release();
 
     void BindBuffer(GLenum Target) const;
+    void BindVertexBuffer(GLuint BindingIndex, GLintptr Offset, GLsizei Stride) const;
     void NamedBufferStorage(GLsizeiptr Size, const void * Data, GLbitfield Flags);
     void * MapNamedBufferRange(GLintptr Offset, GLsizeiptr length, GLbitfield access);
 

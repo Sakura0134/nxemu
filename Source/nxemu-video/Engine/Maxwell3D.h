@@ -466,6 +466,13 @@ public:
         PADDING_WORDS(1);
     } tyIndependentBlend;
 
+    typedef struct _tyInstancedArrays
+    {
+        uint32_t IsInstanced[NumVertexArrays];
+
+        bool IsInstancingEnabled(uint32_t Index) const;
+    } tyInstancedArrays;
+
     typedef struct _tyIndexArray
     {
         uint32_t StartAddrHigh;
@@ -897,7 +904,8 @@ public:
             tyIndexArray IndexArray;
             PADDING_WORDS(0x26);
             float PolygonOffsetClamp;
-            PADDING_WORDS(0x24);
+            tyInstancedArrays InstancedArrays;
+            PADDING_WORDS(0x4);
             tyVPPointSize VPPointSize;
             PADDING_WORDS(1);
             uint32_t CullTestEnabled;
@@ -983,6 +991,7 @@ public:
         Method_IndependentBlend = offsetof(Registers, IndependentBlend) / sizeof(uint32_t),
         Method_IndependentBlendEnable = offsetof(Registers, IndependentBlendEnable) / sizeof(uint32_t),
         Method_IndexArrayCount = offsetof(Registers, IndexArray.Count) / sizeof(uint32_t),
+        Method_InstancedArrays = offsetof(Registers, InstancedArrays) / sizeof(uint32_t),
         Method_LineSmoothEnable = offsetof(Registers, LineSmoothEnable) / sizeof(uint32_t),
         Method_LineWidthAliased = offsetof(Registers, LineWidthAliased) / sizeof(uint32_t),
         Method_LineWidthSmooth = offsetof(Registers, LineWidthSmooth) / sizeof(uint32_t),
@@ -1185,6 +1194,7 @@ ASSERT_REG_POSITION(Draw, 0x585);
 ASSERT_REG_POSITION(PrimitiveRestart, 0x591);
 ASSERT_REG_POSITION(IndexArray, 0x5F2);
 ASSERT_REG_POSITION(PolygonOffsetClamp, 0x61F);
+ASSERT_REG_POSITION(InstancedArrays, 0x620);
 ASSERT_REG_POSITION(VPPointSize, 0x644);
 ASSERT_REG_POSITION(CullTestEnabled, 0x646);
 ASSERT_REG_POSITION(FrontFace, 0x647);

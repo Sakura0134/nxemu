@@ -19,6 +19,7 @@ class OpenGLRenderer :
     enum 
     {
         NUM_SUPPORTED_VERTEX_ATTRIBUTES = 16,
+        NUM_SUPPORTED_VERTEX_BINDINGS = 16,
     };
 
 public:
@@ -44,6 +45,7 @@ private:
     OpenGLRenderer& operator=(const OpenGLRenderer&);
 
     void SetupVertexFormat();
+    void SetupVertexBuffer();
     void SyncFragmentColorClampState();
     void SyncFramebufferSRGB();
     void SyncRasterizeEnable();

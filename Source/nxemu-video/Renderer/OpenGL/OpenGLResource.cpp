@@ -132,6 +132,16 @@ void OpenGLBuffer::BindBuffer(GLenum Target) const
     glBindBuffer(Target, m_Handle);
 }
 
+void OpenGLBuffer::BindVertexBuffer(GLuint BindingIndex, GLintptr Offset, GLsizei Stride) const
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glBindVertexBuffer(BindingIndex, m_Handle, Offset, Stride);
+}
+
 void OpenGLBuffer::NamedBufferStorage(GLsizeiptr Size, const void * Data, GLbitfield Flags) 
 {
     if (m_Handle == 0) 

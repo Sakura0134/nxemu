@@ -15,6 +15,9 @@ class CVideoMemory
         PageTableBits = 24,
         PageTableSize = 1 << PageTableBits,
         PageTableMask = PageTableSize - 1,
+        CpuPageBits = 12,
+        CpuPageSize = 1ULL << CpuPageBits,
+        CpuPageMask = CpuPageSize - 1,
     };
 
     class PageEntry
@@ -60,9 +63,11 @@ public:
 
     void BindRenderer(IRenderer* Renderer);
     bool GpuToCpuAddress(uint64_t GpuAddr, uint64_t & CpuAddress) const;
+    uint8_t * GetPointer(uint64_t GpuAddr);
     void ReadBuffer(uint64_t GpuAddr, void * Buffer, uint64_t Size) const;
     void WriteBuffer(uint64_t GpuAddr, const void * Buffer, uint64_t Size, bool InvalidateRegion);
 
+    bool IsGranularRange(uint64_t GpuAddr, uint64_t Size) const;
     void Map(uint64_t CpuAddr, uint64_t GpuAddr, uint64_t Size);
     uint64_t MapAllocate(uint64_t CpuAddr, uint64_t Size, uint64_t Align);
     bool AllocateFixed(uint64_t GpuAddr, uint64_t Size);

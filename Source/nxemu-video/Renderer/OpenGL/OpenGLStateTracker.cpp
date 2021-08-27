@@ -11,6 +11,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     SetupColorMasks();
     SetupViewports();
     SetupScissors();
+    SetupVertexArrays();
     SetupVertexFormat();
     SetupPolygonModes();
     SetupDepthTest();
@@ -99,6 +100,36 @@ void OpenGLStateTracker::SetupColorMasks(void)
         m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask + (i * ColorMaskItemSize), ColorMaskItemSize, OpenGLDirtyFlag_ColorMask0 + i);
     }
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask, ColorMaskSize, OpenGLDirtyFlag_ColorMasks);
+}
+
+void OpenGLStateTracker::SetupVertexArrays(void) 
+{
+    enum 
+    {
+        VertexArrayItemSize = (sizeof(CMaxwell3D::Registers::VertexArray[0]) / (sizeof(uint32_t))),
+        VertexArrayLimitItemSize = (sizeof(CMaxwell3D::Registers::VertexArrayLimit[0]) / (sizeof(uint32_t))),
+    };
+    for (uint8_t i = 0; i < CMaxwell3D::NumVertexArrays; ++i) 
+    {
+        uint32_t ArrayOffset = CMaxwell3D::Method_VertexArray + (i * VertexArrayItemSize);
+        m_StateTracker.SetRegisterFlag(ArrayOffset, 3, OpenGLDirtyFlag_VertexBuffers);
+        m_StateTracker.SetRegisterFlag(ArrayOffset + 3, 1, OpenGLDirtyFlag_VertexInstances);
+        m_StateTracker.SetRegisterFlag(ArrayOffset, 3, OpenGLDirtyFlag_VertexBuffer0 + i);
+        m_StateTracker.SetRegisterFlag(ArrayOffset + 3, 1, OpenGLDirtyFlag_VertexInstance0 + i);
+
+        uint32_t LimitOffset = CMaxwell3D::Method_VertexArrayLimit + (i * VertexArrayLimitItemSize);
+        m_StateTracker.SetRegisterFlag(LimitOffset, VertexArrayLimitItemSize, OpenGLDirtyFlag_VertexBuffers);
+        m_StateTracker.SetRegisterFlag(LimitOffset, VertexArrayLimitItemSize, OpenGLDirtyFlag_VertexBuffer0 + i);
+
+        m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_InstancedArrays + i, 1, OpenGLDirtyFlag_VertexInstances);
+        m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_InstancedArrays + i, 1, OpenGLDirtyFlag_VertexInstance0 + i);
+    }
+
+    m_StateTracker.MemoryWriteFlagSet(OpenGLDirtyFlag_VertexBuffers);
+    for (uint8_t i = 0; i < CMaxwell3D::NumVertexArrays; ++i) 
+    {
+        m_StateTracker.MemoryWriteFlagSet(OpenGLDirtyFlag_VertexBuffer0 + i);
+    }
 }
 
 void OpenGLStateTracker::SetupVertexFormat(void)

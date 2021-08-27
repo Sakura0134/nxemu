@@ -203,6 +203,7 @@ void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
     m_StreamBuffer.Map(BufferSize);
 
     SetupVertexFormat();
+    SetupVertexBuffer();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -364,6 +365,64 @@ void OpenGLRenderer::SetupVertexFormat()
             glVertexAttribFormat(i, VertexAttrib.ComponentCount(), MaxwellToOpenGL_VertexFormat(VertexAttrib), VertexAttrib.IsNormalized() ? GL_TRUE : GL_FALSE, VertexAttrib.Offset);
         }
         glVertexAttribBinding(i, VertexAttrib.Buffer);
+    }
+}
+
+void OpenGLRenderer::SetupVertexBuffer() 
+{
+    CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
+    CStateTracker & StateTracker = Maxwell3D.StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_VertexBuffers)) 
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_VertexBuffers);
+
+    const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
+    bool UseUnifiedMemory = m_Device.HasVertexBufferUnifiedMemory();
+
+    for (uint32_t i = 0; i < NUM_SUPPORTED_VERTEX_BINDINGS; i++) 
+    {
+        if (!StateTracker.Flag(OpenGLDirtyFlag_VertexBuffer0 + i)) 
+        {
+            continue;
+        }
+        StateTracker.FlagClear(OpenGLDirtyFlag_VertexBuffer0 + i);
+
+        const CMaxwell3D::tyVertexArray & VertexArray = Regs.VertexArray[i];
+        if (!VertexArray.IsEnabled())
+        {
+            continue;
+        }
+
+        uint64_t GpuAddrStart = VertexArray.StartAddress();
+        uint64_t GpuAddrEnd = Regs.VertexArrayLimit[i].LimitAddress();
+        if (GpuAddrEnd < GpuAddrStart) 
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            break;
+        }
+
+        uint32_t Size = (uint32_t)(GpuAddrEnd - GpuAddrStart);
+        if (Size == 0)
+        {
+            glBindVertexBuffer(i, 0, 0, VertexArray.Stride);
+            if (UseUnifiedMemory) 
+            {
+                glBufferAddressRangeNV(GL_VERTEX_ATTRIB_ARRAY_ADDRESS_NV, i, 0, 0);
+            }
+            continue;
+        }
+        uint64_t Offset = m_StreamBuffer.UploadMemory(GpuAddrStart, Size, 4);
+        if (UseUnifiedMemory)
+        {
+            glBindVertexBuffer(i, 0, 0, VertexArray.Stride);
+            glBufferAddressRangeNV(GL_VERTEX_ATTRIB_ARRAY_ADDRESS_NV, i, Offset, Size);
+        } 
+        else 
+        {
+            m_StreamBuffer.Buffer()->BindVertexBuffer(i, Offset, VertexArray.Stride);
+        }
     }
 }
 
