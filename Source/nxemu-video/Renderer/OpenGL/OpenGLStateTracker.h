@@ -18,6 +18,10 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_ColorBuffer7,
     OpenGLDirtyFlag_ZetaBuffer,
 
+    OpenGLDirtyFlag_VertexFormats,
+    OpenGLDirtyFlag_VertexFormat0,
+    OpenGLDirtyFlag_VertexFormat31 = OpenGLDirtyFlag_VertexFormat0 + 31,
+
     OpenGLDirtyFlag_ViewportTransform,
     OpenGLDirtyFlag_Viewports,
     OpenGLDirtyFlag_Viewport0,
@@ -80,6 +84,7 @@ private:
 
     void SetupDirtyRenderTargets(void);
     void SetupColorMasks(void);
+    void SetupVertexFormat(void);
     void SetupViewports(void);
     void SetupScissors(void);
     void SetupPolygonModes(void);

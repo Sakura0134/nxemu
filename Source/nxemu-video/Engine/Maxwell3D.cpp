@@ -39,6 +39,35 @@ void CMaxwell3D::InitializeRegisterDefaults()
 {
     memset(&m_Regs, 0, sizeof(m_Regs));
 
+    for (tyViewPort & ViewPort : m_Regs.ViewPorts)
+    {
+        ViewPort.DepthRangeNear = 0.0f;
+        ViewPort.DepthRangeFar = 1.0f;
+    }
+    for (uint32_t i = 0, n = sizeof(m_Regs.ViewPortTransform) / sizeof(m_Regs.ViewPortTransform[0]); i < n; i++) 
+    {
+        tyViewPortTransform & ViewPort = m_Regs.ViewPortTransform[i];
+        ViewPort.Swizzle.X = ViewportSwizzle_PositiveX;
+        ViewPort.Swizzle.Y = ViewportSwizzle_PositiveY;
+        ViewPort.Swizzle.Z = ViewportSwizzle_PositiveZ;
+        ViewPort.Swizzle.W = ViewportSwizzle_PositiveW;
+    }
+    m_Regs.Blend.EquationRGB = BlendEquation_Add;
+    m_Regs.Blend.FactorSourceRGB = BlendFactor_One;
+    m_Regs.Blend.FactorDestRGB = BlendFactor_Zero;
+    m_Regs.Blend.EquationA = BlendEquation_Add;
+    m_Regs.Blend.FactorSourceA = BlendFactor_One;
+    m_Regs.Blend.FactorDestA = BlendFactor_Zero;
+    for (uint32_t i = 0, n = sizeof(m_Regs.IndependentBlend) / sizeof(m_Regs.IndependentBlend[0]); i < n; i++) 
+    {
+        tyIndependentBlend & IndependentBlend = m_Regs.IndependentBlend[i];
+        IndependentBlend.EquationRGB = BlendEquation_Add;
+        IndependentBlend.FactorSourceRGB = BlendFactor_One;
+        IndependentBlend.FactorDestRGB = BlendFactor_Zero;
+        IndependentBlend.EquationA = BlendEquation_Add;
+        IndependentBlend.FactorSourceA = BlendFactor_One;
+        IndependentBlend.FactorDestA = BlendFactor_Zero;
+    }
     m_Regs.StencilFrontOpFail = StencilOp_Keep;
     m_Regs.StencilFrontOpZFail = StencilOp_Keep;
     m_Regs.StencilFrontOpZPass = StencilOp_Keep;
@@ -52,8 +81,14 @@ void CMaxwell3D::InitializeRegisterDefaults()
     m_Regs.StencilBackFuncFunc = ComparisonOp_Always;
     m_Regs.StencilBackFuncMask = 0xFFFFFFFF;
     m_Regs.StencilBackMask = 0xFFFFFFFF;
+    m_Regs.DepthTestFunc = ComparisonOp_Always;
     m_Regs.FrontFace = FrontFace_ClockWise;
+    m_Regs.CullFace = CullFace_Back;
+    m_Regs.PointSize = 1.0f;
     m_Regs.RasterizeEnable = 1;
+    m_Regs.FramebufferSRGB = 1;
+    m_Regs.LineWidthAliased = 1.0f;
+    m_Regs.LineWidthSmooth = 1.0f;
     m_Regs.PolygonModeBack = PolygonMode_Fill;
     m_Regs.PolygonModeFront = PolygonMode_Fill;
     for (uint32_t i = 0, n = sizeof(m_Regs.ColorMask) / sizeof(m_Regs.ColorMask[0]); i < n; i++)
@@ -520,6 +555,39 @@ bool CMaxwell3D::_tyVertexArray::IsEnabled() const
 uint64_t CMaxwell3D::_tyVertexArrayLimit::LimitAddress() const 
 {
     return ((((uint64_t)LimitHigh) << 32) | LimitLow) + 1;
+}
+
+uint32_t CMaxwell3D::_tyVertexAttribute::ComponentCount() const
+{
+    switch (Size)
+    {
+    case VertexAttributeSize_32_32_32_32: return 4;
+    case VertexAttributeSize_32_32_32: return 3;
+    case VertexAttributeSize_16_16_16_16: return 4;
+    case VertexAttributeSize_32_32: return 2;
+    case VertexAttributeSize_16_16_16: return 3;
+    case VertexAttributeSize_8_8_8_8: return 4;
+    case VertexAttributeSize_16_16: return 2;
+    case VertexAttributeSize_32: return 1;
+    case VertexAttributeSize_8_8_8: return 3;
+    case VertexAttributeSize_8_8: return 2;
+    case VertexAttributeSize_16: return 1;
+    case VertexAttributeSize_8: return 1;
+    case VertexAttributeSize_10_10_10_2: return 4;
+    case VertexAttributeSize_11_11_10: return 3;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return 1;
+}
+
+bool CMaxwell3D::_tyVertexAttribute::IsNormalized() const
+{
+    return (Type == VertexAttributeType_SignedNorm) || (Type == VertexAttributeType_UnsignedNorm);
+}
+
+bool CMaxwell3D::_tyVertexAttribute::IsConstant() const
+{
+    return Constant;
 }
 
 CRectangle<float> CMaxwell3D::_tyViewPortTransform::GetRect() const 

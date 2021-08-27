@@ -23,6 +23,7 @@ public:
         NumViewPorts = 16,
         NumCBData = 16,
         NumVertexArrays = 32,
+        NumVertexAttributes = 32,
         MaxShaderStage = 5,
         MaxConstBuffers = 18,
         MaxConstBufferSize = 0x10000
@@ -277,6 +278,36 @@ public:
         StencilOp_InvertOGL = 0x150A,
         StencilOp_IncrWrapOGL = 0x8507,
         StencilOp_DecrWrapOGL = 0x8508,
+    };
+
+    enum VertexAttributeSize : unsigned
+    {
+        VertexAttributeSize_Invalid = 0x0,
+        VertexAttributeSize_32_32_32_32 = 0x01,
+        VertexAttributeSize_32_32_32 = 0x02,
+        VertexAttributeSize_16_16_16_16 = 0x03,
+        VertexAttributeSize_32_32 = 0x04,
+        VertexAttributeSize_16_16_16 = 0x05,
+        VertexAttributeSize_8_8_8_8 = 0x0a,
+        VertexAttributeSize_16_16 = 0x0f,
+        VertexAttributeSize_32 = 0x12,
+        VertexAttributeSize_8_8_8 = 0x13,
+        VertexAttributeSize_8_8 = 0x18,
+        VertexAttributeSize_16 = 0x1b,
+        VertexAttributeSize_8 = 0x1d,
+        VertexAttributeSize_10_10_10_2 = 0x30,
+        VertexAttributeSize_11_11_10 = 0x31,
+    };
+
+    enum VertexAttributeType : unsigned
+    {
+        VertexAttributeType_SignedNorm = 1,
+        VertexAttributeType_UnsignedNorm = 2,
+        VertexAttributeType_SignedInt = 3,
+        VertexAttributeType_UnsignedInt = 4,
+        VertexAttributeType_UnsignedScaled = 5,
+        VertexAttributeType_SignedScaled = 6,
+        VertexAttributeType_Float = 7,
     };
 
     enum ViewportSwizzle : unsigned
@@ -652,6 +683,31 @@ public:
         uint64_t LimitAddress() const;
     } tyVertexArrayLimit;
 
+    typedef struct _tyVertexAttribute
+    {
+        union
+        {
+            uint32_t Value;
+            struct
+            {
+                unsigned Buffer : 5;
+                unsigned : 1;
+                unsigned Constant : 1;
+                unsigned Offset : 14;
+                VertexAttributeSize Size : 6;
+                VertexAttributeType Type : 3;
+                unsigned : 1;
+                unsigned BGRA : 1;
+            };
+        };
+
+        uint32_t ComponentCount() const;
+        uint32_t SizeInBytes() const;
+        bool IsNormalized() const;
+        bool IsConstant() const;
+        bool IsValid() const;
+        bool operator<(const _tyVertexAttribute& other) const;
+    } tyVertexAttribute;
 
     typedef struct
     {
@@ -772,7 +828,9 @@ public:
             tyClearFlags ClearFlags;
             PADDING_WORDS(0x10);
             uint32_t FillRectangle;
-            PADDING_WORDS(0x37);
+            PADDING_WORDS(0x8);
+            tyVertexAttribute VertexAttribFormat[NumVertexAttributes];
+            PADDING_WORDS(0xF);
             tyRTControl RTControl;
             PADDING_WORDS(0x2);
             uint32_t ZetaWidth;
@@ -973,6 +1031,7 @@ public:
         Method_Tsc = offsetof(Registers, Tsc) / sizeof(uint32_t),
         Method_VertexArray = offsetof(Registers, VertexArray) / sizeof(uint32_t),
         Method_VertexArrayLimit = offsetof(Registers, VertexArrayLimit) / sizeof(uint32_t),
+        Method_VertexAttribFormat = offsetof(Registers, VertexAttribFormat) / sizeof(uint32_t),
         Method_VertexBufferCount = offsetof(Registers, VertexBufferCount) / sizeof(uint32_t),
         Method_ViewPorts = offsetof(Registers, ViewPorts) / sizeof(uint32_t),
         Method_ViewPortTransform = offsetof(Registers, ViewPortTransform) / sizeof(uint32_t),
@@ -1079,6 +1138,7 @@ ASSERT_REG_POSITION(Zeta, 0x3F8);
 ASSERT_REG_POSITION(RenderArea, 0x3FD);
 ASSERT_REG_POSITION(ClearFlags, 0x43E);
 ASSERT_REG_POSITION(FillRectangle, 0x44F);
+ASSERT_REG_POSITION(VertexAttribFormat, 0x458);
 ASSERT_REG_POSITION(RTControl, 0x487);
 ASSERT_REG_POSITION(ZetaWidth, 0x48a);
 ASSERT_REG_POSITION(ZetaHeight, 0x48b);

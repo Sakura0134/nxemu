@@ -201,6 +201,8 @@ void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
     BufferSize = AlignUp(BufferSize, 4) + ((sizeof(MaxwellUniformData) + m_Device.GetUniformBufferAlignment()) * CMaxwell3D::MaxShaderStage);
     BufferSize += CMaxwell3D::MaxConstBuffers * (CMaxwell3D::MaxConstBufferSize + m_Device.GetUniformBufferAlignment());
     m_StreamBuffer.Map(BufferSize);
+
+    SetupVertexFormat();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -323,6 +325,45 @@ void OpenGLRenderer::SyncScissorTest()
         {
             glDisablei(GL_SCISSOR_TEST, (GLuint)i);
         }
+    }
+}
+
+void OpenGLRenderer::SetupVertexFormat() 
+{
+    CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
+    CStateTracker & StateTracker = Maxwell3D.StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_VertexFormats)) 
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_VertexFormats);
+
+    const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
+    for (uint32_t i = 0; i < NUM_SUPPORTED_VERTEX_ATTRIBUTES; i++) 
+    {
+        if (!StateTracker.Flag(OpenGLDirtyFlag_VertexFormat0 + i))
+        {
+            continue;
+        }
+        StateTracker.FlagClear(OpenGLDirtyFlag_VertexFormat0 + i);
+
+        const CMaxwell3D::tyVertexAttribute VertexAttrib = Regs.VertexAttribFormat[i];
+        if (VertexAttrib.IsConstant()) 
+        {
+            glDisableVertexAttribArray(i);
+            continue;
+        }
+        glEnableVertexAttribArray(i);
+
+        if (VertexAttrib.Type == CMaxwell3D::VertexAttributeType_SignedInt || VertexAttrib.Type == CMaxwell3D::VertexAttributeType_UnsignedInt)
+        {
+            glVertexAttribIFormat(i, VertexAttrib.ComponentCount(), MaxwellToOpenGL_VertexFormat(VertexAttrib), VertexAttrib.Offset);
+        }
+        else 
+        {
+            glVertexAttribFormat(i, VertexAttrib.ComponentCount(), MaxwellToOpenGL_VertexFormat(VertexAttrib), VertexAttrib.IsNormalized() ? GL_TRUE : GL_FALSE, VertexAttrib.Offset);
+        }
+        glVertexAttribBinding(i, VertexAttrib.Buffer);
     }
 }
 

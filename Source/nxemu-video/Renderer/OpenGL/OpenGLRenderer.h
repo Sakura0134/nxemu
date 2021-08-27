@@ -16,6 +16,11 @@ class EmulatorWindow;
 class OpenGLRenderer : 
     public IRenderer
 {
+    enum 
+    {
+        NUM_SUPPORTED_VERTEX_ATTRIBUTES = 16,
+    };
+
 public:
     OpenGLRenderer(ISwitchSystem & SwitchSystem, CVideo & Video);
     ~OpenGLRenderer();
@@ -38,6 +43,7 @@ private:
     OpenGLRenderer(const OpenGLRenderer&);
     OpenGLRenderer& operator=(const OpenGLRenderer&);
 
+    void SetupVertexFormat();
     void SyncFragmentColorClampState();
     void SyncFramebufferSRGB();
     void SyncRasterizeEnable();

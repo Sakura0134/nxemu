@@ -89,6 +89,83 @@ GLenum MaxwellToOpenGL_StencilOp(CMaxwell3D::StencilOp Stencil)
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return GL_KEEP;
 }
+GLenum MaxwellToOpenGL_VertexFormat(CMaxwell3D::tyVertexAttribute Attrib) 
+{
+    switch (Attrib.Type) 
+    {
+    case CMaxwell3D::VertexAttributeType_UnsignedNorm:
+    case CMaxwell3D::VertexAttributeType_UnsignedScaled:
+    case CMaxwell3D::VertexAttributeType_UnsignedInt:
+        switch (Attrib.Size)
+        {
+        case CMaxwell3D::VertexAttributeSize_8:
+        case CMaxwell3D::VertexAttributeSize_8_8:
+        case CMaxwell3D::VertexAttributeSize_8_8_8:
+        case CMaxwell3D::VertexAttributeSize_8_8_8_8:
+            return GL_UNSIGNED_BYTE;
+        case CMaxwell3D::VertexAttributeSize_16:
+        case CMaxwell3D::VertexAttributeSize_16_16:
+        case CMaxwell3D::VertexAttributeSize_16_16_16:
+        case CMaxwell3D::VertexAttributeSize_16_16_16_16:
+            return GL_UNSIGNED_SHORT;
+        case CMaxwell3D::VertexAttributeSize_32:
+        case CMaxwell3D::VertexAttributeSize_32_32:
+        case CMaxwell3D::VertexAttributeSize_32_32_32:
+        case CMaxwell3D::VertexAttributeSize_32_32_32_32:
+            return GL_UNSIGNED_INT;
+        case CMaxwell3D::VertexAttributeSize_10_10_10_2:
+            return GL_UNSIGNED_INT_2_10_10_10_REV;
+        default:
+            break;
+        }
+        break;
+    case CMaxwell3D::VertexAttributeType_SignedNorm:
+    case CMaxwell3D::VertexAttributeType_SignedScaled:
+    case CMaxwell3D::VertexAttributeType_SignedInt:
+        switch (Attrib.Size)
+        {
+        case CMaxwell3D::VertexAttributeSize_8:
+        case CMaxwell3D::VertexAttributeSize_8_8:
+        case CMaxwell3D::VertexAttributeSize_8_8_8:
+        case CMaxwell3D::VertexAttributeSize_8_8_8_8:
+            return GL_BYTE;
+        case CMaxwell3D::VertexAttributeSize_16:
+        case CMaxwell3D::VertexAttributeSize_16_16:
+        case CMaxwell3D::VertexAttributeSize_16_16_16:
+        case CMaxwell3D::VertexAttributeSize_16_16_16_16:
+            return GL_SHORT;
+        case CMaxwell3D::VertexAttributeSize_32:
+        case CMaxwell3D::VertexAttributeSize_32_32:
+        case CMaxwell3D::VertexAttributeSize_32_32_32:
+        case CMaxwell3D::VertexAttributeSize_32_32_32_32:
+            return GL_INT;
+        case CMaxwell3D::VertexAttributeSize_10_10_10_2:
+            return GL_INT_2_10_10_10_REV;
+        default:
+            break;
+        }
+        break;
+    case CMaxwell3D::VertexAttributeType_Float:
+        switch (Attrib.Size) 
+        {
+        case CMaxwell3D::VertexAttributeSize_16:
+        case CMaxwell3D::VertexAttributeSize_16_16:
+        case CMaxwell3D::VertexAttributeSize_16_16_16:
+        case CMaxwell3D::VertexAttributeSize_16_16_16_16:
+            return GL_HALF_FLOAT;
+        case CMaxwell3D::VertexAttributeSize_32:
+        case CMaxwell3D::VertexAttributeSize_32_32:
+        case CMaxwell3D::VertexAttributeSize_32_32_32:
+        case CMaxwell3D::VertexAttributeSize_32_32_32_32:
+            return GL_FLOAT;
+        default:
+            break;
+        }
+        break;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return GL_ZERO;
+}
 
 GLenum MaxwellToOpenGL_ViewportSwizzle(CMaxwell3D::ViewportSwizzle swizzle) 
 {

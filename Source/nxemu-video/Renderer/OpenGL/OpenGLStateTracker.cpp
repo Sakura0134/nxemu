@@ -11,6 +11,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     SetupColorMasks();
     SetupViewports();
     SetupScissors();
+    SetupVertexFormat();
     SetupPolygonModes();
     SetupDepthTest();
     SetupStencilTest();
@@ -98,6 +99,21 @@ void OpenGLStateTracker::SetupColorMasks(void)
         m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask + (i * ColorMaskItemSize), ColorMaskItemSize, OpenGLDirtyFlag_ColorMask0 + i);
     }
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ColorMask, ColorMaskSize, OpenGLDirtyFlag_ColorMasks);
+}
+
+void OpenGLStateTracker::SetupVertexFormat(void)
+{
+    enum 
+    {
+        VertexAttribFormatItemSize = (sizeof(CMaxwell3D::Registers::VertexAttribFormat[0]) / (sizeof(uint32_t)))
+    };
+
+    for (uint8_t i = 0; i < CMaxwell3D::NumVertexAttributes; i++) 
+    {
+        uint32_t Offset = CMaxwell3D::Method_VertexAttribFormat + (i * VertexAttribFormatItemSize);
+        m_StateTracker.SetRegisterFlag(Offset, VertexAttribFormatItemSize, OpenGLDirtyFlag_VertexFormat0 + i);
+    }
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_VertexAttribFormat, CMaxwell3D::NumVertexAttributes, OpenGLDirtyFlag_VertexFormats);
 }
 
 void OpenGLStateTracker::SetupViewports(void) 
