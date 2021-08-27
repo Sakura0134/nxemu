@@ -463,6 +463,23 @@ uint64_t CMaxwell3D::_tyConstBuffer::Address() const
     return (((uint64_t)AddressHigh) << 32) | AddressLow;
 }
 
+unsigned CMaxwell3D::_tyIndexArray::FormatSizeInBytes() const
+{
+    switch (Format)
+    {
+    case IndexFormat_UnsignedByte: return 1;
+    case IndexFormat_UnsignedShort: return 2;
+    case IndexFormat_UnsignedInt: return 4;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return 1;
+}
+
+uint64_t CMaxwell3D::_tyIndexArray::StartAddress() const
+{
+    return (((uint64_t)StartAddrHigh) << 32) | StartAddrLow;
+}
+
 uint64_t CMaxwell3D::_tyQuery::Address() const
 {
     return (((uint64_t)AddressHigh) << 32) | AddressLow;
@@ -488,6 +505,21 @@ uint32_t CMaxwell3D::_tyRTControl::Map(uint32_t Index) const
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return 0;
+}
+
+uint64_t CMaxwell3D::_tyVertexArray::StartAddress() const 
+{
+    return (((uint64_t)StartHigh) << 32) | StartLow;
+}
+
+bool CMaxwell3D::_tyVertexArray::IsEnabled() const 
+{
+    return Enable != 0 && StartAddress() != 0;
+}
+
+uint64_t CMaxwell3D::_tyVertexArrayLimit::LimitAddress() const 
+{
+    return ((((uint64_t)LimitHigh) << 32) | LimitLow) + 1;
 }
 
 CRectangle<float> CMaxwell3D::_tyViewPortTransform::GetRect() const 

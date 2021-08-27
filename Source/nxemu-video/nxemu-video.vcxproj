@@ -58,6 +58,7 @@
     <ClCompile Include="Macro\MacroInterpreter.cpp" />
     <ClCompile Include="NXEmu-video.cpp" />
     <ClCompile Include="Renderer\OpenGL\MaxwellToOpenGL.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLDevice.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLFenceManager.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLImage.cpp" />
@@ -67,6 +68,7 @@
     <ClCompile Include="Renderer\OpenGL\OpenGLStagingBuffer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStagingBuffers.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStateTracker.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLStreamBuffer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLTextureCache.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLTypes.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLWindow.cpp" />
@@ -88,6 +90,7 @@
     <ClInclude Include="Macro\MacroEngine.h" />
     <ClInclude Include="Macro\MacroInterpreter.h" />
     <ClInclude Include="Renderer\OpenGL\MaxwellToOpenGL.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLDevice.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLFenceManager.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLImage.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLImageView.h" />
@@ -97,6 +100,7 @@
     <ClInclude Include="Renderer\OpenGL\OpenGLStagingBuffer.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLStagingBuffers.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLStateTracker.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLStreamBuffer.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLTextureCache.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLTypes.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLWindow.h" />

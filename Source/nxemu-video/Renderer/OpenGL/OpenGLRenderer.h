@@ -2,9 +2,12 @@
 #include "OpenGLStateTracker.h"
 #include "OpenGLWindow.h"
 #include "OpenGLTextureCache.h"
+#include "OpenGLStreamBuffer.h"
 #include "OpenGLFenceManager.h"
+#include "OpenGLDevice.h"
 #include "Renderer\Renderer.h"
 #include <map>
+#include <stdint.h>
 
 __interface ISwitchSystem;
 class CVideo;
@@ -54,6 +57,7 @@ private:
     void SyncAlphaTest();
     void SyncBlendState();
     void SyncPointState();
+    uint32_t CalculateVertexArraysSize() const;
 
     static void OpenGLEnable(GLenum Cap, bool Enable);
 
@@ -72,6 +76,8 @@ private:
     EmulatorWindow & m_EmulatorWindow;
     ISwitchSystem & m_SwitchSystem;
     CVideo & m_Video;
+    OpenGLDevice m_Device;
+    OpenGLStreamBuffer m_StreamBuffer;
     bool m_QueuedCommands;
     TrackedPageMap m_TrackedPages;
     CriticalSection m_PageCS;

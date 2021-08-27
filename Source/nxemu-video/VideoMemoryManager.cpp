@@ -125,7 +125,7 @@ void CVideoMemory::SetPageEntry(uint64_t GpuAddr, PageEntry PageEntry)
 bool CVideoMemory::FindFreeRange(uint64_t & GpuAddr, uint64_t Size, uint64_t Align) const
 {
     uint64_t AvailableSize = 0, TestAddr = AddressSpaceStart;
-    Align = Align == 0 ? Align::Up(Align, PageSize) : PageSize;
+    Align = Align == 0 ? AlignUp(Align, PageSize) : PageSize;
 
     while (TestAddr + AvailableSize < AddressSpaceSize) 
     {

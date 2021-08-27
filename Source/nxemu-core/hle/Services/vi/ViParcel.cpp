@@ -31,7 +31,7 @@ void ViParcel::ReadUnaligned(void * dst, size_t size)
 void ViParcel::Read(void * dst, size_t size)
 {
     ReadUnaligned(dst, size);
-    m_ReadIndex = Align::Up(m_ReadIndex, 4);
+    m_ReadIndex = AlignUp(m_ReadIndex, 4);
 }
 
 std::wstring ViParcel::ReadInterfaceToken()
@@ -49,7 +49,7 @@ std::wstring ViParcel::ReadInterfaceToken()
         token.push_back(c);
     }
 
-    m_ReadIndex = Align::Up(m_ReadIndex, 4);
+    m_ReadIndex = AlignUp(m_ReadIndex, 4);
     return token;
 }
 
@@ -62,7 +62,7 @@ void ViParcel::Write(const void * val, size_t valSize)
 
     std::memcpy(m_Buffer.data() + m_WriteIndex, val, valSize);
     m_WriteIndex += valSize;
-    m_WriteIndex = Align::Up(m_WriteIndex, 4);
+    m_WriteIndex = AlignUp(m_WriteIndex, 4);
 }
 
 void ViParcel::WriteObject(const void * val, size_t valSize)

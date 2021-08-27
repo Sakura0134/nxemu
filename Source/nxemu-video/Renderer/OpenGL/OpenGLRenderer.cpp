@@ -3,6 +3,7 @@
 #include "EmulatorWindow.h"
 #include "VideoNotification.h"
 #include "Video.h"
+#include <Common/Align.h>
 #include <glad/glad.h>
 
 #pragma comment(lib, "opengl32.lib")
@@ -12,6 +13,7 @@ OpenGLRenderer::OpenGLRenderer(ISwitchSystem & SwitchSystem, CVideo & Video) :
     m_SwitchSystem(SwitchSystem), 
     m_Video(Video),
     m_StateTracker(Video),
+    m_StreamBuffer(SwitchSystem, Video, m_StateTracker),
     m_TextureCache(*this, Video),
     m_FenceManager(*this, Video),
     m_QueuedCommands(false)
@@ -31,6 +33,14 @@ bool OpenGLRenderer::Init()
         return false;
     }
     if (!GLAD_GL_VERSION_4_3) 
+    {
+        return false;
+    }
+    if (!m_Device.Init())
+    {
+        return false;
+    }
+    if (!m_StreamBuffer.Init(m_Device))
     {
         return false;
     }
@@ -152,8 +162,14 @@ void OpenGLRenderer::Clear()
     m_QueuedCommands = true;
 }
 
-void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
+void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
 {
+    struct alignas(16) MaxwellUniformData
+    {
+        GLfloat YDirection;
+        PADDING_WORDS(3);
+    };
+
     SyncViewport();
     SyncRasterizeEnable();
     SyncPolygonModes();
@@ -172,6 +188,19 @@ void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
     SyncLineState();
     SyncPolygonOffset();
     SyncAlphaTest();
+    SyncFramebufferSRGB();
+
+    CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
+    const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
+
+    uint32_t BufferSize = CalculateVertexArraysSize();
+    if (IsIndexed) 
+    {
+        BufferSize = AlignUp(BufferSize, 4) + (Regs.IndexArray.Count * Regs.IndexArray.FormatSizeInBytes());
+    }
+    BufferSize = AlignUp(BufferSize, 4) + ((sizeof(MaxwellUniformData) + m_Device.GetUniformBufferAlignment()) * CMaxwell3D::MaxShaderStage);
+    BufferSize += CMaxwell3D::MaxConstBuffers * (CMaxwell3D::MaxConstBufferSize + m_Device.GetUniformBufferAlignment());
+    m_StreamBuffer.Map(BufferSize);
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -654,6 +683,28 @@ void OpenGLRenderer::SyncPointState()
     OpenGLEnable(GL_PROGRAM_POINT_SIZE, Regs.VPPointSize.Enable);
 
     glPointSize(std::max(1.0f, Regs.PointSize));
+}
+
+uint32_t OpenGLRenderer::CalculateVertexArraysSize() const 
+{
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+    uint32_t Size = 0;
+    for (uint32_t i = 0, n = sizeof(Regs.VertexArray) / sizeof(Regs.VertexArray[0]); i < n; i++) 
+    {
+        if (!Regs.VertexArray[i].IsEnabled())
+        {
+            continue;
+        }
+
+        uint64_t Start = Regs.VertexArray[i].StartAddress();
+        uint64_t End = Regs.VertexArrayLimit[i].LimitAddress();
+        if (End < Start) 
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        Size += (uint32_t)(End - Start);
+    }
+    return Size;
 }
 
 void OpenGLRenderer::OpenGLEnable(GLenum Cap, bool Enable) 

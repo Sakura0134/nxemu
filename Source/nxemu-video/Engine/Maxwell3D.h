@@ -22,8 +22,10 @@ public:
         NumRegisters = 0xE00,
         NumViewPorts = 16,
         NumCBData = 16,
+        NumVertexArrays = 32,
         MaxShaderStage = 5,
         MaxConstBuffers = 18,
+        MaxConstBufferSize = 0x10000
     };
 
     enum BlendEquation : unsigned
@@ -442,6 +444,9 @@ public:
         IndexFormat Format;
         uint32_t First;
         uint32_t Count;
+
+        unsigned FormatSizeInBytes() const;
+        uint64_t StartAddress() const;
     } tyIndexArray;
 
     typedef struct
@@ -620,6 +625,33 @@ public:
             unsigned Increment : 1;
         };
     } tySyncInfo;
+    typedef struct _tyVertexArray
+    {
+        union
+        {
+            uint32_t StrideValue;
+            struct
+            {
+                unsigned Stride : 12;
+                unsigned Enable : 1;
+            };
+        };
+        uint32_t StartHigh;
+        uint32_t StartLow;
+        uint32_t Divisor;
+
+        uint64_t StartAddress() const;
+        bool IsEnabled() const;
+    } tyVertexArray;
+
+    typedef struct _tyVertexArrayLimit
+    {
+        uint32_t LimitHigh;
+        uint32_t LimitLow;
+
+        uint64_t LimitAddress() const;
+    } tyVertexArrayLimit;
+
 
     typedef struct
     {
@@ -825,9 +857,11 @@ public:
             tyColorMask ColorMask[NumRenderTargets];
             PADDING_WORDS(0x38);
             tyQuery Query;
-            PADDING_WORDS(0xBC);
+            PADDING_WORDS(0x3C);
+            tyVertexArray VertexArray[NumVertexArrays];
             tyIndependentBlend IndependentBlend[NumRenderTargets];
-            PADDING_WORDS(0x100);
+            tyVertexArrayLimit VertexArrayLimit[NumVertexArrays];
+            PADDING_WORDS(0xC0);
             uint32_t Firmware[0x20];
             tyConstBuffer ConstBuffer;
             PADDING_WORDS(0x10);
@@ -937,6 +971,8 @@ public:
         Method_Tic = offsetof(Registers, Tic) / sizeof(uint32_t),
         Method_TiledCacheBarrier = offsetof(Registers, TiledCacheBarrier) / sizeof(uint32_t),
         Method_Tsc = offsetof(Registers, Tsc) / sizeof(uint32_t),
+        Method_VertexArray = offsetof(Registers, VertexArray) / sizeof(uint32_t),
+        Method_VertexArrayLimit = offsetof(Registers, VertexArrayLimit) / sizeof(uint32_t),
         Method_VertexBufferCount = offsetof(Registers, VertexBufferCount) / sizeof(uint32_t),
         Method_ViewPorts = offsetof(Registers, ViewPorts) / sizeof(uint32_t),
         Method_ViewPortTransform = offsetof(Registers, ViewPortTransform) / sizeof(uint32_t),
@@ -1099,7 +1135,9 @@ ASSERT_REG_POSITION(LogicOp, 0x671);
 ASSERT_REG_POSITION(ClearBuffers, 0x674);
 ASSERT_REG_POSITION(ColorMask, 0x680);
 ASSERT_REG_POSITION(Query, 0x6C0);
+ASSERT_REG_POSITION(VertexArray, 0x700);
 ASSERT_REG_POSITION(IndependentBlend, 0x780);
+ASSERT_REG_POSITION(VertexArrayLimit, 0x7C0);
 ASSERT_REG_POSITION(Firmware, 0x8C0);
 ASSERT_REG_POSITION(ConstBuffer, 0x8E0);
 ASSERT_REG_POSITION(CBBind, 0x904);

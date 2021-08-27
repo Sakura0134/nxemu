@@ -1,21 +1,13 @@
 #pragma once
 
-class Align
+template <typename T>
+T AlignUp(T Value, size_t Size)
 {
-public:
-    template <typename T>
-    static T Up(T Value, size_t Size)
-    {
-        return (T)(Value + (Size - Value % Size) % Size);
-    }
+    return (T)(Value + (Size - Value % Size) % Size);
+}
 
-    template <typename T>
-    static bool Is4KBAligned(T Value)
-    {
-        return (Value & 0xFFF) == 0;
-    }
-private:
-    Align(void);
-    Align(const Align&);
-    Align& operator=(const Align&);
-};
+template <typename T>
+bool Is4KBAligned(T Value) 
+{
+    return (Value & 0xFFF) == 0;
+}

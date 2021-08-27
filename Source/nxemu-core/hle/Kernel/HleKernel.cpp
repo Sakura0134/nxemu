@@ -244,7 +244,7 @@ ResultCode CHleKernel::MapSharedMemory(uint32_t SharedMemoryHandle, uint64_t Add
     WriteTrace(TraceHleKernel, TraceInfo, "Start (SharedMemoryHandle: 0x%0X Address: 0x%I64X Size: 0x%I64X MemoryPermission: 0x%X)", SharedMemoryHandle, Address, Size, Permission);
     CGuard Guard(m_CS);
 
-    if (!Align::Is4KBAligned(Address))
+    if (!Is4KBAligned(Address))
     {
         WriteTrace(TraceHleKernel, TraceWarning, "Address is not aligned to 4KB, Address: 0x%I64X", Address);
         return ERR_INVALID_ADDRESS;
@@ -256,7 +256,7 @@ ResultCode CHleKernel::MapSharedMemory(uint32_t SharedMemoryHandle, uint64_t Add
         return ERR_INVALID_SIZE;
     }
 
-    if (!Align::Is4KBAligned(Size))
+    if (!Is4KBAligned(Size))
     {
         WriteTrace(TraceHleKernel, TraceWarning, "Size is not aligned to 4KB, Size: 0x%I64X", Size);
         return ERR_INVALID_SIZE;
@@ -556,13 +556,13 @@ ResultCode CHleKernel::SetMemoryAttribute(uint64_t Addr, uint64_t Size, uint32_t
     WriteTrace(TraceHleKernel, TraceInfo, "(Addr: 0x%I64X size: 0x%I64X Mask: 0x%X, Attribute: 0x%X)", Addr, Size, Mask, Attribute);
     CGuard Guard(m_CS);
 
-    if (!Align::Is4KBAligned(Addr))
+    if (!Is4KBAligned(Addr))
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return ERR_INVALID_ADDRESS;
     }
 
-    if (Size == 0 || !Align::Is4KBAligned(Size))
+    if (Size == 0 || !Is4KBAligned(Size))
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return ERR_INVALID_ADDRESS;
