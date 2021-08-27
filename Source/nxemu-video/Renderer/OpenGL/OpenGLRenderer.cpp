@@ -167,6 +167,8 @@ void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
     SyncLogicOpState();
     SyncCullMode();
     SyncPrimitiveRestart();
+    SyncScissorTest();
+    SyncPointState();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -271,7 +273,7 @@ void OpenGLRenderer::SyncScissorTest()
     StateTracker.FlagClear(OpenGLDirtyFlag_Scissors);
 
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
-    for (uint32_t i = 0; i < CMaxwell3D::NumViewPorts; i++) 
+    for (uint32_t i = 0, n = sizeof(Regs.ScissorTest) / sizeof(Regs.ScissorTest[0]); i < n; i++) 
     {
         if (!StateTracker.Flag(OpenGLDirtyFlag_Scissor0 + i)) 
         {
@@ -582,6 +584,22 @@ void OpenGLRenderer::SyncBlendState()
 
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
+}
+
+void OpenGLRenderer::SyncPointState()
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_PointSize)) 
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_PointSize);
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+
+    OpenGLEnable(GL_POINT_SPRITE, Regs.PointSpriteEnable != 0);
+    OpenGLEnable(GL_PROGRAM_POINT_SIZE, Regs.VPPointSize.Enable);
+
+    glPointSize(std::max(1.0f, Regs.PointSize));
 }
 
 void OpenGLRenderer::OpenGLEnable(GLenum Cap, bool Enable) 

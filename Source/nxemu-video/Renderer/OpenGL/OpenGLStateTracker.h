@@ -53,6 +53,7 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_FramebufferSRGB,
     OpenGLDirtyFlag_LogicOp,
     OpenGLDirtyFlag_FragmentClampColor,
+    OpenGLDirtyFlag_PointSize,
     OpenGLDirtyFlag_ClipControl,
     OpenGLDirtyFlag_DepthClampEnabled,
 
@@ -88,6 +89,7 @@ private:
     void SetupFramebufferSRGB(void);
     void SetupLogicOp(void);
     void SetupFragmentClampColor(void);
+    void SetupPointSize(void);
     void SetupClipControl(void);
     void SetupDepthClampEnabled(void);
     void SetupMisc(void);

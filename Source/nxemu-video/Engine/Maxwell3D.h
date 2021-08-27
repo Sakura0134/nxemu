@@ -479,6 +479,15 @@ public:
         };
     } tyMultiSampleControl;
 
+    typedef union
+    {
+        uint32_t Value;
+        struct
+        {
+            unsigned Enable : 1;
+        };
+    } tyVPPointSize;
+
     typedef struct
     {
         uint32_t Enabled;
@@ -754,7 +763,11 @@ public:
             PADDING_WORDS(0x2);
             uint32_t FragmentColorClamp;
             tyScreenYControl ScreenYControl;
-            PADDING_WORDS(0x60);
+            PADDING_WORDS(0x5A);
+            float PointSize;
+            PADDING_WORDS(0x1);
+            uint32_t PointSpriteEnable;
+            PADDING_WORDS(0x3);
             CounterReset CounterReset;
             PADDING_WORDS(0x1);
             uint32_t ZetaEnable;
@@ -780,7 +793,9 @@ public:
             tyPrimitiveRestart PrimitiveRestart;
             PADDING_WORDS(0x5F);
             tyIndexArray IndexArray;
-            PADDING_WORDS(0x4D);
+            PADDING_WORDS(0x4B);
+            tyVPPointSize VPPointSize;
+            PADDING_WORDS(1);
             uint32_t CullTestEnabled;
             FrontFace FrontFace;
             CullFace CullFace;
@@ -863,6 +878,8 @@ public:
         Method_MacrosBind = offsetof(Registers, Macros.Bind) / sizeof(uint32_t),
         Method_MacrosData = offsetof(Registers, Macros.Data) / sizeof(uint32_t),
         Method_MultisampleControl = offsetof(Registers, MultisampleControl) / sizeof(uint32_t),
+        Method_PointSize = offsetof(Registers, PointSize) / sizeof(uint32_t),
+        Method_PointSpriteEnable = offsetof(Registers, PointSpriteEnable) / sizeof(uint32_t),
         Method_PolygonModeBack = offsetof(Registers, PolygonModeBack) / sizeof(uint32_t),
         Method_PolygonModeFront = offsetof(Registers, PolygonModeFront) / sizeof(uint32_t),
         Method_PrimitiveRestart = offsetof(Registers, PrimitiveRestart) / sizeof(uint32_t),
@@ -899,6 +916,7 @@ public:
         Method_ViewPortTransform = offsetof(Registers, ViewPortTransform) / sizeof(uint32_t),
         Method_ViewportTransformEnabled = offsetof(Registers, ViewportTransformEnabled) / sizeof(uint32_t),
         Method_ViewVolumeClipControl = offsetof(Registers, ViewVolumeClipControl) / sizeof(uint32_t),
+        Method_VPPointSize = offsetof(Registers, VPPointSize) / sizeof(uint32_t),
         Method_WaitForIdle = offsetof(Registers, WaitForIdle) / sizeof(uint32_t),
         Method_Zeta = offsetof(Registers, Zeta) / sizeof(uint32_t),
         Method_ZetaEnable = offsetof(Registers, ZetaEnable) / sizeof(uint32_t),
@@ -1015,6 +1033,8 @@ ASSERT_REG_POSITION(StencilFrontFuncMask, 0x4E6);
 ASSERT_REG_POSITION(StencilFrontMask, 0x4E7);
 ASSERT_REG_POSITION(FragmentColorClamp, 0x4EA);
 ASSERT_REG_POSITION(ScreenYControl, 0x4EB);
+ASSERT_REG_POSITION(PointSize, 0x546);
+ASSERT_REG_POSITION(PointSpriteEnable, 0x548);
 ASSERT_REG_POSITION(CounterReset, 0x54C);
 ASSERT_REG_POSITION(ZetaEnable, 0x54E);
 ASSERT_REG_POSITION(MultisampleControl, 0x54F);
@@ -1031,6 +1051,7 @@ ASSERT_REG_POSITION(MultisampleMode, 0x574);
 ASSERT_REG_POSITION(Draw, 0x585);
 ASSERT_REG_POSITION(PrimitiveRestart, 0x591);
 ASSERT_REG_POSITION(IndexArray, 0x5F2);
+ASSERT_REG_POSITION(VPPointSize, 0x644);
 ASSERT_REG_POSITION(CullTestEnabled, 0x646);
 ASSERT_REG_POSITION(FrontFace, 0x647);
 ASSERT_REG_POSITION(CullFace, 0x648);

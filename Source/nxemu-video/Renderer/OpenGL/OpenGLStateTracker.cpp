@@ -18,6 +18,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     SetupFramebufferSRGB();
     SetupLogicOp();
     SetupFragmentClampColor();
+    SetupPointSize();
     SetupClipControl();
     SetupDepthClampEnabled();
     SetupMisc();
@@ -232,6 +233,13 @@ void OpenGLStateTracker::SetupLogicOp(void)
 void OpenGLStateTracker::SetupFragmentClampColor(void)
 {
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_FragmentColorClamp, 1, OpenGLDirtyFlag_FragmentClampColor);
+}
+
+void OpenGLStateTracker::SetupPointSize(void) 
+{
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_VPPointSize, 1, OpenGLDirtyFlag_PointSize);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PointSize, 1, OpenGLDirtyFlag_PointSize);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_PointSpriteEnable, 1, OpenGLDirtyFlag_PointSize);
 }
 
 void OpenGLStateTracker::SetupClipControl(void)
