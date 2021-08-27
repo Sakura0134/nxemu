@@ -171,6 +171,7 @@ void OpenGLRenderer::Draw(bool /*IsIndexed*/, bool /*IsInstanced*/)
     SyncPointState();
     SyncLineState();
     SyncPolygonOffset();
+    SyncAlphaTest();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -578,6 +579,23 @@ void OpenGLRenderer::SyncPolygonOffset()
     {
         glPolygonOffsetClamp(Regs.PolygonOffsetFactor, Regs.PolygonOffsetUnits / 2.0f, Regs.PolygonOffsetClamp);
     }
+}
+
+void OpenGLRenderer::SyncAlphaTest() 
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_AlphaTest))
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_AlphaTest);
+
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+    OpenGLEnable(GL_ALPHA_TEST, Regs.AlphaTestEnabled != 0);
+    if (Regs.AlphaTestEnabled)
+    {
+        glAlphaFunc(MaxwellToOpenGL_ComparisonOp(Regs.AlphaTestFunc), Regs.AlphaTestRef);
+    } 
 }
 
 void OpenGLRenderer::SyncBlendState() 

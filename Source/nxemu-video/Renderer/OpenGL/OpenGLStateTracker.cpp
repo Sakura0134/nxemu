@@ -12,6 +12,10 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     SetupViewports();
     SetupScissors();
     SetupPolygonModes();
+    SetupDepthTest();
+    SetupStencilTest();
+    SetupAlphaTest();
+    SetupBlend();
     SetupPrimitiveRestart();
     SetupPolygonOffset();
     SetupMultisampleControl();
@@ -173,6 +177,13 @@ void OpenGLStateTracker::SetupStencilTest(void)
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_StencilBackMask, 1, OpenGLDirtyFlag_StencilTest);
 }
 
+void OpenGLStateTracker::SetupAlphaTest(void) 
+{
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_AlphaTestRef, 1, OpenGLDirtyFlag_AlphaTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_AlphaTestFunc, 1, OpenGLDirtyFlag_AlphaTest);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_AlphaTestEnabled, 1, OpenGLDirtyFlag_AlphaTest);
+}
+
 void OpenGLStateTracker::SetupBlend(void) 
 {
     enum 
@@ -265,6 +276,7 @@ void OpenGLStateTracker::SetupLineWidth(void)
 void OpenGLStateTracker::SetupClipControl(void)
 {
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ScreenYControl, 1, OpenGLDirtyFlag_ClipControl);
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_DepthMode, 1, OpenGLDirtyFlag_ClipControl);
 }
 
 void OpenGLStateTracker::SetupDepthClampEnabled(void) 

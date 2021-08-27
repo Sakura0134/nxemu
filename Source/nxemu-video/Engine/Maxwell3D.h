@@ -750,9 +750,12 @@ public:
             PADDING_WORDS(0x5);
             uint32_t IndependentBlendEnable;
             uint32_t DepthWriteEnabled;
-            PADDING_WORDS(0x8);
+            uint32_t AlphaTestEnabled;
+            PADDING_WORDS(0x7);
             ComparisonOp DepthTestFunc;
-            PADDING_WORDS(0x3);
+            float AlphaTestRef;
+            ComparisonOp AlphaTestFunc;
+            PADDING_WORDS(0x1);
             tyBlendColor BlendColor;
             PADDING_WORDS(0x4);
             tyBlend Blend;
@@ -836,6 +839,9 @@ public:
 
     enum Method : uint32_t
     {
+        Method_AlphaTestEnabled = offsetof(Registers, AlphaTestEnabled) / sizeof(uint32_t),
+        Method_AlphaTestFunc = offsetof(Registers, AlphaTestFunc) / sizeof(uint32_t),
+        Method_AlphaTestRef = offsetof(Registers, AlphaTestRef) / sizeof(uint32_t),
         Method_Blend = offsetof(Registers, Blend) / sizeof(uint32_t),
         Method_BlendColor = offsetof(Registers, BlendColor) / sizeof(uint32_t),
         Method_BlendEnable = offsetof(Registers, Blend.Enable) / sizeof(uint32_t),
@@ -1043,7 +1049,10 @@ ASSERT_REG_POSITION(ZetaHeight, 0x48b);
 ASSERT_REG_POSITION(DepthTestEnable, 0x4B3);
 ASSERT_REG_POSITION(IndependentBlendEnable, 0x4B9);
 ASSERT_REG_POSITION(DepthWriteEnabled, 0x4BA);
+ASSERT_REG_POSITION(AlphaTestEnabled, 0x4BB);
 ASSERT_REG_POSITION(DepthTestFunc, 0x4C3);
+ASSERT_REG_POSITION(AlphaTestRef, 0x4C4);
+ASSERT_REG_POSITION(AlphaTestFunc, 0x4C5);
 ASSERT_REG_POSITION(BlendColor, 0x4C7);
 ASSERT_REG_POSITION(Blend, 0x4CF);
 ASSERT_REG_POSITION(StencilEnable, 0x4E0);

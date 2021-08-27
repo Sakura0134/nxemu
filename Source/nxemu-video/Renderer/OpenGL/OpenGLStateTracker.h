@@ -47,6 +47,7 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_DepthMask,
     OpenGLDirtyFlag_DepthTest,
     OpenGLDirtyFlag_StencilTest,
+    OpenGLDirtyFlag_AlphaTest,
     OpenGLDirtyFlag_PrimitiveRestart,
     OpenGLDirtyFlag_PolygonOffset,
     OpenGLDirtyFlag_MultisampleControl,
@@ -84,6 +85,7 @@ private:
     void SetupPolygonModes(void);
     void SetupDepthTest(void);
     void SetupStencilTest(void);
+    void SetupAlphaTest(void);
     void SetupBlend(void);
     void SetupPrimitiveRestart(void);
     void SetupPolygonOffset(void);

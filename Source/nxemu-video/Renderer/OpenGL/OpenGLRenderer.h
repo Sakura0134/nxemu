@@ -51,6 +51,7 @@ private:
     void SyncPrimitiveRestart();
     void SyncLineState();
     void SyncPolygonOffset();
+    void SyncAlphaTest();
     void SyncBlendState();
     void SyncPointState();
 
