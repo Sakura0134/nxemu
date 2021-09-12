@@ -35,6 +35,11 @@ void CMaxwell3D::BindRenderer(IRenderer * Renderer)
     m_Renderer = Renderer;
 }
 
+bool CMaxwell3D::IsShaderConfigEnabled(uint32_t Index) const 
+{
+    return Index == ShaderProgram_VertexB ? true : m_Regs.ShaderConfig[Index].Enable != 0;
+}
+
 void CMaxwell3D::InitializeRegisterDefaults()
 {
     memset(&m_Regs, 0, sizeof(m_Regs));

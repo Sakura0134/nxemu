@@ -91,6 +91,66 @@ void OpenGLTexture::TextureParameteriv(GLenum PName, const GLint * Param)
     glTextureParameteriv(m_Handle, PName, Param);
 }
 
+OpenGLProgram::OpenGLProgram() :
+    m_Handle(0),
+    m_Ref(0)
+{
+} 
+
+OpenGLProgram::~OpenGLProgram() 
+{
+    Release();
+}
+
+void OpenGLProgram::Release() 
+{
+    if (m_Handle == 0) 
+    {
+        return;    
+    }
+    glDeleteProgram(m_Handle);
+    m_Handle = 0;
+}
+
+OpenGLPipeline::OpenGLPipeline() : 
+    m_Handle(0) 
+{
+}
+
+OpenGLPipeline::~OpenGLPipeline()
+{
+    Release();
+}
+
+void OpenGLPipeline::Create() 
+{
+    if (m_Handle != 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    glGenProgramPipelines(1, &m_Handle);
+}
+
+void OpenGLPipeline::Release() 
+{
+    if (m_Handle == 0)
+    {
+        return;
+    }
+    glDeleteProgramPipelines(1, &m_Handle);
+    m_Handle = 0;
+}
+
+void OpenGLPipeline::BindProgramPipeline() const 
+{
+    if (m_Handle == 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glBindProgramPipeline(m_Handle);
+}
+
 OpenGLBuffer::OpenGLBuffer() : 
     m_Handle(0), 
     m_Ref(0)
@@ -130,6 +190,16 @@ void OpenGLBuffer::BindBuffer(GLenum Target) const
         return;
     }
     glBindBuffer(Target, m_Handle);
+}
+
+void OpenGLBuffer::BindBufferRange(GLenum Target, GLuint Index, GLintptr Offset, GLsizeiptr Size) const
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glBindBufferRange(Target, Index, m_Handle, Offset, Size);
 }
 
 void OpenGLBuffer::BindVertexBuffer(GLuint BindingIndex, GLintptr Offset, GLsizei Stride) const

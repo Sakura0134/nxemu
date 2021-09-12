@@ -1,10 +1,12 @@
 #pragma once
 #include "OpenGLStateTracker.h"
 #include "OpenGLWindow.h"
+#include "OpenGLShaderCache.h"
 #include "OpenGLTextureCache.h"
 #include "OpenGLStreamBuffer.h"
 #include "OpenGLFenceManager.h"
 #include "OpenGLDevice.h"
+#include "OpenGLProgramManager.h"
 #include "Renderer\Renderer.h"
 #include <map>
 #include <stdint.h>
@@ -48,6 +50,7 @@ private:
     void SetupVertexBuffer();
     void SetupVertexInstances();
     GLintptr SetupIndexBuffer();
+    void SetupShaders();
     void SyncFragmentColorClampState();
     void SyncFramebufferSRGB();
     void SyncRasterizeEnable();
@@ -81,12 +84,14 @@ private:
     
     OpenGLStateTracker m_StateTracker;
     OpenGLTextureCache m_TextureCache;
+    OpenGLShaderCache m_ShaderCache;
     OpenGLFenceManager m_FenceManager;
     OpenGLWindow m_OpenGLWindow;
     EmulatorWindow & m_EmulatorWindow;
     ISwitchSystem & m_SwitchSystem;
     CVideo & m_Video;
     OpenGLDevice m_Device;
+    OpenGLProgramManager m_ProgramManager;
     OpenGLStreamBuffer m_StreamBuffer;
     bool m_QueuedCommands;
     TrackedPageMap m_TrackedPages;

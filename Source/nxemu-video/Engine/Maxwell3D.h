@@ -24,6 +24,7 @@ public:
         NumCBData = 16,
         NumVertexArrays = 32,
         NumVertexAttributes = 32,
+        MaxShaderProgram = 6,
         MaxShaderStage = 5,
         MaxConstBuffers = 18,
         MaxConstBufferSize = 0x10000
@@ -250,6 +251,16 @@ public:
         QueryUnit_ZCull = 7,
         QueryUnit_Prop = 10,
         QueryUnit_Crop = 15,
+    };
+
+    enum ShaderProgram : unsigned
+    {
+        ShaderProgram_VertexA = 0,
+        ShaderProgram_VertexB = 1,
+        ShaderProgram_TesselationControl = 2,
+        ShaderProgram_TesselationEval = 3,
+        ShaderProgram_Geometry = 4,
+        ShaderProgram_Fragment = 5,
     };
 
     enum ShadowRamControl : unsigned
@@ -649,6 +660,22 @@ public:
 
     typedef struct
     {
+        union
+        {
+            uint32_t ProgramValue;
+            struct 
+            {
+                unsigned Enable : 1;
+                unsigned : 3;
+                ShaderProgram Program : 4;
+            };
+        };
+        uint32_t Offset;
+        PADDING_WORDS(14);
+    } tyShaderConfig;
+
+    typedef struct
+    {
         uint64_t Address;
         uint32_t Size;
         bool Enabled;
@@ -928,7 +955,8 @@ public:
             tyVertexArray VertexArray[NumVertexArrays];
             tyIndependentBlend IndependentBlend[NumRenderTargets];
             tyVertexArrayLimit VertexArrayLimit[NumVertexArrays];
-            PADDING_WORDS(0xC0);
+            tyShaderConfig ShaderConfig[MaxShaderProgram];
+            PADDING_WORDS(0x60);
             uint32_t Firmware[0x20];
             tyConstBuffer ConstBuffer;
             PADDING_WORDS(0x10);
@@ -1018,6 +1046,7 @@ public:
         Method_RTControl = offsetof(Registers, RTControl) / sizeof(uint32_t),
         Method_ScissorTest = offsetof(Registers, ScissorTest) / sizeof(uint32_t),
         Method_ScreenYControl = offsetof(Registers, ScreenYControl) / sizeof(uint32_t),
+        Method_ShaderConfig = offsetof(Registers, ShaderConfig) / sizeof(uint32_t),
         Method_ShadowRamControl = offsetof(Registers, ShadowRamControl) / sizeof(uint32_t),
         Method_StencilBackFuncFunc = offsetof(Registers, StencilBackFuncFunc) / sizeof(uint32_t),
         Method_StencilBackFuncMask = offsetof(Registers, StencilBackFuncMask) / sizeof(uint32_t),
@@ -1059,6 +1088,7 @@ public:
     ~CMaxwell3D();
 
     void BindRenderer(IRenderer * Renderer);
+    bool IsShaderConfigEnabled(uint32_t Index) const;
     void CallMultiMethod(Method Method, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending);
     void CallMethodFromMME(Method Method, uint32_t Argument);
     void FlushMMEInlineDraw();
@@ -1209,6 +1239,7 @@ ASSERT_REG_POSITION(Query, 0x6C0);
 ASSERT_REG_POSITION(VertexArray, 0x700);
 ASSERT_REG_POSITION(IndependentBlend, 0x780);
 ASSERT_REG_POSITION(VertexArrayLimit, 0x7C0);
+ASSERT_REG_POSITION(ShaderConfig, 0x800);
 ASSERT_REG_POSITION(Firmware, 0x8C0);
 ASSERT_REG_POSITION(ConstBuffer, 0x8E0);
 ASSERT_REG_POSITION(CBBind, 0x904);

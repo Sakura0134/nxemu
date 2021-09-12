@@ -61,6 +61,17 @@ uint64_t OpenGLStreamBuffer::UploadMemory(uint64_t GpuAddr, uint32_t Size, uint3
     return UploadedOffset;
 }
 
+uint64_t OpenGLStreamBuffer::UploadHostMemory(const void * Data, uint32_t Size, uint32_t Alignment) 
+{
+    AlignBuffer(Alignment);
+    uint64_t UploadedOffset = m_BufferOffset;
+    std::memcpy(m_BufferPtr, Data, Size);
+
+    m_BufferPtr += Size;
+    m_BufferOffset += Size;
+    return UploadedOffset;
+}
+
 void OpenGLStreamBuffer::Map(uint32_t Size) 
 {
     if (Size > BUFFER_SIZE || m_BufferPos + Size > BUFFER_SIZE)

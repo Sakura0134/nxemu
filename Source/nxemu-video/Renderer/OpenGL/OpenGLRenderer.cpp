@@ -1,4 +1,5 @@
 #include "OpenGLRenderer.h"
+#include "OpenGLCompiledShader.h"
 #include "MaxwellToOpenGL.h"
 #include "EmulatorWindow.h"
 #include "VideoNotification.h"
@@ -15,6 +16,7 @@ OpenGLRenderer::OpenGLRenderer(ISwitchSystem & SwitchSystem, CVideo & Video) :
     m_StateTracker(Video),
     m_StreamBuffer(SwitchSystem, Video, m_StateTracker),
     m_TextureCache(*this, Video),
+    m_ShaderCache(*this, Video, m_Device),
     m_FenceManager(*this, Video),
     m_QueuedCommands(false)
 {
@@ -37,6 +39,10 @@ bool OpenGLRenderer::Init()
         return false;
     }
     if (!m_Device.Init())
+    {
+        return false;
+    }
+    if (!m_ProgramManager.Init(m_Device)) 
     {
         return false;
     }
@@ -209,9 +215,13 @@ void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
 
     if (!m_Device.UseAssemblyShaders())
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        MaxwellUniformData UBO;
+        UBO.YDirection = Regs.ScreenYControl.YNegate == 0 ? 1.0f : -1.0f;
+        uint64_t Offset = m_StreamBuffer.UploadHostMemory(&UBO, sizeof(UBO), m_Device.GetUniformBufferAlignment());
+        m_StreamBuffer.Buffer()->BindBufferRange(GL_UNIFORM_BUFFER, 0, Offset, sizeof(UBO));
     }
 
+    SetupShaders();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -466,6 +476,66 @@ GLintptr OpenGLRenderer::SetupIndexBuffer()
     uint64_t Offset = m_StreamBuffer.UploadMemory(Regs.IndexArray.IndexStart(), Size, 4);
     m_StreamBuffer.Buffer()->BindBuffer(GL_ELEMENT_ARRAY_BUFFER);
     return Offset;
+}
+
+void OpenGLRenderer::SetupShaders()
+{
+    OpenGLCompiledShaderPtr Shaders[CMaxwell3D::MaxShaderStage];
+    CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
+
+    for (uint32_t i = 0; i < CMaxwell3D::MaxShaderProgram; i++)
+    {
+        CMaxwell3D::ShaderProgram ProgramType = (CMaxwell3D::ShaderProgram)i;
+
+        if (!Maxwell3D.IsShaderConfigEnabled(ProgramType))
+        {
+            OpenGLProgramPtr NullOpenGLProgramPtr(nullptr);
+
+            switch (ProgramType)
+            {
+            case CMaxwell3D::ShaderProgram_Geometry:
+                m_ProgramManager.UseGeometryShader(NullOpenGLProgramPtr);
+                break;
+            case CMaxwell3D::ShaderProgram_Fragment:
+                m_ProgramManager.UseFragmentShader(NullOpenGLProgramPtr);
+                break;
+            }
+            continue;
+        }
+        if (ProgramType == CMaxwell3D::ShaderProgram_TesselationControl || ProgramType == CMaxwell3D::ShaderProgram_TesselationEval)
+        {
+            continue;
+        }
+
+        OpenGLCompiledShaderPtr Shader = m_ShaderCache.GetStageProgram(ProgramType);
+        OpenGLProgramPtr ShaderProgram(Shader->IsBuilt() ? Shader->Program() : nullptr);
+        switch (ProgramType)
+        {
+        case CMaxwell3D::ShaderProgram_VertexA:
+        case CMaxwell3D::ShaderProgram_VertexB:
+            m_ProgramManager.UseVertexShader(ShaderProgram);
+            break;
+        case CMaxwell3D::ShaderProgram_Geometry:
+            m_ProgramManager.UseGeometryShader(ShaderProgram);
+            break;
+        case CMaxwell3D::ShaderProgram_Fragment:
+            m_ProgramManager.UseFragmentShader(ShaderProgram);
+            break;
+        default:
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            break;
+        }
+
+        uint32_t Stage = ProgramType == CMaxwell3D::ShaderProgram_VertexA ? CMaxwell3D::ShaderProgram_VertexA : ProgramType - 1;
+        Shaders[Stage] = Shader;
+
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        if (ProgramType == CMaxwell3D::ShaderProgram_VertexA)
+        {
+            i++;
+        }
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
 void OpenGLRenderer::SyncViewport()

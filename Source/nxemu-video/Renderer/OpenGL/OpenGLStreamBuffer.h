@@ -22,6 +22,8 @@ public:
     bool Init(const OpenGLDevice & Device);
     void Map(uint32_t MaxSize);
     uint64_t UploadMemory(uint64_t GpuAddr, uint32_t Size, uint32_t Alignment);
+    uint64_t UploadHostMemory(const void * Data, uint32_t Size, uint32_t Alignment);
+
     OpenGLBufferPtr & Buffer() { return m_Buffer; }
 
 private:

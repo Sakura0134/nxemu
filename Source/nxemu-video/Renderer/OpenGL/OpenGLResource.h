@@ -1,6 +1,6 @@
 #pragma once
 #include "OpenGLItemPtr.h"
-#include <glad/glad.h>
+#include <glad\glad.h>
 #include <stdint.h>
 
 class OpenGLFramebuffer;
@@ -35,6 +35,44 @@ private:
     int32_t m_Ref;
 };
 
+class OpenGLProgram;
+
+typedef OpenGLItemPtr<OpenGLProgram> OpenGLProgramPtr;
+
+class OpenGLProgram 
+{
+    friend OpenGLProgramPtr;
+public:
+    OpenGLProgram();
+    ~OpenGLProgram();
+
+    void Release();
+private:
+    OpenGLProgram(const OpenGLProgram&);
+    OpenGLProgram& operator=(const OpenGLProgram&);
+
+    GLuint m_Handle;
+    uint32_t m_Ref;
+};
+
+class OpenGLPipeline 
+{
+public:
+    OpenGLPipeline();
+    ~OpenGLPipeline();
+
+    void Create();
+    void Release();
+    
+    void BindProgramPipeline(void) const;
+
+private:
+    OpenGLPipeline(const OpenGLPipeline&);
+    OpenGLPipeline& operator=(const OpenGLPipeline&);
+
+    GLuint m_Handle;
+};
+
 class OpenGLBuffer;
 typedef OpenGLItemPtr<OpenGLBuffer> OpenGLBufferPtr;
 
@@ -50,6 +88,7 @@ public:
     void Release();
 
     void BindBuffer(GLenum Target) const;
+    void BindBufferRange(GLenum Target, GLuint Index, GLintptr Offset, GLsizeiptr Size) const;
     void BindVertexBuffer(GLuint BindingIndex, GLintptr Offset, GLsizei Stride) const;
     void NamedBufferStorage(GLsizeiptr Size, const void * Data, GLbitfield Flags);
     void * MapNamedBufferRange(GLintptr Offset, GLsizeiptr length, GLbitfield access);
