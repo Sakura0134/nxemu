@@ -485,6 +485,7 @@ public:
 
         unsigned FormatSizeInBytes() const;
         uint64_t StartAddress() const;
+        uint64_t IndexStart() const;
     } tyIndexArray;
 
     typedef struct

@@ -520,6 +520,11 @@ uint64_t CMaxwell3D::_tyIndexArray::StartAddress() const
     return (((uint64_t)StartAddrHigh) << 32) | StartAddrLow;
 }
 
+uint64_t CMaxwell3D::_tyIndexArray::IndexStart() const
+{
+    return StartAddress() + (((uint64_t)First) * FormatSizeInBytes());
+}
+
 uint64_t CMaxwell3D::_tyQuery::Address() const
 {
     return (((uint64_t)AddressHigh) << 32) | AddressLow;

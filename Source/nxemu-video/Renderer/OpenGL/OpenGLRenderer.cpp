@@ -205,6 +205,13 @@ void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
     SetupVertexFormat();
     SetupVertexBuffer();
     SetupVertexInstances();
+    if (IsIndexed) { SetupIndexBuffer(); }
+
+    if (!m_Device.UseAssemblyShaders())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -449,6 +456,16 @@ void OpenGLRenderer::SetupVertexInstances()
         bool InstancingEnabled = Regs.InstancedArrays.IsInstancingEnabled(i);
         glVertexBindingDivisor(i, InstancingEnabled ? Regs.VertexArray[i].Divisor : 0);
     }
+}
+
+GLintptr OpenGLRenderer::SetupIndexBuffer() 
+{
+    CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
+    const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
+    uint32_t Size = Regs.IndexArray.Count * Regs.IndexArray.FormatSizeInBytes();
+    uint64_t Offset = m_StreamBuffer.UploadMemory(Regs.IndexArray.IndexStart(), Size, 4);
+    m_StreamBuffer.Buffer()->BindBuffer(GL_ELEMENT_ARRAY_BUFFER);
+    return Offset;
 }
 
 void OpenGLRenderer::SyncViewport()

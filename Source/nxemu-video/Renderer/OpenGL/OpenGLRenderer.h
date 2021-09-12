@@ -47,6 +47,7 @@ private:
     void SetupVertexFormat();
     void SetupVertexBuffer();
     void SetupVertexInstances();
+    GLintptr SetupIndexBuffer();
     void SyncFragmentColorClampState();
     void SyncFramebufferSRGB();
     void SyncRasterizeEnable();
