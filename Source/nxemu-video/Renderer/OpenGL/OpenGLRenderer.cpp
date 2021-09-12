@@ -204,6 +204,7 @@ void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
 
     SetupVertexFormat();
     SetupVertexBuffer();
+    SetupVertexInstances();
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
@@ -423,6 +424,30 @@ void OpenGLRenderer::SetupVertexBuffer()
         {
             m_StreamBuffer.Buffer()->BindVertexBuffer(i, Offset, VertexArray.Stride);
         }
+    }
+}
+
+void OpenGLRenderer::SetupVertexInstances() 
+{
+    CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
+    CStateTracker & StateTracker = Maxwell3D.StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_VertexInstances)) 
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_VertexInstances);
+
+    const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
+    for (uint32_t i = 0; i < NUM_SUPPORTED_VERTEX_ATTRIBUTES; i++) 
+    {
+        if (!StateTracker.Flag(OpenGLDirtyFlag_VertexInstance0 + i)) 
+        {
+            continue;
+        }
+        StateTracker.FlagClear(OpenGLDirtyFlag_VertexInstance0 + i);
+
+        bool InstancingEnabled = Regs.InstancedArrays.IsInstancingEnabled(i);
+        glVertexBindingDivisor(i, InstancingEnabled ? Regs.VertexArray[i].Divisor : 0);
     }
 }
 

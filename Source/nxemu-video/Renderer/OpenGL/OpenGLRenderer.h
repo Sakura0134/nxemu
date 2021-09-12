@@ -46,6 +46,7 @@ private:
 
     void SetupVertexFormat();
     void SetupVertexBuffer();
+    void SetupVertexInstances();
     void SyncFragmentColorClampState();
     void SyncFramebufferSRGB();
     void SyncRasterizeEnable();

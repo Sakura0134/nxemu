@@ -510,6 +510,11 @@ unsigned CMaxwell3D::_tyIndexArray::FormatSizeInBytes() const
     return 1;
 }
 
+bool CMaxwell3D::_tyInstancedArrays::IsInstancingEnabled(uint32_t Index) const
+{
+    return IsInstanced[Index] != 0;
+}
+
 uint64_t CMaxwell3D::_tyIndexArray::StartAddress() const
 {
     return (((uint64_t)StartAddrHigh) << 32) | StartAddrLow;
