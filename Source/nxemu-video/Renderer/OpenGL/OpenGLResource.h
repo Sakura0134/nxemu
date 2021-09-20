@@ -37,6 +37,24 @@ private:
 
 class OpenGLProgram;
 
+class OpenGLShader 
+{
+    friend OpenGLProgram;
+
+public:
+    OpenGLShader();
+    ~OpenGLShader();
+
+    void Create(const char * Source, GLenum Type);
+    void Release();
+
+private:
+    OpenGLShader(const OpenGLShader&);
+    OpenGLShader& operator=(const OpenGLShader&);
+
+    GLuint m_Handle;
+};
+
 typedef OpenGLItemPtr<OpenGLProgram> OpenGLProgramPtr;
 
 class OpenGLProgram 
@@ -46,7 +64,11 @@ public:
     OpenGLProgram();
     ~OpenGLProgram();
 
+    void Create(bool separable_program, bool hint_retrievable, const OpenGLShader & Shader);
     void Release();
+
+    bool Created() const { return m_Handle != 0; }
+
 private:
     OpenGLProgram(const OpenGLProgram&);
     OpenGLProgram& operator=(const OpenGLProgram&);

@@ -1,4 +1,5 @@
 #pragma once
+#include "Shader\Shader.h"
 #include "GpuTypes.h"
 #include "Engine\UploadState.h"
 #include "Macro\MacroEngine.h"
@@ -407,6 +408,14 @@ public:
             unsigned Viewport : 4;
         };
     } tyClearFlags;
+
+    typedef struct _tyCodeAddress 
+    {
+        uint32_t AddressHigh;
+        uint32_t AddressLow;
+
+        uint64_t Address() const;
+    } tyCodeAddress;
 
     typedef union
     {
@@ -924,7 +933,9 @@ public:
             float PolygonOffsetUnits;
             PADDING_WORDS(0x4);
             MsaaMode MultisampleMode;
-            PADDING_WORDS(0x10);
+            PADDING_WORDS(0xD);
+            tyCodeAddress CodeAddress;
+            PADDING_WORDS(1);
             tyDraw Draw;
             PADDING_WORDS(0xA);
             tyPrimitiveRestart PrimitiveRestart;
@@ -1097,6 +1108,8 @@ public:
     inline const Registers & Regs (void) const { return m_Regs; }
     inline CStateTracker & StateTracker (void) { return m_StateTracker; }
 
+    static ShaderType GetShaderType(ShaderProgram ProgramType);
+
 private:
     CMaxwell3D();
     CMaxwell3D(const CMaxwell3D&);
@@ -1221,6 +1234,7 @@ ASSERT_REG_POSITION(StencilBackFuncFunc, 0x569);
 ASSERT_REG_POSITION(FramebufferSRGB, 0x56E);
 ASSERT_REG_POSITION(PolygonOffsetUnits, 0x56F);
 ASSERT_REG_POSITION(MultisampleMode, 0x574);
+ASSERT_REG_POSITION(CodeAddress, 0x582);
 ASSERT_REG_POSITION(Draw, 0x585);
 ASSERT_REG_POSITION(PrimitiveRestart, 0x591);
 ASSERT_REG_POSITION(IndexArray, 0x5F2);

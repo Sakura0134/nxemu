@@ -13,6 +13,7 @@ OpenGLStateTracker::OpenGLStateTracker(CVideo& Video) :
     SetupScissors();
     SetupVertexArrays();
     SetupVertexFormat();
+    SetupShaders();
     SetupPolygonModes();
     SetupDepthTest();
     SetupStencilTest();
@@ -186,6 +187,16 @@ void OpenGLStateTracker::SetupScissors(void)
         m_StateTracker.SetRegisterFlag(Offset, ScissorTestItemSize, OpenGLDirtyFlag_Scissor0 + i);
     }
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ScissorTest, ScissorTestSize, OpenGLDirtyFlag_Scissors);
+}
+
+void OpenGLStateTracker::SetupShaders(void) 
+{
+    enum 
+    {
+        ShaderConfigSize = (sizeof(CMaxwell3D::Registers::ShaderConfig) / (sizeof(uint32_t))),
+    };
+
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ShaderConfig, ShaderConfigSize, OpenGLDirtyFlag_Shaders);
 }
 
 void OpenGLStateTracker::SetupPolygonModes(void) 

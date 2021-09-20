@@ -2,6 +2,7 @@
 
 enum 
 {
+    MaxShaderTypes = 6,
     NumRenderTargets = 8,
 };
 

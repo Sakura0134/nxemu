@@ -9,7 +9,7 @@ CKeplerCompute::~CKeplerCompute()
 {
 }
 
-void CKeplerCompute::CallMethod(uint32_t Method, uint32_t Argument, bool Last)
+void CKeplerCompute::CallMethod(uint32_t Method, uint32_t Argument, bool /*Last*/)
 {
     if (Method >= NumRegisters) 
     {

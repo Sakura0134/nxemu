@@ -68,6 +68,7 @@
     <ClCompile Include="Renderer\OpenGL\OpenGLRenderer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLResource.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLShaderCache.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLShaderDecompiler.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStagingBuffer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStagingBuffers.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStateTracker.cpp" />
@@ -75,6 +76,8 @@
     <ClCompile Include="Renderer\OpenGL\OpenGLTextureCache.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLTypes.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLWindow.cpp" />
+    <ClCompile Include="Shader\Shader.cpp" />
+    <ClCompile Include="Shader\ShaderIR.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Task\CommandList.cpp" />
     <ClCompile Include="Task\CommandListEnd.cpp" />
@@ -102,6 +105,7 @@
     <ClInclude Include="Renderer\OpenGL\OpenGLProgramManager.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLRenderer.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLResource.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLShaderDecompiler.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLStagingBuffer.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLStagingBuffers.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLStateTracker.h" />
@@ -110,6 +114,11 @@
     <ClInclude Include="Renderer\OpenGL\OpenGLTypes.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLWindow.h" />
     <ClInclude Include="Renderer\Renderer.h" />
+    <ClInclude Include="Shader\Shader.h" />
+    <ClInclude Include="Shader\ShaderHeader.h" />
+    <ClInclude Include="Shader\ShaderInstruction.h" />
+    <ClInclude Include="Shader\ShaderIR.h" />
+    <ClInclude Include="Shader\ShaderNode.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="Task\CommandList.h" />
     <ClInclude Include="Task\CommandListEnd.h" />

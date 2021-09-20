@@ -50,6 +50,8 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_BlendState0,
     OpenGLDirtyFlag_BlendState7 = OpenGLDirtyFlag_BlendState0 + 7,
 
+    OpenGLDirtyFlag_Shaders,
+
     OpenGLDirtyFlag_PolygonModes,
     OpenGLDirtyFlag_PolygonModeFront,
     OpenGLDirtyFlag_PolygonModeBack,
@@ -96,6 +98,7 @@ private:
     void SetupVertexFormat(void);
     void SetupViewports(void);
     void SetupScissors(void);
+    void SetupShaders(void);
     void SetupPolygonModes(void);
     void SetupDepthTest(void);
     void SetupStencilTest(void);

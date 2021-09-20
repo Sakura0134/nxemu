@@ -498,6 +498,26 @@ void CMaxwell3D::ProcessClearBuffers()
     m_Renderer->Clear();
 }
 
+ShaderType CMaxwell3D::GetShaderType(ShaderProgram ProgramType) 
+{
+    switch (ProgramType)
+    {
+    case CMaxwell3D::ShaderProgram_VertexA: return ShaderType_Vertex;
+    case CMaxwell3D::ShaderProgram_VertexB: return ShaderType_Vertex;
+    case CMaxwell3D::ShaderProgram_TesselationControl: return ShaderType_TesselationControl;
+    case CMaxwell3D::ShaderProgram_TesselationEval: return ShaderType_TesselationEval;
+    case CMaxwell3D::ShaderProgram_Geometry: return ShaderType_Geometry;
+    case CMaxwell3D::ShaderProgram_Fragment: return ShaderType_Fragment;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return ShaderType_Vertex;
+}
+
+uint64_t CMaxwell3D::_tyCodeAddress::Address(void) const
+{
+    return (((uint64_t)AddressHigh) << 32) | AddressLow;
+}
+
 uint64_t CMaxwell3D::_tyConstBuffer::Address() const
 {
     return (((uint64_t)AddressHigh) << 32) | AddressLow;

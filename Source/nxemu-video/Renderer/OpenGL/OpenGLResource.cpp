@@ -1,5 +1,6 @@
 #include "OpenGLResource.h"
 #include "VideoNotification.h"
+#include <string>
 
 OpenGLTexture::OpenGLTexture() : 
     m_Handle(0),
@@ -91,6 +92,61 @@ void OpenGLTexture::TextureParameteriv(GLenum PName, const GLint * Param)
     glTextureParameteriv(m_Handle, PName, Param);
 }
 
+OpenGLShader::OpenGLShader() :
+    m_Handle(0)
+{
+} 
+
+OpenGLShader::~OpenGLShader() 
+{
+    Release();
+}
+
+void OpenGLShader::Create(const char * Source, GLenum Type) 
+{
+    if (m_Handle != 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+
+    if (Source == nullptr || Source[0] == '\0')
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    m_Handle = glCreateShader(Type);
+
+    const GLchar * SourceString = Source;
+    GLint SourceLength = (GLint)strlen(Source);
+
+    glShaderSource(m_Handle, 1, &SourceString, &SourceLength);
+    glCompileShader(m_Handle);
+
+    GLint InfoLogLength;
+    glGetShaderiv(m_Handle, GL_INFO_LOG_LENGTH, &InfoLogLength);
+
+    if (InfoLogLength > 1)
+    {
+        GLint Result = GL_FALSE;
+        glGetShaderiv(m_Handle, GL_COMPILE_STATUS, &Result);
+        std::string ShaderError(InfoLogLength, ' ');
+        glGetShaderInfoLog(m_Handle, InfoLogLength, nullptr, &ShaderError[0]);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
+void OpenGLShader::Release()
+{
+    if (m_Handle == 0) 
+    {
+        return;        
+    }
+
+    glDeleteShader(m_Handle);
+    m_Handle = 0;
+}
+
 OpenGLProgram::OpenGLProgram() :
     m_Handle(0),
     m_Ref(0)
@@ -100,6 +156,40 @@ OpenGLProgram::OpenGLProgram() :
 OpenGLProgram::~OpenGLProgram() 
 {
     Release();
+}
+
+void OpenGLProgram::Create(bool SeparableProgram, bool HintRetrievable, const OpenGLShader & Shader) 
+{
+    if (m_Handle != 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    GLuint ProgramId = glCreateProgram();
+    glAttachShader(ProgramId, Shader.m_Handle);
+
+    if (SeparableProgram)
+    {
+        glProgramParameteri(ProgramId, GL_PROGRAM_SEPARABLE, GL_TRUE);
+    }
+    if (HintRetrievable)
+    {
+        glProgramParameteri(ProgramId, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
+    }
+    glLinkProgram(ProgramId);
+
+    GLint InfoLogLength;
+    glGetProgramiv(ProgramId, GL_INFO_LOG_LENGTH, &InfoLogLength);
+    if (InfoLogLength > 1)
+    {
+        GLint result = GL_FALSE;
+        glGetProgramiv(ProgramId, GL_LINK_STATUS, &result);
+        std::string ProgramError(InfoLogLength, ' ');
+        glGetProgramInfoLog(ProgramId, InfoLogLength, nullptr, &ProgramError[0]);
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    glDetachShader(ProgramId, Shader.m_Handle);
+    m_Handle = ProgramId;
 }
 
 void OpenGLProgram::Release() 
