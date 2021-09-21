@@ -13,6 +13,19 @@ enum
     Texture_GOB_SizeShift = Texture_GOB_SizeXShift + Texture_GOB_SizeYShift + Texture_GOB_SizeZShift,
 };
 
+enum TextureType : unsigned 
+{
+    TextureType_1D = 0,
+    TextureType_2D = 1,
+    TextureType_3D = 2,
+    TextureType_Cubemap = 3,
+    TextureType_1DArray = 4,
+    TextureType_2DArray = 5,
+    TextureType_1DBuffer = 6,
+    TextureType_2DNoMipmap = 7,
+    TextureType_CubeArray = 8,
+};
+
 enum MsaaMode
 {
     MsaaMode_1x1 = 0,

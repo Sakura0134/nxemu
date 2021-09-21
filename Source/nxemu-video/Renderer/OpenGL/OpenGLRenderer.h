@@ -38,6 +38,7 @@ public:
     void ReleaseFences(void);
     void Clear();
     void Draw(bool IsIndexed, bool IsInstanced);
+    bool IsTextureHandlerSizeKnown() const;
 
     void TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool Track);
 
@@ -94,6 +95,7 @@ private:
     OpenGLProgramManager m_ProgramManager;
     OpenGLStreamBuffer m_StreamBuffer;
     bool m_QueuedCommands;
+    bool m_IsTextureHandlerSizeKnown;
     TrackedPageMap m_TrackedPages;
     CriticalSection m_PageCS;
 };

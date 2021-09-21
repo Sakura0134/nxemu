@@ -135,5 +135,7 @@ struct ShaderHeader
         tyVTG VTG;
         tyPS PS;
     };
+
+    ShaderPixelImap GetPixelImap(uint32_t Attribute) const;
 };
 #pragma warning(pop)

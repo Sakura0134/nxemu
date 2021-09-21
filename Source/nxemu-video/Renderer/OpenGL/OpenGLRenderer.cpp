@@ -9,16 +9,17 @@
 
 #pragma comment(lib, "opengl32.lib")
 
-OpenGLRenderer::OpenGLRenderer(ISwitchSystem & SwitchSystem, CVideo & Video) : 
+OpenGLRenderer::OpenGLRenderer(ISwitchSystem & SwitchSystem, CVideo & Video) :
     m_EmulatorWindow(Video.Window()),
-    m_SwitchSystem(SwitchSystem), 
+    m_SwitchSystem(SwitchSystem),
     m_Video(Video),
     m_StateTracker(Video),
     m_StreamBuffer(SwitchSystem, Video, m_StateTracker),
     m_TextureCache(*this, Video),
     m_ShaderCache(*this, Video, m_Device),
     m_FenceManager(*this, Video),
-    m_QueuedCommands(false)
+    m_QueuedCommands(false),
+    m_IsTextureHandlerSizeKnown(true)
 {
 }
 
@@ -30,11 +31,11 @@ bool OpenGLRenderer::Init()
 {
     OpenGLImage::InitCompatibleViewTable();
 
-    if (!m_OpenGLWindow.Initialize(m_EmulatorWindow.RenderSurface())) 
+    if (!m_OpenGLWindow.Initialize(m_EmulatorWindow.RenderSurface()))
     {
         return false;
     }
-    if (!GLAD_GL_VERSION_4_3) 
+    if (!GLAD_GL_VERSION_4_3)
     {
         return false;
     }
@@ -42,7 +43,7 @@ bool OpenGLRenderer::Init()
     {
         return false;
     }
-    if (!m_ProgramManager.Init(m_Device)) 
+    if (!m_ProgramManager.Init(m_Device))
     {
         return false;
     }
@@ -60,7 +61,7 @@ bool OpenGLRenderer::Init()
 
 void OpenGLRenderer::InvalidateRegion(uint64_t Addr, uint64_t Size)
 {
-    if (Addr == 0 || Size == 0) 
+    if (Addr == 0 || Size == 0)
     {
         return;
     }
@@ -69,14 +70,14 @@ void OpenGLRenderer::InvalidateRegion(uint64_t Addr, uint64_t Size)
 
 void OpenGLRenderer::FlushCommands(void)
 {
-    if (m_QueuedCommands) 
+    if (m_QueuedCommands)
     {
         m_QueuedCommands = false;
         glFlush();
     }
 }
 
-void OpenGLRenderer::WaitForIdle(void) 
+void OpenGLRenderer::WaitForIdle(void)
 {
     glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT | GL_ELEMENT_ARRAY_BARRIER_BIT |
                     GL_UNIFORM_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT |
@@ -91,17 +92,17 @@ void OpenGLRenderer::SignalSyncPoint(uint32_t Value)
     m_FenceManager.SignalSyncPoint(Value);
 }
 
-void OpenGLRenderer::SignalSemaphore(uint64_t Addr, uint32_t Value) 
+void OpenGLRenderer::SignalSemaphore(uint64_t Addr, uint32_t Value)
 {
     m_FenceManager.SignalSemaphore(Addr, Value);
 }
 
-void OpenGLRenderer::ReleaseFences(void) 
+void OpenGLRenderer::ReleaseFences(void)
 {
     m_FenceManager.WaitPendingFences();
 }
 
-void OpenGLRenderer::Clear() 
+void OpenGLRenderer::Clear()
 {
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
     bool UseColor = false, UseDepth = false, UseStencil = false;
@@ -133,11 +134,11 @@ void OpenGLRenderer::Clear()
     SyncRasterizeEnable();
     SyncStencilTestState();
 
-    if (Regs.ClearFlags.Scissor) 
+    if (Regs.ClearFlags.Scissor)
     {
         SyncScissorTest();
-    } 
-    else 
+    }
+    else
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
     }
@@ -149,19 +150,19 @@ void OpenGLRenderer::Clear()
     m_TextureCache.UpdateRenderTargets(true);
     m_StateTracker.BindFramebuffer(m_TextureCache.GetFramebuffer());
 
-    if (UseColor) 
+    if (UseColor)
     {
         glClearBufferfv(GL_COLOR, Regs.ClearBuffers.RT, Regs.ClearColor);
     }
     if (UseDepth && UseStencil)
     {
         glClearBufferfi(GL_DEPTH_STENCIL, 0, Regs.ClearDepth, Regs.ClearStencil);
-    } 
+    }
     else if (UseDepth)
     {
         glClearBufferfv(GL_DEPTH, 0, &Regs.ClearDepth);
-    } 
-    else if (UseStencil) 
+    }
+    else if (UseStencil)
     {
         glClearBufferiv(GL_STENCIL, 0, &Regs.ClearStencil);
     }
@@ -200,7 +201,7 @@ void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
     const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
 
     uint32_t BufferSize = CalculateVertexArraysSize();
-    if (IsIndexed) 
+    if (IsIndexed)
     {
         BufferSize = AlignUp(BufferSize, 4) + (Regs.IndexArray.Count * Regs.IndexArray.FormatSizeInBytes());
     }
@@ -225,7 +226,12 @@ void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
     g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
-void OpenGLRenderer::TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool Track) 
+bool OpenGLRenderer::IsTextureHandlerSizeKnown() const
+{
+    return m_IsTextureHandlerSizeKnown;
+}
+
+void OpenGLRenderer::TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool Track)
 {
     enum
     {
@@ -234,13 +240,13 @@ void OpenGLRenderer::TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool
     };
     CGuard Guard(m_PageCS);
     TrackedPageMap::iterator itr = m_TrackedPages.find(CpuAddr);
-    if (itr != m_TrackedPages.end()) 
+    if (itr != m_TrackedPages.end())
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
-    } 
+    }
     else
     {
-        if (!Track) 
+        if (!Track)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
             return;
@@ -253,10 +259,10 @@ void OpenGLRenderer::TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool
     }
 }
 
-void OpenGLRenderer::SyncFragmentColorClampState() 
+void OpenGLRenderer::SyncFragmentColorClampState()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
-    if (!StateTracker.Flag(OpenGLDirtyFlag_FragmentClampColor)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_FragmentClampColor))
     {
         return;
     }
@@ -276,10 +282,10 @@ void OpenGLRenderer::SyncFramebufferSRGB()
     m_Video.Maxwell3D().Regs().FramebufferSRGB != 0 ? glEnable(GL_FRAMEBUFFER_SRGB) : glDisable(GL_FRAMEBUFFER_SRGB);
 }
 
-void OpenGLRenderer::SyncRasterizeEnable() 
+void OpenGLRenderer::SyncRasterizeEnable()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
-    if (!StateTracker.Flag(OpenGLDirtyFlag_RasterizeEnable)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_RasterizeEnable))
     {
         return;
     }
@@ -287,7 +293,7 @@ void OpenGLRenderer::SyncRasterizeEnable()
     m_Video.Maxwell3D().Regs().RasterizeEnable == 0 ? glEnable(GL_RASTERIZER_DISCARD) : glDisable(GL_RASTERIZER_DISCARD);
 }
 
-void OpenGLRenderer::SyncStencilTestState() 
+void OpenGLRenderer::SyncStencilTestState()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
     if (!StateTracker.Flag(OpenGLDirtyFlag_StencilTest))
@@ -307,8 +313,8 @@ void OpenGLRenderer::SyncStencilTestState()
         glStencilFuncSeparate(GL_BACK, MaxwellToOpenGL_ComparisonOp(Regs.StencilBackFuncFunc), Regs.StencilBackFuncRef, Regs.StencilBackFuncMask);
         glStencilOpSeparate(GL_BACK, MaxwellToOpenGL_StencilOp(Regs.StencilBackOpFail), MaxwellToOpenGL_StencilOp(Regs.StencilBackOpZFail), MaxwellToOpenGL_StencilOp(Regs.StencilBackOpZPass));
         glStencilMaskSeparate(GL_BACK, Regs.StencilBackMask);
-    } 
-    else 
+    }
+    else
     {
         glStencilFuncSeparate(GL_BACK, GL_ALWAYS, 0, 0xFFFFFFFF);
         glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
@@ -326,9 +332,9 @@ void OpenGLRenderer::SyncScissorTest()
     StateTracker.FlagClear(OpenGLDirtyFlag_Scissors);
 
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
-    for (uint32_t i = 0, n = sizeof(Regs.ScissorTest) / sizeof(Regs.ScissorTest[0]); i < n; i++) 
+    for (uint32_t i = 0, n = sizeof(Regs.ScissorTest) / sizeof(Regs.ScissorTest[0]); i < n; i++)
     {
-        if (!StateTracker.Flag(OpenGLDirtyFlag_Scissor0 + i)) 
+        if (!StateTracker.Flag(OpenGLDirtyFlag_Scissor0 + i))
         {
             continue;
         }
@@ -340,25 +346,25 @@ void OpenGLRenderer::SyncScissorTest()
             glEnablei(GL_SCISSOR_TEST, (GLuint)i);
             glScissorIndexed((GLuint)i, ScissorTest.MinX, ScissorTest.MinY, ScissorTest.MaxX - ScissorTest.MinX, ScissorTest.MaxY - ScissorTest.MinY);
         }
-        else 
+        else
         {
             glDisablei(GL_SCISSOR_TEST, (GLuint)i);
         }
     }
 }
 
-void OpenGLRenderer::SetupVertexFormat() 
+void OpenGLRenderer::SetupVertexFormat()
 {
     CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
     CStateTracker & StateTracker = Maxwell3D.StateTracker();
-    if (!StateTracker.Flag(OpenGLDirtyFlag_VertexFormats)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_VertexFormats))
     {
         return;
     }
     StateTracker.FlagClear(OpenGLDirtyFlag_VertexFormats);
 
     const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
-    for (uint32_t i = 0; i < NUM_SUPPORTED_VERTEX_ATTRIBUTES; i++) 
+    for (uint32_t i = 0; i < NUM_SUPPORTED_VERTEX_ATTRIBUTES; i++)
     {
         if (!StateTracker.Flag(OpenGLDirtyFlag_VertexFormat0 + i))
         {
@@ -367,7 +373,7 @@ void OpenGLRenderer::SetupVertexFormat()
         StateTracker.FlagClear(OpenGLDirtyFlag_VertexFormat0 + i);
 
         const CMaxwell3D::tyVertexAttribute VertexAttrib = Regs.VertexAttribFormat[i];
-        if (VertexAttrib.IsConstant()) 
+        if (VertexAttrib.IsConstant())
         {
             glDisableVertexAttribArray(i);
             continue;
@@ -378,7 +384,7 @@ void OpenGLRenderer::SetupVertexFormat()
         {
             glVertexAttribIFormat(i, VertexAttrib.ComponentCount(), MaxwellToOpenGL_VertexFormat(VertexAttrib), VertexAttrib.Offset);
         }
-        else 
+        else
         {
             glVertexAttribFormat(i, VertexAttrib.ComponentCount(), MaxwellToOpenGL_VertexFormat(VertexAttrib), VertexAttrib.IsNormalized() ? GL_TRUE : GL_FALSE, VertexAttrib.Offset);
         }
@@ -386,11 +392,11 @@ void OpenGLRenderer::SetupVertexFormat()
     }
 }
 
-void OpenGLRenderer::SetupVertexBuffer() 
+void OpenGLRenderer::SetupVertexBuffer()
 {
     CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
     CStateTracker & StateTracker = Maxwell3D.StateTracker();
-    if (!StateTracker.Flag(OpenGLDirtyFlag_VertexBuffers)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_VertexBuffers))
     {
         return;
     }
@@ -399,9 +405,9 @@ void OpenGLRenderer::SetupVertexBuffer()
     const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
     bool UseUnifiedMemory = m_Device.HasVertexBufferUnifiedMemory();
 
-    for (uint32_t i = 0; i < NUM_SUPPORTED_VERTEX_BINDINGS; i++) 
+    for (uint32_t i = 0; i < NUM_SUPPORTED_VERTEX_BINDINGS; i++)
     {
-        if (!StateTracker.Flag(OpenGLDirtyFlag_VertexBuffer0 + i)) 
+        if (!StateTracker.Flag(OpenGLDirtyFlag_VertexBuffer0 + i))
         {
             continue;
         }
@@ -415,7 +421,7 @@ void OpenGLRenderer::SetupVertexBuffer()
 
         uint64_t GpuAddrStart = VertexArray.StartAddress();
         uint64_t GpuAddrEnd = Regs.VertexArrayLimit[i].LimitAddress();
-        if (GpuAddrEnd < GpuAddrStart) 
+        if (GpuAddrEnd < GpuAddrStart)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
             break;
@@ -425,7 +431,7 @@ void OpenGLRenderer::SetupVertexBuffer()
         if (Size == 0)
         {
             glBindVertexBuffer(i, 0, 0, VertexArray.Stride);
-            if (UseUnifiedMemory) 
+            if (UseUnifiedMemory)
             {
                 glBufferAddressRangeNV(GL_VERTEX_ATTRIB_ARRAY_ADDRESS_NV, i, 0, 0);
             }
@@ -436,28 +442,28 @@ void OpenGLRenderer::SetupVertexBuffer()
         {
             glBindVertexBuffer(i, 0, 0, VertexArray.Stride);
             glBufferAddressRangeNV(GL_VERTEX_ATTRIB_ARRAY_ADDRESS_NV, i, Offset, Size);
-        } 
-        else 
+        }
+        else
         {
             m_StreamBuffer.Buffer()->BindVertexBuffer(i, Offset, VertexArray.Stride);
         }
     }
 }
 
-void OpenGLRenderer::SetupVertexInstances() 
+void OpenGLRenderer::SetupVertexInstances()
 {
     CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
     CStateTracker & StateTracker = Maxwell3D.StateTracker();
-    if (!StateTracker.Flag(OpenGLDirtyFlag_VertexInstances)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_VertexInstances))
     {
         return;
     }
     StateTracker.FlagClear(OpenGLDirtyFlag_VertexInstances);
 
     const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
-    for (uint32_t i = 0; i < NUM_SUPPORTED_VERTEX_ATTRIBUTES; i++) 
+    for (uint32_t i = 0; i < NUM_SUPPORTED_VERTEX_ATTRIBUTES; i++)
     {
-        if (!StateTracker.Flag(OpenGLDirtyFlag_VertexInstance0 + i)) 
+        if (!StateTracker.Flag(OpenGLDirtyFlag_VertexInstance0 + i))
         {
             continue;
         }
@@ -468,7 +474,7 @@ void OpenGLRenderer::SetupVertexInstances()
     }
 }
 
-GLintptr OpenGLRenderer::SetupIndexBuffer() 
+GLintptr OpenGLRenderer::SetupIndexBuffer()
 {
     CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
     const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
@@ -546,12 +552,12 @@ void OpenGLRenderer::SyncViewport()
     bool ViewPortDirty = StateTracker.Flag(OpenGLDirtyFlag_Viewports);
     bool ClipControlDirty = StateTracker.Flag(OpenGLDirtyFlag_ClipControl);
 
-    if (ClipControlDirty || StateTracker.Flag(OpenGLDirtyFlag_FrontFace)) 
+    if (ClipControlDirty || StateTracker.Flag(OpenGLDirtyFlag_FrontFace))
     {
         StateTracker.FlagClear(OpenGLDirtyFlag_FrontFace);
 
         GLenum Mode = MaxwellToOpenGL_FrontFace(Regs.FrontFace);
-        if (Regs.ScreenYControl.TriangleRastFlip != 0 && Regs.ViewPortTransform[0].ScaleY < 0.0f) 
+        if (Regs.ScreenYControl.TriangleRastFlip != 0 && Regs.ViewPortTransform[0].ScaleY < 0.0f)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -563,7 +569,7 @@ void OpenGLRenderer::SyncViewport()
         StateTracker.FlagClear(OpenGLDirtyFlag_ClipControl);
 
         bool FlipY = false;
-        if (Regs.ViewPortTransform[0].ScaleY < 0.0f) 
+        if (Regs.ViewPortTransform[0].ScaleY < 0.0f)
         {
             FlipY = !FlipY;
         }
@@ -574,13 +580,13 @@ void OpenGLRenderer::SyncViewport()
         glClipControl(FlipY ? GL_UPPER_LEFT : GL_LOWER_LEFT, Regs.DepthMode == CMaxwell3D::DepthMode_ZeroToOne ? GL_ZERO_TO_ONE : GL_NEGATIVE_ONE_TO_ONE);
     }
 
-    if (ViewPortDirty) 
+    if (ViewPortDirty)
     {
         bool ViewportTransformDirty = StateTracker.Flag(OpenGLDirtyFlag_ViewportTransform);
         StateTracker.FlagClear(OpenGLDirtyFlag_Viewports);
         StateTracker.FlagClear(OpenGLDirtyFlag_ViewportTransform);
 
-        for (uint8_t i = 0; i < CMaxwell3D::NumViewPorts; i++) 
+        for (uint8_t i = 0; i < CMaxwell3D::NumViewPorts; i++)
         {
             if (!ViewportTransformDirty && !StateTracker.Flag(OpenGLDirtyFlag_Viewport0 + i))
             {
@@ -606,19 +612,19 @@ void OpenGLRenderer::SyncViewport()
     }
 }
 
-void OpenGLRenderer::SyncPolygonModes() 
+void OpenGLRenderer::SyncPolygonModes()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
-    if (!StateTracker.Flag(OpenGLDirtyFlag_PolygonModes)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_PolygonModes))
     {
         return;
     }
     StateTracker.FlagClear(OpenGLDirtyFlag_PolygonModes);
 
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
-    if (Regs.FillRectangle != 0) 
+    if (Regs.FillRectangle != 0)
     {
-        if (!GLAD_GL_NV_fill_rectangle) 
+        if (!GLAD_GL_NV_fill_rectangle)
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             return;
@@ -629,7 +635,7 @@ void OpenGLRenderer::SyncPolygonModes()
         return;
     }
 
-    if (Regs.PolygonModeFront == Regs.PolygonModeBack) 
+    if (Regs.PolygonModeFront == Regs.PolygonModeBack)
     {
         StateTracker.FlagClear(OpenGLDirtyFlag_PolygonModeFront);
         StateTracker.FlagClear(OpenGLDirtyFlag_PolygonModeBack);
@@ -637,23 +643,23 @@ void OpenGLRenderer::SyncPolygonModes()
         return;
     }
 
-    if (StateTracker.Flag(OpenGLDirtyFlag_PolygonModeFront)) 
+    if (StateTracker.Flag(OpenGLDirtyFlag_PolygonModeFront))
     {
         StateTracker.FlagClear(OpenGLDirtyFlag_PolygonModeFront);
         glPolygonMode(GL_FRONT, MaxwellToOpenGL_PolygonMode(Regs.PolygonModeFront));
     }
 
-    if (StateTracker.Flag(OpenGLDirtyFlag_PolygonModeBack)) 
+    if (StateTracker.Flag(OpenGLDirtyFlag_PolygonModeBack))
     {
         StateTracker.FlagClear(OpenGLDirtyFlag_PolygonModeBack);
         glPolygonMode(GL_BACK, MaxwellToOpenGL_PolygonMode(Regs.PolygonModeBack));
     }
 }
 
-void OpenGLRenderer::SyncColorMask() 
+void OpenGLRenderer::SyncColorMask()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
-    if (!StateTracker.Flag(OpenGLDirtyFlag_ColorMasks)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_ColorMasks))
     {
         return;
     }
@@ -663,9 +669,9 @@ void OpenGLRenderer::SyncColorMask()
     StateTracker.FlagClear(OpenGLDirtyFlag_ColorMaskCommon);
 
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
-    if (Regs.ColorMaskCommon) 
+    if (Regs.ColorMaskCommon)
     {
-        if (!Force && !StateTracker.Flag(OpenGLDirtyFlag_ColorMask0)) 
+        if (!Force && !StateTracker.Flag(OpenGLDirtyFlag_ColorMask0))
         {
             return;
         }
@@ -676,7 +682,7 @@ void OpenGLRenderer::SyncColorMask()
         return;
     }
 
-    for (uint8_t i = 0; i < NumRenderTargets; i++) 
+    for (uint8_t i = 0; i < NumRenderTargets; i++)
     {
         if (!Force && !StateTracker.Flag(OpenGLDirtyFlag_ColorMask0 + i))
         {
@@ -708,7 +714,7 @@ void OpenGLRenderer::SyncDepthTestState()
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
 
-    if (StateTracker.Flag(OpenGLDirtyFlag_DepthMask)) 
+    if (StateTracker.Flag(OpenGLDirtyFlag_DepthMask))
     {
         StateTracker.FlagClear(OpenGLDirtyFlag_DepthMask);
         glDepthMask(Regs.DepthWriteEnabled != 0 ? GL_TRUE : GL_FALSE);
@@ -718,17 +724,17 @@ void OpenGLRenderer::SyncDepthTestState()
     {
         StateTracker.FlagClear(OpenGLDirtyFlag_DepthTest);
         OpenGLEnable(GL_DEPTH_TEST, Regs.DepthTestEnable != 0);
-        if (Regs.DepthTestEnable != 0) 
+        if (Regs.DepthTestEnable != 0)
         {
             glDepthFunc(MaxwellToOpenGL_ComparisonOp(Regs.DepthTestFunc));
         }
     }
 }
 
-void OpenGLRenderer::SyncDepthClamp() 
+void OpenGLRenderer::SyncDepthClamp()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
-    if (!StateTracker.Flag(OpenGLDirtyFlag_DepthClampEnabled)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_DepthClampEnabled))
     {
         return;
     }
@@ -740,7 +746,7 @@ void OpenGLRenderer::SyncDepthClamp()
 void OpenGLRenderer::SyncLogicOpState()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
-    if (!StateTracker.Flag(OpenGLDirtyFlag_LogicOp)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_LogicOp))
     {
         return;
     }
@@ -748,10 +754,10 @@ void OpenGLRenderer::SyncLogicOpState()
 
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
     OpenGLEnable(GL_COLOR_LOGIC_OP, Regs.LogicOp.Enable != 0);
-    if (Regs.LogicOp.Enable != 0) 
+    if (Regs.LogicOp.Enable != 0)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
-    } 
+    }
 }
 
 void OpenGLRenderer::SyncCullMode()
@@ -759,22 +765,22 @@ void OpenGLRenderer::SyncCullMode()
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
 
-    if (StateTracker.Flag(OpenGLDirtyFlag_CullTest)) 
+    if (StateTracker.Flag(OpenGLDirtyFlag_CullTest))
     {
         StateTracker.FlagSet(OpenGLDirtyFlag_CullTest);
 
         OpenGLEnable(GL_CULL_FACE, Regs.CullTestEnabled != 0);
-        if (Regs.CullTestEnabled != 0) 
+        if (Regs.CullTestEnabled != 0)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
     }
 }
 
-void OpenGLRenderer::SyncPrimitiveRestart() 
+void OpenGLRenderer::SyncPrimitiveRestart()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
-    if (!StateTracker.Flag(OpenGLDirtyFlag_PrimitiveRestart)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_PrimitiveRestart))
     {
         return;
     }
@@ -782,13 +788,13 @@ void OpenGLRenderer::SyncPrimitiveRestart()
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
 
     OpenGLEnable(GL_PRIMITIVE_RESTART, Regs.PrimitiveRestart.Enabled != 0);
-    if (Regs.PrimitiveRestart.Enabled != 0) 
+    if (Regs.PrimitiveRestart.Enabled != 0)
     {
         glPrimitiveRestartIndex(Regs.PrimitiveRestart.Index);
     }
 }
 
-void OpenGLRenderer::SyncLineState() 
+void OpenGLRenderer::SyncLineState()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
     if (!StateTracker.Flag(OpenGLDirtyFlag_LineWidth))
@@ -802,10 +808,10 @@ void OpenGLRenderer::SyncLineState()
     glLineWidth(Regs.LineSmoothEnable ? Regs.LineWidthSmooth : Regs.LineWidthAliased);
 }
 
-void OpenGLRenderer::SyncPolygonOffset() 
+void OpenGLRenderer::SyncPolygonOffset()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
-    if (!StateTracker.Flag(OpenGLDirtyFlag_PolygonOffset)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_PolygonOffset))
     {
         return;
     }
@@ -822,7 +828,7 @@ void OpenGLRenderer::SyncPolygonOffset()
     }
 }
 
-void OpenGLRenderer::SyncAlphaTest() 
+void OpenGLRenderer::SyncAlphaTest()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
     if (!StateTracker.Flag(OpenGLDirtyFlag_AlphaTest))
@@ -836,10 +842,10 @@ void OpenGLRenderer::SyncAlphaTest()
     if (Regs.AlphaTestEnabled)
     {
         glAlphaFunc(MaxwellToOpenGL_ComparisonOp(Regs.AlphaTestFunc), Regs.AlphaTestRef);
-    } 
+    }
 }
 
-void OpenGLRenderer::SyncBlendState() 
+void OpenGLRenderer::SyncBlendState()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
@@ -850,16 +856,16 @@ void OpenGLRenderer::SyncBlendState()
         glBlendColor(Regs.BlendColor.R, Regs.BlendColor.G, Regs.BlendColor.B, Regs.BlendColor.A);
     }
 
-    if (!StateTracker.Flag(OpenGLDirtyFlag_BlendStates)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_BlendStates))
     {
         return;
     }
     StateTracker.FlagClear(OpenGLDirtyFlag_BlendStates);
 
-    if (Regs.IndependentBlendEnable != 0) 
+    if (Regs.IndependentBlendEnable != 0)
     {
         OpenGLEnable(GL_BLEND, Regs.Blend.Enable[0] != 0);
-        if (Regs.Blend.Enable[0] != 0) 
+        if (Regs.Blend.Enable[0] != 0)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -869,9 +875,9 @@ void OpenGLRenderer::SyncBlendState()
     bool BlendIndependentEnabled = StateTracker.Flag(OpenGLDirtyFlag_BlendIndependentEnabled);
     StateTracker.FlagClear(OpenGLDirtyFlag_BlendIndependentEnabled);
 
-    for (uint8_t i = 0; i < NumRenderTargets; i++) 
+    for (uint8_t i = 0; i < NumRenderTargets; i++)
     {
-        if (!BlendIndependentEnabled && !StateTracker.Flag(OpenGLDirtyFlag_BlendState0 + i)) 
+        if (!BlendIndependentEnabled && !StateTracker.Flag(OpenGLDirtyFlag_BlendState0 + i))
         {
             continue;
         }
@@ -884,7 +890,7 @@ void OpenGLRenderer::SyncBlendState()
 void OpenGLRenderer::SyncPointState()
 {
     CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
-    if (!StateTracker.Flag(OpenGLDirtyFlag_PointSize)) 
+    if (!StateTracker.Flag(OpenGLDirtyFlag_PointSize))
     {
         return;
     }
@@ -897,11 +903,11 @@ void OpenGLRenderer::SyncPointState()
     glPointSize(std::max(1.0f, Regs.PointSize));
 }
 
-uint32_t OpenGLRenderer::CalculateVertexArraysSize() const 
+uint32_t OpenGLRenderer::CalculateVertexArraysSize() const
 {
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
     uint32_t Size = 0;
-    for (uint32_t i = 0, n = sizeof(Regs.VertexArray) / sizeof(Regs.VertexArray[0]); i < n; i++) 
+    for (uint32_t i = 0, n = sizeof(Regs.VertexArray) / sizeof(Regs.VertexArray[0]); i < n; i++)
     {
         if (!Regs.VertexArray[i].IsEnabled())
         {
@@ -910,7 +916,7 @@ uint32_t OpenGLRenderer::CalculateVertexArraysSize() const
 
         uint64_t Start = Regs.VertexArray[i].StartAddress();
         uint64_t End = Regs.VertexArrayLimit[i].LimitAddress();
-        if (End < Start) 
+        if (End < Start)
         {
             g_Notify->BreakPoint(__FILE__, __LINE__);
         }
@@ -919,7 +925,7 @@ uint32_t OpenGLRenderer::CalculateVertexArraysSize() const
     return Size;
 }
 
-void OpenGLRenderer::OpenGLEnable(GLenum Cap, bool Enable) 
+void OpenGLRenderer::OpenGLEnable(GLenum Cap, bool Enable)
 {
     if (Enable)
     {

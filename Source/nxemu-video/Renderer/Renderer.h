@@ -12,4 +12,5 @@ __interface IRenderer
     virtual void ReleaseFences() = 0;
     virtual void Clear() = 0;
     virtual void Draw(bool IsIndexed, bool IsInstanced) = 0;
+    virtual bool IsTextureHandlerSizeKnown() const = 0;
 };
