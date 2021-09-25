@@ -25,6 +25,7 @@ public:
         NumCBData = 16,
         NumVertexArrays = 32,
         NumVertexAttributes = 32,
+        NumTransformFeedbackBuffers = 4,
         MaxShaderProgram = 6,
         MaxShaderStage = 5,
         MaxConstBuffers = 18,
@@ -290,6 +291,20 @@ public:
         StencilOp_InvertOGL = 0x150A,
         StencilOp_IncrWrapOGL = 0x8507,
         StencilOp_DecrWrapOGL = 0x8508,
+    };
+
+    enum TessellationPrimitive : unsigned
+    {
+        TessellationPrimitive_Isolines = 0,
+        TessellationPrimitive_Triangles = 1,
+        TessellationPrimitive_Quads = 2,
+    };
+
+    enum TessellationSpacing : unsigned
+    {
+        TessellationSpacing_Equal = 0,
+        TessellationSpacing_FractionalOdd = 1,
+        TessellationSpacing_FractionalEven = 2,
     };
 
     enum VertexAttributeSize : unsigned
@@ -700,6 +715,29 @@ public:
             unsigned Increment : 1;
         };
     } tySyncInfo;
+
+    typedef union 
+    {
+        uint32_t Value;
+        struct 
+        {
+            TessellationPrimitive Primitive : 2;
+            unsigned : 2;
+            TessellationSpacing Spacing : 2;
+            unsigned : 2;
+            unsigned CW : 1;
+            unsigned Connected : 1;
+        };
+    } tyTessellationMode;
+
+    typedef struct
+    {
+        uint32_t Stream;
+        uint32_t VaryingCount;
+        uint32_t Stride;
+        PADDING_WORDS(1);
+    } tyTransformFeedbackLayout;
+
     typedef struct _tyVertexArray
     {
         union
@@ -833,9 +871,15 @@ public:
             uint32_t DataUpload;
             PADDING_WORDS(0x44);
             tySyncInfo SyncInfo;
-            PADDING_WORDS(0x2C);
+            PADDING_WORDS(0x15);
+            tyTessellationMode TessellationMode;
+            PADDING_WORDS(0x16);
             uint32_t RasterizeEnable;
-            PADDING_WORDS(0x120);
+            PADDING_WORDS(0xE0);
+            tyTransformFeedbackLayout TFBLayouts[NumTransformFeedbackBuffers];
+            PADDING_WORDS(0x1);
+            uint32_t TFBEnabled;
+            PADDING_WORDS(0x2E);
             tyRenderTarget RenderTarget[NumRenderTargets];
             tyViewPortTransform ViewPortTransform[NumViewPorts];
             tyViewPort ViewPorts[NumViewPorts];
@@ -972,6 +1016,8 @@ public:
             tyConstBuffer ConstBuffer;
             PADDING_WORDS(0x10);
             tyCBBind CBBind[MaxShaderStage];
+            PADDING_WORDS(0xD4);
+            uint8_t TFBVaryingLocs[NumTransformFeedbackBuffers][128];
         };
         uint32_t Value[NumRegisters];
     };
@@ -1076,6 +1122,8 @@ public:
         Method_StencilFrontOpZPass = offsetof(Registers, StencilFrontOpZPass) / sizeof(uint32_t),
         Method_StencilTwoSideEnable = offsetof(Registers, StencilTwoSideEnable) / sizeof(uint32_t),
         Method_SyncInfo = offsetof(Registers, SyncInfo) / sizeof(uint32_t),
+        Method_TFBLayouts = offsetof(Registers, TFBLayouts) / sizeof(uint32_t),
+        Method_TFBVaryingLocs = offsetof(Registers, TFBVaryingLocs) / sizeof(uint32_t),
         Method_Tic = offsetof(Registers, Tic) / sizeof(uint32_t),
         Method_TiledCacheBarrier = offsetof(Registers, TiledCacheBarrier) / sizeof(uint32_t),
         Method_Tsc = offsetof(Registers, Tsc) / sizeof(uint32_t),
@@ -1167,7 +1215,10 @@ ASSERT_REG_POSITION(Upload, 0x60);
 ASSERT_REG_POSITION(ExecUpload, 0x6C);
 ASSERT_REG_POSITION(DataUpload, 0x6D);
 ASSERT_REG_POSITION(SyncInfo, 0xB2);
+ASSERT_REG_POSITION(TessellationMode, 0xC8);
 ASSERT_REG_POSITION(RasterizeEnable, 0xDF);
+ASSERT_REG_POSITION(TFBLayouts, 0x1C0);
+ASSERT_REG_POSITION(TFBEnabled, 0x1D1);
 ASSERT_REG_POSITION(RenderTarget, 0x200);
 ASSERT_REG_POSITION(ViewPorts, 0x300);
 ASSERT_REG_POSITION(VertexBufferCount, 0x35E);
@@ -1257,5 +1308,6 @@ ASSERT_REG_POSITION(ShaderConfig, 0x800);
 ASSERT_REG_POSITION(Firmware, 0x8C0);
 ASSERT_REG_POSITION(ConstBuffer, 0x8E0);
 ASSERT_REG_POSITION(CBBind, 0x904);
+ASSERT_REG_POSITION(TFBVaryingLocs, 0xA00);
 
 #undef ASSERT_REG_POSITION

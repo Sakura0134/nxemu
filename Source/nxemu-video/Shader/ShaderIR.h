@@ -2,6 +2,7 @@
 #include "Shader.h"
 #include "ShaderHeader.h"
 #include "ShaderNode.h"
+#include "Engine/Maxwell3D.h"
 #include <stdint.h>
 #include <map>
 #include <set>
@@ -10,6 +11,17 @@ class CVideo;
 class ShaderCharacteristics;
 class ShaderBlock;
 __interface IRenderer;
+
+typedef struct
+{
+    CMaxwell3D::tyTransformFeedbackLayout TFBLayouts[CMaxwell3D::NumTransformFeedbackBuffers];
+    uint8_t TFBVaryingLocs[CMaxwell3D::NumTransformFeedbackBuffers][128];
+    CMaxwell3D::PrimitiveTopology PrimitiveTopology;
+    CMaxwell3D::TessellationPrimitive TessellationPrimitive;
+    CMaxwell3D::TessellationSpacing TessellationSpacing;
+    bool TFBEnabled;
+    bool TessellationClockwise;
+} ShaderGraphicsInfo;
 
 class ShaderConstBuffer 
 {
@@ -20,6 +32,7 @@ public:
     void MarkAsUsed(uint32_t Offset);
 
     bool IsIndirect() const { return m_IsIndirect; }
+    uint32_t GetSize() const { return m_MaxOffset + (uint32_t)(sizeof(float)); }
     uint32_t GetMaxOffset() const { return m_MaxOffset; }
 
 private:
@@ -38,11 +51,21 @@ public:
     typedef std::set<uint32_t> RegisterSet;
     typedef std::set<ShaderPredicate> PredicateSet;
 
-    ShaderIR(const ShaderProgramCode & ProgramCode, uint32_t MainOffset, IRenderer & Renderer);
+    ShaderIR(const ShaderProgramCode & ProgramCode, uint32_t MainOffset, IRenderer & Renderer, CVideo & Video, ShaderType Type);
     ~ShaderIR();
 
+    const ShaderNodeMap & ShaderNodes() const { return m_ShaderNodes; }
+    const RegisterSet & GetRegisters() const { return m_UsedRegisters; }
+    const PredicateSet & GetPredicates() const { return m_UsedPredicates; }
+    const ShaderAttributeIndexSet & GetInputAttributes() const { return m_UsedInputAttributes; }
+    const ShaderAttributeIndexSet & GetOutputAttributes() const { return m_UsedOutputAttributes; }
     const ShaderConstBufferMap & GetConstantBuffers() const { return m_UsedConstBuffers; }
     const ShaderSamplerEntryList & GetSamplers() const { return m_UsedSamplers; }
+    bool HasPhysicalAttributes() const { return m_UsesPhysicalAttributes; }
+    bool IsDecompiled() const { return m_Decompiled; }
+    bool IsFlowStackDisabled() const { return m_DisableFlowStack; }
+    const ShaderHeader & GetHeader() const { return m_Header; }
+    const ShaderGraphicsInfo & GetGraphicsInfo() const;
 
 private:
     ShaderIR();
@@ -78,10 +101,16 @@ private:
     ShaderNodeList GetTextureCode(ShaderInstruction Instruction, ShaderTextureType TextureType, ShaderTextureProcessMode ProcessMode, ShaderNodeList Coords, ShaderNodePtr Array, ShaderNodePtr DepthCompare, uint32_t BiasOffset);
     void WriteTexsInstructionFloat(ShaderNodeList & NodeList, ShaderInstruction Instruction, const ShaderNodeList & components);
 
+    static ShaderGraphicsInfo MakeGraphicsInfo(ShaderType Type, CMaxwell3D & Maxwell3D);
+
     const ShaderProgramCode & m_ProgramCode;
     uint32_t m_MainOffset;
     IRenderer & m_Renderer;
+    CVideo & m_Video;
+    ShaderType m_ShaderType;
     ShaderHeader m_Header;
+    ShaderGraphicsInfo m_GraphicsInfo;
+    bool m_Decompiled;
     bool m_DisableFlowStack;
     ShaderNodeMap m_ShaderNodes;
     RegisterSet m_UsedRegisters;
@@ -90,4 +119,5 @@ private:
     ShaderAttributeIndexSet m_UsedOutputAttributes;
     ShaderConstBufferMap m_UsedConstBuffers;
     ShaderSamplerEntryList m_UsedSamplers;
+    bool m_UsesPhysicalAttributes;
 };

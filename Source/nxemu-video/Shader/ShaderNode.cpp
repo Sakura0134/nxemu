@@ -90,6 +90,11 @@ ShaderNodePtr::~ShaderNodePtr()
     ReleaseRef();
 }
 
+ShaderNode * ShaderNodePtr::operator->() const 
+{
+    return (get());
+}
+
 ShaderNode * ShaderNodePtr::get() const
 {
     return m_Object;
@@ -168,6 +173,11 @@ ShaderGprNode::ShaderGprNode(uint32_t Index) :
 
 ShaderGprNode::~ShaderGprNode()
 {
+}
+
+uint32_t ShaderGprNode::GetIndex() const
+{
+    return m_Index;
 }
 
 ShaderAttributeBufferNode::ShaderAttributeBufferNode(ShaderAttributeIndex Index, uint32_t Eement, ShaderNodePtr Buffer) : 

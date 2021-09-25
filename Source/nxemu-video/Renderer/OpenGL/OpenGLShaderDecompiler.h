@@ -18,5 +18,5 @@ private:
 };
 
 typedef std::vector<OpenGLShaderConstBuffer> OpenGLShaderConstBufferList;
-
 std::string OpenGLDecompileShader(const OpenGLDevice & device, const ShaderIR & ir, ShaderType stage, const char * Identifier);
+void InitOpenGLDecompileShader(void);

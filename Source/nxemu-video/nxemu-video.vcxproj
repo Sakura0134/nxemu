@@ -60,6 +60,7 @@
     <ClCompile Include="Renderer\OpenGL\MaxwellToOpenGL.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLCompiledShader.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLDevice.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLExpression.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLFenceManager.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLImage.cpp" />
@@ -69,6 +70,7 @@
     <ClCompile Include="Renderer\OpenGL\OpenGLResource.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLShaderCache.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLShaderDecompiler.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLShaderWriter.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStagingBuffer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStagingBuffers.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStateTracker.cpp" />
@@ -106,6 +108,7 @@
     <ClInclude Include="Renderer\OpenGL\MaxwellToOpenGL.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLCompiledShader.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLDevice.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLExpression.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLFenceManager.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLImage.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLImageView.h" />
@@ -114,6 +117,7 @@
     <ClInclude Include="Renderer\OpenGL\OpenGLRenderer.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLResource.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLShaderDecompiler.h" />
+    <ClInclude Include="Renderer\OpenGL\OpenGLShaderWriter.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLStagingBuffer.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLStagingBuffers.h" />
     <ClInclude Include="Renderer\OpenGL\OpenGLStateTracker.h" />

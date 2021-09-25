@@ -29,6 +29,7 @@ OpenGLRenderer::~OpenGLRenderer()
 
 bool OpenGLRenderer::Init()
 {
+    InitOpenGLDecompileShader();
     OpenGLImage::InitCompatibleViewTable();
 
     if (!m_OpenGLWindow.Initialize(m_EmulatorWindow.RenderSurface()))

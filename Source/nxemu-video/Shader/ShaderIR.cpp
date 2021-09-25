@@ -4,6 +4,7 @@
 #include "ShaderBranch.h"
 #include "ShaderBlock.h"
 #include "Renderer\Renderer.h"
+#include "Video.h"
 #include "VideoNotification.h"
 #include "Textures\Texture.h"
 #include <Common\StdString.h>
@@ -26,11 +27,16 @@ void ShaderConstBuffer::MarkAsUsed(uint32_t Offset)
     m_MaxOffset = std::max(m_MaxOffset, Offset);
 }
 
-ShaderIR::ShaderIR(const ShaderProgramCode & ProgramCode, uint32_t MainOffset, IRenderer & Renderer) :
+ShaderIR::ShaderIR(const ShaderProgramCode & ProgramCode, uint32_t MainOffset, IRenderer & Renderer, CVideo & Video, ShaderType Type) :
     m_ProgramCode(ProgramCode),
     m_MainOffset(MainOffset),
     m_Renderer(Renderer),
-    m_DisableFlowStack(false)
+    m_Video(Video),
+    m_ShaderType(Type),
+    m_GraphicsInfo(MakeGraphicsInfo(Type, Video.Maxwell3D())),
+    m_Decompiled(false),
+    m_DisableFlowStack(false),
+    m_UsesPhysicalAttributes(false)
 {
     std::memcpy(&m_Header, m_ProgramCode.data(), sizeof(ShaderHeader));
     Decode();
@@ -631,6 +637,15 @@ ShaderNodePtr ShaderIR::GetSaturatedFloat(ShaderNodePtr Value, bool Saturate)
     return Value;
 }
 
+const ShaderGraphicsInfo & ShaderIR::GetGraphicsInfo() const
+{
+    if (m_ShaderType == ShaderType_Compute)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    return m_GraphicsInfo;
+}
+
 void ShaderIR::SetRegister(ShaderNodeList & NodeList, uint32_t dest, ShaderNodePtr src)
 {
     NodeList.push_back(ShaderNodePtr(new ShaderOperationNode(ShaderOperationCode_Assign, false, { GetRegister(dest), std::move(src) })));
@@ -743,4 +758,22 @@ void ShaderIR::WriteTexsInstructionFloat(ShaderNodeList & NodeList, ShaderInstru
         }
         SetRegister(NodeList, (uint32_t)((i < 2 ? Instruction.Gpr0 : Instruction.Gpr28) + i % 2), GetRegister(ShaderRegister_ZeroIndex + 1 + i));
     }
+}
+
+ShaderGraphicsInfo ShaderIR::MakeGraphicsInfo(ShaderType Type, CMaxwell3D & Maxwell3D)
+{
+    ShaderGraphicsInfo Info;
+    memset(&Info, 0, sizeof(Info));
+    if (Type != ShaderType_Compute)
+    {
+        const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
+        memcpy(Info.TFBLayouts, Regs.TFBLayouts, sizeof(Info.TFBLayouts));
+        memcpy(&Info.TFBVaryingLocs, &Regs.TFBVaryingLocs, sizeof(Info.TFBVaryingLocs));
+        Info.PrimitiveTopology = Regs.Draw.Topology;
+        Info.TessellationPrimitive = Regs.TessellationMode.Primitive;
+        Info.TessellationSpacing = Regs.TessellationMode.Spacing;
+        Info.TFBEnabled = Regs.TFBEnabled != 0;
+        Info.TessellationClockwise = Regs.TessellationMode.CW != 0;
+    }
+    return Info;
 }

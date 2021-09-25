@@ -136,6 +136,8 @@ struct ShaderHeader
         tyPS PS;
     };
 
+    uint64_t GetLocalMemorySize() const;
     ShaderPixelImap GetPixelImap(uint32_t Attribute) const;
+    bool IsColorComponentOutputEnabled(uint32_t RenderTarget, uint32_t Component) const;
 };
 #pragma warning(pop)

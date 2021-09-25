@@ -123,6 +123,7 @@ ShaderScanState::ShaderScanState(const ShaderProgramCode & ProgramCode, uint32_t
     m_ProgramCode(ProgramCode),
     m_StartAddress(StartAddress)
 {
+    m_Labels.emplace(StartAddress);
     m_InspectQueries.push_back(StartAddress);
     m_Queries.emplace_back();
     ShaderScanQuery & Query = *std::prev(m_Queries.end());    

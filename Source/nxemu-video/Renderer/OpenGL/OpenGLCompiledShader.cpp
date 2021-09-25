@@ -53,7 +53,7 @@ OpenGLCompiledShaderPtr OpenGLCompiledShader::CreateStageFromMemory(IRenderer & 
     uint32_t ShaderCodeSize = (uint32_t)(ShaderCode.size() * sizeof(uint64_t));
 
     ShaderType Type = CMaxwell3D::GetShaderType(ProgramType);
-    ShaderIR IR(ShaderCode, SHADER_STAGE_MAIN_OFFSET, Renderer);
+    ShaderIR IR(ShaderCode, SHADER_STAGE_MAIN_OFFSET, Renderer, Video, Type);
     std::string ShaderId = stdstr_f("%s:%016llX", GetShaderTypeName(Type), UniqueIdentifier);
     std::string glsl = OpenGLDecompileShader(Device, IR, Type, ShaderId.c_str());
     OpenGLShader Shader;

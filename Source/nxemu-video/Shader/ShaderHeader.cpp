@@ -1,6 +1,11 @@
 #include "ShaderHeader.h"
 #include "VideoNotification.h"
 
+uint64_t ShaderHeader::GetLocalMemorySize() const 
+{
+    return (PS.CommonWord1.ShaderLocalMemoryLowSize | (PS.CommonWord2.ShaderLocalMemoryHighSize << 24));
+}
+
 ShaderPixelImap ShaderHeader::GetPixelImap(uint32_t Attribute) const 
 {
     ShaderPixelImap Values[] = 
@@ -26,4 +31,9 @@ ShaderPixelImap ShaderHeader::GetPixelImap(uint32_t Attribute) const
         Result = Values[i];
     }
     return Result;
+}
+
+bool ShaderHeader::IsColorComponentOutputEnabled(uint32_t Rendertarget, uint32_t Component) const
+{
+    return PS.OmapTarget & (1 << (Rendertarget * 4 + Component));
 }
