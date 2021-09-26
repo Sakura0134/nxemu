@@ -14,13 +14,43 @@ OpenGLImageView::OpenGLImageView(OpenGLImageViewType Type, SurfacePixelFormat Fo
     m_Size(),
     m_OpenGLFormat(GL_NONE), 
     m_Flags(0),
-    m_XSource(RENDER_TARGET_SWIZZLE),
-    m_YSource(RENDER_TARGET_SWIZZLE),
-    m_ZSource(RENDER_TARGET_SWIZZLE),
-    m_WSource(RENDER_TARGET_SWIZZLE),
+    m_XSource((TextureSwizzleSource)RENDER_TARGET_SWIZZLE),
+    m_YSource((TextureSwizzleSource)RENDER_TARGET_SWIZZLE),
+    m_ZSource((TextureSwizzleSource)RENDER_TARGET_SWIZZLE),
+    m_WSource((TextureSwizzleSource)RENDER_TARGET_SWIZZLE),
     m_Created(false),
     m_Ref(0)
 {
+}
+
+OpenGLImageView::OpenGLImageView(const TextureTICEntry & TICEntry, int32_t BaseLayer) :
+    m_Image(nullptr),
+    m_Format(TICEntry.PixelFormat()), 
+    m_Type(OpenGLImageViewType_e1D), 
+    m_Range(OpenGLSubresourceBase((int32_t)TICEntry.ResMinMipLevel, BaseLayer), OpenGLSubresourceExtent(TICEntry.ResMaxMipLevel - TICEntry.ResMinMipLevel + 1,1)),
+    m_Size(),
+    m_OpenGLFormat(GL_NONE), 
+    m_Flags(0),
+    m_XSource(TICEntry.XSource),
+    m_YSource(TICEntry.YSource),
+    m_ZSource(TICEntry.ZSource),
+    m_WSource(TICEntry.WSource),
+    m_Created(false),
+    m_Ref(0)
+{
+    switch (TICEntry.TextureType) 
+    {
+    case TextureType_2DNoMipmap:
+        if (TICEntry.Depth() != 1) 
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        m_Type = TICEntry.NormalizedCoords ? OpenGLImageViewType_e2D : OpenGLImageViewType_Rect;
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    }
 }
 
 void OpenGLImageView::Create(OpenGLTexturePtr * NullTextures, uint32_t NumNullTextures, OpenGLImage * Image)
@@ -50,7 +80,7 @@ void OpenGLImageView::Create(OpenGLTexturePtr * NullTextures, uint32_t NumNullTe
     }
     if (Image->Type() == OpenGLImageType_Linear) 
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        m_Flags |= ImageViewFlag_PreemtiveDownload;
     }
     if (Image->Type() == OpenGLImageType_e3D && m_Type != OpenGLImageViewType_e3D)
     {
@@ -99,7 +129,8 @@ void OpenGLImageView::SetupView(OpenGLImageViewType ViewType, OpenGLTexturePtr &
         Texture->TextureView(target, m_Image->Texture(), m_OpenGLFormat, view_range.Base().Level(), view_range.Extent().Levels(), view_range.Base().Layer(), view_range.Extent().Layers());
         if (!IsRenderTarget()) 
         {
-            g_Notify->BreakPoint(__FILE__, __LINE__);
+            TextureSwizzleSource SwizzleData[] = { m_XSource, m_YSource, m_ZSource,  m_WSource };
+            ApplySwizzle(Texture, m_Format, SwizzleData, sizeof(SwizzleData) / sizeof(SwizzleData[0]));
         }
     }
     m_Texture[ViewType] = Texture;
@@ -222,4 +253,41 @@ GLenum OpenGLImageView::ImageTarget(OpenGLImageViewType Type, int NumSamples)
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return GL_NONE;
+}
+
+GLint OpenGLImageView::Swizzle(TextureSwizzleSource source)
+{
+    switch (source) 
+    {
+    case TextureSwizzleSource_Zero: return GL_ZERO;
+    case TextureSwizzleSource_R: return GL_RED;
+    case TextureSwizzleSource_G: return GL_GREEN;
+    case TextureSwizzleSource_B: return GL_BLUE;
+    case TextureSwizzleSource_A: return GL_ALPHA;
+    case TextureSwizzleSource_OneInt: return GL_ONE;
+    case TextureSwizzleSource_OneFloat: return GL_ONE;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return GL_NONE;
+}
+
+void OpenGLImageView::ApplySwizzle(OpenGLTexture & Texture, SurfacePixelFormat Format, TextureSwizzleSource * SwizzleData, size_t SwizzleLength) 
+{
+    if (SwizzleLength != 4) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+
+    if (Format == SurfacePixelFormat_D24_UNORM_S8_UINT || Format == SurfacePixelFormat_D32_FLOAT_S8_UINT || Format == SurfacePixelFormat_S8_UINT_D24_UNORM)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    GLint GLSwizzle[4];
+    for (uint32_t i = 0, n = (uint32_t)SwizzleLength; i < n; i++)
+    {
+        GLSwizzle[i] = Swizzle(SwizzleData[i]);
+    }
+    Texture.TextureParameteriv(GL_TEXTURE_SWIZZLE_RGBA, GLSwizzle);
 }

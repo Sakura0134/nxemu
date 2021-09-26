@@ -25,6 +25,7 @@ public:
         NumCBData = 16,
         NumVertexArrays = 32,
         NumVertexAttributes = 32,
+        NumClipDistances = 8,
         NumTransformFeedbackBuffers = 4,
         MaxShaderProgram = 6,
         MaxShaderStage = 5,
@@ -255,6 +256,12 @@ public:
         QueryUnit_Crop = 15,
     };
 
+    enum SamplerIndex : unsigned
+    {
+        SamplerIndex_Independently = 0,
+        SamplerIndex_ViaHeaderIndex = 1,
+    };
+
     enum ShaderProgram : unsigned
     {
         ShaderProgram_VertexA = 0,
@@ -357,6 +364,8 @@ public:
         uint32_t AddressHigh;
         uint32_t AddressLow;
         uint32_t Limit;
+
+        uint64_t Address() const;
     } tyAdrressLimit;
 
     typedef struct
@@ -923,7 +932,9 @@ public:
             PADDING_WORDS(0x2);
             uint32_t ZetaWidth;
             uint32_t ZetaHeight;
-            PADDING_WORDS(0x27);
+            PADDING_WORDS(0x1);
+            SamplerIndex SamplerIndex;
+            PADDING_WORDS(0x25);
             uint32_t DepthTestEnable;
             PADDING_WORDS(0x5);
             uint32_t IndependentBlendEnable;
@@ -950,7 +961,9 @@ public:
             tyScreenYControl ScreenYControl;
             float LineWidthSmooth;
             float LineWidthAliased;
-            PADDING_WORDS(0x58);
+            PADDING_WORDS(0x56);
+            uint32_t ClipDistanceEnabled;
+            PADDING_WORDS(0x1);
             float PointSize;
             PADDING_WORDS(0x1);
             uint32_t PointSpriteEnable;
@@ -1016,7 +1029,9 @@ public:
             tyConstBuffer ConstBuffer;
             PADDING_WORDS(0x10);
             tyCBBind CBBind[MaxShaderStage];
-            PADDING_WORDS(0xD4);
+            PADDING_WORDS(0x56);
+            uint32_t TexCBIndex;
+            PADDING_WORDS(0x7D);
             uint8_t TFBVaryingLocs[NumTransformFeedbackBuffers][128];
         };
         uint32_t Value[NumRegisters];
@@ -1038,6 +1053,7 @@ public:
         Method_CBBind4 = (offsetof(Registers, CBBind) + (sizeof(Registers::CBBind[0]) * 4)) / sizeof(uint32_t),
         Method_ClearBuffers = offsetof(Registers, ClearBuffers) / sizeof(uint32_t),
         Method_ClearFlags = offsetof(Registers, ClearFlags) / sizeof(uint32_t),
+        Method_ClipDistanceEnabled = offsetof(Registers, ClipDistanceEnabled) / sizeof(uint32_t),
         Method_ColorMask = offsetof(Registers, ColorMask) / sizeof(uint32_t),
         Method_ColorMaskCommon = offsetof(Registers, ColorMaskCommon) / sizeof(uint32_t),
         Method_ConditionMode = offsetof(Registers, Condition.Mode) / sizeof(uint32_t),
@@ -1146,6 +1162,7 @@ public:
     CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory);
     ~CMaxwell3D();
 
+    uint32_t AccessConstBuffer32(ShaderType Stage, uint64_t ConstBuffer, uint64_t Offset) const;
     void BindRenderer(IRenderer * Renderer);
     bool IsShaderConfigEnabled(uint32_t Index) const;
     void CallMultiMethod(Method Method, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending);
@@ -1155,6 +1172,7 @@ public:
 
     inline const Registers & Regs (void) const { return m_Regs; }
     inline CStateTracker & StateTracker (void) { return m_StateTracker; }
+    inline const tyShaderStage & ShaderStage(uint32_t ShaderStage, uint32_t ConstBuffer) const { return m_ShaderStage[ShaderStage][ConstBuffer]; }
 
     static ShaderType GetShaderType(ShaderProgram ProgramType);
 
@@ -1246,6 +1264,7 @@ ASSERT_REG_POSITION(VertexAttribFormat, 0x458);
 ASSERT_REG_POSITION(RTControl, 0x487);
 ASSERT_REG_POSITION(ZetaWidth, 0x48a);
 ASSERT_REG_POSITION(ZetaHeight, 0x48b);
+ASSERT_REG_POSITION(SamplerIndex, 0x48D);
 ASSERT_REG_POSITION(DepthTestEnable, 0x4B3);
 ASSERT_REG_POSITION(IndependentBlendEnable, 0x4B9);
 ASSERT_REG_POSITION(DepthWriteEnabled, 0x4BA);
@@ -1267,6 +1286,7 @@ ASSERT_REG_POSITION(FragmentColorClamp, 0x4EA);
 ASSERT_REG_POSITION(ScreenYControl, 0x4EB);
 ASSERT_REG_POSITION(LineWidthSmooth, 0x4EC);
 ASSERT_REG_POSITION(LineWidthAliased, 0x4ED);
+ASSERT_REG_POSITION(ClipDistanceEnabled, 0x544);
 ASSERT_REG_POSITION(PointSize, 0x546);
 ASSERT_REG_POSITION(PointSpriteEnable, 0x548);
 ASSERT_REG_POSITION(CounterReset, 0x54C);
@@ -1308,6 +1328,7 @@ ASSERT_REG_POSITION(ShaderConfig, 0x800);
 ASSERT_REG_POSITION(Firmware, 0x8C0);
 ASSERT_REG_POSITION(ConstBuffer, 0x8E0);
 ASSERT_REG_POSITION(CBBind, 0x904);
+ASSERT_REG_POSITION(TexCBIndex, 0x982);
 ASSERT_REG_POSITION(TFBVaryingLocs, 0xA00);
 
 #undef ASSERT_REG_POSITION

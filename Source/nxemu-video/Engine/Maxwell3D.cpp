@@ -26,6 +26,19 @@ CMaxwell3D::~CMaxwell3D()
 {
 }
 
+uint32_t CMaxwell3D::AccessConstBuffer32(ShaderType Stage, uint64_t ConstBuffer, uint64_t Offset) const
+{
+    if (Stage == ShaderType_Compute) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return 0;
+    }
+    const tyShaderStage & Buffer = m_ShaderStage[Stage][ConstBuffer];
+    uint32_t ConstBuffer32 = 0;
+    m_VideoMemory.ReadBuffer(Buffer.Address + Offset, &ConstBuffer32, sizeof(ConstBuffer32));
+    return ConstBuffer32;
+}
+
 void CMaxwell3D::BindRenderer(IRenderer * Renderer)
 {
     if (Renderer != nullptr && m_Renderer != nullptr) 
@@ -511,6 +524,11 @@ ShaderType CMaxwell3D::GetShaderType(ShaderProgram ProgramType)
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return ShaderType_Vertex;
+}
+
+uint64_t CMaxwell3D::_tyAdrressLimit::Address() const
+{
+    return (((uint64_t)AddressHigh) << 32) | AddressLow;
 }
 
 uint64_t CMaxwell3D::_tyCodeAddress::Address(void) const

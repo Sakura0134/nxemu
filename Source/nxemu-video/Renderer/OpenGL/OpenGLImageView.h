@@ -3,6 +3,7 @@
 #include "OpenGLItemPtr.h"
 #include "OpenGLResource.h"
 #include "Surface.h"
+#include "Textures\Texture.h"
 #include <stdint.h>
 
 class OpenGLImage;
@@ -21,6 +22,7 @@ class OpenGLImageView
     friend OpenGLImageViewPtr;
 
 public:
+    OpenGLImageView(const TextureTICEntry & TICEntry, int32_t BaseLayer);
     OpenGLImageView(OpenGLImageViewType Type, SurfacePixelFormat Format, const OpenGLSubresourceRange & Range);
 
     void Create(OpenGLTexturePtr * NullTextures, uint32_t NumNullTextures, OpenGLImage * Image);
@@ -45,6 +47,8 @@ private:
 
     static GLenum PixelFormatToInternalFormat(SurfacePixelFormat PixelFormat);
     static GLenum ImageTarget(OpenGLImageViewType Type, int NumSamples = 1);
+    static GLint Swizzle(TextureSwizzleSource source);
+    static void ApplySwizzle(OpenGLTexture & Texture, SurfacePixelFormat Format, TextureSwizzleSource * SwizzleData, size_t SwizzleLength);
 
     OpenGLImagePtr m_Image;
     SurfacePixelFormat m_Format;
@@ -55,7 +59,7 @@ private:
     OpenGLSubresourceRange m_Range;
     OpenGLExtent3D m_Size;
     uint32_t m_Flags;
-    uint8_t m_XSource, m_YSource, m_ZSource, m_WSource;
+    TextureSwizzleSource m_XSource, m_YSource, m_ZSource, m_WSource;
     bool m_Created;
     uint32_t m_Ref;
 };

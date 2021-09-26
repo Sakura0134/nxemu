@@ -76,6 +76,8 @@
     <ClCompile Include="Renderer\OpenGL\OpenGLStateTracker.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLStreamBuffer.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLTextureCache.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLTICEntryTable.cpp" />
+    <ClCompile Include="Renderer\OpenGL\OpenGLTSCEntryTable.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLTypes.cpp" />
     <ClCompile Include="Renderer\OpenGL\OpenGLWindow.cpp" />
     <ClCompile Include="Shader\Shader.cpp" />
@@ -93,6 +95,7 @@
     <ClCompile Include="Task\CommandListEnd.cpp" />
     <ClCompile Include="Textures\Decoder.cpp" />
     <ClCompile Include="Textures\Texture.cpp" />
+    <ClCompile Include="Util\CityHash.cpp" />
     <ClCompile Include="Util\StateTracker.cpp" />
     <ClCompile Include="Video.cpp" />
     <ClCompile Include="VideoMemoryManager.cpp" />
@@ -140,6 +143,7 @@
     <ClInclude Include="Task\GpuTask.h" />
     <ClInclude Include="Textures\Decoder.h" />
     <ClInclude Include="Textures\Texture.h" />
+    <ClInclude Include="Util\CityHash.h" />
     <ClInclude Include="Util\Rectangle.h" />
     <ClInclude Include="Util\StateTracker.h" />
     <ClInclude Include="Video.h" />

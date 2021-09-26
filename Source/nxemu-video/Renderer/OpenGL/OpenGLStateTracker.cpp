@@ -344,6 +344,7 @@ void OpenGLStateTracker::SetupDepthClampEnabled(void)
 
 void OpenGLStateTracker::SetupMisc(void)
 {
+    m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_ClipDistanceEnabled, 1, OpenGLDirtyFlag_ClipDistances);
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_FrontFace, 1, OpenGLDirtyFlag_FrontFace);
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_CullTestEnabled, 1, OpenGLDirtyFlag_CullTest);
     m_StateTracker.SetRegisterFlag(CMaxwell3D::Method_CullFace, 1, OpenGLDirtyFlag_CullTest);

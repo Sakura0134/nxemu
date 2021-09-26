@@ -89,6 +89,7 @@ class OpenGLSubresourceBase
 public:
     OpenGLSubresourceBase();
     OpenGLSubresourceBase(const OpenGLSubresourceBase&);
+    OpenGLSubresourceBase(int32_t Level, int32_t Layer);
     OpenGLSubresourceBase& operator=(const OpenGLSubresourceBase&);
 
     int32_t Level(void) const { return m_Level; }

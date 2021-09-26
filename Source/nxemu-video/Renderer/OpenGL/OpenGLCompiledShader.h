@@ -24,7 +24,9 @@ public:
 
     uint64_t Address() const { return m_Address; }
     uint32_t Size() const { return m_Size; }
+    const OpenGLShaderConstBufferList & ConstBuffers() const { return m_ConstBuffers; }
     const ShaderSamplerEntryList & Samplers() const { return m_Samplers; }
+    bool UseUnifiedUniforms() const { return m_UseUnifiedUniforms; }
     OpenGLProgramPtr & Program() { return m_Program; }
     bool IsBuilt() const { return m_IsBuilt; }
 

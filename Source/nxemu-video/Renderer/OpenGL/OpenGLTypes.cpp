@@ -79,6 +79,12 @@ OpenGLSubresourceBase::OpenGLSubresourceBase() :
 {
 }
 
+OpenGLSubresourceBase::OpenGLSubresourceBase(int32_t Level, int32_t Layer) : 
+    m_Level(Level),
+    m_Layer(Layer)
+{
+}
+
 OpenGLSubresourceBase::OpenGLSubresourceBase(const OpenGLSubresourceBase & Base) : 
     m_Level(Base.m_Level),
     m_Layer(Base.m_Layer)

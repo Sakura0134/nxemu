@@ -51,6 +51,7 @@ enum OpenGLDirtyFlag
     OpenGLDirtyFlag_BlendState7 = OpenGLDirtyFlag_BlendState0 + 7,
 
     OpenGLDirtyFlag_Shaders,
+    OpenGLDirtyFlag_ClipDistances,
 
     OpenGLDirtyFlag_PolygonModes,
     OpenGLDirtyFlag_PolygonModeFront,

@@ -34,6 +34,23 @@ GLenum MaxwellToOpenGL_ComparisonOp(CMaxwell3D::ComparisonOp Comparison)
     return GL_ALWAYS;
 }
 
+GLenum MaxwellToOpenGL_DepthCompareFunc(TextureDepthCompareFunc Func) 
+{
+    switch (Func) 
+    {
+    case TextureDepthCompareFunc_Never: return GL_NEVER;
+    case TextureDepthCompareFunc_Less: return GL_LESS;
+    case TextureDepthCompareFunc_LessEqual: return GL_LEQUAL;
+    case TextureDepthCompareFunc_Equal: return GL_EQUAL;
+    case TextureDepthCompareFunc_NotEqual: return GL_NOTEQUAL;
+    case TextureDepthCompareFunc_Greater: return GL_GREATER;
+    case TextureDepthCompareFunc_GreaterEqual: return GL_GEQUAL;
+    case TextureDepthCompareFunc_Always: return GL_ALWAYS;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return GL_GREATER;
+}
+
 GLenum MaxwellToOpenGL_FrontFace(CMaxwell3D::FrontFace FrontFace) 
 {
     switch (FrontFace)
@@ -55,6 +72,18 @@ GLenum MaxwellToOpenGL_PolygonMode(CMaxwell3D::PolygonMode PolygonMode)
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return GL_FILL;
+}
+
+GLenum MaxwellToOpenGL_ReductionFilter(TextureSamplerReduction Filter) 
+{
+    switch (Filter) 
+    {
+    case TextureSamplerReduction_WeightedAverage: return GL_WEIGHTED_AVERAGE_ARB;
+    case TextureSamplerReduction_Min: return GL_MIN;
+    case TextureSamplerReduction_Max: return GL_MAX;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return GL_WEIGHTED_AVERAGE_ARB;
 }
 
 GLenum MaxwellToOpenGL_StencilOp(CMaxwell3D::StencilOp Stencil) 
@@ -89,6 +118,32 @@ GLenum MaxwellToOpenGL_StencilOp(CMaxwell3D::StencilOp Stencil)
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return GL_KEEP;
 }
+
+GLenum MaxwellToOpenGL_TextureFilterMode(TextureFilter FilterMode, TextureMipmapFilter MipmapFilterMode) 
+{
+    switch (FilterMode)
+    {
+    case TextureFilter_Nearest:
+        switch (MipmapFilterMode) 
+        {
+        case TextureMipmapFilter_None: return GL_NEAREST;
+        case TextureMipmapFilter_Nearest: return GL_NEAREST_MIPMAP_NEAREST;
+        case TextureMipmapFilter_Linear: return GL_NEAREST_MIPMAP_LINEAR;
+        }
+        break;
+    case TextureFilter_Linear:
+        switch (MipmapFilterMode)
+        {
+        case TextureMipmapFilter_None: return GL_LINEAR;
+        case TextureMipmapFilter_Nearest: return GL_LINEAR_MIPMAP_NEAREST;
+        case TextureMipmapFilter_Linear: return GL_LINEAR_MIPMAP_LINEAR;
+        }
+        break;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return GL_NEAREST;
+}
+
 GLenum MaxwellToOpenGL_VertexFormat(CMaxwell3D::tyVertexAttribute Attrib) 
 {
     switch (Attrib.Type) 
@@ -170,4 +225,21 @@ GLenum MaxwellToOpenGL_VertexFormat(CMaxwell3D::tyVertexAttribute Attrib)
 GLenum MaxwellToOpenGL_ViewportSwizzle(CMaxwell3D::ViewportSwizzle swizzle) 
 {
     return GL_VIEWPORT_SWIZZLE_POSITIVE_X_NV + (GLenum)swizzle;
+}
+
+GLenum MaxwellToOpenGL_WrapMode(TextureWrapMode WrapMode) 
+{
+    switch (WrapMode)
+    {
+    case TextureWrapMode_Wrap: return GL_REPEAT;
+    case TextureWrapMode_Mirror: return GL_MIRRORED_REPEAT;
+    case TextureWrapMode_ClampToEdge: return GL_CLAMP_TO_EDGE;
+    case TextureWrapMode_Border: return GL_CLAMP_TO_BORDER;
+    case TextureWrapMode_Clamp: return GL_CLAMP;
+    case TextureWrapMode_MirrorOnceClampToEdge: return GL_MIRROR_CLAMP_TO_EDGE;
+    case TextureWrapMode_MirrorOnceBorder: return GL_EXT_texture_mirror_clamp ? GL_MIRROR_CLAMP_TO_BORDER_EXT : GL_MIRROR_CLAMP_TO_EDGE;
+    case TextureWrapMode_MirrorOnceClampOGL: return GL_EXT_texture_mirror_clamp ? GL_MIRROR_CLAMP_EXT : GL_MIRROR_CLAMP_TO_EDGE;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return GL_REPEAT;
 }

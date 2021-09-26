@@ -19,7 +19,8 @@ OpenGLRenderer::OpenGLRenderer(ISwitchSystem & SwitchSystem, CVideo & Video) :
     m_ShaderCache(*this, Video, m_Device),
     m_FenceManager(*this, Video),
     m_QueuedCommands(false),
-    m_IsTextureHandlerSizeKnown(true)
+    m_IsTextureHandlerSizeKnown(true),
+    m_LastClipDistanceMask(0)
 {
 }
 
@@ -354,6 +355,38 @@ void OpenGLRenderer::SyncScissorTest()
     }
 }
 
+void OpenGLRenderer::BindTextures(const OpenGLCompiledShaderPtr * Shaders, uint32_t NoOfShaders)
+{
+    uint32_t ImageViewIndex = 0;
+    uint32_t TextureIndex = 0;
+    for (uint32_t ShaderIndex = 0; ShaderIndex < NoOfShaders; ShaderIndex++)
+    {
+        if (Shaders[ShaderIndex] == nullptr)
+        {
+            continue;
+        }
+        const OpenGLDevice::BaseBindings & Base = m_Device.GetBaseBindings((ShaderType)ShaderIndex);
+        const OpenGLCompiledShader & Shader = Shaders[ShaderIndex];
+        const ShaderSamplerEntryList & Samplers = Shader.Samplers();
+        uint32_t BaseTextureIndex = TextureIndex;
+        for (uint32_t SamplersIndex = 0, NumSamplers = (uint32_t)Samplers.size(); SamplersIndex < NumSamplers; SamplersIndex++)
+        {
+            const ShaderSamplerEntry & Sampler = Samplers[SamplersIndex];
+            for (uint32_t SamplerIndex = 0, NumSampler = (uint32_t)Sampler.Size(); SamplerIndex < NumSampler; SamplerIndex++)
+            {
+                const OpenGLImageViewPtr & ImageView = m_ImageViews[ImageViewIndex++];
+                OpenGLTexturePtr & Texture = m_Textures[TextureIndex++];
+                Texture = ImageView.Get() != nullptr ? ImageView->Texture(ImageViewTypeFromEntry(Sampler)) : OpenGLTexturePtr(nullptr);
+            }
+        }
+        for (uint32_t SamplerIndex = 0, NumSamplers = (uint32_t)Samplers.size(); SamplerIndex < NumSamplers; SamplerIndex++)
+        {
+            m_Textures[BaseTextureIndex + SamplerIndex]->BindTexture(Base.Sampler);
+            m_Samplers[BaseTextureIndex + SamplerIndex]->BindTexture(Base.Sampler);
+        }
+    }
+}
+
 void OpenGLRenderer::SetupVertexFormat()
 {
     CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
@@ -487,9 +520,12 @@ GLintptr OpenGLRenderer::SetupIndexBuffer()
 
 void OpenGLRenderer::SetupShaders()
 {
+    m_ImageViewIndices.clear();
+    m_Samplers.clear();
+    m_TextureCache.SynchronizeGraphicsDescriptors();
+
     OpenGLCompiledShaderPtr Shaders[CMaxwell3D::MaxShaderStage];
     CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
-
     for (uint32_t i = 0; i < CMaxwell3D::MaxShaderProgram; i++)
     {
         CMaxwell3D::ShaderProgram ProgramType = (CMaxwell3D::ShaderProgram)i;
@@ -536,13 +572,116 @@ void OpenGLRenderer::SetupShaders()
         uint32_t Stage = ProgramType == CMaxwell3D::ShaderProgram_VertexA ? CMaxwell3D::ShaderProgram_VertexA : ProgramType - 1;
         Shaders[Stage] = Shader;
 
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        SetupDrawConstBuffers(Stage, Shader);
+        SetupDrawTextures(Stage, Shader);
+
         if (ProgramType == CMaxwell3D::ShaderProgram_VertexA)
         {
             i++;
         }
     }
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    SyncClipEnabled(0);
+    Maxwell3D.StateTracker().FlagClear(OpenGLDirtyFlag_Shaders);
+    m_TextureCache.FillGraphicsImageViews(m_ImageViewIndices.data(), (uint32_t)(m_ImageViewIndices.size()), m_ImageViews, (uint32_t)(sizeof(m_ImageViews) / sizeof(m_ImageViews[0])));
+    BindTextures(Shaders, sizeof(Shaders) / sizeof(Shaders[0]));
+}
+
+void OpenGLRenderer::SetupDrawConstBuffers(uint32_t StageIndex, OpenGLCompiledShaderPtr & Shader)
+{
+    enum
+    {
+        NUM_CONST_BUFFERS_PER_STAGE = 18,
+        NUM_CONST_BUFFERS_BYTES_PER_STAGE = NUM_CONST_BUFFERS_PER_STAGE * CMaxwell3D::MaxConstBufferSize,
+    };
+    GLenum PARAMETER_LUT[] =
+    {
+        GL_VERTEX_PROGRAM_PARAMETER_BUFFER_NV,
+        GL_TESS_CONTROL_PROGRAM_PARAMETER_BUFFER_NV,
+        GL_TESS_EVALUATION_PROGRAM_PARAMETER_BUFFER_NV,
+        GL_GEOMETRY_PROGRAM_PARAMETER_BUFFER_NV,
+        GL_FRAGMENT_PROGRAM_PARAMETER_BUFFER_NV,
+    };
+    const OpenGLShaderConstBufferList & ConstBuffers = Shader->ConstBuffers();
+    const OpenGLDevice::BaseBindings BaseBindings = m_Device.GetBaseBindings((ShaderType)StageIndex);
+    bool UseUnifiedUniforms = Shader->UseUnifiedUniforms();
+    uint32_t Binding = m_Device.UseAssemblyShaders() ? 0 : BaseBindings.UniformBuffer;
+    for (OpenGLShaderConstBufferList::const_iterator Entry = ConstBuffers.begin(); Entry != ConstBuffers.end(); Entry++)
+    {
+        uint32_t Index = Entry->GetIndex();
+        CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
+        const CMaxwell3D::tyShaderStage & ShaderStage = Maxwell3D.ShaderStage((uint32_t)StageIndex, Index);
+        if (ShaderStage.Enabled)
+        {
+            uint32_t ConstBufferSize = Entry->IsIndirect() ? ShaderStage.Size : Entry->GetSize();
+            if (ConstBufferSize > CMaxwell3D::MaxConstBufferSize)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+                ConstBufferSize = CMaxwell3D::MaxConstBufferSize;
+            }
+            uint32_t Size = AlignUp(ConstBufferSize, sizeof(GLfloat[4]));
+            uint32_t Alignment = UseUnifiedUniforms ? 4 : m_Device.GetUniformBufferAlignment();
+            uint64_t Offset = m_StreamBuffer.UploadMemory(ShaderStage.Address, Size, Alignment);
+
+            if (m_Device.UseAssemblyShaders())
+            {
+                if (UseUnifiedUniforms)
+                {
+                    g_Notify->BreakPoint(__FILE__, __LINE__);
+                }
+                if (Offset != 0)
+                {
+                    g_Notify->BreakPoint(__FILE__, __LINE__);
+                }
+                m_StreamBuffer.Buffer()->BindBufferRangeNV(PARAMETER_LUT[StageIndex], Binding, Offset, Size);
+            }
+            else if (UseUnifiedUniforms)
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+            else
+            {
+                m_StreamBuffer.Buffer()->BindBufferRange(GL_UNIFORM_BUFFER, Binding, Offset, Size);
+            }
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        Binding += 1;
+    }
+    if (UseUnifiedUniforms)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
+void OpenGLRenderer::SetupDrawTextures(uint32_t StageIndex, OpenGLCompiledShaderPtr & Shader)
+{
+    const CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
+    ShaderSamplerEntryList Samplers = Shader->Samplers();
+    bool ViaHeaderIndex = Maxwell3D.Regs().SamplerIndex == CMaxwell3D::SamplerIndex_ViaHeaderIndex;
+    for (size_t i = 0, n = Samplers.size(); i < n; i++)
+    {
+        ShaderSamplerEntry & Entry = Samplers[i];
+        for (size_t Index = 0, EntrySize = Entry.Size(); Index < EntrySize; Index++)
+        {
+            if (Entry.IsBindless())
+            {
+                g_Notify->BreakPoint(__FILE__, __LINE__);
+            }
+
+            uint32_t TexCBIndex = Maxwell3D.Regs().TexCBIndex;
+            uint64_t Offset = (Entry.Offset() + Index) * sizeof(uint32_t);
+            uint32_t ConstBuffer32 = Maxwell3D.AccessConstBuffer32((ShaderType)StageIndex, TexCBIndex, Offset);
+            TextureHandle Handle;
+            Handle.Value = ConstBuffer32;
+            uint32_t ImageID = Handle.TICId;
+            uint32_t SamplerID = ViaHeaderIndex ? ImageID : Handle.TSCId;
+            OpenGLSamplerPtr Sampler = m_TextureCache.GetGraphicsSampler(SamplerID);
+            m_Samplers.push_back(Sampler);
+            m_ImageViewIndices.push_back(ImageID);
+        }
+    }
 }
 
 void OpenGLRenderer::SyncViewport()
@@ -904,6 +1043,29 @@ void OpenGLRenderer::SyncPointState()
     glPointSize(std::max(1.0f, Regs.PointSize));
 }
 
+void OpenGLRenderer::SyncClipEnabled(uint32_t ClipMask)
+{
+    CStateTracker & StateTracker = m_Video.Maxwell3D().StateTracker();
+    if (!StateTracker.Flag(OpenGLDirtyFlag_ClipDistances) && !StateTracker.Flag(OpenGLDirtyFlag_Shaders))
+    {
+        return;
+    }
+    StateTracker.FlagClear(OpenGLDirtyFlag_ClipDistances);
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+
+    ClipMask &= Regs.ClipDistanceEnabled;
+    if (ClipMask == m_LastClipDistanceMask)
+    {
+        return;
+    }
+    m_LastClipDistanceMask = ClipMask;
+
+    for (uint32_t i = 0; i < CMaxwell3D::NumClipDistances; i++)
+    {
+        OpenGLEnable((GLenum)(GL_CLIP_DISTANCE0 + i), (ClipMask >> i) & 1);
+    }
+}
+
 uint32_t OpenGLRenderer::CalculateVertexArraysSize() const
 {
     const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
@@ -936,4 +1098,18 @@ void OpenGLRenderer::OpenGLEnable(GLenum Cap, bool Enable)
     {
         glDisable(Cap);
     }
+}
+
+OpenGLImageViewType OpenGLRenderer::ImageViewTypeFromEntry(const ShaderSamplerEntry & Entry)
+{
+    if (Entry.IsBuffer())
+    {
+        return OpenGLImageViewType_Buffer;
+    }
+    switch (Entry.Type())
+    {
+    case ShaderTextureType_2D: return Entry.IsArray() ? OpenGLImageViewType_e2DArray : OpenGLImageViewType_e2D;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return OpenGLImageViewType_e2D;
 }

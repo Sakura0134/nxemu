@@ -8,6 +8,7 @@
 #include "OpenGLDevice.h"
 #include "OpenGLProgramManager.h"
 #include "Renderer\Renderer.h"
+#include <vector>
 #include <map>
 #include <stdint.h>
 
@@ -20,9 +21,20 @@ class OpenGLRenderer :
 {
     enum 
     {
+        MAX_TEXTURES = 192,
+        MAX_IMAGES = 48,
+        MAX_IMAGE_VIEWS = MAX_TEXTURES + MAX_IMAGES,
         NUM_SUPPORTED_VERTEX_ATTRIBUTES = 16,
         NUM_SUPPORTED_VERTEX_BINDINGS = 16,
     };
+
+    typedef struct
+    {
+        uint64_t Start;
+        uint64_t Size;
+    } TrackedPage;
+
+    typedef std::map<uint64_t, TrackedPage> TrackedPageMap;
 
 public:
     OpenGLRenderer(ISwitchSystem & SwitchSystem, CVideo & Video);
@@ -47,11 +59,14 @@ private:
     OpenGLRenderer(const OpenGLRenderer&);
     OpenGLRenderer& operator=(const OpenGLRenderer&);
 
+    void BindTextures(const OpenGLCompiledShaderPtr * Shaders, uint32_t NoOfShaders);
     void SetupVertexFormat();
     void SetupVertexBuffer();
     void SetupVertexInstances();
     GLintptr SetupIndexBuffer();
     void SetupShaders();
+    void SetupDrawConstBuffers(uint32_t StageIndex, OpenGLCompiledShaderPtr & Shader);
+    void SetupDrawTextures(uint32_t StageIndex, OpenGLCompiledShaderPtr & Shader);
     void SyncFragmentColorClampState();
     void SyncFramebufferSRGB();
     void SyncRasterizeEnable();
@@ -71,18 +86,12 @@ private:
     void SyncAlphaTest();
     void SyncBlendState();
     void SyncPointState();
+    void SyncClipEnabled(uint32_t ClipMask);
     uint32_t CalculateVertexArraysSize() const;
 
     static void OpenGLEnable(GLenum Cap, bool Enable);
+    static OpenGLImageViewType ImageViewTypeFromEntry(const ShaderSamplerEntry& Entry);
 
-    typedef struct 
-    {
-        uint64_t Start;
-        uint64_t Size;
-    } TrackedPage;
-
-    typedef std::map<uint64_t, TrackedPage> TrackedPageMap;
-    
     OpenGLStateTracker m_StateTracker;
     OpenGLTextureCache m_TextureCache;
     OpenGLShaderCache m_ShaderCache;
@@ -94,7 +103,12 @@ private:
     OpenGLDevice m_Device;
     OpenGLProgramManager m_ProgramManager;
     OpenGLStreamBuffer m_StreamBuffer;
+    std::vector<uint32_t> m_ImageViewIndices;
+    OpenGLImageViewPtr m_ImageViews[MAX_IMAGE_VIEWS];
+    std::vector<OpenGLSamplerPtr> m_Samplers;
+    OpenGLTexturePtr m_Textures[MAX_TEXTURES];
     bool m_QueuedCommands;
+    uint32_t m_LastClipDistanceMask;
     bool m_IsTextureHandlerSizeKnown;
     TrackedPageMap m_TrackedPages;
     CriticalSection m_PageCS;

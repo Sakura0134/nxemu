@@ -50,12 +50,12 @@ OpenGLCompiledShaderPtr OpenGLShaderCache::GetStageProgram(CMaxwell3D::ShaderPro
     m_ShaderAddrMap.emplace(Shader->Address(), Shader);
     m_Shaders.push_back(Shader);
 
-    uint64_t PageEnd = ((Shader->Address() + Shader->Size()) + PAGE_SIZE - 1) >> PAGE_BITS;
-    for (uint64_t Page = Shader->Address() >> PAGE_BITS; Page < PageEnd; Page++)
+    uint64_t PageEnd = ((CpuAddr + Shader->Size()) + PAGE_SIZE - 1) >> PAGE_BITS;
+    for (uint64_t Page = CpuAddr >> PAGE_BITS; Page < PageEnd; Page++) 
     {
         m_ShaderPageMap[Page].push_back(Shader);
     }
-    m_Renderer.TrackRasterizerMemory(Shader->Address(), Shader->Size(), true);
+    m_Renderer.TrackRasterizerMemory(CpuAddr, Shader->Size(), true);
     m_LastShaders[ProgramType] = Shader;
     return Shader;
 }

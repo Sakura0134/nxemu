@@ -1,6 +1,5 @@
 #pragma once
 #include "Surface.h"
-#include "OpenGLImageView.h"
 #include "OpenGLTypes.h"
 #include "OpenGLItemPtr.h"
 #include "OpenGLResource.h"
@@ -9,10 +8,12 @@
 #include <stdint.h>
 #include <vector>
 
+class OpenGLImage;
+class OpenGLImageView;
 class OpenGLStagingBuffer;
 class OpenGLRenderer;
-class OpenGLImage;
 typedef OpenGLItemPtr<OpenGLImage> OpenGLImagePtr;
+typedef OpenGLItemPtr<OpenGLImageView> OpenGLImageViewPtr;
 
 enum OpenGLImageType
 {
@@ -44,19 +45,21 @@ class OpenGLImage
 public:
     OpenGLImage();
     OpenGLImage(const OpenGLImage & Image);
+    OpenGLImage(const TextureTICEntry & TICEntry);
     OpenGLImage(const CMaxwell3D::tyRenderTarget& RenderTarget, uint32_t Samples);
     ~OpenGLImage();
 
     static void InitCompatibleViewTable(void);
 
     void Create(uint64_t GpuAddr, uint64_t CpuAddr, OpenGLRenderer * Renderer);
+    uint32_t LayerSize(void) const;
     OpenGLImageViewType ImageViewType(void) const;
 
     bool IsViewCompatible(SurfacePixelFormat Format, bool BrokenViews) const;
     OpenGLBufferImageList UnswizzleImage(CVideoMemory& VideoMemory, uint64_t gpu_addr, uint8_t * Output, size_t OutputSize) const;
     void UploadMemory(OpenGLStagingBuffer & Buffer, uint32_t BufferOffset, const OpenGLBufferImage * Images, size_t NoOfImages);
     OpenGLImageView * ImageView(OpenGLTexturePtr * NullTextures, uint32_t NumNullTextures, uint64_t GPUAddr, bool IsClear);
-    uint32_t LayerSize(void) const;
+    OpenGLImageView * ImageView(OpenGLTexturePtr * NullTextures, uint32_t NumNullTextures, const TextureTICEntry & config, int32_t base_layer);
     uint32_t MapSizeBytes(void) const;
     uint32_t GuestSizeBytes(void) const;
     uint32_t UnswizzledSizeBytes(void) const;
@@ -64,11 +67,13 @@ public:
     void UpdateFlags(uint32_t Add, uint32_t Remove);
     void Track(void);
     void UploadImageContents(CVideoMemory & VideoMemory, OpenGLStagingBuffer & Buffer, uint32_t BufferOffset);
+    bool FindBase(uint64_t Addr, OpenGLSubresourceBase & Subresource) const;
 
     OpenGLImageType Type(void) const { return m_Type; }
     const OpenGLExtent3D & Size(void) const { return m_Size; }
     uint32_t NumSamples(void) const { return m_NumSamples; }
     const OpenGLSubresourceExtent & Resources(void) const { return m_Resources; }
+    uint32_t LayerStride(void) const { return m_LayerStride; }
     uint64_t CpuAddr(void) const { return m_CpuAddr; }
     uint64_t GpuAddr(void) const { return m_GpuAddr; }
     const OpenGLTexture & Texture() const { return m_Texture; }
@@ -89,7 +94,6 @@ private:
     LevelInfo MakeLevelInfo(void) const;
     uint32_t NumBlocksPerLayer(const OpenGLExtent2D & TileSize) const;
     void SetOpenGLFormat(void);
-    bool FindBase(uint64_t Addr, OpenGLSubresourceBase & Subresource) const;
 
     static uint32_t AdjustTileSize(uint32_t Shift, uint32_t UnitFactor, uint32_t Dimension);
     static OpenGLExtent3D AdjustTileSize(const OpenGLExtent3D & Size, const OpenGLExtent2D & TileSize);

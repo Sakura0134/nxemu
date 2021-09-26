@@ -1,4 +1,5 @@
 #include "OpenGLResource.h"
+#include "MaxwellToOpenGL.h"
 #include "VideoNotification.h"
 #include <string>
 
@@ -40,6 +41,16 @@ void OpenGLTexture::Release()
 
     glDeleteTextures(1, &m_Handle);
     m_Handle = 0;
+}
+
+void OpenGLTexture::BindTexture(GLuint First)
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glBindTextures(First, 1, &m_Handle);
 }
 
 void OpenGLTexture::TextureView(GLenum Target, const OpenGLTexture & OrigTexture, GLenum InternalFormat, GLuint MinLevel, GLuint NumLevels, GLuint MinLayer, GLuint NumLayers)
@@ -90,6 +101,84 @@ void OpenGLTexture::TextureParameteriv(GLenum PName, const GLint * Param)
         return;
     }
     glTextureParameteriv(m_Handle, PName, Param);
+}
+
+OpenGLSampler::OpenGLSampler(const TextureTSCEntry & Config) : 
+    m_Handle(0),
+    m_Ref(0) 
+{
+    GLenum CompareMode = Config.DepthCompareEnabled ? GL_COMPARE_REF_TO_TEXTURE : GL_NONE;
+    GLenum CompareFunc = MaxwellToOpenGL_DepthCompareFunc(Config.DepthCompareFunc);
+    GLenum Mag = MaxwellToOpenGL_TextureFilterMode(Config.MagFilter, TextureMipmapFilter_None);
+    GLenum Min = MaxwellToOpenGL_TextureFilterMode(Config.MinFilter, Config.MipmapFilter);
+    GLenum ReductionFilter = MaxwellToOpenGL_ReductionFilter(Config.ReductionFilter);
+    GLint Seamless = Config.CubemapInterfaceFiltering ? GL_TRUE : GL_FALSE;
+
+    if (Config.CubemapAnisotropy != 1 || Config.FloatCoordNormalization != 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    Create();
+    glSamplerParameteri(m_Handle, GL_TEXTURE_WRAP_S, MaxwellToOpenGL_WrapMode(Config.WrapU));
+    glSamplerParameteri(m_Handle, GL_TEXTURE_WRAP_T, MaxwellToOpenGL_WrapMode(Config.WrapV));
+    glSamplerParameteri(m_Handle, GL_TEXTURE_WRAP_R, MaxwellToOpenGL_WrapMode(Config.WrapP));
+    glSamplerParameteri(m_Handle, GL_TEXTURE_COMPARE_MODE, CompareMode);
+    glSamplerParameteri(m_Handle, GL_TEXTURE_COMPARE_FUNC, CompareFunc);
+    glSamplerParameteri(m_Handle, GL_TEXTURE_MAG_FILTER, Mag);
+    glSamplerParameteri(m_Handle, GL_TEXTURE_MIN_FILTER, Min);
+    glSamplerParameterf(m_Handle, GL_TEXTURE_LOD_BIAS, Config.LodBias());
+    glSamplerParameterf(m_Handle, GL_TEXTURE_MIN_LOD, Config.MinLod());
+    glSamplerParameterf(m_Handle, GL_TEXTURE_MAX_LOD, Config.MaxLod());
+    glSamplerParameterfv(m_Handle, GL_TEXTURE_BORDER_COLOR, Config.BorderColor());
+
+    if (GLAD_GL_ARB_texture_filter_anisotropic || GLAD_GL_EXT_texture_filter_anisotropic) 
+    {
+        glSamplerParameterf(m_Handle, GL_TEXTURE_MAX_ANISOTROPY, 1U);
+    }
+    if (GLAD_GL_ARB_texture_filter_minmax || GLAD_GL_EXT_texture_filter_minmax)
+    {
+        glSamplerParameteri(m_Handle, GL_TEXTURE_REDUCTION_MODE_ARB, ReductionFilter);
+    }
+    if (GLAD_GL_ARB_seamless_cubemap_per_texture || GLAD_GL_AMD_seamless_cubemap_per_texture) 
+    {
+        glSamplerParameteri(m_Handle, GL_TEXTURE_CUBE_MAP_SEAMLESS, Seamless);
+    }
+}
+
+OpenGLSampler::~OpenGLSampler()
+{
+    Release();
+}
+
+void OpenGLSampler::Create() 
+{
+    if (m_Handle != 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glCreateSamplers(1, &m_Handle);
+}
+
+void OpenGLSampler::Release()
+{
+    if (m_Handle == 0) 
+    {
+        return;
+    }
+
+    glDeleteSamplers(1, &m_Handle);
+    m_Handle = 0;
+}
+
+void OpenGLSampler::BindTexture(GLuint First)
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glBindImageTextures(First, 1, &m_Handle);
 }
 
 OpenGLShader::OpenGLShader() :
@@ -290,6 +379,16 @@ void OpenGLBuffer::BindBufferRange(GLenum Target, GLuint Index, GLintptr Offset,
         return;
     }
     glBindBufferRange(Target, Index, m_Handle, Offset, Size);
+}
+
+void OpenGLBuffer::BindBufferRangeNV(GLenum Target, GLuint Index, GLintptr Offset, GLsizeiptr Size) const
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glBindBufferRangeNV(Target, Index, m_Handle, Offset, Size);
 }
 
 void OpenGLBuffer::BindVertexBuffer(GLuint BindingIndex, GLintptr Offset, GLsizei Stride) const

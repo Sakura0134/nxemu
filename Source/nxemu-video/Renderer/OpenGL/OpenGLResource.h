@@ -1,5 +1,6 @@
 #pragma once
 #include "OpenGLItemPtr.h"
+#include "Textures\Texture.h"
 #include <glad\glad.h>
 #include <stdint.h>
 
@@ -21,6 +22,7 @@ public:
     void Generate();
     void Release();
 
+    void BindTexture(GLuint First);
     void TextureView(GLenum Target, const OpenGLTexture & OrigTexture, GLenum InternalFormat, GLuint MinLevel, GLuint NumLevels, GLuint MinLayer, GLuint NumLayers);
     void TextureStorage2D(GLsizei Levels, GLenum InternalFormat, GLsizei Width, GLsizei Height);
     void TextureStorage3D(GLsizei Levels, GLenum InternalFormat, GLsizei Width, GLsizei Height, GLsizei Depth);
@@ -31,6 +33,33 @@ private:
     OpenGLTexture(const OpenGLTexture&);
     OpenGLTexture & operator=(const OpenGLTexture &);
         
+    GLuint m_Handle;
+    int32_t m_Ref;
+};
+
+class OpenGLSampler;
+typedef OpenGLItemPtr<OpenGLSampler> OpenGLSamplerPtr;
+
+class OpenGLSampler 
+{
+    friend OpenGLSamplerPtr;
+
+public:
+    OpenGLSampler();
+    OpenGLSampler(const TextureTSCEntry & Config);
+    ~OpenGLSampler();
+
+    void Create();
+    void Release();
+
+    void BindSampler(GLuint Unit);
+    void BindTexture(GLuint First);
+    void SamplerParameteri(GLenum pname, GLint param);
+
+private:
+    OpenGLSampler(const OpenGLSampler&);
+    OpenGLSampler& operator=(const OpenGLSampler&);
+
     GLuint m_Handle;
     int32_t m_Ref;
 };
@@ -111,6 +140,7 @@ public:
 
     void BindBuffer(GLenum Target) const;
     void BindBufferRange(GLenum Target, GLuint Index, GLintptr Offset, GLsizeiptr Size) const;
+    void BindBufferRangeNV(GLenum Target, GLuint Index, GLintptr Offset, GLsizeiptr Size) const;
     void BindVertexBuffer(GLuint BindingIndex, GLintptr Offset, GLsizei Stride) const;
     void NamedBufferStorage(GLsizeiptr Size, const void * Data, GLbitfield Flags);
     void * MapNamedBufferRange(GLintptr Offset, GLsizeiptr length, GLbitfield access);

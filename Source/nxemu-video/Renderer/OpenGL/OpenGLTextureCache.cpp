@@ -1,4 +1,5 @@
 #include "OpenGLTextureCache.h"
+#include "OpenGLImageView.h"
 #include "OpenGLStateTracker.h"
 #include "Engine/Maxwell3D.h"
 #include "Textures/Texture.h"
@@ -10,6 +11,8 @@ OpenGLTextureCache::OpenGLTextureCache(OpenGLRenderer & Renderer, CVideo & Video
     m_Renderer(Renderer),
     m_Maxwell3D(Video.Maxwell3D()),
     m_VideoMemory(Video.VideoMemory()),
+    m_GraphicsImageTable(Video.VideoMemory()), 
+    m_GraphicsSamplerTable(Video.VideoMemory()), 
     m_UploadBuffers(GL_MAP_WRITE_BIT, GL_MAP_WRITE_BIT | GL_MAP_FLUSH_EXPLICIT_BIT),
     m_RenderWidth(0),
     m_RenderHeight(0)
@@ -68,6 +71,132 @@ bool OpenGLTextureCache::Init(void)
     NullImageViewCube->TextureView(GL_TEXTURE_CUBE_MAP, NullImageCubeArray, GL_R8, 0, 1, 0, 6);
     NullImageViewCube->TextureParameteriv(GL_TEXTURE_SWIZZLE_RGBA, NULL_SWIZZLE);
     return true;
+}
+
+void OpenGLTextureCache::FillGraphicsImageViews(const uint32_t * Indices, uint32_t IndiceSize, OpenGLImageViewPtr * ImageViews, uint32_t ImageViewSize)
+{
+    if (IndiceSize > ImageViewSize)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+
+    for (uint32_t i = 0, n = IndiceSize; i < n; i++)
+    {
+        if (i > m_GraphicsImageTable.Limit())
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            break;
+        }
+        TextureTICEntry Descriptor;
+        bool IsNew = m_GraphicsImageTable.Read(Indices[i], Descriptor);
+        OpenGLImageViewPtr & ImageView = ImageViews[i];
+        if (IsNew)
+        {
+            uint64_t CpuAddr;
+            if (Descriptor.Address() != 0 && Descriptor.Address() <= (1ull << 48) && m_VideoMemory.GpuToCpuAddress(Descriptor.Address(), CpuAddr))
+            {
+                TextureEntryOpenGLImages::const_iterator itr = m_TextureImageViews.find(Descriptor);
+                if (itr == m_TextureImageViews.end()) 
+                {
+                    OpenGLImage ImageInfo(Descriptor);
+                    uint64_t ImageAddr = Descriptor.Address() - (Descriptor.BaseLayer() * ImageInfo.LayerStride());
+                    OpenGLImage * Image = GetImage(ImageInfo, ImageAddr);
+                    if (Image != nullptr)
+                    {
+                        OpenGLSubresourceBase Base;
+                        if (!Image->FindBase(Descriptor.Address(), Base) || Base.Level() != 0)
+                        {
+                            g_Notify->BreakPoint(__FILE__, __LINE__);
+                        }
+
+                        ImageView.Reset(Image->ImageView(m_NullImages, sizeof(m_NullImages) / sizeof(m_NullImages[0]), Descriptor, Base.Layer()));
+                        if (ImageView.Get() != nullptr)
+                        {
+                            m_TextureImageViews.emplace(Descriptor, ImageView.Get());
+                        }
+                        else
+                        {
+                            g_Notify->BreakPoint(__FILE__, __LINE__);
+                            ImageView.Reset(nullptr);
+                        } 
+                    }
+                    else
+                    {
+                        g_Notify->BreakPoint(__FILE__, __LINE__);
+                        ImageView.Reset(nullptr);
+                    }
+                } 
+                else 
+                {
+                    ImageView.Reset(itr->second.Get());
+                }
+            }
+            else
+            {
+                ImageView.Reset(nullptr);
+            }
+        }
+        if (ImageView.Get() != nullptr)
+        {
+            PrepareImage(ImageView->Image(), false, false);
+        }
+    }
+}
+
+OpenGLSamplerPtr OpenGLTextureCache::GetGraphicsSampler(uint32_t Index)
+{
+    if (Index > m_GraphicsSamplerTable.Limit())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return nullptr;
+    }
+    TextureTSCEntry Descriptor;
+    bool IsNew = m_GraphicsSamplerTable.Read(Index, Descriptor);
+    OpenGLSamplerPtr & Ptr = m_GraphicsSamplers[Index];
+    if (IsNew) 
+    {
+        bool NullConfig = true;
+        for (uint32_t i = 0, n = sizeof(Descriptor.Value) / sizeof(Descriptor.Value[0]); i < n; i++)
+        {
+            if (Descriptor.Value[i] == 0)
+            {
+                continue;
+            }
+            NullConfig = false;
+            break;
+        }
+        if (!NullConfig)
+        {
+            std::pair<TextureEntryOpenGLSamplers::iterator, bool> Res = m_TextureSamplers.try_emplace(Descriptor);
+            if (Res.second)
+            {
+                m_Samplers.emplace_back(new OpenGLSampler(Descriptor));
+                Res.first->second = m_Samplers[m_Samplers.size() - 1];
+            }
+            Ptr = Res.first->second;
+        }
+        else 
+        {
+            Ptr = nullptr;
+        }
+    }
+    return Ptr;
+}
+
+void OpenGLTextureCache::SynchronizeGraphicsDescriptors()
+{
+    bool Linked = m_Maxwell3D.Regs().SamplerIndex == CMaxwell3D::SamplerIndex_ViaHeaderIndex;
+    uint32_t TicLimit = m_Maxwell3D.Regs().Tic.Limit;
+    uint32_t TscLimit = Linked ? TicLimit : m_Maxwell3D.Regs().Tsc.Limit;
+    if (m_GraphicsSamplerTable.Synchornize(m_Maxwell3D.Regs().Tsc.Address(), TscLimit))
+    {
+        m_GraphicsSamplers.resize(TscLimit + 1);
+    }
+    if (m_GraphicsImageTable.Synchornize(m_Maxwell3D.Regs().Tic.Address(), TicLimit))
+    {
+        m_GraphicsImageViews.resize(TicLimit + 1);
+    }
 }
 
 void OpenGLTextureCache::UpdateRenderTargets(bool IsClear)
@@ -255,7 +384,7 @@ void OpenGLTextureCache::PrepareImage(OpenGLImagePtr & Image, bool IsModificatio
     }
     else
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        RefreshContents(Image);
     }
     if (IsModification)
     {

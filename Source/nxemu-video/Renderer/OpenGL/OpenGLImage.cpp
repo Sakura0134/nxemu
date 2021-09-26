@@ -1,9 +1,9 @@
 #include "OpenGLImage.h"
-#include "Textures/Texture.h"
-#include "Textures/Decoder.h"
+#include "Textures\Texture.h"
+#include "Textures\Decoder.h"
 #include "OpenGLRenderer.h"
 #include "VideoNotification.h"
-#include <Common/Maths.h>
+#include <Common\Maths.h>
 #include <algorithm>
 
 uint64_t OpenGLImage::m_CompatibleViewTable[SurfacePixelFormat_MaxPixelFormat][2];
@@ -49,6 +49,65 @@ OpenGLImage::OpenGLImage(const OpenGLImage & Image) :
     m_Ref(0)
 {
     memset(m_MipLevelOffsets, 0, sizeof(m_MipLevelOffsets));
+    SetOpenGLFormat();
+}
+
+OpenGLImage::OpenGLImage(const TextureTICEntry & TICEntry ) :
+    m_Type(OpenGLImageType_e1D),
+    m_Format(SurfacePixelFormat_Invalid),
+    m_Block(0, 0, 0),
+    m_Size(1, 1, 1),
+    m_NumSamples(1),
+    m_LayerStride(0),
+    m_TileWidthSpacing(0),
+    m_Flags(ImageFlag_CpuModified),
+    m_Renderer(nullptr),
+    m_GpuAddr(0),
+    m_CpuAddr(0),
+    m_CpuAddrEnd(0),
+    m_GLInternalFormat(GL_NONE),
+    m_GLFormat(GL_NONE),
+    m_GLType(GL_NONE),
+    m_Ref(0)
+{
+    memset(m_MipLevelOffsets, 0, sizeof(m_MipLevelOffsets));
+    m_Format = TICEntry.PixelFormat();
+    m_NumSamples = MsaaModeSamples(TICEntry.MsaaMode);
+    m_Resources.Levels(TICEntry.MaxMipLevel + 1);
+    if (TICEntry.IsPitchLinear())
+    {
+        m_Block.Width(TICEntry.Pitch());
+    }
+    else if (TICEntry.IsBlockLinear())
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    m_TileWidthSpacing = TICEntry.TileWidthSpacing;
+    if (TICEntry.TextureType != TextureType_2D && TICEntry.TextureType != TextureType_2DNoMipmap)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    switch (TICEntry.TextureType)
+    {
+    case TextureType_2DNoMipmap:
+        if (TICEntry.Depth() != 1)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        m_Type = TICEntry.IsPitchLinear() ? OpenGLImageType_Linear : OpenGLImageType_e2D;
+        m_Size.Width(TICEntry.Width());
+        m_Size.Height(TICEntry.Height());
+        m_Resources.Layers(TICEntry.BaseLayer() + 1);
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        break;
+    }
+    if (m_Type != OpenGLImageType_Linear)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
     SetOpenGLFormat();
 }
 
@@ -154,6 +213,10 @@ void OpenGLImage::Create(uint64_t GpuAddr, uint64_t CpuAddr, OpenGLRenderer * Re
         m_Texture.Create(GL_TEXTURE_2D_ARRAY);
         m_Texture.TextureStorage3D(NumLevels, m_GLInternalFormat, m_Size.Width(), m_Size.Height(), m_Resources.Layers());
         break;
+    case OpenGLImageType_Linear:
+        m_Texture.Create(GL_TEXTURE_2D_ARRAY);
+        m_Texture.TextureStorage3D(NumLevels, m_GLInternalFormat, m_Size.Width(), m_Size.Height(), m_Resources.Layers());
+        break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
@@ -176,8 +239,25 @@ OpenGLBufferImageList OpenGLImage::UnswizzleImage(CVideoMemory & VideoMemory, ui
 
     if (m_Type == OpenGLImageType_Linear)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        OpenGLBufferImageList Images;
+        VideoMemory.ReadBuffer(GpuAddr, Output, GuestSize);
+
+        if (((m_Block.Width() >> BPBLog2) << BPBLog2 != m_Block.Width()))
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+        OpenGLBufferImageList Images(1);
+        OpenGLBufferImage & Image = Images[0];
+        Image.BufferOffset(0);
+        Image.BufferSize(GuestSize);
+        Image.BufferRowLength(m_Block.Width() >> BPBLog2);
+        Image.BufferImageHeight(m_Size.Height());
+        Image.ImageBaseLevel(0);
+        Image.ImageBaseLayer(0);
+        Image.ImageNumLayers(1);
+        Image.ImageOffsetX(0);
+        Image.ImageOffsetY(0);
+        Image.ImageOffsetZ(0);
+        Image.ImageExtent(m_Size);
         return Images;
     }
     std::unique_ptr<uint8_t> InputData(new uint8_t[GuestSize]);
@@ -307,8 +387,8 @@ uint32_t OpenGLImage::GuestSizeBytes(void) const
     }
     if (m_Type == OpenGLImageType_Linear)
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        return 0;
+        uint32_t BlockHeight = SurfaceDefaultBlockHeight(m_Format);
+        return m_Block.Width() * ((m_Size.Height() + BlockHeight - 1) / BlockHeight);
     }
     if (m_Resources.Layers() > 1)
     {
@@ -379,6 +459,11 @@ void OpenGLImage::SetOpenGLFormat(void)
         m_GLInternalFormat = GL_RGBA8;
         m_GLFormat = GL_RGBA;
         m_GLType = GL_UNSIGNED_INT_8_8_8_8_REV;
+        break;
+    case SurfacePixelFormat_B5G6R5_UNORM:
+        m_GLInternalFormat = GL_RGB565;
+        m_GLFormat = GL_RGB;
+        m_GLType = GL_UNSIGNED_SHORT_5_6_5_REV;
         break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -577,6 +662,18 @@ OpenGLImageView * OpenGLImage::ImageView(OpenGLTexturePtr * NullTextures, uint32
     return ImageViewPtr.Get();
 }
 
+OpenGLImageView * OpenGLImage::ImageView(OpenGLTexturePtr * NullTextures, uint32_t NumNullTextures, const TextureTICEntry & config, int32_t base_layer)
+{
+    if (m_ImageViews.size() > 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    m_ImageViews.emplace_back(new OpenGLImageView(config, base_layer));
+    OpenGLImageViewPtr & ImageViewPtr = m_ImageViews[m_ImageViews.size() - 1];
+    ImageViewPtr->Create(NullTextures, NumNullTextures, this);
+    return ImageViewPtr.Get();
+}
+
 uint32_t OpenGLImage::MapSizeBytes(void) const
 {
     if (IsFlagSet(ImageFlag_Converted))
@@ -588,10 +685,15 @@ uint32_t OpenGLImage::MapSizeBytes(void) const
 
 uint32_t OpenGLImage::UnswizzledSizeBytes(void) const
 {
-    if (m_Type == OpenGLImageType_Buffer || m_Type == OpenGLImageType_Linear || m_NumSamples > 1)
+    if (m_Type == OpenGLImageType_Buffer || m_NumSamples > 1)
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return 0;
+    }
+    if (m_Type == OpenGLImageType_Linear)
+    {
+        uint32_t BlockHeight = SurfaceDefaultBlockHeight(m_Format);
+        return m_Block.Width() * ((m_Size.Height() + BlockHeight - 1) / BlockHeight);
     }
     OpenGLExtent2D TileSize(SurfaceDefaultBlockWidth(m_Format), SurfaceDefaultBlockHeight(m_Format));
     return NumBlocksPerLayer(TileSize) * m_Resources.Layers() * SurfacePixelFormatBytesPerBlock(m_Format);

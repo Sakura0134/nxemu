@@ -9,6 +9,7 @@ class OpenGLShaderConstBuffer :
 {
 public:
     OpenGLShaderConstBuffer(uint32_t MaxOffset, bool IsIndirect, uint32_t Index);
+    uint32_t GetIndex() const { return m_Index; }
 
 private:
     OpenGLShaderConstBuffer();
