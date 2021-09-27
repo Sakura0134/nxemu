@@ -21,7 +21,11 @@ OpenGLCompiledShaderPtr OpenGLShaderCache::GetStageProgram(CMaxwell3D::ShaderPro
 {
     if (!m_Maxwell3D.StateTracker().Flag(OpenGLDirtyFlag_Shaders))
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        OpenGLCompiledShaderPtr & LastShader = m_LastShaders[ProgramType];
+        if (LastShader->IsBuilt()) 
+        {
+            return LastShader;
+        }
     }
 
     const CMaxwell3D::tyShaderConfig & ShaderConfig = m_Maxwell3D.Regs().ShaderConfig[ProgramType];

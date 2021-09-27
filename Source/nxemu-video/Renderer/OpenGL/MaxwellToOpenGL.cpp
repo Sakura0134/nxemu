@@ -62,6 +62,18 @@ GLenum MaxwellToOpenGL_FrontFace(CMaxwell3D::FrontFace FrontFace)
     return GL_CCW;
 }
 
+GLenum MaxwellToOpenGL_IndexFormat(CMaxwell3D::IndexFormat IndexFormat)
+{
+    switch (IndexFormat) 
+    {
+    case CMaxwell3D::IndexFormat_UnsignedByte: return GL_UNSIGNED_BYTE;
+    case CMaxwell3D::IndexFormat_UnsignedShort: return GL_UNSIGNED_SHORT;
+    case CMaxwell3D::IndexFormat_UnsignedInt: return GL_UNSIGNED_INT;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return GL_UNSIGNED_BYTE;
+}
+
 GLenum MaxwellToOpenGL_PolygonMode(CMaxwell3D::PolygonMode PolygonMode) 
 {
     switch (PolygonMode)
@@ -72,6 +84,30 @@ GLenum MaxwellToOpenGL_PolygonMode(CMaxwell3D::PolygonMode PolygonMode)
     }
     g_Notify->BreakPoint(__FILE__, __LINE__);
     return GL_FILL;
+}
+
+GLenum MaxwellToOpenGL_PrimitiveTopology(CMaxwell3D::PrimitiveTopology Topology) 
+{
+    switch (Topology)
+    {
+    case CMaxwell3D::PrimitiveTopology_Points: return GL_POINTS;
+    case CMaxwell3D::PrimitiveTopology_Lines: return GL_LINES;
+    case CMaxwell3D::PrimitiveTopology_LineLoop: return GL_LINE_LOOP;
+    case CMaxwell3D::PrimitiveTopology_LineStrip: return GL_LINE_STRIP;
+    case CMaxwell3D::PrimitiveTopology_Triangles: return GL_TRIANGLES;
+    case CMaxwell3D::PrimitiveTopology_TriangleStrip: return GL_TRIANGLE_STRIP;
+    case CMaxwell3D::PrimitiveTopology_TriangleFan: return GL_TRIANGLE_FAN;
+    case CMaxwell3D::PrimitiveTopology_Quads: return GL_QUADS;
+    case CMaxwell3D::PrimitiveTopology_QuadStrip: return GL_QUAD_STRIP;
+    case CMaxwell3D::PrimitiveTopology_Polygon: return GL_POLYGON;
+    case CMaxwell3D::PrimitiveTopology_LinesAdjacency: return GL_LINES_ADJACENCY;
+    case CMaxwell3D::PrimitiveTopology_LineStripAdjacency: return GL_LINE_STRIP_ADJACENCY;
+    case CMaxwell3D::PrimitiveTopology_TrianglesAdjacency: return GL_TRIANGLES_ADJACENCY;
+    case CMaxwell3D::PrimitiveTopology_TriangleStripAdjacency: return GL_TRIANGLE_STRIP_ADJACENCY;
+    case CMaxwell3D::PrimitiveTopology_Patches: return GL_PATCHES;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+    return GL_POINTS;
 }
 
 GLenum MaxwellToOpenGL_ReductionFilter(TextureSamplerReduction Filter) 

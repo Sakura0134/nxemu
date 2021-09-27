@@ -60,6 +60,8 @@ private:
     OpenGLRenderer& operator=(const OpenGLRenderer&);
 
     void BindTextures(const OpenGLCompiledShaderPtr * Shaders, uint32_t NoOfShaders);
+    void BeginTransformFeedback(GLenum primitive_mode);
+    void EndTransformFeedback();
     void SetupVertexFormat();
     void SetupVertexBuffer();
     void SetupVertexInstances();

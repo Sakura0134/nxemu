@@ -9,7 +9,8 @@ public:
     OpenGLProgramManager(void);
     ~OpenGLProgramManager();
 
-    bool Init(const OpenGLDevice & device);
+    bool Init(const OpenGLDevice & Device);
+    void BindGraphicsPipeline();
     void UseVertexShader(OpenGLProgramPtr & Program);
     void UseGeometryShader(OpenGLProgramPtr & Program);
     void UseFragmentShader(OpenGLProgramPtr & Program);
@@ -25,11 +26,15 @@ private:
         OpenGLProgramPtr Fragment;
     };
 
+    void UpdateSourcePrograms();
+
     static void BindProgram(GLenum Stage, const OpenGLProgramPtr & Current, const OpenGLProgramPtr & Old, bool & Enabled);
 
     OpenGLPipeline m_GraphicsPipeline;
     PipelineState m_CurrentState;
+    PipelineState m_OldState;
     bool m_UseAssemblyShaders;
+    bool m_IsGraphicsBound;
     bool m_VertexEnabled;
     bool m_GeometryEnabled;
     bool m_FragmentEnabled;

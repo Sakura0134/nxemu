@@ -10,6 +10,7 @@
 #include <vector>
 #include <unordered_map>
 
+class OpenGLDevice;
 class OpenGLRenderer;
 class CVideo;
 class CMaxwell3D;
@@ -42,7 +43,7 @@ class OpenGLTextureCache
 public:
     OpenGLTextureCache(OpenGLRenderer & Renderer, CVideo & Video);
 
-    bool Init(void);
+    bool Init(const OpenGLDevice & Device);
     void FillGraphicsImageViews(const uint32_t * Indices, uint32_t IndiceSize, OpenGLImageViewPtr * ImageViews, uint32_t ImageViewSize);
     OpenGLSamplerPtr GetGraphicsSampler(uint32_t index);
     void SynchronizeGraphicsDescriptors();
@@ -83,4 +84,5 @@ private:
     OpenGLFramebuffers m_Framebuffers;
     OpenGLStagingBuffers m_UploadBuffers;
     OpenGLTexturePtr m_NullImages[OpenGLImageViewType_Last];
+    bool m_HasBrokenTextureViewFormats;
 };

@@ -86,6 +86,21 @@ void OpenGLStreamBuffer::Map(uint32_t Size)
     m_BufferOffset = (uint32_t)m_BufferPos;
 }
 
+void OpenGLStreamBuffer::Unmap()
+{
+    GLsizeiptr Size = m_BufferOffset - m_BufferPosBase;
+    if (Size > m_MappedSize)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+
+    if (Size > 0)
+    {
+        m_Buffer->FlushMappedNamedBufferRange(m_BufferPos, Size);
+    }
+    m_BufferPos += Size;
+}
+
 void OpenGLStreamBuffer::AlignBuffer(uint32_t Alignment)
 {
     uint32_t OffsetAligned = AlignUp(m_BufferOffset, Alignment);

@@ -55,7 +55,10 @@ public:
     uint32_t LayerSize(void) const;
     OpenGLImageViewType ImageViewType(void) const;
 
+    bool IsSubresource(const OpenGLImage & Candidate, uint64_t Addr, uint32_t Options, bool BrokenViews);
+    bool IsLayerStrideCompatible(const OpenGLImage & Image);
     bool IsViewCompatible(SurfacePixelFormat Format, bool BrokenViews) const;
+    bool IsBlockLinearSizeCompatible(const OpenGLImage & Overlap, uint32_t NewLevel, uint32_t OverlapLevel, bool StrictSize) const;
     OpenGLBufferImageList UnswizzleImage(CVideoMemory& VideoMemory, uint64_t gpu_addr, uint8_t * Output, size_t OutputSize) const;
     void UploadMemory(OpenGLStagingBuffer & Buffer, uint32_t BufferOffset, const OpenGLBufferImage * Images, size_t NoOfImages);
     OpenGLImageView * ImageView(OpenGLTexturePtr * NullTextures, uint32_t NumNullTextures, uint64_t GPUAddr, bool IsClear);
@@ -63,6 +66,7 @@ public:
     uint32_t MapSizeBytes(void) const;
     uint32_t GuestSizeBytes(void) const;
     uint32_t UnswizzledSizeBytes(void) const;
+    bool Overlaps(uint64_t OverlapCpuAddr, size_t OverlapSize) const;
     bool IsFlagSet(ImageFlags Flag) const;
     void UpdateFlags(uint32_t Add, uint32_t Remove);
     void Track(void);

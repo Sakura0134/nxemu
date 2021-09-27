@@ -1,6 +1,7 @@
 #include "OpenGLTextureCache.h"
 #include "OpenGLImageView.h"
 #include "OpenGLStateTracker.h"
+#include "OpenGLDevice.h"
 #include "Engine/Maxwell3D.h"
 #include "Textures/Texture.h"
 #include "OpenGLTypes.h"
@@ -15,13 +16,16 @@ OpenGLTextureCache::OpenGLTextureCache(OpenGLRenderer & Renderer, CVideo & Video
     m_GraphicsSamplerTable(Video.VideoMemory()), 
     m_UploadBuffers(GL_MAP_WRITE_BIT, GL_MAP_WRITE_BIT | GL_MAP_FLUSH_EXPLICIT_BIT),
     m_RenderWidth(0),
-    m_RenderHeight(0)
+    m_RenderHeight(0),
+    m_HasBrokenTextureViewFormats(false)
 {
     memset(m_DrawBuffers, 0, sizeof(m_DrawBuffers));
 }
 
-bool OpenGLTextureCache::Init(void)
+bool OpenGLTextureCache::Init(const OpenGLDevice & Device)
 {
+    m_HasBrokenTextureViewFormats = Device.HasBrokenTextureViewFormats();
+
     GLint NULL_SWIZZLE[] = { GL_ZERO, GL_ZERO, GL_ZERO, GL_ZERO };
     OpenGLTexturePtr & NullImage1DArray = m_NullImages[OpenGLImageViewType_e1DArray];
     NullImage1DArray.Reset(new OpenGLTexture);
@@ -290,7 +294,7 @@ void OpenGLTextureCache::RefreshContents(OpenGLImage & Image)
     glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
-OpenGLImage * OpenGLTextureCache::GetImage(const OpenGLImage & Info, uint64_t GpuAddr, uint32_t /*Options*/)
+OpenGLImage * OpenGLTextureCache::GetImage(const OpenGLImage & Info, uint64_t GpuAddr, uint32_t Options)
 {
     uint64_t CpuAddr;
     if (!m_VideoMemory.GpuToCpuAddress(GpuAddr, CpuAddr) || CpuAddr == 0)
@@ -307,8 +311,23 @@ OpenGLImage * OpenGLTextureCache::GetImage(const OpenGLImage & Info, uint64_t Gp
             continue;
         }
 
-        g_Notify->BreakPoint(__FILE__, __LINE__);
-        return nullptr;
+        OpenGLImagePtrList & Images = itr->second;
+        for (size_t i = 0, n = Images.size(); i < n; i++)
+        {
+            OpenGLImage * Image = Images[i].Get();
+            if (!Image->Overlaps(CpuAddr, Size))
+            {
+                continue;
+            }
+            if (Info.Type() == OpenGLImageType_Linear || Image->Type() == OpenGLImageType_Linear)
+            {
+                g_Notify->BreakPoint(__FILE__,__LINE__);
+            }
+            else if (Image->IsSubresource(Info, GpuAddr, Options, m_HasBrokenTextureViewFormats))
+            {
+                return Image;
+            }
+        }
     }
 
     OpenGLImagePtr Image(new OpenGLImage(Info));

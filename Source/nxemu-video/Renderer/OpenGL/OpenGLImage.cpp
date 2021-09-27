@@ -223,6 +223,61 @@ void OpenGLImage::Create(uint64_t GpuAddr, uint64_t CpuAddr, OpenGLRenderer * Re
     }
 }
 
+bool OpenGLImage::IsSubresource(const OpenGLImage & Candidate, uint64_t Addr, uint32_t Options, bool BrokenViews)
+{
+    OpenGLSubresourceBase Base;
+    if (!FindBase(Addr, Base))
+    {
+        return false;
+    }
+    if ((Options & OpenGLOptions_Format) == 0 && !IsViewCompatible(Candidate.m_Format, BrokenViews)) 
+    {
+        return false;
+    }
+    if (!IsLayerStrideCompatible(Candidate))
+    {
+        return false;
+    }
+    if (m_Type != Candidate.Type()) 
+    {
+        return false;
+    }
+    if ((Options & OpenGLOptions_Samples) == 0 && m_NumSamples != Candidate.NumSamples()) 
+    {
+        return false;
+    }
+    if (m_Resources.Levels() < Candidate.m_Resources.Levels() + Base.Level())
+    {
+        return false;
+    }
+    if (m_Type == OpenGLImageType_e3D)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    else if (m_Resources.Layers() < Candidate.m_Resources.Layers() + Base.Layer()) 
+    {
+        return false;
+    }
+    if (!IsBlockLinearSizeCompatible(Candidate, Base.Level(), 0, (Options & OpenGLOptions_Size) == 0))
+    {
+        return false;
+    }
+    return true;
+}
+
+bool OpenGLImage::IsLayerStrideCompatible(const OpenGLImage & Image)
+{
+    if (m_LayerStride == 0 || Image.m_LayerStride == 0) 
+    {
+        return true;
+    }
+    if (m_LayerStride == Image.m_LayerStride) 
+    {
+        return true;
+    }
+    return false;
+}
+
 bool OpenGLImage::IsViewCompatible(SurfacePixelFormat Format, bool BrokenViews) const 
 {
     if (BrokenViews)
@@ -230,6 +285,21 @@ bool OpenGLImage::IsViewCompatible(SurfacePixelFormat Format, bool BrokenViews) 
         return m_Format == Format;
     }
     return ((m_CompatibleViewTable[m_Format][Format / 64] >> (Format % 64)) & 1) != 0;
+}
+
+bool OpenGLImage::IsBlockLinearSizeCompatible(const OpenGLImage & Overlap, uint32_t NewLevel, uint32_t OverlapLevel, bool StrictSize) const
+{
+    if (m_Type == OpenGLImageType_Linear)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    if (!StrictSize)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    const OpenGLExtent3D Size = AdjustMipSize(m_Size, NewLevel);
+    const OpenGLExtent3D OverlapSize = AdjustMipSize(Overlap.Size(), OverlapLevel);
+    return Size.Width() == OverlapSize.Width() && Size.Height() == OverlapSize.Height();
 }
 
 OpenGLBufferImageList OpenGLImage::UnswizzleImage(CVideoMemory & VideoMemory, uint64_t GpuAddr,  uint8_t * Output, size_t OutputSize) const
@@ -697,6 +767,11 @@ uint32_t OpenGLImage::UnswizzledSizeBytes(void) const
     }
     OpenGLExtent2D TileSize(SurfaceDefaultBlockWidth(m_Format), SurfaceDefaultBlockHeight(m_Format));
     return NumBlocksPerLayer(TileSize) * m_Resources.Layers() * SurfacePixelFormatBytesPerBlock(m_Format);
+}
+
+bool OpenGLImage::Overlaps(uint64_t OverlapCpuAddr, size_t OverlapSize) const
+{
+    return m_CpuAddr < (OverlapCpuAddr + OverlapSize) && (OverlapCpuAddr < m_CpuAddrEnd);
 }
 
 bool OpenGLImage::FindBase(uint64_t Addr, OpenGLSubresourceBase & Subresource) const

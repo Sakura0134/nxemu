@@ -53,7 +53,7 @@ bool OpenGLRenderer::Init()
     {
         return false;
     }
-    if (!m_TextureCache.Init())
+    if (!m_TextureCache.Init(m_Device))
     {
         return false;
     }
@@ -171,7 +171,7 @@ void OpenGLRenderer::Clear()
     m_QueuedCommands = true;
 }
 
-void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
+void OpenGLRenderer::Draw(bool IsIndexed, bool IsInstanced)
 {
     struct alignas(16) MaxwellUniformData
     {
@@ -201,7 +201,6 @@ void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
 
     CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
     const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
-
     uint32_t BufferSize = CalculateVertexArraysSize();
     if (IsIndexed)
     {
@@ -214,7 +213,7 @@ void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
     SetupVertexFormat();
     SetupVertexBuffer();
     SetupVertexInstances();
-    if (IsIndexed) { SetupIndexBuffer(); }
+    GLintptr IndexBufferOffset = IsIndexed ? SetupIndexBuffer() : 0;
 
     if (!m_Device.UseAssemblyShaders())
     {
@@ -225,7 +224,37 @@ void OpenGLRenderer::Draw(bool IsIndexed, bool /*IsInstanced*/)
     }
 
     SetupShaders();
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    m_StreamBuffer.Unmap();
+    m_TextureCache.UpdateRenderTargets(false);
+    m_StateTracker.BindFramebuffer(m_TextureCache.GetFramebuffer());
+    m_ProgramManager.BindGraphicsPipeline();
+
+    GLenum PrimitiveMode = MaxwellToOpenGL_PrimitiveTopology(Regs.Draw.Topology);
+    BeginTransformFeedback(PrimitiveMode);
+
+    GLuint BaseInstance = (GLuint)Regs.VBBaseInstance;
+    GLsizei NumInstances = (GLsizei)(IsInstanced ? Maxwell3D.MMEDraw().InstanceCount : 1);
+    if (IsIndexed)
+    {
+        GLint BaseVertex = (GLint)Regs.VBElementBase;
+        GLsizei NumVertices = (GLsizei)Regs.IndexArray.Count;
+        const GLvoid * BufferOffset = (const GLvoid *)IndexBufferOffset;
+        GLenum Format = MaxwellToOpenGL_IndexFormat(Regs.IndexArray.Format);
+        if (NumInstances == 1 && BaseInstance == 0 && BaseVertex == 0)
+        {
+            glDrawElements(PrimitiveMode, NumVertices, Format, BufferOffset);
+        }
+        else
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+        }
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+    EndTransformFeedback();
+    m_QueuedCommands = true;
 }
 
 bool OpenGLRenderer::IsTextureHandlerSizeKnown() const
@@ -385,6 +414,27 @@ void OpenGLRenderer::BindTextures(const OpenGLCompiledShaderPtr * Shaders, uint3
             m_Samplers[BaseTextureIndex + SamplerIndex]->BindTexture(Base.Sampler);
         }
     }
+}
+
+void OpenGLRenderer::BeginTransformFeedback(GLenum /*PrimitiveMode*/)
+{
+    CMaxwell3D & Maxwell3D = m_Video.Maxwell3D();
+    const CMaxwell3D::Registers & Regs = Maxwell3D.Regs();
+    if (Regs.TFBEnabled == 0)
+    {
+        return;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+}
+
+void OpenGLRenderer::EndTransformFeedback()
+{
+    const CMaxwell3D::Registers & Regs = m_Video.Maxwell3D().Regs();
+    if (Regs.TFBEnabled == 0)
+    {
+        return;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
 }
 
 void OpenGLRenderer::SetupVertexFormat()

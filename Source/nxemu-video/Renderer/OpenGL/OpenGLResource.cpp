@@ -330,6 +330,16 @@ void OpenGLPipeline::BindProgramPipeline() const
     glBindProgramPipeline(m_Handle);
 }
 
+void OpenGLPipeline::UseProgramStages(GLbitfield Stages, const OpenGLProgram & Program) const
+{
+    if (m_Handle == 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glUseProgramStages(m_Handle, Stages, Program.m_Handle);
+}
+
 OpenGLBuffer::OpenGLBuffer() : 
     m_Handle(0), 
     m_Ref(0)
@@ -399,6 +409,16 @@ void OpenGLBuffer::BindVertexBuffer(GLuint BindingIndex, GLintptr Offset, GLsize
         return;
     }
     glBindVertexBuffer(BindingIndex, m_Handle, Offset, Stride);
+}
+
+void OpenGLBuffer::FlushMappedNamedBufferRange(GLintptr Offset, GLsizeiptr Length) const
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glFlushMappedNamedBufferRange(m_Handle, Offset, Length);
 }
 
 void OpenGLBuffer::NamedBufferStorage(GLsizeiptr Size, const void * Data, GLbitfield Flags) 

@@ -7,6 +7,7 @@ OpenGLDevice::OpenGLDevice() :
     m_UniformBufferAlignment(4),
     m_HasVertexBufferUnifiedMemory(false),
     m_HasPreciseBug(false),
+    m_HasBrokenTextureViewFormats(false), 
     m_UseAssemblyShaders(false),
     m_HasWarpIntrinsics(false),
     m_HasShaderBallot(false),
@@ -22,6 +23,12 @@ bool OpenGLDevice::Init(void)
 {
     BuildBaseBindings();
     GetExtensions();
+
+    const char * Vendor = (const char* )glGetString(GL_VENDOR);
+
+    bool IsAmd = _stricmp(Vendor, "ATI Technologies Inc.") == 0;
+    bool IsIntel = _stricmp(Vendor, "Intel") == 0;
+
     glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &m_UniformBufferAlignment);
     m_HasWarpIntrinsics = GLAD_GL_NV_gpu_shader5 && GLAD_GL_NV_shader_thread_group && GLAD_GL_NV_shader_thread_shuffle;
     m_HasShaderBallot = GLAD_GL_ARB_shader_ballot != 0;
@@ -29,6 +36,7 @@ bool OpenGLDevice::Init(void)
     m_HasImageLoadFormatted = HasExtension("GL_EXT_shader_image_load_formatted");
     m_HasTextureShadowLOD = HasExtension("GL_EXT_texture_shadow_lod");
     m_HasPreciseBug = TestPreciseBug();
+    m_HasBrokenTextureViewFormats = IsAmd || IsIntel;
     m_HasVertexBufferUnifiedMemory = GLAD_GL_NV_vertex_buffer_unified_memory != 0;
     m_UseAssemblyShaders = GLAD_GL_NV_gpu_program5 && GLAD_GL_NV_compute_program5 && GLAD_GL_NV_transform_feedback && GLAD_GL_NV_transform_feedback2;
     return true;

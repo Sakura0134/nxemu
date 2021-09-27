@@ -961,7 +961,10 @@ public:
             tyScreenYControl ScreenYControl;
             float LineWidthSmooth;
             float LineWidthAliased;
-            PADDING_WORDS(0x56);
+            PADDING_WORDS(0x1F);
+            uint32_t VBElementBase;
+            uint32_t VBBaseInstance;
+            PADDING_WORDS(0x35);
             uint32_t ClipDistanceEnabled;
             PADDING_WORDS(0x1);
             float PointSize;
@@ -1171,6 +1174,7 @@ public:
     void CallMethod(Method Method, uint32_t Argument, bool Last);
 
     inline const Registers & Regs (void) const { return m_Regs; }
+    inline const tyMMEDrawState & MMEDraw(void) const { return m_MMEDraw; }
     inline CStateTracker & StateTracker (void) { return m_StateTracker; }
     inline const tyShaderStage & ShaderStage(uint32_t ShaderStage, uint32_t ConstBuffer) const { return m_ShaderStage[ShaderStage][ConstBuffer]; }
 
@@ -1286,6 +1290,8 @@ ASSERT_REG_POSITION(FragmentColorClamp, 0x4EA);
 ASSERT_REG_POSITION(ScreenYControl, 0x4EB);
 ASSERT_REG_POSITION(LineWidthSmooth, 0x4EC);
 ASSERT_REG_POSITION(LineWidthAliased, 0x4ED);
+ASSERT_REG_POSITION(VBElementBase, 0x50D);
+ASSERT_REG_POSITION(VBBaseInstance, 0x50E);
 ASSERT_REG_POSITION(ClipDistanceEnabled, 0x544);
 ASSERT_REG_POSITION(PointSize, 0x546);
 ASSERT_REG_POSITION(PointSpriteEnable, 0x548);

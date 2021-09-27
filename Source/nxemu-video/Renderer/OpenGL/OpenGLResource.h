@@ -84,11 +84,14 @@ private:
     GLuint m_Handle;
 };
 
+class OpenGLPipeline;
 typedef OpenGLItemPtr<OpenGLProgram> OpenGLProgramPtr;
 
 class OpenGLProgram 
 {
     friend OpenGLProgramPtr;
+    friend OpenGLPipeline;
+
 public:
     OpenGLProgram();
     ~OpenGLProgram();
@@ -116,6 +119,7 @@ public:
     void Release();
     
     void BindProgramPipeline(void) const;
+    void UseProgramStages(GLbitfield Stages, const OpenGLProgram & Program) const;
 
 private:
     OpenGLPipeline(const OpenGLPipeline&);
@@ -142,6 +146,7 @@ public:
     void BindBufferRange(GLenum Target, GLuint Index, GLintptr Offset, GLsizeiptr Size) const;
     void BindBufferRangeNV(GLenum Target, GLuint Index, GLintptr Offset, GLsizeiptr Size) const;
     void BindVertexBuffer(GLuint BindingIndex, GLintptr Offset, GLsizei Stride) const;
+    void FlushMappedNamedBufferRange(GLintptr Offset, GLsizeiptr Length) const;
     void NamedBufferStorage(GLsizeiptr Size, const void * Data, GLbitfield Flags);
     void * MapNamedBufferRange(GLintptr Offset, GLsizeiptr length, GLbitfield access);
 

@@ -28,6 +28,7 @@ public:
     bool HasTextureShadowLod() const { return m_HasTextureShadowLOD; }
     bool HasVertexBufferUnifiedMemory() const { return m_HasVertexBufferUnifiedMemory; }
     bool HasPreciseBug() const { return m_HasPreciseBug; }
+    bool HasBrokenTextureViewFormats() const {  return m_HasBrokenTextureViewFormats; }
     bool UseAssemblyShaders() const { return m_UseAssemblyShaders; }
     bool Init(void);
 
@@ -54,5 +55,6 @@ private:
     bool m_HasTextureShadowLOD;
     bool m_HasVertexBufferUnifiedMemory;
     bool m_HasPreciseBug;
+    bool m_HasBrokenTextureViewFormats;
     bool m_UseAssemblyShaders;
 };
