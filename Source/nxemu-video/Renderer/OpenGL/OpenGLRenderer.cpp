@@ -299,7 +299,14 @@ void OpenGLRenderer::TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool
     TrackedPageMap::iterator itr = m_TrackedPages.find(CpuAddr);
     if (itr != m_TrackedPages.end())
     {
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        if (Track)
+        {
+            g_Notify->BreakPoint(__FILE__, __LINE__);
+            return;
+        }
+        TrackedPage & Page = itr->second;
+        m_SwitchSystem.MarkRasterizerMemory(Page.Start << PageBits, Page.Size << PageBits, false);
+        m_TrackedPages.erase(itr);
     }
     else
     {

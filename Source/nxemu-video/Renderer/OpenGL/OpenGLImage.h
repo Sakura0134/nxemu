@@ -70,6 +70,7 @@ public:
     bool IsFlagSet(ImageFlags Flag) const;
     void UpdateFlags(uint32_t Add, uint32_t Remove);
     void Track(void);
+    void Untrack(void);
     void UploadImageContents(CVideoMemory & VideoMemory, OpenGLStagingBuffer & Buffer, uint32_t BufferOffset);
     bool FindBase(uint64_t Addr, OpenGLSubresourceBase & Subresource) const;
 

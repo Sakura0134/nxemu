@@ -834,6 +834,24 @@ void OpenGLImage::Track(void)
     }
 }
 
+void OpenGLImage::Untrack(void)
+{
+    if (!IsFlagSet(ImageFlag_Tracked))
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    UpdateFlags(0,ImageFlag_Tracked);
+    if (m_Renderer != nullptr)
+    {
+        m_Renderer->TrackRasterizerMemory(m_CpuAddr, GuestSizeBytes(), false);
+    }
+    else
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
 void OpenGLImage::UploadImageContents(CVideoMemory & VideoMemory, OpenGLStagingBuffer & Buffer, uint32_t BufferOffset) 
 {
     uint8_t * Map = Buffer.Map() + BufferOffset;

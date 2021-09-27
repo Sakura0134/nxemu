@@ -24,6 +24,7 @@ public:
     bool StartThread(void);
     void PushCommands(const uint64_t * Entries, uint32_t NoOfEntries);
     void SwapBuffers(CFramebuffer && Framebuffer);
+    void FlushAndInvalidateRegion(uint64_t Addr, uint32_t Size);
     void OnCommandListEnd();
 
 private:

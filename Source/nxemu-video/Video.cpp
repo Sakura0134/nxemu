@@ -81,9 +81,9 @@ void CVideo::WaitFence(uint32_t SyncPointId, uint32_t Value)
     }
 }
 
-void CVideo::InvalidateRegion(uint64_t /*CpuAddr*/, uint64_t /*size*/)
+void CVideo::InvalidateRegion(uint64_t CpuAddr, uint32_t Size)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    m_GpuThread.FlushAndInvalidateRegion(CpuAddr, Size);
 }
 
 void CVideo::FlushRegion(uint64_t /*CpuAddr*/, uint64_t /*size*/)
@@ -210,7 +210,7 @@ void CVideo::CallPullerMethod(BufferMethods Method, uint32_t Argument, uint32_t 
     case BufferMethods_FenceValue:
         break;
     case BufferMethods_FenceAction:
-        g_Notify->BreakPoint(__FILE__, __LINE__);
+        ProcessFenceActionMethod();
         break;
     case BufferMethods_Yield:
     case BufferMethods_WaitForInterrupt:
@@ -229,6 +229,21 @@ void CVideo::CallEngineMultiMethod(uint32_t Method, uint32_t SubChannel, const u
     {
     case EngineID_MAXWELL_B:
         m_Maxwell3D.CallMultiMethod((CMaxwell3D::Method)Method, BaseStart, Amount, MethodsPending);
+        break;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
+void CVideo::ProcessFenceActionMethod() 
+{
+    switch (m_Regs.FenceAction.Op) 
+    {
+    case FenceOperation_Acquire:
+        WaitFence(m_Regs.FenceAction.SyncPointId, m_Regs.FenceValue);
+        break;
+    case FenceOperation_Increment:
+        IncrementSyncPoint(m_Regs.FenceAction.SyncPointId);
         break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);

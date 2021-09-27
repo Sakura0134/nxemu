@@ -13,24 +13,44 @@
 class CVideo :
     public IVideo
 {
-    enum 
+public:
+    enum
     {
         MaxSyncPoints = 192,
     };
+
+    enum FenceOperation : unsigned
+    {
+        FenceOperation_Acquire = 0,
+        FenceOperation_Increment = 1,
+    };
+
 #pragma warning(push)
 #pragma warning(disable : 4201) // warning C4201: nonstandard extension used : nameless struct/union
+    union tyFenceAction 
+    {
+        uint32_t Value;
+        struct 
+        {
+            FenceOperation Op : 1;
+            unsigned : 7;
+            unsigned SyncPointId : 24;
+        };
+    };
+
     union Registers 
     {
         enum { NUM_REGS = 0x40 };
         struct 
         {
-            PADDING_WORDS(0x40);
+            PADDING_WORDS(0x1C);
+            uint32_t FenceValue;
+            tyFenceAction FenceAction;
         };
         uint32_t Value[NUM_REGS];
     };
 #pragma warning(pop)
 
-public:
     CVideo(IRenderWindow & RenderWindow, ISwitchSystem & SwitchSystem);
     ~CVideo();
 
@@ -41,7 +61,7 @@ public:
     uint32_t GetSyncPointValue(uint32_t SyncPointId) const;
     void WaitFence(uint32_t SyncPointId, uint32_t value);
     void FlushRegion(uint64_t CpuAddr, uint64_t size);
-    void InvalidateRegion(uint64_t CpuAddr, uint64_t size);
+    void InvalidateRegion(uint64_t Addr, uint32_t Size);
     uint64_t VideoMemoryAllocate(uint64_t Size, uint64_t Align);
     uint64_t VideoMemoryAllocateFixed(uint64_t GpuAddr, uint64_t Size);
     void VideoMemoryMap(uint64_t CpuAddr, uint64_t GpuAddr, uint64_t size);
@@ -62,6 +82,7 @@ private:
     CVideo(const CVideo&);
     CVideo& operator=(const CVideo&);
 
+    void ProcessFenceActionMethod();
     void CallEngineMultiMethod(uint32_t Method, uint32_t SubChannel, const uint32_t * BaseStart, uint32_t Amount, uint32_t MethodsPending);
     void CallPullerMethod(BufferMethods Method, uint32_t Argument, uint32_t SubChannel);
 
@@ -77,3 +98,10 @@ private:
     CGpuThread m_GpuThread;
     EmulatorWindow m_EmulatorWindow;
 };
+
+#define ASSERT_REG_POSITION(field_name, position) static_assert(offsetof(CVideo::Registers, field_name) == position * 4, "Field " #field_name " has invalid position")
+
+ASSERT_REG_POSITION(FenceValue, 0x1C);
+ASSERT_REG_POSITION(FenceAction, 0x1D);
+
+#undef ASSERT_REG_POSITION

@@ -54,6 +54,11 @@ void CGpuThread::SwapBuffers(CFramebuffer && Framebuffer)
     PushCommand(std::move(std::make_shared<SwapBufferTask>(*m_Renderer, std::move(Framebuffer))));
 }
 
+void CGpuThread::FlushAndInvalidateRegion(uint64_t Addr, uint32_t Size)
+{
+    m_Renderer->InvalidateRegion(Addr, Size);
+}
+
 void CGpuThread::OnCommandListEnd()
 {
     PushCommand(std::move(std::make_shared<CommandListEndTask>(*m_Renderer)));

@@ -452,6 +452,24 @@ bool OpenGLTextureCache::IsFullClear(OpenGLImageViewPtr & ImageView)
     return Scissor.MinX == 0 && Scissor.MinY == 0 && Scissor.MaxX >= Size.Width() && Scissor.MaxY >= Size.Height();
 }
 
-void OpenGLTextureCache::WriteMemory(uint64_t /*CpuAddr*/, uint64_t /*Size*/)
+void OpenGLTextureCache::WriteMemory(uint64_t CpuAddr, uint64_t Size)
 {
+    for (uint64_t Page = CpuAddr >> PAGE_BITS, PageEnd = (CpuAddr + Size - 1) >> PAGE_BITS; Page <= PageEnd; Page++)
+    {
+        PageTables::iterator itr = m_PageTable.find(Page);
+        if (itr == m_PageTable.end())
+        {
+            continue;
+        }
+        OpenGLImagePtrList & Images = itr->second;
+        for (size_t i = 0, n = Images.size(); i < n; i++)
+        {
+            OpenGLImage * Image = Images[i].Get();
+            if (Image->IsFlagSet(ImageFlag_CpuModified) == 0)
+            {
+                Image->UpdateFlags(ImageFlag_CpuModified, 0);
+                Image->Untrack();
+            }
+        }
+    }
 }
