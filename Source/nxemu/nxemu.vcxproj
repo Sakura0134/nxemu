@@ -27,6 +27,9 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(SolutionDir)\Source\3rdParty\SoftFloat-3e\source\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <PreBuildEvent>
+      <Command>IF NOT EXIST "$(SolutionDir)Config\NXEmu.cfg" (copy  "$(SolutionDir)Config\NXEmu.cfg.development" "$(SolutionDir)Config\NXEmu.cfg")</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

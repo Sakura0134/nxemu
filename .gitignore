@@ -31,5 +31,6 @@ Thumbs.db
 /Plugin/Video/NXEmu-Video.dll
 /Plugin/Video/NXEmu-Video_d.dll
 /Source/nxemu-core/Version.h
+/Source/nxemu-video/Version.h
 /Config/NXEmu.cfg
 /Config/switch.keys
