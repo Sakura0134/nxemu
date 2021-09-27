@@ -9,6 +9,7 @@
 #include <list>
 
 class CVideo;
+class CFramebuffer;
 
 class CGpuThread :
     private CThread
@@ -22,6 +23,7 @@ public:
 
     bool StartThread(void);
     void PushCommands(const uint64_t * Entries, uint32_t NoOfEntries);
+    void SwapBuffers(CFramebuffer && Framebuffer);
     void OnCommandListEnd();
 
 private:

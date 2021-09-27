@@ -63,3 +63,37 @@ OpenGLCompiledShaderPtr OpenGLShaderCache::GetStageProgram(CMaxwell3D::ShaderPro
     m_LastShaders[ProgramType] = Shader;
     return Shader;
 }
+
+void OpenGLShaderCache::InvalidateRegion(uint64_t CpuAddr, uint32_t Size) 
+{
+    InvalidatePagesInRegion(CpuAddr, Size);
+    RemovePendingShaders();
+}
+
+void OpenGLShaderCache::SyncGuestHost() 
+{
+    RemovePendingShaders();
+}
+
+void OpenGLShaderCache::InvalidatePagesInRegion(uint64_t Addr, uint64_t Size) 
+{
+    uint64_t AddrEnd = Addr + Size;
+    for (uint64_t Page = Addr >> PAGE_BITS, PageEnd = (AddrEnd + PAGE_SIZE - 1) >> PAGE_BITS; Page < PageEnd; Page++) 
+    {
+        ShaderAddrListMap::iterator itr = m_ShaderPageMap.find(Page);
+        if (itr == m_ShaderPageMap.end())
+        {
+            continue;
+        }
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    }
+}
+
+void OpenGLShaderCache::RemovePendingShaders()
+{
+    if (m_MarkedForRemoval.empty()) 
+    {
+        return;
+    }
+    g_Notify->BreakPoint(__FILE__, __LINE__);
+}

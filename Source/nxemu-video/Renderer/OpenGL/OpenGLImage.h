@@ -78,6 +78,8 @@ public:
     uint32_t NumSamples(void) const { return m_NumSamples; }
     const OpenGLSubresourceExtent & Resources(void) const { return m_Resources; }
     uint32_t LayerStride(void) const { return m_LayerStride; }
+    size_t ImageViews(void) const { return m_ImageViews.size(); }
+    OpenGLImageViewPtr & ImageView(uint32_t index) { return m_ImageViews[index]; }
     uint64_t CpuAddr(void) const { return m_CpuAddr; }
     uint64_t GpuAddr(void) const { return m_GpuAddr; }
     const OpenGLTexture & Texture() const { return m_Texture; }

@@ -53,6 +53,26 @@ void OpenGLTexture::BindTexture(GLuint First)
     glBindTextures(First, 1, &m_Handle);
 }
 
+void OpenGLTexture::BindTextureUnit(GLuint unit)
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glBindTextureUnit(unit, m_Handle);
+}
+
+void OpenGLTexture::ClearTexImage(GLint Level, GLenum Format, GLenum Type, const void * Data) 
+{
+    if (m_Handle == 0)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glClearTexImage(m_Handle, Level, Format, Type, Data);
+}
+
 void OpenGLTexture::TextureView(GLenum Target, const OpenGLTexture & OrigTexture, GLenum InternalFormat, GLuint MinLevel, GLuint NumLevels, GLuint MinLayer, GLuint NumLayers)
 {
     if (m_Handle == 0)
@@ -101,6 +121,12 @@ void OpenGLTexture::TextureParameteriv(GLenum PName, const GLint * Param)
         return;
     }
     glTextureParameteriv(m_Handle, PName, Param);
+}
+
+OpenGLSampler::OpenGLSampler() : 
+    m_Handle(0),
+    m_Ref(0) 
+{
 }
 
 OpenGLSampler::OpenGLSampler(const TextureTSCEntry & Config) : 
@@ -171,6 +197,16 @@ void OpenGLSampler::Release()
     m_Handle = 0;
 }
 
+void OpenGLSampler::BindSampler(GLuint Unit)
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glBindSampler(Unit, m_Handle);
+}
+
 void OpenGLSampler::BindTexture(GLuint First)
 {
     if (m_Handle == 0) 
@@ -179,6 +215,16 @@ void OpenGLSampler::BindTexture(GLuint First)
         return;
     }
     glBindImageTextures(First, 1, &m_Handle);
+}
+
+void OpenGLSampler::SamplerParameteri(GLenum pname, GLint param)
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glSamplerParameteri(m_Handle, pname, param);
 }
 
 OpenGLShader::OpenGLShader() :
@@ -289,6 +335,16 @@ void OpenGLProgram::Release()
     }
     glDeleteProgram(m_Handle);
     m_Handle = 0;
+}
+
+void OpenGLProgram::ProgramUniformMatrix3x2fv(GLint Location, GLsizei Count, GLboolean Transpose, const GLfloat * Value)
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;    
+    }
+    glProgramUniformMatrix3x2fv(m_Handle, Location, Count, Transpose, Value);
 }
 
 OpenGLPipeline::OpenGLPipeline() : 
@@ -419,6 +475,26 @@ void OpenGLBuffer::FlushMappedNamedBufferRange(GLintptr Offset, GLsizeiptr Lengt
         return;
     }
     glFlushMappedNamedBufferRange(m_Handle, Offset, Length);
+}
+
+void OpenGLBuffer::NamedBufferData(GLsizeiptr Size, const void* Data, GLenum Usage)
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glNamedBufferData(m_Handle, Size, Data, Usage);
+}
+
+void OpenGLBuffer::NamedBufferSubData(GLintptr Offset, GLsizeiptr Size, const void * Data)
+{
+    if (m_Handle == 0) 
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return;
+    }
+    glNamedBufferSubData(m_Handle, Offset, Size, Data);
 }
 
 void OpenGLBuffer::NamedBufferStorage(GLsizeiptr Size, const void * Data, GLbitfield Flags) 

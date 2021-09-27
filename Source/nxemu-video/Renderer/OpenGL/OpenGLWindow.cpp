@@ -98,3 +98,8 @@ bool OpenGLWindow::Initialize(void * RenderSurface)
     }
     return true;
 }
+
+void OpenGLWindow::SwapBuffers() 
+{
+    ::SwapBuffers(wglGetCurrentDC());
+}

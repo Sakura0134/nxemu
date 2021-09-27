@@ -1,5 +1,6 @@
 #pragma once
 #include "OpenGLStateTracker.h"
+#include "OpenGLScreen.h"
 #include "OpenGLWindow.h"
 #include "OpenGLShaderCache.h"
 #include "OpenGLTextureCache.h"
@@ -42,8 +43,10 @@ public:
 
     //IRenderer
     bool Init();
-    void InvalidateRegion(uint64_t Addr, uint64_t Size);
+    void SwapBuffers(const CFramebuffer & Framebuffer);
+    void InvalidateRegion(uint64_t CpuAddr, uint32_t Size);
     void FlushCommands(void);
+    void SyncGuestHost(void);
     void WaitForIdle(void);
     void SignalSyncPoint(uint32_t Value);
     void SignalSemaphore(uint64_t Addr, uint32_t Value);
@@ -52,6 +55,7 @@ public:
     void Draw(bool IsIndexed, bool IsInstanced);
     bool IsTextureHandlerSizeKnown() const;
 
+    void TickFrame();
     void TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool Track);
 
 private:
@@ -103,6 +107,7 @@ private:
     ISwitchSystem & m_SwitchSystem;
     CVideo & m_Video;
     OpenGLDevice m_Device;
+    OpenGLScreen m_Screen;
     OpenGLProgramManager m_ProgramManager;
     OpenGLStreamBuffer m_StreamBuffer;
     std::vector<uint32_t> m_ImageViewIndices;

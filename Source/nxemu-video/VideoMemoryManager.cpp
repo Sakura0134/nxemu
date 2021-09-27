@@ -240,7 +240,7 @@ void CVideoMemory::WriteBuffer(uint64_t GpuAddr, const void* Buffer, uint64_t Si
             uint64_t DestAddr = CpuAddr + PageOffset;
             if (InvalidateRegion)
             {
-                m_Renderer->InvalidateRegion(DestAddr, CopyAmount);            
+                m_Renderer->InvalidateRegion(DestAddr, (uint32_t)CopyAmount);            
             }
             if (!m_System.WriteCPUMemory(DestAddr, Buffer, CopyAmount))
             {

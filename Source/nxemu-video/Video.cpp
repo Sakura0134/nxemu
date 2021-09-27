@@ -2,6 +2,7 @@
 #include "VideoNotification.h"
 #include "Textures\Decoder.h"
 #include "Shader\ShaderOpCode.h"
+#include "Framebuffer.h"
 #include <stdio.h>
 
 CVideo::CVideo(IRenderWindow & RenderWindow, ISwitchSystem & SwitchSystem) :
@@ -37,9 +38,9 @@ void CVideo::PushGPUEntries(const uint64_t * Entries, uint32_t NoOfEntries)
     m_GpuThread.PushCommands(Entries, NoOfEntries);
 }
 
-void CVideo::SwapBuffers(uint64_t /*Address*/, uint32_t /*Offset*/, uint32_t /*Format*/, uint32_t /*Width*/, uint32_t /*Height*/, uint32_t /*Stride*/, uint32_t /*Transform*/, int32_t /*CropLeft*/, int32_t /*CropTop*/, int32_t /*CropRight*/, int32_t /*CropBottom*/)
+void CVideo::SwapBuffers(uint64_t Address, uint32_t Offset, uint32_t Format, uint32_t Width, uint32_t Height, uint32_t Stride, uint32_t Transform, int32_t CropLeft, int32_t CropTop, int32_t CropRight, int32_t CropBottom)
 {
-    g_Notify->BreakPoint(__FILE__, __LINE__);
+    m_GpuThread.SwapBuffers(CFramebuffer(Address, Offset,(GPUPixelFormat)Format, Width, Height, Stride, (TransformFlags)Transform, CropLeft, CropTop, CropRight, CropBottom));
 }
 
 uint32_t CVideo::GetSyncPointValue(uint32_t SyncPointId) const

@@ -14,6 +14,7 @@ OpenGLRenderer::OpenGLRenderer(ISwitchSystem & SwitchSystem, CVideo & Video) :
     m_SwitchSystem(SwitchSystem),
     m_Video(Video),
     m_StateTracker(Video),
+    m_Screen(SwitchSystem, m_StateTracker, m_TextureCache, m_ProgramManager, m_Device),
     m_StreamBuffer(SwitchSystem, Video, m_StateTracker),
     m_TextureCache(*this, Video),
     m_ShaderCache(*this, Video, m_Device),
@@ -57,17 +58,31 @@ bool OpenGLRenderer::Init()
     {
         return false;
     }
-    glClearColor(0.0f, 0.0f, 0.0, 0.0f);
+    if (!m_Screen.Init()) 
+    {
+        return false;
+    }
     return true;
 }
 
-void OpenGLRenderer::InvalidateRegion(uint64_t Addr, uint64_t Size)
+void OpenGLRenderer::SwapBuffers(const CFramebuffer & Framebuffer)
 {
-    if (Addr == 0 || Size == 0)
+    m_Screen.PrepareRendertarget(Framebuffer);
+    m_StateTracker.BindFramebuffer(0);
+    m_Screen.Draw(m_EmulatorWindow);
+    TickFrame();
+
+    m_OpenGLWindow.SwapBuffers();
+}
+
+void OpenGLRenderer::InvalidateRegion(uint64_t CpuAddr, uint32_t Size)
+{
+    if (CpuAddr == 0 || Size == 0)
     {
         return;
     }
-    m_TextureCache.WriteMemory(Addr, Size);
+    m_TextureCache.WriteMemory(CpuAddr, Size);
+    m_ShaderCache.InvalidateRegion(CpuAddr, Size);
 }
 
 void OpenGLRenderer::FlushCommands(void)
@@ -77,6 +92,11 @@ void OpenGLRenderer::FlushCommands(void)
         m_QueuedCommands = false;
         glFlush();
     }
+}
+
+void OpenGLRenderer::SyncGuestHost(void)
+{
+    m_ShaderCache.SyncGuestHost();
 }
 
 void OpenGLRenderer::WaitForIdle(void)
@@ -260,6 +280,12 @@ void OpenGLRenderer::Draw(bool IsIndexed, bool IsInstanced)
 bool OpenGLRenderer::IsTextureHandlerSizeKnown() const
 {
     return m_IsTextureHandlerSizeKnown;
+}
+
+void OpenGLRenderer::TickFrame()
+{
+    m_QueuedCommands = false;
+    m_FenceManager.TickFrame();
 }
 
 void OpenGLRenderer::TrackRasterizerMemory(uint64_t CpuAddr, uint64_t Size, bool Track)

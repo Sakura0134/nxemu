@@ -38,6 +38,31 @@ void OpenGLProgramManager::BindGraphicsPipeline()
     }
 }
 
+void OpenGLProgramManager::BindHostPipeline(const OpenGLPipeline & Pipeline)
+{
+    if (m_UseAssemblyShaders)
+    {
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+    } 
+    else if (!m_IsGraphicsBound)
+    {
+        glUseProgram(0);
+    }
+    Pipeline.BindProgramPipeline();
+}
+
+void OpenGLProgramManager::RestoreGuestPipeline() 
+{
+    if (m_UseAssemblyShaders)
+    {
+        glBindProgramPipeline(0);
+    }
+    else 
+    {
+        m_GraphicsPipeline.BindProgramPipeline();
+    }
+}
+
 void OpenGLProgramManager::UseVertexShader(OpenGLProgramPtr & Program)
 {
     if (m_UseAssemblyShaders)

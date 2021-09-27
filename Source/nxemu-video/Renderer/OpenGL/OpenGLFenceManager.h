@@ -40,6 +40,7 @@ class OpenGLFenceManager
 public:
     OpenGLFenceManager(OpenGLRenderer & Renderer, CVideo & Video);
 
+    void TickFrame();
     void SignalSemaphore(uint64_t Addr, uint32_t Value);
     void SignalSyncPoint(uint32_t Value);
     void WaitPendingFences();

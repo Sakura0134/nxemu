@@ -1,4 +1,5 @@
 #include "OpenGLFenceManager.h"
+#include "OpenGLRenderer.h"
 #include "VideoNotification.h"
 
 
@@ -77,6 +78,12 @@ bool OpenGLFenceManager::IsFenceSignaled(OpenGLFencePtr & /*Fence*/) const
     return false;
 }
 
+void OpenGLFenceManager::TickFrame()
+{
+    m_DelayedDestoyIndex = (m_DelayedDestoyIndex + 1) % (sizeof(m_DelayedDestoyFence) / sizeof(m_DelayedDestoyFence[0]));
+    m_DelayedDestoyFence[m_DelayedDestoyIndex].clear();
+}
+
 void OpenGLFenceManager::SignalSemaphore(uint64_t Addr, uint32_t Value)
 {
     ReleasePendingFences();
@@ -85,6 +92,11 @@ void OpenGLFenceManager::SignalSemaphore(uint64_t Addr, uint32_t Value)
     OpenGLFencePtr Fence = CreateFence(Addr, Value, !Flush);
     m_Fences.push(Fence);
     QueueFence(Fence);
+    if (Flush)
+    {
+        m_Renderer.FlushCommands();
+    }
+    m_Renderer.SyncGuestHost();
 }
 
 void OpenGLFenceManager::SignalSyncPoint(uint32_t Value)
@@ -95,6 +107,11 @@ void OpenGLFenceManager::SignalSyncPoint(uint32_t Value)
     OpenGLFencePtr Fence = CreateFence(Value, !Flush);
     m_Fences.push(Fence);
     QueueFence(Fence);
+    if (Flush)
+    {
+        m_Renderer.FlushCommands();
+    }
+    m_Renderer.SyncGuestHost();
 }
 
 void OpenGLFenceManager::WaitPendingFences()

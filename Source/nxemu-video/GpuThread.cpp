@@ -4,9 +4,10 @@
 #include "VideoNotification.h"
 #include "Task/CommandList.h"
 #include "Task/CommandListEnd.h"
+#include "Task/SwapBuffer.h"
 #include <Common/Util.h>
 
-CGpuThread::CGpuThread(ISwitchSystem & SwitchSystem, CVideo & Video) : 
+CGpuThread::CGpuThread(ISwitchSystem & SwitchSystem, CVideo & Video) :
     CThread(stGpuThread),
     m_SwitchSystem(SwitchSystem),
     m_Video(Video),
@@ -32,7 +33,7 @@ bool CGpuThread::StartThread()
     }
     m_RenderInit = false;
     Start(this);
-    for (uint32_t i = 0 , n = 10000; i < n; i++) 
+    for (uint32_t i = 0 , n = 10000; i < n; i++)
     {
         if (m_RenderInit)
         {
@@ -48,12 +49,17 @@ void CGpuThread::PushCommands(const uint64_t* Entries, uint32_t NoOfEntries)
     PushCommand(std::move(std::make_shared<CommandListTask>(m_Video, *m_Renderer, Entries, NoOfEntries)));
 }
 
+void CGpuThread::SwapBuffers(CFramebuffer && Framebuffer)
+{
+    PushCommand(std::move(std::make_shared<SwapBufferTask>(*m_Renderer, std::move(Framebuffer))));
+}
+
 void CGpuThread::OnCommandListEnd()
 {
     PushCommand(std::move(std::make_shared<CommandListEndTask>(*m_Renderer)));
 }
 
-void CGpuThread::PushCommand(GpuTask && Task) 
+void CGpuThread::PushCommand(GpuTask && Task)
 {
     CGuard Guard(m_cs);
     m_Tasks.push_back(std::move(Task));
@@ -63,7 +69,7 @@ void CGpuThread::PushCommand(GpuTask && Task)
 void CGpuThread::GpuThread(void)
 {
     m_Renderer.reset(new OpenGLRenderer(m_SwitchSystem, m_Video));
-    if (!m_Renderer->Init()) 
+    if (!m_Renderer->Init())
     {
         g_Notify->BreakPoint(__FILE__, __LINE__);
         return;
@@ -78,7 +84,7 @@ void CGpuThread::GpuThread(void)
         {
             break;
         }
-       
+
         GpuTask Task;
         {
             CGuard Guard(m_cs);
@@ -87,11 +93,11 @@ void CGpuThread::GpuThread(void)
                 Task = std::move(m_Tasks.front());
                 m_Tasks.pop_front();
             }
-            else 
+            else
             {
                 g_Notify->BreakPoint(__FILE__,__LINE__);
             }
-            if (m_Tasks.empty()) 
+            if (m_Tasks.empty())
             {
                 m_TaskEvent.Reset();
             }

@@ -112,6 +112,7 @@ enum SurfaceType
 
 uint32_t SurfacePixelFormatBytesPerBlock(SurfacePixelFormat Format);
 bool IsSurfacePixelFormatSRGB(SurfacePixelFormat Format);
+SurfacePixelFormat SurfacePixelFormatFromGPUPixelFormat(GPUPixelFormat Format);
 SurfacePixelFormat SurfacePixelFormatFromRenderTargetFormat(RenderTargetFormat Format);
 SurfaceType SurfaceGetFormatType(SurfacePixelFormat PixelFormat);
 uint32_t SurfaceDefaultBlockHeight(SurfacePixelFormat Format);

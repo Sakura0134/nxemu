@@ -38,6 +38,23 @@ enum EngineID
     EngineID_MAXWELL_DMA_COPY_A = 0xB0B5,
 };
 
+enum GPUPixelFormat
+{
+    GPUPixelFormat_A8B8G8R8_UNORM = 1,
+    GPUPixelFormat_RGB565_UNORM = 4,
+    GPUPixelFormat_B8G8R8A8_UNORM = 5,
+};
+
+enum TransformFlags 
+{
+    TransformFlags_Unset = 0x00,
+    TransformFlags_FlipH = 0x01,
+    TransformFlags_FlipV = 0x02,
+    TransformFlags_Rotate90 = 0x04,
+    TransformFlags_Rotate180 = 0x03,
+    TransformFlags_Rotate270 = 0x07,
+};
+
 enum RenderTargetFormat 
 {
     RenderTargetFormat_NONE = 0x0,

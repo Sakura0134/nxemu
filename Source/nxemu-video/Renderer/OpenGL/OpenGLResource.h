@@ -23,6 +23,8 @@ public:
     void Release();
 
     void BindTexture(GLuint First);
+    void BindTextureUnit(GLuint unit);
+    void ClearTexImage(GLint Level, GLenum Format, GLenum Type, const void * Data);
     void TextureView(GLenum Target, const OpenGLTexture & OrigTexture, GLenum InternalFormat, GLuint MinLevel, GLuint NumLevels, GLuint MinLayer, GLuint NumLayers);
     void TextureStorage2D(GLsizei Levels, GLenum InternalFormat, GLsizei Width, GLsizei Height);
     void TextureStorage3D(GLsizei Levels, GLenum InternalFormat, GLsizei Width, GLsizei Height, GLsizei Depth);
@@ -101,6 +103,8 @@ public:
 
     bool Created() const { return m_Handle != 0; }
 
+    void ProgramUniformMatrix3x2fv(GLint Location, GLsizei Count, GLboolean Transpose, const GLfloat * Value);
+
 private:
     OpenGLProgram(const OpenGLProgram&);
     OpenGLProgram& operator=(const OpenGLProgram&);
@@ -147,6 +151,8 @@ public:
     void BindBufferRangeNV(GLenum Target, GLuint Index, GLintptr Offset, GLsizeiptr Size) const;
     void BindVertexBuffer(GLuint BindingIndex, GLintptr Offset, GLsizei Stride) const;
     void FlushMappedNamedBufferRange(GLintptr Offset, GLsizeiptr Length) const;
+    void NamedBufferData(GLsizeiptr Size, const void* Data, GLenum Usage);
+    void NamedBufferSubData(GLintptr Offset, GLsizeiptr Size, const void * Data);
     void NamedBufferStorage(GLsizeiptr Size, const void * Data, GLbitfield Flags);
     void * MapNamedBufferRange(GLintptr Offset, GLsizeiptr length, GLbitfield access);
 

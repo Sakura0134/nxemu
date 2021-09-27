@@ -26,11 +26,16 @@ public:
     ~OpenGLShaderCache();
 
     OpenGLCompiledShaderPtr GetStageProgram(CMaxwell3D::ShaderProgram ProgramType);
+    void InvalidateRegion(uint64_t Addr, uint32_t Size);
+    void SyncGuestHost();
 
 private:
     OpenGLShaderCache(void);
     OpenGLShaderCache(const OpenGLShaderCache&);
     OpenGLShaderCache& operator=(const OpenGLShaderCache&);
+
+    void InvalidatePagesInRegion(uint64_t Addr, uint64_t Size);
+    void RemovePendingShaders();
 
     OpenGLRenderer & m_Renderer;
     CVideo & m_Video;
@@ -40,5 +45,6 @@ private:
     ShaderAddrMap m_ShaderAddrMap;
     ShaderAddrListMap m_ShaderPageMap;
     ShaderList m_Shaders;
+    ShaderList m_MarkedForRemoval;
     OpenGLCompiledShaderPtr m_LastShaders[CMaxwell3D::MaxShaderProgram];
 };

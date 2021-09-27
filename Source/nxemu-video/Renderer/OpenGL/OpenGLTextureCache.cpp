@@ -276,6 +276,26 @@ OpenGLFramebufferPtr OpenGLTextureCache::GetFramebuffer()
     return Framebuffer;
 }
 
+OpenGLImageViewPtr OpenGLTextureCache::FindImageView(uint64_t CpuAddress)
+{
+    PageTables::const_iterator itr = m_PageTable.find(CpuAddress >> PAGE_BITS);
+    if (itr == m_PageTable.end())
+    {
+        return nullptr;
+    }
+    const OpenGLImagePtrList & Images = itr->second;
+    for (size_t i = 0, n = Images.size(); i < n; i++)
+    {
+        OpenGLImage * Image = Images[i].Get();
+        if (Image->CpuAddr() != CpuAddress || Image->ImageViews() == 0)
+        {
+            continue;
+        }
+        return Image->ImageView(0);
+    }
+    return nullptr;
+}
+
 void OpenGLTextureCache::RefreshContents(OpenGLImage & Image)
 {
     if (!Image.IsFlagSet(ImageFlag_CpuModified))

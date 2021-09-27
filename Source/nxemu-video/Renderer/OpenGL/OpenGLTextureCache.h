@@ -50,6 +50,7 @@ public:
     void UpdateRenderTargets(bool is_clear);
     OpenGLFramebufferPtr GetFramebuffer();
     void WriteMemory(uint64_t CpuAddr, uint64_t Size);
+    OpenGLImageViewPtr FindImageView(uint64_t CpuAddress);
 
 private:
     OpenGLTextureCache();

@@ -127,6 +127,19 @@ bool IsSurfacePixelFormatSRGB(SurfacePixelFormat Format)
     return false;
 }
 
+SurfacePixelFormat SurfacePixelFormatFromGPUPixelFormat(GPUPixelFormat Format)
+{
+    switch (Format) 
+    {
+    case GPUPixelFormat_A8B8G8R8_UNORM: return SurfacePixelFormat_A8B8G8R8_UNORM;
+    case GPUPixelFormat_RGB565_UNORM: return SurfacePixelFormat_R5G6B5_UNORM;
+    case GPUPixelFormat_B8G8R8A8_UNORM: return SurfacePixelFormat_B8G8R8A8_UNORM;
+    default:
+        g_Notify->BreakPoint(__FILE__, __LINE__);
+        return SurfacePixelFormat_A8B8G8R8_UNORM;
+    }
+}
+
 SurfacePixelFormat SurfacePixelFormatFromRenderTargetFormat(RenderTargetFormat Format) 
 {
     switch (Format)

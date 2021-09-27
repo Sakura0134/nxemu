@@ -11,6 +11,8 @@ public:
 
     bool Init(const OpenGLDevice & Device);
     void BindGraphicsPipeline();
+    void BindHostPipeline(const OpenGLPipeline & Pipeline);
+    void RestoreGuestPipeline();
     void UseVertexShader(OpenGLProgramPtr & Program);
     void UseGeometryShader(OpenGLProgramPtr & Program);
     void UseFragmentShader(OpenGLProgramPtr & Program);

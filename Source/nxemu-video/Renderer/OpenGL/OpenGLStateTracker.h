@@ -86,7 +86,24 @@ public:
     OpenGLStateTracker(CVideo & Video);
 
     void BindFramebuffer(OpenGLFramebufferPtr Framebuffer);
+    void NotifyDrawScreen();
+    void NotifyScreenDrawVertexArray();
+    void NotifyPolygonModes();
+    void NotifyViewport0();
+    void NotifyScissor0();
     void NotifyColorMask(uint8_t index);
+    void NotifyBlend0();
+    void NotifyFramebuffer();
+    void NotifyFrontFace();
+    void NotifyCullTest();
+    void NotifyDepthTest();
+    void NotifyStencilTest();
+    void NotifyPolygonOffset();
+    void NotifyRasterizeEnable();
+    void NotifyFramebufferSRGB();
+    void NotifyLogicOp();
+    void NotifyClipControl();
+    void NotifyAlphaTest();
 
 private:
     OpenGLStateTracker(void);

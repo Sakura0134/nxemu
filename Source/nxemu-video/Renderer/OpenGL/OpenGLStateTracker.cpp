@@ -50,10 +50,125 @@ void OpenGLStateTracker::BindFramebuffer(OpenGLFramebufferPtr Framebuffer)
     }
 }
 
+void OpenGLStateTracker::NotifyDrawScreen()
+{
+    NotifyScreenDrawVertexArray();
+    NotifyPolygonModes();
+    NotifyViewport0();
+    NotifyScissor0();
+    NotifyColorMask(0);
+    NotifyBlend0();
+    NotifyFramebuffer();
+    NotifyFrontFace();
+    NotifyCullTest();
+    NotifyDepthTest();
+    NotifyStencilTest();
+    NotifyPolygonOffset();
+    NotifyRasterizeEnable();
+    NotifyFramebufferSRGB();
+    NotifyLogicOp();
+    NotifyClipControl();
+    NotifyAlphaTest();
+}
+
+void OpenGLStateTracker::NotifyScreenDrawVertexArray()
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_VertexFormats);
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_VertexFormat0 + 0);
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_VertexFormat0 + 1);
+
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_VertexBuffers);
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_VertexBuffer0);
+
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_VertexInstances);
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_VertexInstance0 + 0);
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_VertexInstance0 + 1);
+}
+
+void OpenGLStateTracker::NotifyPolygonModes() 
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_PolygonModes);
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_PolygonModeFront);
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_PolygonModeBack);
+}
+
+void OpenGLStateTracker::NotifyViewport0() 
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_Viewports);
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_Viewport0);
+}
+
+void OpenGLStateTracker::NotifyScissor0()
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_Scissors);
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_Scissor0);
+}
+
 void OpenGLStateTracker::NotifyColorMask(uint8_t index) 
 {
     m_StateTracker.FlagSet(OpenGLDirtyFlag_ColorMasks);
     m_StateTracker.FlagSet(OpenGLDirtyFlag_ColorMask0 + index);
+}
+
+void OpenGLStateTracker::NotifyBlend0() 
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_BlendStates);
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_BlendState0);
+}
+
+void OpenGLStateTracker::NotifyFramebuffer() 
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_RenderTargets);
+}
+
+void OpenGLStateTracker::NotifyFrontFace()
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_FrontFace);
+}
+
+void OpenGLStateTracker::NotifyCullTest()
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_CullTest);
+}
+
+void OpenGLStateTracker::NotifyDepthTest() 
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_DepthTest);
+}
+
+void OpenGLStateTracker::NotifyStencilTest() 
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_StencilTest);
+}
+
+void OpenGLStateTracker::NotifyPolygonOffset() 
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_PolygonOffset);
+}
+
+void OpenGLStateTracker::NotifyRasterizeEnable()
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_RasterizeEnable);
+}
+
+void OpenGLStateTracker::NotifyFramebufferSRGB()
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_FramebufferSRGB);
+}
+
+void OpenGLStateTracker::NotifyLogicOp() 
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_LogicOp);
+}
+
+void OpenGLStateTracker::NotifyClipControl() 
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_ClipControl);
+}
+
+void OpenGLStateTracker::NotifyAlphaTest() 
+{
+    m_StateTracker.FlagSet(OpenGLDirtyFlag_AlphaTest);
 }
 
 void OpenGLStateTracker::SetupDirtyRenderTargets(void)

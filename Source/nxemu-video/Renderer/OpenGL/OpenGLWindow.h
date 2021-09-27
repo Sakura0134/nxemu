@@ -6,6 +6,7 @@ public:
     OpenGLWindow(void);
 
     bool Initialize(void * RenderSurface);
+    void SwapBuffers(void);
 
 private:
     OpenGLWindow(const OpenGLWindow &);
