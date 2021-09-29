@@ -3,6 +3,7 @@
 #include "VideoMemoryManager.h"
 #include "VideoNotification.h"
 #include <algorithm>
+#include <cmath>
 
 CMaxwell3D::CMaxwell3D(ISwitchSystem & SwitchSystem, CVideoMemory & VideoMemory) :
     m_SwitchSystem(SwitchSystem),

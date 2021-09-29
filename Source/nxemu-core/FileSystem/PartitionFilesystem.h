@@ -1,6 +1,7 @@
 #pragma once
 #include <nxemu-core\FileSystem\EncryptedFile.h>
 #include <stdint.h>
+#include <string>
 
 class CPartitionFilesystem
 {

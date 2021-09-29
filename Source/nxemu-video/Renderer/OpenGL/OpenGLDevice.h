@@ -26,10 +26,10 @@ public:
     bool HasVertexViewportLayer() const { return m_HasVertexViewportLayer; }
     bool HasImageLoadFormatted() const { return m_HasImageLoadFormatted; }
     bool HasTextureShadowLod() const { return m_HasTextureShadowLOD; }
-    bool HasVertexBufferUnifiedMemory() const { return m_HasVertexBufferUnifiedMemory; }
+    bool HasVertexBufferUnifiedMemory() const { return false; /* m_HasVertexBufferUnifiedMemory*/; }
     bool HasPreciseBug() const { return m_HasPreciseBug; }
     bool HasBrokenTextureViewFormats() const {  return m_HasBrokenTextureViewFormats; }
-    bool UseAssemblyShaders() const { return m_UseAssemblyShaders; }
+    bool UseAssemblyShaders() const { return false; /* m_UseAssemblyShaders;*/ }
     bool Init(void);
 
 private:

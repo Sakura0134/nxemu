@@ -3,6 +3,7 @@
 #include <nxemu-core\hle\Memory\MemoryRegion.h>
 #include <Common\CriticalSection.h>
 #include <stdint.h>
+#include <string>
 #include <map>
 
 class CSwitchSystem;
