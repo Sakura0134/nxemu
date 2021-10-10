@@ -21,7 +21,6 @@ if %MSVC-BUILDER% == "" (
 )
 
 :: Build x64 version of the software
-echo %MSVC-BUILDER% "%base_dir%\nxemu.sln" /rebuild "%BuildMode%|x64"
 %MSVC-BUILDER% "%base_dir%\nxemu.sln" /rebuild "%BuildMode%|x64"
 set Result=%ERRORLEVEL%
 echo Done - ERRORLEVEL: %Result%
